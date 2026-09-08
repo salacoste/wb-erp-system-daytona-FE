@@ -20,6 +20,7 @@
 **Бейдж статуса синхронизации рекламы**
 
 Отображение статуса синхронизации рекламных данных на виджете рекламы в дашборде. Пользователь видит:
+
 - Время последней синхронизации
 - Текущий статус (синхронизация/завершено/ошибка)
 - Период доступных данных
@@ -28,12 +29,14 @@
 ## Acceptance Criteria
 
 ### AC1: Sync Status Badge Display
+
 - [ ] Badge displays in advertising dashboard widget header
 - [ ] Shows human-readable last sync time (relative format)
 - [ ] Badge color reflects current sync status
 - [ ] Badge is compact and doesn't interfere with other controls
 
 ### AC2: Status Color Coding
+
 - [ ] `idle` - Gray (#9CA3AF) with clock icon
 - [ ] `syncing` - Blue (#3B82F6) with animated spinner
 - [ ] `completed` - Green (#22C55E) with checkmark icon
@@ -41,6 +44,7 @@
 - [ ] `failed` - Red (#EF4444) with X icon
 
 ### AC3: Tooltip Information
+
 - [ ] Last sync timestamp (full datetime, Moscow timezone)
 - [ ] Next scheduled sync time
 - [ ] Number of campaigns synced
@@ -48,18 +52,21 @@
 - [ ] Status-specific message
 
 ### AC4: Auto-Refresh Behavior
+
 - [ ] Poll sync status every 60 seconds when widget is visible
 - [ ] Stop polling when tab is in background
 - [ ] Resume polling when tab becomes active
 - [ ] Show loading skeleton during initial fetch
 
 ### AC5: API Integration
+
 - [ ] Connect to `GET /v1/analytics/advertising/sync-status`
 - [ ] Handle 401/403 authentication errors
 - [ ] Graceful fallback if API unavailable
 - [ ] Cache response for 60 seconds (TanStack Query staleTime)
 
 ### AC6: Accessibility
+
 - [ ] Status badge has descriptive `aria-label`
 - [ ] Tooltip accessible via keyboard focus
 - [ ] Color is supplemented with icon (not color-only)
@@ -290,15 +297,16 @@ function SyncStatusTooltipContent({ data, config }) {
 
 ### Status Colors
 
-| Status | Background | Text | Hex |
-|--------|------------|------|-----|
-| `idle` | `bg-gray-100` | `text-gray-600` | #9CA3AF |
-| `syncing` | `bg-blue-100` | `text-blue-600` | #3B82F6 |
-| `completed` | `bg-green-100` | `text-green-600` | #22C55E |
+| Status            | Background      | Text              | Hex     |
+| ----------------- | --------------- | ----------------- | ------- |
+| `idle`            | `bg-gray-100`   | `text-gray-600`   | #9CA3AF |
+| `syncing`         | `bg-blue-100`   | `text-blue-600`   | #3B82F6 |
+| `completed`       | `bg-green-100`  | `text-green-600`  | #22C55E |
 | `partial_success` | `bg-yellow-100` | `text-yellow-600` | #F59E0B |
-| `failed` | `bg-red-100` | `text-red-600` | #EF4444 |
+| `failed`          | `bg-red-100`    | `text-red-600`    | #EF4444 |
 
 ### Badge Dimensions
+
 - Height: 24px (py-1)
 - Padding: 8px horizontal (px-2)
 - Border radius: full (rounded-full)
@@ -306,6 +314,7 @@ function SyncStatusTooltipContent({ data, config }) {
 - Icon size: 12px (w-3 h-3)
 
 ### Responsive Behavior
+
 - Mobile: Show icon only, text visible on SM+ screens
 - Tooltip: 256px width (w-64)
 
@@ -325,11 +334,11 @@ src/
 
 ## Files to Modify
 
-| File | Changes |
-|------|---------|
+| File                                 | Changes                                                             |
+| ------------------------------------ | ------------------------------------------------------------------- |
 | `src/types/advertising-analytics.ts` | Add `partial_success` to SyncTaskStatus, add new response interface |
-| `src/lib/api/advertising.ts` | Add `getAdvertisingSyncStatus()` function |
-| Dashboard advertising widget | Integrate badge in header |
+| `src/lib/api/advertising.ts`         | Add `getAdvertisingSyncStatus()` function                           |
+| Dashboard advertising widget         | Integrate badge in header                                           |
 
 ## Dependencies
 
@@ -339,6 +348,7 @@ src/
 ## Testing Requirements
 
 ### Unit Tests
+
 - [ ] Badge renders correctly for each status
 - [ ] Tooltip displays all sync details
 - [ ] Loading skeleton shown during fetch
@@ -346,11 +356,13 @@ src/
 - [ ] Relative time formatting works correctly
 
 ### Integration Tests
+
 - [ ] Hook fetches data from correct endpoint
 - [ ] Auto-refresh works (mock timer)
 - [ ] Polling stops when tab is hidden
 
 ### Accessibility Tests
+
 - [ ] Badge is keyboard focusable
 - [ ] Tooltip accessible via keyboard
 - [ ] Screen reader announces status
@@ -373,8 +385,8 @@ src/
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author   | Change                                  |
+| ---------- | -------- | --------------------------------------- |
 | 2026-01-31 | PM Agent | Initial draft based on backend docs 123 |
 
 ---
@@ -382,12 +394,15 @@ src/
 ## Notes
 
 ### Backend API Reference
+
 - Endpoint: `GET /v1/analytics/advertising/sync-status`
 - Documentation: `docs/request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md`
 - Sync statuses: `idle`, `syncing`, `completed`, `partial_success`, `failed`
 
 ### Relation to Story 33.6-FE
+
 This story is similar to Story 33.6-FE (Sync Status Display) but focuses on:
+
 - Dashboard widget integration (not advertising page header)
 - Simplified badge format (not full indicator)
 - New backend endpoint with extended status values
@@ -400,6 +415,7 @@ This story is similar to Story 33.6-FE (Sync Status Display) but focuses on:
 **Hook**: `src/hooks/useAdvertisingSyncStatusBadge.ts`
 **Lines**: 200
 **Key Features**:
+
 - Status badge with 5 color-coded states (idle, syncing, completed, partial_success, failed)
 - Relative time display (formatDistanceToNow)
 - Auto-refresh every 60 seconds with refetchIntervalInBackground: false

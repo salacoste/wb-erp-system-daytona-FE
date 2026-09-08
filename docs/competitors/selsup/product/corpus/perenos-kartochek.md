@@ -13,7 +13,7 @@ chars: 2829
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-perenesti-kartochki-tovara-na-wildberries" rel="nofollow">Как перенести карточки товара на Wildberries</a>
 - <a href="#kak-perenesti-kartochki-tovara-na-ozon" rel="nofollow">Как перенести карточки товара на Ozon</a>
 - <a href="#kak-perenesti-kartochki-tovara-na-yandeks-market" rel="nofollow">Как перенести карточки товара на Яндекс.Маркет</a>
@@ -52,8 +52,8 @@ chars: 2829
 
  
 
-***Как перенести карточки с одной организации в другую читайте [тут](../perenos-kartochek-s-odnoj-organizatsii-v-druguyu/index.html).***
+_**Как перенести карточки с одной организации в другую читайте [тут](../perenos-kartochek-s-odnoj-organizatsii-v-druguyu/index.html).**_
 
 Следите за обновлениями программы в нашем [Телеграмм канале](https://t.me/SelSup_ru) и на сайте в разделе «[Новости SelSup](https://selsup.ru/news/)». Читайте [блог](https://selsup.ru/news-mp/) – там много полезных статей.
 
-*Главная статья по работе с SelSup — [здесь](../s-chego-nachat/index.html), в ней собраны самые важные и полезные статьи для управления Вашим бизнесом.*
+_Главная статья по работе с SelSup — [здесь](../s-chego-nachat/index.html), в ней собраны самые важные и полезные статьи для управления Вашим бизнесом._

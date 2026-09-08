@@ -11,7 +11,7 @@ chars: 4327
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojka-umnoj-lenty" rel="nofollow">Настройка умной ленты</a>
 - <a href="#pechat-lenty-zakazov-s-etiketkami-tovarov-v-pdf" rel="nofollow">Печать ленты заказов с этикетками товаров в PDF</a>
 

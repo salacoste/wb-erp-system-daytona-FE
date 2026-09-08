@@ -18,6 +18,7 @@
 **So that** the correct commission rates and cost structure are applied for my chosen fulfillment method.
 
 **Non-goals**:
+
 - DBS/EDBS fulfillment types (future scope, per Question #1 in requirements)
 - Auto-detection of fulfillment type from existing products
 - Fulfillment type comparison side-by-side
@@ -26,16 +27,16 @@
 
 ## Background: FBO vs FBS
 
-| Aspect | FBO (Fulfillment by WB) | FBS (Fulfillment by Seller) |
-|--------|-------------------------|----------------------------|
-| Описание (RU) | Товар на складе WB | Товар у продавца |
-| Storage | Items stored at WB warehouse | Items stored by seller |
-| Commission Field | `paidStorageKgvp` (~25%) | `kgvpMarketplace` (~28%) |
-| Storage Costs | Applicable | Not applicable (N/A) |
-| Acceptance Costs | Applicable | Not applicable (N/A) |
-| Turnover Days | Applicable (default: 20) | Not applicable (N/A) |
-| API Field | `delivery_type: "fbo"` | `delivery_type: "fbs"` |
-| Typical Use | High-volume items | Low-volume or fragile items |
+| Aspect           | FBO (Fulfillment by WB)      | FBS (Fulfillment by Seller) |
+| ---------------- | ---------------------------- | --------------------------- |
+| Описание (RU)    | Товар на складе WB           | Товар у продавца            |
+| Storage          | Items stored at WB warehouse | Items stored by seller      |
+| Commission Field | `paidStorageKgvp` (~25%)     | `kgvpMarketplace` (~28%)    |
+| Storage Costs    | Applicable                   | Not applicable (N/A)        |
+| Acceptance Costs | Applicable                   | Not applicable (N/A)        |
+| Turnover Days    | Applicable (default: 20)     | Not applicable (N/A)        |
+| API Field        | `delivery_type: "fbo"`       | `delivery_type: "fbs"`      |
+| Typical Use      | High-volume items            | Low-volume or fragile items |
 
 **Business Impact**: FBS commission is typically **3-4% higher** than FBO (96.5% of categories based on analysis of 7,346 WB categories).
 
@@ -44,6 +45,7 @@
 ## Acceptance Criteria
 
 ### AC1: Fulfillment Type Selection UI
+
 - [x] Add SegmentedControl / Radio buttons at top of form
 - [x] Options: "FBO" and "FBS"
 - [x] Default selection: FBO
@@ -51,18 +53,21 @@
 - [x] Clear visual indication of selected option
 
 ### AC2: Label and Descriptions
+
 - [x] Label: "Тип исполнения" (Fulfillment Type)
 - [x] FBO description: "Товар на складе WB"
 - [x] FBS description: "Товар у продавца"
 - [x] Tooltip explaining difference between FBO/FBS
 
 ### AC3: Commission Rate Impact
+
 - [x] FBO uses `paidStorageKgvp` field from category commissions
 - [x] FBS uses `kgvpMarketplace` field from category commissions
 - [x] Switching fulfillment type updates commission display immediately
 - [x] Show commission % difference indicator (e.g., "FBS +3%")
 
 ### AC4: Conditional Field Visibility
+
 - [x] When FBO selected:
   - Show "Хранение" (Storage) input field
   - Show "Тип приёмки" (Acceptance Type) section
@@ -73,12 +78,14 @@
   - Hide acceptance coefficient field
 
 ### AC5: Form State Integration
+
 - [x] Store `fulfillment_type` in form state as `'FBO' | 'FBS'`
 - [x] Reset FBO-only fields to 0 when switching to FBS
 - [x] Preserve FBO-only field values when switching back to FBO
 - [x] Include `fulfillment_type` in calculation request
 
 ### AC6: Accessibility
+
 - [x] Keyboard navigation between FBO/FBS options
 - [x] ARIA attributes: `role="radiogroup"`, `aria-checked`
 - [x] Screen reader announces selection changes
@@ -103,6 +110,7 @@
 ### Backend Integration
 
 **Price Calculator Request** (`POST /v1/products/price-calculator`):
+
 ```json
 {
   "delivery_type": "fbo",           // "fbo" | "fbs" - affects commission & costs
@@ -115,6 +123,7 @@
 ```
 
 **Commission Field Mapping** (from `GET /v1/tariffs/commissions`):
+
 ```typescript
 // API returns commission rates per category
 {
@@ -129,6 +138,7 @@
 ```
 
 **Commission Difference Analysis** (from backend):
+
 - 96.5% of 7,346 categories: FBS > FBO
 - Average difference: +3.38%
 - Max difference: up to +10% in some categories
@@ -393,16 +403,16 @@ When FBS selected:
 
 ### Invariants & Edge Cases
 
-| Scenario | Handling |
-|----------|----------|
-| Switch FBO → FBS | Reset storage/acceptance/turnover to 0, hide FBO sections |
-| Switch FBS → FBO | Restore defaults (turnover=20, storage=0), show FBO sections |
-| No category selected | Show placeholder commission % (25% FBO / 28% FBS) |
-| Category selected | Calculate actual commission difference from API data |
-| Form reset | Fulfillment type resets to FBO (default) |
-| Mobile viewport | Full-width buttons, stack vertically if needed |
-| API error on commission fetch | Use default commission (25% FBO / 28% FBS), show warning |
-| Rapid FBO↔FBS toggle | Debounce state changes (100ms) |
+| Scenario                      | Handling                                                     |
+| ----------------------------- | ------------------------------------------------------------ |
+| Switch FBO → FBS              | Reset storage/acceptance/turnover to 0, hide FBO sections    |
+| Switch FBS → FBO              | Restore defaults (turnover=20, storage=0), show FBO sections |
+| No category selected          | Show placeholder commission % (25% FBO / 28% FBS)            |
+| Category selected             | Calculate actual commission difference from API data         |
+| Form reset                    | Fulfillment type resets to FBO (default)                     |
+| Mobile viewport               | Full-width buttons, stack vertically if needed               |
+| API error on commission fetch | Use default commission (25% FBO / 28% FBS), show warning     |
+| Rapid FBO↔FBS toggle          | Debounce state changes (100ms)                               |
 
 ---
 
@@ -437,18 +447,21 @@ When FBS selected:
 ## Testing Requirements
 
 ### Unit Tests
+
 - [ ] FulfillmentTypeSelector renders both options
 - [ ] Selection changes trigger onChange callback
 - [ ] Commission difference badge displays correctly
 - [ ] Disabled state prevents interaction
 
 ### Integration Tests
+
 - [ ] Switching to FBS hides FBO-only fields
 - [ ] Switching to FBO shows FBO-only fields
 - [ ] Form values reset correctly on switch
 - [ ] Commission rate updates with fulfillment type
 
 ### E2E Tests
+
 - [ ] User can select FBO/FBS via click
 - [ ] User can navigate with keyboard (Tab, Arrow)
 - [ ] Conditional fields show/hide correctly
@@ -459,20 +472,24 @@ When FBS selected:
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/FulfillmentTypeSelector.tsx` | CREATE | ~80 | Segmented control component |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +40 | Add fulfillment type, conditional fields |
-| `src/lib/price-calculator-utils.ts` | UPDATE | +20 | Commission field mapping functions |
-| `src/types/price-calculator.ts` | UPDATE | +5 | Add FulfillmentType type |
+
+| File                                                                 | Change Type | Lines (Est.) | Description                              |
+| -------------------------------------------------------------------- | ----------- | ------------ | ---------------------------------------- |
+| `src/components/custom/price-calculator/FulfillmentTypeSelector.tsx` | CREATE      | ~80          | Segmented control component              |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`     | UPDATE      | +40          | Add fulfillment type, conditional fields |
+| `src/lib/price-calculator-utils.ts`                                  | UPDATE      | +20          | Commission field mapping functions       |
+| `src/types/price-calculator.ts`                                      | UPDATE      | +5           | Add FulfillmentType type                 |
 
 ### Change Log
+
 _(To be filled by Dev Agent during implementation)_
 
 ### Implementation Notes
+
 _(To be filled by Dev Agent during implementation)_
 
 ### Review Follow-ups
+
 _(To be filled by AI Code Review)_
 
 ---
@@ -486,22 +503,24 @@ _(To be filled after implementation)_
 **Gate Decision**:
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Fulfillment Type Selection UI | ⏳ | |
-| AC2 | Label and Descriptions | ⏳ | |
-| AC3 | Commission Rate Impact | ⏳ | |
-| AC4 | Conditional Field Visibility | ⏳ | |
-| AC5 | Form State Integration | ⏳ | |
-| AC6 | Accessibility | ⏳ | |
+
+| AC  | Requirement                   | Status | Evidence |
+| --- | ----------------------------- | ------ | -------- |
+| AC1 | Fulfillment Type Selection UI | ⏳     |          |
+| AC2 | Label and Descriptions        | ⏳     |          |
+| AC3 | Commission Rate Impact        | ⏳     |          |
+| AC4 | Conditional Field Visibility  | ⏳     |          |
+| AC5 | Form State Integration        | ⏳     |          |
+| AC6 | Accessibility                 | ⏳     |          |
 
 ### Accessibility Check
-| Check | Status | Evidence |
-|-------|--------|----------|
-| Radio group ARIA | ⏳ | |
-| Keyboard navigation | ⏳ | |
-| Screen reader | ⏳ | |
-| Color contrast | ⏳ | |
+
+| Check               | Status | Evidence |
+| ------------------- | ------ | -------- |
+| Radio group ARIA    | ⏳     |          |
+| Keyboard navigation | ⏳     |          |
+| Screen reader       | ⏳     |          |
+| Color contrast      | ⏳     |          |
 
 ---
 

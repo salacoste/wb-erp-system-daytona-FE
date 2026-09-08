@@ -41,6 +41,7 @@ Integrates frontend with the backend tax & VAT accounting system (Epic 72 + Task
 **Read**: `GET /v1/cabinets/:id` → returns `taxSystem`, `taxRate`, `vatPayer`, `vatRate`
 
 **Update**: `PUT /v1/cabinets/:id`
+
 ```json
 {
   "taxSystem": "usn6" | "usn15" | "manual" | null,
@@ -50,12 +51,12 @@ Integrates frontend with the backend tax & VAT accounting system (Epic 72 + Task
 }
 ```
 
-| Field | Values | Rules |
-|-------|--------|-------|
-| `taxSystem` | `null`, `"usn6"`, `"usn15"`, `"manual"` | null = not configured |
-| `taxRate` | `number \| null` | Required when manual, auto-cleared otherwise |
-| `vatPayer` | `boolean` | Default false |
-| `vatRate` | `0 \| 5 \| 20 \| 22 \| null` | Required when vatPayer=true, auto-cleared otherwise |
+| Field       | Values                                  | Rules                                               |
+| ----------- | --------------------------------------- | --------------------------------------------------- |
+| `taxSystem` | `null`, `"usn6"`, `"usn15"`, `"manual"` | null = not configured                               |
+| `taxRate`   | `number \| null`                        | Required when manual, auto-cleared otherwise        |
+| `vatPayer`  | `boolean`                               | Default false                                       |
+| `vatRate`   | `0 \| 5 \| 20 \| 22 \| null`            | Required when vatPayer=true, auto-cleared otherwise |
 
 ### 2. Finance Summary Tax Metrics
 
@@ -88,11 +89,13 @@ When `tax === null` → tax system not configured for cabinet.
 ### 3. Tax Formulas (Backend-Calculated)
 
 **Income Tax**:
+
 - **USN 6%**: `tax = revenue_excl_vat × 6%` (or sales_gross_total if no VAT)
 - **USN 15%**: `tax = MAX((revenue − expenses) × 15%, revenue × 1%)` (minimum rule)
 - **Manual**: `tax = tax_base × (taxRate / 100)`
 
 **НДС (VAT)**:
+
 - `vat_output = sales_gross_total × vatRate / (100 + vatRate)`
 - `revenue_excl_vat = sales_gross_total − vat_output`
 - `vat_payable = vat_output − vat_input` (input from COGS)
@@ -103,32 +106,36 @@ When `tax === null` → tax system not configured for cabinet.
 
 ## Stories Summary
 
-| Story | Title | Points | Priority | Status | Key Files |
-|-------|-------|--------|----------|--------|-----------|
-| 66.1-FE | Types & API Layer | 4 | P0 | 📋 Ready | `types/cabinet.ts`, `types/finance-summary.ts`, `lib/api/cabinet.ts` |
-| 66.2-FE | Tax Settings Hooks | 3 | P0 | 📋 Ready | `hooks/useCabinetTaxSettings.ts` |
-| 66.3-FE | Tax & VAT Settings Page | 7 | P0 | 📋 Ready | `app/(dashboard)/settings/tax/page.tsx`, `components/custom/settings/TaxSettingsForm.tsx` |
-| 66.4-FE | Finance Summary Tax Integration | 4 | P0 | 📋 Ready | `types/finance-summary.ts`, `hooks-v1/financial/aggregation.ts` |
-| 66.5-FE | Dashboard Tax Card (Backend Data) | 6 | P0 | 📋 Ready | `components/custom/dashboard/TaxCard.tsx` |
-| 66.6-FE | Net Profit After Tax Display | 7 | P1 | 📋 Ready | `components/custom/dashboard/NetProfitCard.tsx` |
-| 66.7-FE | Tax Warning & Empty States | 4 | P1 | 📋 Ready | `components/custom/dashboard/TaxWarningBanner.tsx` |
+| Story   | Title                             | Points | Priority | Status   | Key Files                                                                                 |
+| ------- | --------------------------------- | ------ | -------- | -------- | ----------------------------------------------------------------------------------------- |
+| 66.1-FE | Types & API Layer                 | 4      | P0       | 📋 Ready | `types/cabinet.ts`, `types/finance-summary.ts`, `lib/api/cabinet.ts`                      |
+| 66.2-FE | Tax Settings Hooks                | 3      | P0       | 📋 Ready | `hooks/useCabinetTaxSettings.ts`                                                          |
+| 66.3-FE | Tax & VAT Settings Page           | 7      | P0       | 📋 Ready | `app/(dashboard)/settings/tax/page.tsx`, `components/custom/settings/TaxSettingsForm.tsx` |
+| 66.4-FE | Finance Summary Tax Integration   | 4      | P0       | 📋 Ready | `types/finance-summary.ts`, `hooks-v1/financial/aggregation.ts`                           |
+| 66.5-FE | Dashboard Tax Card (Backend Data) | 6      | P0       | 📋 Ready | `components/custom/dashboard/TaxCard.tsx`                                                 |
+| 66.6-FE | Net Profit After Tax Display      | 7      | P1       | 📋 Ready | `components/custom/dashboard/NetProfitCard.tsx`                                           |
+| 66.7-FE | Tax Warning & Empty States        | 4      | P1       | 📋 Ready | `components/custom/dashboard/TaxWarningBanner.tsx`                                        |
 
 ---
 
 ## Implementation Order
 
 ### Phase 1: Foundation (P0) — Stories 66.1, 66.2
+
 1. 66.1-FE: Types & API Layer (foundation for all other stories)
 2. 66.2-FE: Tax Settings Hooks (depends on 66.1)
 
 ### Phase 2: Settings UI (P0) — Story 66.3
+
 3. 66.3-FE: Tax & VAT Settings Page (depends on 66.2)
 
 ### Phase 3: Dashboard Integration (P0) — Stories 66.4, 66.5
+
 4. 66.4-FE: Finance Summary Tax Integration (depends on 66.1)
 5. 66.5-FE: Dashboard Tax Card refactor (depends on 66.4)
 
 ### Phase 4: Polish (P1) — Stories 66.6, 66.7
+
 6. 66.6-FE: Net Profit After Tax (depends on 66.4)
 7. 66.7-FE: Tax Warning States (depends on 66.3, 66.5)
 
@@ -137,11 +144,13 @@ When `tax === null` → tax system not configured for cabinet.
 ## Dependencies
 
 ### Backend APIs Required (All ✅ Complete)
+
 - `GET /v1/cabinets/:id` — read taxSystem, taxRate, vatPayer, vatRate
 - `PUT /v1/cabinets/:id` — update tax + VAT settings
 - `GET /v1/analytics/weekly/finance-summary` — tax metrics in summary_total.tax
 
 ### From Existing Frontend Epics
+
 - Epic 61-FE: `useFinancialSummary` hook, aggregation pipeline
 - Epic 62-FE: Dashboard grid layout, MetricCardStates
 - Epic 63-FE: DashboardMetricsGrid, ProfitBreakdownPopover
@@ -151,13 +160,13 @@ When `tax === null` → tax system not configured for cabinet.
 
 ## Success Metrics
 
-| Metric | Target |
-|--------|--------|
-| TypeScript strict mode | 0 errors |
-| Unit test coverage | >80% per story |
-| File size limit | <200 lines each |
-| API response handling | All error states covered |
-| Accessibility | WCAG 2.1 AA (form labels, keyboard nav) |
+| Metric                 | Target                                  |
+| ---------------------- | --------------------------------------- |
+| TypeScript strict mode | 0 errors                                |
+| Unit test coverage     | >80% per story                          |
+| File size limit        | <200 lines each                         |
+| API response handling  | All error states covered                |
+| Accessibility          | WCAG 2.1 AA (form labels, keyboard nav) |
 
 ---
 
@@ -175,7 +184,7 @@ When `tax === null` → tax system not configured for cabinet.
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-02-22 | BMad Master | Initial epic creation based on Backend Epic 72 summary |
-| 2026-02-23 | Claude | Full rescope: added НДС/VAT support (Task-50), updated all stories, 28→35 SP |
+| Date       | Author      | Change                                                                       |
+| ---------- | ----------- | ---------------------------------------------------------------------------- |
+| 2026-02-22 | BMad Master | Initial epic creation based on Backend Epic 72 summary                       |
+| 2026-02-23 | Claude      | Full rescope: added НДС/VAT support (Task-50), updated all stories, 28→35 SP |

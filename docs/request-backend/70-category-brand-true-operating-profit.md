@@ -26,6 +26,7 @@ Category and Brand APIs return `operating_profit` that equals `profit` (gross pr
 ### Expected vs Actual
 
 **Cabinet-level totals:**
+
 - gross_profit_sku: 99,562₽
 - logistics: 25,744₽
 - storage: 1,769₽
@@ -34,6 +35,7 @@ Category and Brand APIs return `operating_profit` that equals `profit` (gross pr
 - penalties: 0₽
 
 **Expected calculation:**
+
 ```
 true_operating_profit = gross_profit - logistics - storage - penalties - paid_acceptance - other_adjustments
                       = 99,562 - 25,744 - 1,769 - 0 - 75 - 38,469
@@ -41,21 +43,23 @@ true_operating_profit = gross_profit - logistics - storage - penalties - paid_ac
 ```
 
 **Current Category API behavior:**
+
 - Returns `operating_profit: 99,562₽` (equals gross_profit)
 - Should return `operating_profit: 33,505₽` (after all expenses)
 
 ### Result
 
-| Page | Margin Shown | Expected Margin |
-|------|--------------|-----------------|
-| **SKU** | 21.6% | ~15% (33k/222k) |
-| **Category** | 64.7% | ~15% |
-| **Brand** | Similar issue | ~15% |
-| **Cashflow** | 14.9% ✅ | 14.9% |
+| Page         | Margin Shown  | Expected Margin |
+| ------------ | ------------- | --------------- |
+| **SKU**      | 21.6%         | ~15% (33k/222k) |
+| **Category** | 64.7%         | ~15%            |
+| **Brand**    | Similar issue | ~15%            |
+| **Cashflow** | 14.9% ✅      | 14.9%           |
 
 ## Root Cause
 
 Category API calculates `operating_profit` as:
+
 ```typescript
 operating_profit = revenue_net - cogs  // This is GROSS profit!
 
@@ -68,6 +72,7 @@ operating_profit = revenue_net - cogs  // This is GROSS profit!
 ```
 
 But should be:
+
 ```typescript
 operating_profit = revenue_net - cogs - logistics - storage - penalties - paid_acceptance - distributed_other_adjustments
 ```
@@ -129,12 +134,14 @@ SKU Financials API returns **inverted** revenue values:
 ```
 
 **Expected relationship:**
+
 ```
 revenueGross > revenueNet
 Because: net_for_pay = retail_price_with_discount - commission - acquiring
 ```
 
 **Actual (BUG):**
+
 ```
 revenueGross (26584) < revenueNet (28680.99)
 ```
@@ -144,12 +151,14 @@ This is backwards! The backend's `sales.revenue_gross` field appears to contain 
 ### Impact
 
 SKU margin calculation uses wrong base:
+
 - Shows: `33,269 / 153,778 = 21.6%`
 - Should be: `33,269 / ~220,000 = ~15%`
 
 ### Root Cause Investigation Needed
 
 Check SKU Financials service - what values are being returned for:
+
 - `sales.revenue_gross` - should be SUM(retail_price_with_discount)
 - `sales.revenue_net` - should be SUM(net_for_pay)
 
@@ -158,6 +167,7 @@ The fields appear to be swapped or incorrectly calculated
 ## Verification After Fix
 
 All pages should show consistent ~15% operating margin:
+
 - SKU: `sum(operating_profit) / sum(revenue_gross) * 100`
 - Category: `sum(operating_profit) / sum(revenue_gross) * 100`
 - Brand: `sum(operating_profit) / sum(revenue_gross) * 100`
@@ -195,6 +205,7 @@ The reported `revenueGross < revenueNet` is **NOT a bug** — it's legitimate WB
 Wildberries pays "Компенсация скидки по программе лояльности" (loyalty compensation) which **adds** to `net_for_pay`, making it larger than `gross` for some SKUs.
 
 Verified on raw data:
+
 ```
 docType: 'sale', gross: 240, net: 292.47  // net > gross due to loyalty compensation
 ```

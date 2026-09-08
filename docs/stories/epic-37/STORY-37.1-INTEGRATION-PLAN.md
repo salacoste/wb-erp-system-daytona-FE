@@ -15,12 +15,14 @@
 **Цель**: Заменить mock данные на реальный backend API для MergedGroupTable компонента.
 
 **Текущее состояние**:
+
 - ✅ Backend API готов и протестирован (Request #88)
 - ✅ Frontend компонент работает с mock данными
 - ✅ Unit tests покрывают все формулы (77 tests passing)
 - 🚧 Интеграция с real API отсутствует
 
 **Результат после Story 37.1**:
+
 - ✅ MergedGroupTable получает данные из `/v1/analytics/advertising?groupBy=imtId`
 - ✅ Mock данные удалены
 - ✅ Feature flag `useRealApi` включен
@@ -31,6 +33,7 @@
 ## 🎯 Acceptance Criteria (Обновлённые)
 
 ### API Integration (AC 1-8)
+
 1. ✅ TypeScript типы обновлены для новой API структуры (aggregateMetrics, products[], mainProduct)
 2. ✅ API client функция `getAdvertisingAnalytics()` обрабатывает `groupBy=imtId`
 3. ✅ Transformation layer: backend response → frontend MergedGroup[] type
@@ -41,6 +44,7 @@
 8. ✅ Empty state обрабатывается (нет merged groups в кабинете)
 
 ### Data Validation (AC 9-14)
+
 9. ✅ Aggregate метрики корректны (SUM всех продуктов)
 10. ✅ Main product идентифицируется правильно (`isMainProduct: true`)
 11. ✅ Crown icon отображается только для main product
@@ -49,6 +53,7 @@
 14. ✅ Organic contribution calculations correct (формулы Epic 35)
 
 ### Cleanup (AC 15-16)
+
 15. ✅ Mock data import удалён из page.tsx
 16. ✅ Mock data файлы переведены в archived состояние (или удалены)
 
@@ -61,6 +66,7 @@
 **Файл**: `src/types/advertising-analytics.ts`
 
 **Что добавить**:
+
 ```typescript
 // Request #88: New nested structure for merged groups
 export interface AggregateMetrics {
@@ -154,6 +160,7 @@ export interface MergedGroupItem extends AdvertisingItem {
 **Текущая проблема**: API client не передаёт `groupBy` параметр в backend
 
 **Что добавить**:
+
 ```typescript
 export async function getAdvertisingAnalytics(
   params: AdvertisingAnalyticsParams
@@ -185,6 +192,7 @@ export async function getAdvertisingAnalytics(
 ```
 
 **Критичные изменения**:
+
 - ✅ `group_by: params.groupBy` - передача режима группировки
 - ✅ Backend вернёт новую структуру с `aggregateMetrics`, `products[]`, `mainProduct`
 
@@ -197,12 +205,14 @@ export async function getAdvertisingAnalytics(
 **Изменения**:
 
 #### 3.1 Удалить mock data import
+
 ```typescript
 // ❌ УДАЛИТЬ строку 30:
 import { mockMergedGroups } from '@/mocks/data/epic-37-merged-groups'
 ```
 
 #### 3.2 Обновить mergedGroupsData useMemo
+
 ```typescript
 // Заменить строки 215-231
 const mergedGroupsData = useMemo(() => {
@@ -251,6 +261,7 @@ export const features = {
 **Цель**: Конвертировать backend response в frontend types (если нужно)
 
 **Код**:
+
 ```typescript
 /**
  * Advertising Analytics Data Transformers
@@ -304,6 +315,7 @@ export function transformMergedGroups(
 ```
 
 **Применение**:
+
 ```typescript
 // В page.tsx
 import { transformMergedGroups } from '@/lib/transformers/advertising-transformers'
@@ -327,9 +339,11 @@ const mergedGroupsData = useMemo(() => {
 ### 5. Mock Data (АРХИВИРОВАТЬ)
 
 **Файл для архивирования**:
+
 - `src/mocks/data/epic-37-merged-groups.ts`
 
 **Опции**:
+
 - **Option A**: Переместить в `src/mocks/archive/` (для будущих reference)
 - **Option B**: Полностью удалить (если не нужен)
 
@@ -418,6 +432,7 @@ git checkout main  # или ваш feature branch
 **Код для вставки**: См. секцию "Файлы для изменения" выше
 
 **Проверка**:
+
 ```bash
 npm run type-check
 # Должно пройти без errors
@@ -430,6 +445,7 @@ npm run type-check
 **Найти функцию**: `getAdvertisingAnalytics()` (строка ~100)
 
 **Изменить**:
+
 ```typescript
 // BEFORE
 const queryParams = {
@@ -463,6 +479,7 @@ const queryParams = {
 **Код**: См. секцию "Файлы для изменения #4" выше
 
 **Проверка**:
+
 ```bash
 npm run lint
 # Должно пройти без errors
@@ -473,18 +490,21 @@ npm run lint
 **Файл**: `src/app/(dashboard)/analytics/advertising/page.tsx`
 
 **Изменение 1** (строка 30): Удалить mock import
+
 ```typescript
 // ❌ УДАЛИТЬ:
 import { mockMergedGroups } from '@/mocks/data/epic-37-merged-groups'
 ```
 
 **Изменение 2** (после строки 26): Добавить transformer import
+
 ```typescript
 // ✅ ДОБАВИТЬ:
 import { transformMergedGroups } from '@/lib/transformers/advertising-transformers'
 ```
 
 **Изменение 3** (строки 215-231): Заменить mergedGroupsData useMemo
+
 ```typescript
 // ❌ УДАЛИТЬ старую логику с mock:
 const mergedGroupsData = useMemo(() => {
@@ -528,6 +548,7 @@ const mergedGroupsData = useMemo(() => {
 **Файл**: `src/config/features.ts`
 
 **Найти**:
+
 ```typescript
 export const features = {
   epic37MergedGroups: {
@@ -539,6 +560,7 @@ export const features = {
 ```
 
 **Заменить на**:
+
 ```typescript
 export const features = {
   epic37MergedGroups: {
@@ -552,16 +574,19 @@ export const features = {
 ### Step 7: Test Integration
 
 **Start dev server**:
+
 ```bash
 npm run dev
 ```
 
 **Open browser**:
+
 ```
 http://localhost:3000/analytics/advertising?group_by=imtId
 ```
 
 **Checklist визуальной проверки**:
+
 - [ ] Network tab: API call с `group_by=imtId` выполняется
 - [ ] Console: нет errors, нет "Using MOCK data" logs
 - [ ] Таблица отображается с данными из API
@@ -572,12 +597,14 @@ http://localhost:3000/analytics/advertising?group_by=imtId
 - [ ] Sorting: работает при клике на column headers
 
 **Test с разными кабинетами**:
+
 - Кабинет С merged groups (должны отображаться)
 - Кабинет БЕЗ merged groups (должен показать empty state)
 
 ### Step 8: Cleanup Mock Data
 
 **Архивировать mock файл**:
+
 ```bash
 mkdir -p src/mocks/archive
 git mv src/mocks/data/epic-37-merged-groups.ts src/mocks/archive/
@@ -585,6 +612,7 @@ echo "# Mock Data Archive\n\nArchived mock data for reference and testing.\n" > 
 ```
 
 **Проверка**:
+
 ```bash
 npm run lint
 npm run type-check
@@ -599,6 +627,7 @@ npm run build
 ### Manual Testing (30 минут)
 
 #### Test Case 1: Happy Path (merged group с 6 продуктами)
+
 - [ ] Navigate to `/analytics/advertising?group_by=imtId`
 - [ ] Verify API call: `GET /v1/analytics/advertising?...&group_by=imtId`
 - [ ] Verify response status: 200 OK
@@ -612,28 +641,33 @@ npm run build
 - [ ] Verify ROAS: main product = number, child products = "—"
 
 #### Test Case 2: Single Product Group
+
 - [ ] Find standalone product (imtId = null)
 - [ ] Verify renders as single row (no aggregate row)
 - [ ] Verify crown icon shows (standalone = main by default)
 
 #### Test Case 3: Zero Spend Group
+
 - [ ] Find group with totalSpend = 0
 - [ ] Verify ROAS displays "—" (null)
 - [ ] Verify no division by zero errors in console
 
 #### Test Case 4: Sorting
+
 - [ ] Click ROAS column header
 - [ ] Verify groups re-sort by ROAS descending
 - [ ] Click again → verify ascending sort
 - [ ] Verify within each group: main first, then by totalSales DESC
 
 #### Test Case 5: Error Handling
+
 - [ ] Stop backend server
 - [ ] Reload page
 - [ ] Verify error alert shows: "Не удалось загрузить данные..."
 - [ ] Click "Повторить" → verify retry works
 
 #### Test Case 6: Empty State
+
 - [ ] Use cabinet with NO advertising data
 - [ ] Verify empty state shows: "Нет данных за выбранный период"
 
@@ -658,6 +692,7 @@ npm test
 **Причина**: TypeScript types не обновлены
 
 **Решение**:
+
 1. Verify `AggregateMetrics` interface добавлен в `advertising-analytics.ts`
 2. Verify `MergedGroupItem` extends `AdvertisingItem`
 3. Run `npm run type-check`
@@ -667,6 +702,7 @@ npm test
 **Причина**: `groupBy` не передаётся в backend
 
 **Решение**:
+
 1. Verify `group_by: params.groupBy` добавлен в `queryParams`
 2. Verify `groupBy` value = `'imtId'` (not `'group'` or other)
 3. Check Network tab: URL should contain `group_by=imtId`
@@ -676,6 +712,7 @@ npm test
 **Причина**: Transformation layer фильтрует данные
 
 **Решение**:
+
 1. Check Console logs для transformer warnings
 2. Verify backend response has `type: 'merged_group'`
 3. Verify `aggregateMetrics`, `products[]`, `mainProduct` присутствуют
@@ -685,6 +722,7 @@ npm test
 **Причина**: `isMainProduct` flag отсутствует или неправильный
 
 **Решение**:
+
 1. Verify backend возвращает `products[].isMainProduct`
 2. Check Console log для product data
 3. Verify `totalSpend > 0` для main product
@@ -694,6 +732,7 @@ npm test
 **Причина**: Backend bug или неправильная трансформация
 
 **Решение**:
+
 1. Compare `aggregateMetrics.totalSales` с SUM(products[].totalSales)
 2. Tolerance: ±1₽ допустимо (rounding)
 3. Если разница >1₽ → report backend bug
@@ -703,6 +742,7 @@ npm test
 ## 📊 Success Criteria
 
 **Story 37.1 COMPLETE когда**:
+
 - [x] Backend API validated (Request #88 ✅ DONE)
 - [ ] TypeScript types updated
 - [ ] API client sends `groupBy` parameter
@@ -715,6 +755,7 @@ npm test
 - [ ] Unit tests still passing (77/77)
 
 **Epic 37 PRODUCTION READY когда**:
+
 - Story 37.1 ✅ (API integration)
 - Story 37.2 ✅ (Component)
 - Story 37.3 ✅ (Metrics)
@@ -726,6 +767,7 @@ npm test
 ## 🔗 Reference Documents
 
 ### Backend Documentation
+
 - **Integration Guide**: `frontend/docs/request-backend/88-FRONTEND-INTEGRATION-GUIDE.md`
 - **Backend Spec**: `frontend/docs/request-backend/88-epic-37-individual-product-metrics.md`
 - **Swagger**: http://localhost:3000/api
@@ -733,6 +775,7 @@ npm test
 - **Epic 35**: `docs/epics/epic-35-total-sales-organic-split.md`
 
 ### Frontend Documentation
+
 - **Story 37.2**: Component implementation
 - **Story 37.3**: Aggregate metrics formulas
 - **Story 37.4**: Visual styling spec
@@ -743,16 +786,16 @@ npm test
 
 ## 🎯 Estimated Time Breakdown
 
-| Phase | Tasks | Estimated Time |
-|-------|-------|----------------|
-| Phase 1: Type Updates | 4 tasks | 30 min |
-| Phase 2: API Client | 4 tasks | 20 min |
-| Phase 3: Transformation | 4 tasks | 20 min |
-| Phase 4: Page Integration | 5 tasks | 30 min |
-| Phase 5: Feature Flag | 3 tasks | 5 min |
-| Phase 6: Testing | 10 tasks | 30 min |
-| Phase 7: Cleanup | 5 tasks | 10 min |
-| **TOTAL** | **35 tasks** | **2h 25min** |
+| Phase                     | Tasks        | Estimated Time |
+| ------------------------- | ------------ | -------------- |
+| Phase 1: Type Updates     | 4 tasks      | 30 min         |
+| Phase 2: API Client       | 4 tasks      | 20 min         |
+| Phase 3: Transformation   | 4 tasks      | 20 min         |
+| Phase 4: Page Integration | 5 tasks      | 30 min         |
+| Phase 5: Feature Flag     | 3 tasks      | 5 min          |
+| Phase 6: Testing          | 10 tasks     | 30 min         |
+| Phase 7: Cleanup          | 5 tasks      | 10 min         |
+| **TOTAL**                 | **35 tasks** | **2h 25min**   |
 
 **Contingency**: +30min для debugging = **3h max**
 
@@ -985,6 +1028,7 @@ const mergedGroupsData = useMemo(() => {
 **Начинаем с Task 1.1** (Update TypeScript Types)?
 
 **Или хотите**:
+
 - Сначала протестировать API вручную (Postman/curl)?
 - Просмотреть весь integration guide подробнее?
 - Задать вопросы о плане интеграции?

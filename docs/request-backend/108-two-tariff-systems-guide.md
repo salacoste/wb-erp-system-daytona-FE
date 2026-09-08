@@ -12,12 +12,13 @@
 
 **Wildberries has TWO different tariff systems**, both **already implemented** in the backend:
 
-| System | Purpose | SDK Method | Service | Endpoint |
-|--------|---------|------------|--------|----------|
-| **Inventory (остатки)** | Actual storage costs | `sdk.tariffs.getTariffsBox()` | `WarehousesTariffsService` | `GET /v1/tariffs/warehouses-with-tariffs` |
-| **Supply (поставка)** | Planning 14 days ahead | `sdk.ordersFBW.getAcceptanceCoefficients()` | `AcceptanceCoefficientsService` | `GET /v1/tariffs/acceptance/coefficients` |
+| System                  | Purpose                | SDK Method                                  | Service                         | Endpoint                                  |
+| ----------------------- | ---------------------- | ------------------------------------------- | ------------------------------- | ----------------------------------------- |
+| **Inventory (остатки)** | Actual storage costs   | `sdk.tariffs.getTariffsBox()`               | `WarehousesTariffsService`      | `GET /v1/tariffs/warehouses-with-tariffs` |
+| **Supply (поставка)**   | Planning 14 days ahead | `sdk.ordersFBW.getAcceptanceCoefficients()` | `AcceptanceCoefficientsService` | `GET /v1/tariffs/acceptance/coefficients` |
 
 **Key Insight**: The difference between Marketplace rates (higher) and our API rates (lower) is because:
+
 - Marketplace shows **Supply rates** (for planning future deliveries)
 - Our API returns **Inventory rates** (current actual costs)
 
@@ -35,23 +36,27 @@
 ## Inventory Tariff System (Actual Costs)
 
 ### Purpose
+
 - **Current actual costs** for storage and logistics
 - Used for calculating **real expenses** in financial reports
 - Reflects what you **actually pay** for stored goods
 
 ### API Endpoint
+
 ```
 GET /v1/tariffs/warehouses-with-tariffs
 ```
 
 ### Query Parameters
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `date` | string (YYYY-MM-DD) | No | Today | Tariff date |
-| `cargo_type` | string | No | all | Filter: MGT, SGT, KGT |
-| `refresh` | boolean | No | false | Bypass cache |
+
+| Parameter    | Type                | Required | Default | Description           |
+| ------------ | ------------------- | -------- | ------- | --------------------- |
+| `date`       | string (YYYY-MM-DD) | No       | Today   | Tariff date           |
+| `cargo_type` | string              | No       | all     | Filter: MGT, SGT, KGT |
+| `refresh`    | boolean             | No       | false   | Bypass cache          |
 
 ### Response Structure
+
 ```json
 {
   "data": {
@@ -100,12 +105,14 @@ GET /v1/tariffs/warehouses-with-tariffs
 ### When to Use Inventory System
 
 ✅ **USE FOR:**
+
 - Calculating **actual storage costs** in financial reports
 - Displaying **current logistics rates** in Price Calculator
 - Computing **real expenses** for profitability analysis
 - Any **historical** or **current cost** calculations
 
 ❌ **DO NOT USE FOR:**
+
 - Planning future deliveries (use Supply system instead)
 - Estimating acceptance costs for upcoming shipments
 
@@ -114,6 +121,7 @@ GET /v1/tariffs/warehouses-with-tariffs
 ## Supply Tariff System (Planning)
 
 ### Purpose
+
 - **Forward-looking planning** for the next 14 days
 - Used for **supply planning** and cost estimation
 - Shows **future acceptance availability** and rates
@@ -121,6 +129,7 @@ GET /v1/tariffs/warehouses-with-tariffs
 ### API Endpoints
 
 #### 1. Get All Acceptance Coefficients (Discovery)
+
 ```
 GET /v1/tariffs/acceptance/coefficients/all
 ```
@@ -128,6 +137,7 @@ GET /v1/tariffs/acceptance/coefficients/all
 **Purpose**: Discover all warehouses and their 14-day coefficients
 
 **Response Structure**:
+
 ```json
 {
   "coefficients": [
@@ -168,6 +178,7 @@ GET /v1/tariffs/acceptance/coefficients/all
 **IMPORTANT**: All monetary values returned by the API are in **RAW RUB (₽)**, and coefficients are **multipliers** that must be applied during calculation.
 
 **Backend Processing**:
+
 1. WB SDK returns strings like `"0,13"` (comma separator for Russian locale)
 2. Backend parses to numbers: `"0,13"` → `0.13`
 3. Coefficients returned as percentages: `"165"` → `1.65` (divided by 100)
@@ -175,26 +186,29 @@ GET /v1/tariffs/acceptance/coefficients/all
 
 **Box Type Differences**:
 
-| Box Type | ID | `additionalLiterRub` | Formula Behavior |
-|----------|----|---------------------|-----------------|
-| **Boxes** | 2 | Has value (e.g., 0.13 ₽) | Volume-based calculation |
-| **Pallets** | 5 | Always 0 (null in WB API) | Fixed rate, no volume calculation |
-| **Supersafe** | 6 | Has value | Volume-based calculation |
+| Box Type      | ID  | `additionalLiterRub`      | Formula Behavior                  |
+| ------------- | --- | ------------------------- | --------------------------------- |
+| **Boxes**     | 2   | Has value (e.g., 0.13 ₽)  | Volume-based calculation          |
+| **Pallets**   | 5   | Always 0 (null in WB API) | Fixed rate, no volume calculation |
+| **Supersafe** | 6   | Has value                 | Volume-based calculation          |
 
 ### Cost Calculation Formulas
 
 #### Logistics Cost
+
 ```typescript
 logisticsCost = (baseLiterRub + max(0, volume-1) × additionalLiterRub) × coefficient
 ```
 
 **Parameters**:
+
 - `baseLiterRub`: First liter rate in ₽ (e.g., 75 ₽)
 - `additionalLiterRub`: Additional liter rate in ₽ (e.g., 0 ₽ for pallets, 0.13 ₽ for boxes)
 - `coefficient`: Multiplier (e.g., 1.65 = 165%, not 1.65%)
 - `volume`: Product volume in liters (minimum 1)
 
 **Example Calculation (Pallets, 1 liter)**:
+
 ```typescript
 // Input
 baseLiterRub = 75
@@ -210,12 +224,14 @@ logisticsCost = (75 + max(0, 1-1) × 0) × 1.65
 ```
 
 #### Storage Cost
+
 ```typescript
 dailyStorage = (baseLiterRub + max(0, volume-1) × additionalLiterRub) × coefficient
 storageCost = dailyStorage × days
 ```
 
 **Parameters**:
+
 - `baseLiterRub`: Base rate in ₽ per day (e.g., 41.25 ₽)
 - `additionalLiterRub`: Additional liter rate in ₽ per day
 - `coefficient`: Multiplier (e.g., 1.65)
@@ -223,6 +239,7 @@ storageCost = dailyStorage × days
 - `days`: Number of storage days
 
 **Example Calculation (Pallets, 1 liter, 30 days)**:
+
 ```typescript
 // Input
 baseLiterRub = 41.25
@@ -245,6 +262,7 @@ storageCost = 68.0625 × 30 = 2,041.88 ₽
 **Test Scenario**: 1-liter product, warehouse "Краснодар (Тихорецкая)", date 2026-01-27
 
 **Pallets (boxTypeID: 5)**:
+
 ```json
 {
   "warehouseId": 130744,
@@ -266,14 +284,17 @@ storageCost = 68.0625 × 30 = 2,041.88 ₽
 ```
 
 **Calculated costs for 1 liter, 30 days**:
+
 - Logistics: (75 + 0 × 0) × 1.65 = **123.75 ₽**
 - Storage: (41.25 + 0 × 0) × 1.65 × 30 = **2,041.88 ₽**
 
 **Boxes (boxTypeID: 2)**:
+
 - Similar delivery structure
 - Storage rates may vary by warehouse and date (some warehouses return 0)
 
 #### 2. Get Acceptance Coefficients by Warehouse
+
 ```
 GET /v1/tariffs/acceptance/coefficients?warehouseId=507
 ```
@@ -281,6 +302,7 @@ GET /v1/tariffs/acceptance/coefficients?warehouseId=507
 **Purpose**: Get 14-day forecast for specific warehouse
 
 #### 3. Validate Warehouse ID
+
 ```
 GET /v1/tariffs/acceptance/coefficients/validate?warehouseId=507
 ```
@@ -289,22 +311,24 @@ GET /v1/tariffs/acceptance/coefficients/validate?warehouseId=507
 
 ### Coefficient Interpretation
 
-| Value | Meaning | UI Recommendation |
-|-------|---------|-------------------|
-| `-1` | Acceptance unavailable | Show "Unavailable", disabled |
-| `0` | Free acceptance | Show "Free" badge |
-| `1` | Standard cost | Normal display |
-| `>1` | Increased cost | Show warning (×1.5 = 150%) |
+| Value | Meaning                | UI Recommendation            |
+| ----- | ---------------------- | ---------------------------- |
+| `-1`  | Acceptance unavailable | Show "Unavailable", disabled |
+| `0`   | Free acceptance        | Show "Free" badge            |
+| `1`   | Standard cost          | Normal display               |
+| `>1`  | Increased cost         | Show warning (×1.5 = 150%)   |
 
 ### When to Use Supply System
 
 ✅ **USE FOR:**
+
 - **Planning future deliveries** (up to 14 days ahead)
 - **Supply planning** features
 - **Estimating acceptance costs** for upcoming shipments
 - **Warehouse availability** checks for future dates
 
 ❌ **DO NOT USE FOR:**
+
 - Calculating actual historical costs (use Inventory system instead)
 - Financial reporting of real expenses
 
@@ -312,17 +336,17 @@ GET /v1/tariffs/acceptance/coefficients/validate?warehouseId=507
 
 ## Decision Matrix: Which System to Use?
 
-| Scenario | Use System | Endpoint | Reason |
-|----------|-----------|----------|--------|
-| **Price Calculator** (current costs) | Inventory | `/warehouses-with-tariffs` | Actual rates for today |
-| **Price Calculator** (future delivery) | Supply | `/acceptance/coefficients` | Plan delivery 14 days ahead |
-| **Financial Reports** | Inventory | `/warehouses-with-tariffs` | Real expenses incurred |
-| **Supply Planning** | Supply | `/acceptance/coefficients/all` | 14-day forecast |
-| **Storage Cost Analysis** | Inventory | `/warehouses-with-tariffs` | Actual storage costs |
-| **Warehouse Selection** (today) | Inventory | `/warehouses-with-tariffs` | Current rates |
-| **Warehouse Selection** (future) | Supply | `/acceptance/coefficients/all` | Future availability |
-| **Margin Calculator** | Inventory | `/warehouses-with-tariffs` | Real costs matter |
-| **Acceptance Cost Estimator** | Supply | `/acceptance/coefficients` | Future delivery planning |
+| Scenario                               | Use System | Endpoint                       | Reason                      |
+| -------------------------------------- | ---------- | ------------------------------ | --------------------------- |
+| **Price Calculator** (current costs)   | Inventory  | `/warehouses-with-tariffs`     | Actual rates for today      |
+| **Price Calculator** (future delivery) | Supply     | `/acceptance/coefficients`     | Plan delivery 14 days ahead |
+| **Financial Reports**                  | Inventory  | `/warehouses-with-tariffs`     | Real expenses incurred      |
+| **Supply Planning**                    | Supply     | `/acceptance/coefficients/all` | 14-day forecast             |
+| **Storage Cost Analysis**              | Inventory  | `/warehouses-with-tariffs`     | Actual storage costs        |
+| **Warehouse Selection** (today)        | Inventory  | `/warehouses-with-tariffs`     | Current rates               |
+| **Warehouse Selection** (future)       | Supply     | `/acceptance/coefficients/all` | Future availability         |
+| **Margin Calculator**                  | Inventory  | `/warehouses-with-tariffs`     | Real costs matter           |
+| **Acceptance Cost Estimator**          | Supply     | `/acceptance/coefficients`     | Future delivery planning    |
 
 ---
 
@@ -338,6 +362,7 @@ GET /v1/tariffs/acceptance/coefficients/validate?warehouseId=507
 2. **Our API** → Returns Inventory tariffs (actual costs, typically lower)
 
 **Example Scenario**:
+
 ```
 Marketplace display:  "120 ₽ for delivery to warehouse X"
    ↓ (using Supply system)
@@ -349,10 +374,10 @@ Both are correct - they serve different purposes!
 
 ### Business Context
 
-| Context | Tariff Type | Rate Level | Reason |
-|---------|-------------|------------|--------|
-| **Planning delivery** | Supply (Marketplace) | Higher | Conservative estimate for budgeting |
-| **Actual cost** | Inventory (API) | Lower | Real amount you'll be charged |
+| Context               | Tariff Type          | Rate Level | Reason                              |
+| --------------------- | -------------------- | ---------- | ----------------------------------- |
+| **Planning delivery** | Supply (Marketplace) | Higher     | Conservative estimate for budgeting |
+| **Actual cost**       | Inventory (API)      | Lower      | Real amount you'll be charged       |
 
 ---
 
@@ -518,10 +543,10 @@ function PalletsCostExample() {
 
 ## Cache Strategy
 
-| System | Cache TTL | Cache Key | Refresh Strategy |
-|--------|-----------|-----------|------------------|
-| **Inventory** | 1 hour | `tariffs:warehouses-with-tariffs:{cabinetId}:{date}:{cargo_type}` | Use `?refresh=true` to bypass |
-| **Supply** | 1 hour | `tariffs:acceptance:all:{cabinetId}` | Use `?refresh=true` to bypass |
+| System        | Cache TTL | Cache Key                                                         | Refresh Strategy              |
+| ------------- | --------- | ----------------------------------------------------------------- | ----------------------------- |
+| **Inventory** | 1 hour    | `tariffs:warehouses-with-tariffs:{cabinetId}:{date}:{cargo_type}` | Use `?refresh=true` to bypass |
+| **Supply**    | 1 hour    | `tariffs:acceptance:all:{cabinetId}`                              | Use `?refresh=true` to bypass |
 
 **Note**: Both systems use 1-hour cache because tariffs are updated daily by WB.
 
@@ -529,10 +554,10 @@ function PalletsCostExample() {
 
 ## Rate Limits
 
-| System | Scope | Limit | Window |
-|--------|-------|-------|--------|
-| **Inventory** | `tariffs` | 10 req/min | 60s |
-| **Supply** | `orders_fbw` | 6 req/min | 60s |
+| System        | Scope        | Limit      | Window |
+| ------------- | ------------ | ---------- | ------ |
+| **Inventory** | `tariffs`    | 10 req/min | 60s    |
+| **Supply**    | `orders_fbw` | 6 req/min  | 60s    |
 
 **Important**: Supply system has stricter rate limits (6 req/min vs 10 req/min).
 
@@ -543,6 +568,7 @@ function PalletsCostExample() {
 ### Q1: Why do rates differ between systems?
 
 **A**: They serve different purposes:
+
 - **Inventory** = Actual costs (what you pay)
 - **Supply** = Planning rates (conservative estimates)
 
@@ -565,6 +591,7 @@ function PalletsCostExample() {
 ### Q6: How do I calculate costs for different box types?
 
 **A**:
+
 - **Pallets (boxTypeID: 5)**: `additionalLiterRub` is always 0, so formula simplifies to `baseLiterRub × coefficient × days`
 - **Boxes (boxTypeID: 2)**: Full volume-based formula with `additionalLiterRub` value
 - **Supersafe (boxTypeID: 6)**: Volume-based like boxes
@@ -637,6 +664,7 @@ interface AcceptanceCoefficient {
 ## Quick Reference Card
 
 ### Inventory System (Actual Costs)
+
 - **Endpoint**: `GET /v1/tariffs/warehouses-with-tariffs`
 - **Purpose**: Current actual storage/logistics costs
 - **Use Case**: Financial reports, margin calculator
@@ -644,6 +672,7 @@ interface AcceptanceCoefficient {
 - **Cache**: 1 hour
 
 ### Supply System (Planning)
+
 - **Endpoint**: `GET /v1/tariffs/acceptance/coefficients/all`
 - **Purpose**: 14-day forward-looking planning
 - **Use Case**: Supply planning, future delivery estimation
@@ -653,17 +682,20 @@ interface AcceptanceCoefficient {
 ### Key Formulas
 
 **Logistics Cost**:
+
 ```typescript
 logisticsCost = (baseLiterRub + max(0, volume-1) × additionalLiterRub) × coefficient
 ```
 
 **Storage Cost**:
+
 ```typescript
 dailyStorage = (baseLiterRub + max(0, volume-1) × additionalLiterRub) × coefficient
 storageCost = dailyStorage × days
 ```
 
 **Box Type Differences**:
+
 - **Pallets**: `additionalLiterRub = 0` (fixed rate)
 - **Boxes/Supersafe**: `additionalLiterRub > 0` (volume-based)
 

@@ -7,11 +7,12 @@
 ## ⚠️ RESOLUTION (iter-145): DEFECT 1 is NOT a defect — do NOT "fold wb_services into total"
 
 The original claim (net profit overstated because `total` omits `wb_services_cost`) is **WRONG**. Verified against `cabinet-expenses.service.ts`:
+
 - Line 79: `other_adjustments = SUM(ABS(corrections) + ABS(other_adjustments))` — the `other_adjustments` field **includes `ABS(corrections)`**.
 - Lines 178-193: `wb_services_cost = SUM(ABS(corrections))` for `reason='Удержание'` WB-services rows — the **same `corrections`**.
 - Therefore **`wb_services_cost ⊂ other_adjustments`**, and `total = storage + other_adjustments + …` (line 250) **already includes WB-services**. `netProfit = gross_profit_sku − total` is **correct** — no overstatement.
 
-The iter-141 audit was misled by `total` not *literally listing* `wb_services_cost` as a separate term; it's a SUBSET of the `other_adjustments` term (both derive from `corrections`). The dashboard (iter-144) has the identical `wb_services_cost ⊂ other_adjustments_net` relationship — it merely *displays* promotion/jam as separate lines (subtracting them from an "other-adjustments-remaining" line to avoid double-DISPLAY). The sku-cashflow lumps them into the `other_adjustments` line — a **display-granularity** difference, NOT a correctness bug. **Folding `wb_services_cost` into `total` would DOUBLE-COUNT it.**
+The iter-141 audit was misled by `total` not _literally listing_ `wb_services_cost` as a separate term; it's a SUBSET of the `other_adjustments` term (both derive from `corrections`). The dashboard (iter-144) has the identical `wb_services_cost ⊂ other_adjustments_net` relationship — it merely _displays_ promotion/jam as separate lines (subtracting them from an "other-adjustments-remaining" line to avoid double-DISPLAY). The sku-cashflow lumps them into the `other_adjustments` line — a **display-granularity** difference, NOT a correctness bug. **Folding `wb_services_cost` into `total` would DOUBLE-COUNT it.**
 
 (Optional FE polish, not required: break promotion/jam out as their own lines in the sku-cashflow grid for parity with the dashboard, subtracting them from the displayed other-adjustments line — purely cosmetic, no net-profit change.)
 
@@ -28,11 +29,14 @@ The iter-141 audit was misled by `total` not *literally listing* `wb_services_co
 - The FE type `CabinetLevelExpenses` (`margin-analytics-query-keys.ts`) **does not even include `wb_services_cost`** — the FE cannot display it today.
 
 ### Concrete wrong-output
+
 `gross_profit_sku = 200 000`, `total = 50 000`, `wb_services_cost = 40 000` (promotion):
+
 - Card shows **ЧИСТАЯ ПРИБЫЛЬ = 150 000 ₽ (green)**.
 - True payout-level profit = **110 000 ₽**. A 36% overstatement; a loss-making cabinet can render green.
 
 ### Inconsistency
+
 The dashboard expense breakdown (`useExpenses-utils.ts`) **does** include WB.Продвижение/Джем lines — so the SKU-cashflow card and the dashboard disagree on what "expenses / net profit" means. The omission is an oversight, not an intentional model.
 
 ## DEFECT 2 (MEDIUM, related reconciliation)

@@ -5,6 +5,7 @@
 ## 📋 Обзор
 
 Пользователь может обновить (rotate) WB API токен для существующего кабинета через эндпоинт `PUT /v1/cabinets/:id/keys/:keyName`. Это полезно, когда:
+
 - Токен истек или стал недействительным
 - Нужно обновить токен по соображениям безопасности
 - Токен был скомпрометирован
@@ -18,14 +19,17 @@
 ### `PUT /v1/cabinets/:id/keys/:keyName`
 
 **URL Parameters:**
+
 - `id` (string, UUID) - ID кабинета
 - `keyName` (string) - Идентификатор ключа (например, `wb_api_token`)
 
 **Headers:**
+
 - `Authorization: Bearer {jwt_token}` - JWT токен пользователя
 - `X-Cabinet-Id: {cabinetId}` - **ОБЯЗАТЕЛЬНО** - ID кабинета (должен совпадать с `:id` в URL)
 
 **Request Body:**
+
 ```typescript
 {
   "token": "новый_wb_api_токен" // Новый WB API токен (будет зашифрован)
@@ -33,6 +37,7 @@
 ```
 
 **Response (200 OK):**
+
 ```typescript
 interface UpdateTokenResponse {
   id: string;              // UUID ключа
@@ -43,12 +48,14 @@ interface UpdateTokenResponse {
 ```
 
 **Error Responses:**
+
 - `400 Bad Request` - Невалидный токен, отсутствует заголовок `X-Cabinet-Id`
 - `401 Unauthorized` - Невалидный JWT токен
 - `403 Forbidden` - Пользователь не имеет доступа к кабинету или недостаточно прав (требуется Owner или Manager)
 - `404 Not Found` - Кабинет или ключ не найден
 
 **Backend Reference:**
+
 - Controller: `src/cabinets/cabinets.controller.ts:150-176`
 - Service: `src/cabinets/cabinet-keys.service.ts:603-608` → `storeKey()` (строки 59-276)
 - Validation: `src/cabinets/cabinet-keys.service.ts:291-339` (Story 13.1)
@@ -74,7 +81,7 @@ interface UpdateWbTokenResponse {
 
 /**
  * Обновляет WB API токен для кабинета
- * 
+ *
  * @param cabinetId - UUID кабинета
  * @param keyName - Имя ключа (например, "wb_api_token")
  * @param newToken - Новый WB API токен
@@ -154,7 +161,7 @@ export function UpdateWbTokenForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  
+
   const { token } = useAuthStore();
   const params = useParams();
   const cabinetId = params?.cabinetId as string;
@@ -183,7 +190,7 @@ export function UpdateWbTokenForm({
       // Успешное обновление
       setSuccess(true);
       setNewToken(''); // Очищаем поле ввода
-      
+
       // Показываем уведомление
       toast.success('WB API token updated successfully!');
 
@@ -198,7 +205,7 @@ export function UpdateWbTokenForm({
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to update token';
       setError(errorMessage);
-      
+
       // Показываем ошибку
       toast.error(errorMessage);
 
@@ -379,14 +386,14 @@ export default function CabinetSettingsPage() {
   return (
     <div className="cabinet-settings">
       <h1>Cabinet Settings</h1>
-      
+
       <section className="token-management">
         <h2>WB API Token Management</h2>
         <p>
           Update your Wildberries API token if it has expired or been
           compromised.
         </p>
-        
+
         <UpdateWbTokenForm
           keyName="wb_api_token"
           onSuccess={handleTokenUpdateSuccess}
@@ -455,6 +462,7 @@ if (!validation.valid) {
 ### 1. Заголовок X-Cabinet-Id обязателен
 
 **❌ НЕПРАВИЛЬНО:**
+
 ```typescript
 fetch(`/v1/cabinets/${cabinetId}/keys/${keyName}`, {
   method: 'PUT',
@@ -468,6 +476,7 @@ fetch(`/v1/cabinets/${cabinetId}/keys/${keyName}`, {
 ```
 
 **✅ ПРАВИЛЬНО:**
+
 ```typescript
 fetch(`/v1/cabinets/${cabinetId}/keys/${keyName}`, {
   method: 'PUT',
@@ -483,6 +492,7 @@ fetch(`/v1/cabinets/${cabinetId}/keys/${keyName}`, {
 ### 2. Автоматические процессы не запускаются
 
 При обновлении существующего токена:
+
 - ❌ Исторический импорт **НЕ запускается**
 - ❌ Синхронизация продуктов **НЕ запускается**
 
@@ -626,4 +636,3 @@ describe('updateWbToken', () => {
 - **Resolution date**: 2025-01-12
 - **Summary**: WB API token update endpoint `PUT /v1/cabinets/:id/keys/:keyName` is fully implemented with token validation via WB API (Story 13.1). Only Owner/Manager roles can update tokens. Returns structured error codes for invalid tokens (400), auth failures (401), and forbidden access (403).
 - **Remaining frontend action**: Implement the `updateWbToken()` API function with proper error handling for all status codes.
-

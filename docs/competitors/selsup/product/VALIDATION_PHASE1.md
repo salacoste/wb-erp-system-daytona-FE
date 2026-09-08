@@ -20,45 +20,45 @@ post-MVP) и **не блокируют старт frontend Фазы 1**.
 
 ## 1. Окружение и базовые проверки
 
-| Проверка | Результат | Доказательство |
-|---|---|---|
-| Контейнеры `selsup-postgres` (:5532), `selsup-redis` (:6380) | ✅ UP (3ч) | `docker ps` |
-| `pnpm db:generate` | ✅ | Prisma client сгенерирован |
-| `pnpm db:migrate:deploy` | ✅ 2 миграции applied (foundation + catalog) | «No pending migrations» |
-| `pnpm seed` | ✅ roles: owner, admin, manager, operator | `prisma/seed.ts` |
-| `pnpm typecheck` | ✅ GREEN | `tsc --noEmit` без ошибок |
-| `pnpm test` | ✅ 41/41 GREEN (9 файлов) | incl. products.e2e (8), matching (5), adapters (11), import (2) |
-| `pnpm build` | ✅ GREEN | `tsc` + copy generated |
-| Boot smoke `APP_PORT=3198 node dist/main.js` | ✅ старт, 27 маршрутов (23 каталога + 4 auth/org) | boot log |
+| Проверка                                                     | Результат                                         | Доказательство                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------- | --------------------------------------------------------------- |
+| Контейнеры `selsup-postgres` (:5532), `selsup-redis` (:6380) | ✅ UP (3ч)                                        | `docker ps`                                                     |
+| `pnpm db:generate`                                           | ✅                                                | Prisma client сгенерирован                                      |
+| `pnpm db:migrate:deploy`                                     | ✅ 2 миграции applied (foundation + catalog)      | «No pending migrations»                                         |
+| `pnpm seed`                                                  | ✅ roles: owner, admin, manager, operator         | `prisma/seed.ts`                                                |
+| `pnpm typecheck`                                             | ✅ GREEN                                          | `tsc --noEmit` без ошибок                                       |
+| `pnpm test`                                                  | ✅ 41/41 GREEN (9 файлов)                         | incl. products.e2e (8), matching (5), adapters (11), import (2) |
+| `pnpm build`                                                 | ✅ GREEN                                          | `tsc` + copy generated                                          |
+| Boot smoke `APP_PORT=3198 node dist/main.js`                 | ✅ старт, 27 маршрутов (23 каталога + 4 auth/org) | boot log                                                        |
 
 ---
 
 ## 2. Accept-критерии (MVP_PRD §8 Фаза 1 + дизайн §11 AC-1…AC-18)
 
-| AC | Описание | Статус | Доказательство |
-|---|---|---|---|
-| Exit §8 | Карточка создаётся и публикуется на обоих МП | ✅ | `POST /products` → 201; publish WB+OZON → 202; 2 `marketplace_mappings` (enabled, status=ready) |
-| Exit §8 | Импорт из WB/Ozon матчится в единую карточку | ✅ | Импорт WB → `updated=1`, 1 SKU + 2 mapping (WB+OZON), без дублей (AC-3) |
-| Exit §8 | Бренд Ozon привязывается по ID | ✅ | `brands.ozon_id` хранится; OzonAdapter.validateForOzon требует `brand.ozon_id` (AC-6) |
-| Exit §8 | ≥ N карточек без потерь | ⚠️ частично | Механика импорта готова; нагрузка ≥1000 (AC-5) — вне smoke, [SPIKE] реальный API |
-| AC-1 | 3-уровневая карточка публикуется на WB+Ozon | ✅ | live: NIKE-AIR-1, 2 SKU, 2 mapping published |
-| AC-2 | Детальные ошибки по полю | ✅ | WB/Ozon validate возвращает `field`+`code`+`message`; mapping→error+last_error |
-| AC-3 | Матчинг WB+Ozon → одна карточка | ✅ | live: 1 product, 1 SKU, 2 mapping (WB+OZON) |
-| AC-4 | Быстрый импорт (без параметров) | ⚠️ | Режим `quick` принят фильтром; блокировка «нельзя редактировать до дозагрузки» — post-MVP |
-| AC-5 | ≥1000 без потерь | ⏭️ | [SPIKE] реальный WB API; инвариант `added+updated+errors==total` соблюдён |
-| AC-6 | Ozon brand по числовому ID | ✅ | live + e2e: бренд без `ozon_id` → 400 `required: brand.ozon_id`, mapping→error |
-| AC-7 | Массовое редактирование Excel | ❌ | Вне скоупа Фазы 1 (заявлено); нет эндпоинта/multipart |
-| AC-8 | Статусы интеграций (токены) | ⚠️ | Модель Integration есть; probeToken/mock; UI ввода токенов + статус «Невалидный» — frontend/[SPIKE] |
-| AC-9 | Статусы карточки Actual/Archived | ✅ | `status` в Product; archiveProduct (DELETE→204); фильтр `status` в listProducts |
-| AC-10 | Категории + mapping | ✅ | live: 2 mapping (WB wb-shoes-1 / OZON ozon-shoes-1); без mapping валидация блокирует |
-| AC-11 | Надёжность синхронизации ≥99% | ⚠️ | Retry/backoff в SyncService.processOne есть; live-воркер `publish_card`→runPublish — не подключён ([SPIKE]) |
-| AC-12 | Лимиты API (429/throttling) | ⏭️ | BullMQ-очередь есть; rate-limit/backoff на реальном API — [SPIKE] |
-| AC-13 | Идемпотентность | ✅ | live: re-publish WB → тот же `syncJobId`, счётчик publish_card=1; idempotency_key=sha256 |
-| AC-14 | Производительность (≤2с @10k SKU) | ⚠️ | Пагинация + индексы есть; нагрузка 10k — post-MVP |
-| AC-15 | Матчинг-качество ≤0,5% | ⏭️ | [SPIKE] реальные данные |
-| **AC-16** | **Аудит на publish/import** | **❌** | **НЕ реализовано: ProductsController без `@Audit()` → audit_log пуст (см. §4 баг B1)** |
-| AC-17 | Изоляция тенантов | ✅ | live: org2 видит 0 карточек; GET чужой UUID → 404; orgScope() во всех запросах |
-| AC-18 | Покрытие тестами | ✅ | 41/41 GREEN; e2e AC-1/AC-3/AC-6 + matching/adapters/import unit |
+| AC        | Описание                                     | Статус      | Доказательство                                                                                              |
+| --------- | -------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------- |
+| Exit §8   | Карточка создаётся и публикуется на обоих МП | ✅          | `POST /products` → 201; publish WB+OZON → 202; 2 `marketplace_mappings` (enabled, status=ready)             |
+| Exit §8   | Импорт из WB/Ozon матчится в единую карточку | ✅          | Импорт WB → `updated=1`, 1 SKU + 2 mapping (WB+OZON), без дублей (AC-3)                                     |
+| Exit §8   | Бренд Ozon привязывается по ID               | ✅          | `brands.ozon_id` хранится; OzonAdapter.validateForOzon требует `brand.ozon_id` (AC-6)                       |
+| Exit §8   | ≥ N карточек без потерь                      | ⚠️ частично | Механика импорта готова; нагрузка ≥1000 (AC-5) — вне smoke, [SPIKE] реальный API                            |
+| AC-1      | 3-уровневая карточка публикуется на WB+Ozon  | ✅          | live: NIKE-AIR-1, 2 SKU, 2 mapping published                                                                |
+| AC-2      | Детальные ошибки по полю                     | ✅          | WB/Ozon validate возвращает `field`+`code`+`message`; mapping→error+last_error                              |
+| AC-3      | Матчинг WB+Ozon → одна карточка              | ✅          | live: 1 product, 1 SKU, 2 mapping (WB+OZON)                                                                 |
+| AC-4      | Быстрый импорт (без параметров)              | ⚠️          | Режим `quick` принят фильтром; блокировка «нельзя редактировать до дозагрузки» — post-MVP                   |
+| AC-5      | ≥1000 без потерь                             | ⏭️          | [SPIKE] реальный WB API; инвариант `added+updated+errors==total` соблюдён                                   |
+| AC-6      | Ozon brand по числовому ID                   | ✅          | live + e2e: бренд без `ozon_id` → 400 `required: brand.ozon_id`, mapping→error                              |
+| AC-7      | Массовое редактирование Excel                | ❌          | Вне скоупа Фазы 1 (заявлено); нет эндпоинта/multipart                                                       |
+| AC-8      | Статусы интеграций (токены)                  | ⚠️          | Модель Integration есть; probeToken/mock; UI ввода токенов + статус «Невалидный» — frontend/[SPIKE]         |
+| AC-9      | Статусы карточки Actual/Archived             | ✅          | `status` в Product; archiveProduct (DELETE→204); фильтр `status` в listProducts                             |
+| AC-10     | Категории + mapping                          | ✅          | live: 2 mapping (WB wb-shoes-1 / OZON ozon-shoes-1); без mapping валидация блокирует                        |
+| AC-11     | Надёжность синхронизации ≥99%                | ⚠️          | Retry/backoff в SyncService.processOne есть; live-воркер `publish_card`→runPublish — не подключён ([SPIKE]) |
+| AC-12     | Лимиты API (429/throttling)                  | ⏭️          | BullMQ-очередь есть; rate-limit/backoff на реальном API — [SPIKE]                                           |
+| AC-13     | Идемпотентность                              | ✅          | live: re-publish WB → тот же `syncJobId`, счётчик publish_card=1; idempotency_key=sha256                    |
+| AC-14     | Производительность (≤2с @10k SKU)            | ⚠️          | Пагинация + индексы есть; нагрузка 10k — post-MVP                                                           |
+| AC-15     | Матчинг-качество ≤0,5%                       | ⏭️          | [SPIKE] реальные данные                                                                                     |
+| **AC-16** | **Аудит на publish/import**                  | **❌**      | **НЕ реализовано: ProductsController без `@Audit()` → audit_log пуст (см. §4 баг B1)**                      |
+| AC-17     | Изоляция тенантов                            | ✅          | live: org2 видит 0 карточек; GET чужой UUID → 404; orgScope() во всех запросах                              |
+| AC-18     | Покрытие тестами                             | ✅          | 41/41 GREEN; e2e AC-1/AC-3/AC-6 + matching/adapters/import unit                                             |
 
 ---
 
@@ -87,18 +87,21 @@ post-MVP) и **не блокируют старт frontend Фазы 1**.
 ## 4. Найденные дефекты
 
 ### B1. (Medium) Аудит продуктовых операций не пишется — AC-16 не выполнен
+
 - **Где:** `app/backend/src/products/products.controller.ts` — ни один метод не помечен `@Audit()`.
 - **Эффект:** `audit_log` остаётся пустым для create/publish/unpublish/import/category/brand. Глобальный `AuditInterceptor` пишет только при наличии `@Audit()` (так в Фазе0 помечен только `Organization.create`).
 - **Severity:** Medium. Прямое нарушение AC-16 («на каждую публикацию/снятие/импорт есть запись в audit_log»). Не блокирует старт frontend, но должно быть закрыто до hardening/беты.
 - **Действие валидатора:** зафиксировано (не правилось — требует согласования метаданных entity/action по всем эндпоинтам, выходит за рамки 1–2 строк).
 
 ### B2. (Low, ИСПРАВЛЕНО валидатором) Поле `PublishOutcome.created` всегда `true`
+
 - **Где:** `app/backend/src/products/publish.service.ts` — `enqueueSyncJob` возвращал только `job.id`, теряя флаг `created` из `SyncService.enqueue`; оба return-блока `toggleSkuPublish` хардкодили `created: true`.
 - **Эффект:** при повторном PUT `/publish` (идемпотентный повтор) клиенту возвращалось `created: true`, хотя новый `sync_job` не создавался.
 - **Правка (валидатор):** `enqueueSyncJob` возвращает `{ syncJobId, created }`; оба return используют реальный `enq.created`. 1-строчный по сути фикс.
 - **Регрессия:** typecheck GREEN, 41/41 тестов GREEN (e2e идемпотентности ассертит `ja===jb` по syncJobId — проходит).
 
 ### Прочее (не баги, зафиксировано для полноты)
+
 - В `toggleSkuPublish` превалидация выполняется вызовом `adapter.publishCard` с пустым `credentials` через mock-transport — это рабочий компромисс (mock возвращает ok без сети), не дефект; при [SPIKE] стоит разделить `validate()` и `publishCard()` в интерфейсе адаптера.
 - `publishStatus` возвращает только первое встреченное отображение на каждый МП (берёт `if (!result[m.marketplace])`) — приемлемо для статуса по МП, но при нескольких SKU теряет гранулярность; уточнить на frontend-интеграции.
 

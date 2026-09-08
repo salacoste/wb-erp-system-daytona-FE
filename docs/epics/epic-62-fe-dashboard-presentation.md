@@ -25,18 +25,19 @@ Epic 61-FE establishes the **Data Layer** with correct API integrations and calc
 
 **8 Required Metrics on Dashboard:**
 
-| # | Metric (RU) | Metric (EN) | Source |
-|---|-------------|-------------|--------|
-| 1 | Заказы | Orders volume | `/analytics/orders/volume` |
-| 2 | COGS по заказам | COGS for orders | Calculated from orders + COGS |
-| 3 | Выкупы | Sales/Redemptions | `/analytics/weekly/finance-summary` |
-| 4 | COGS по выкупам | COGS for sales | `/analytics/weekly/finance-summary` |
-| 5 | Рекламные затраты | Advertising spend | `/analytics/advertising` |
-| 6 | Логистика | Logistics costs | `/analytics/weekly/finance-summary` |
-| 7 | Хранение | Storage costs | `/analytics/weekly/finance-summary` |
-| 8 | Теор. прибыль | Theoretical profit | Calculated |
+| #   | Metric (RU)       | Metric (EN)        | Source                              |
+| --- | ----------------- | ------------------ | ----------------------------------- |
+| 1   | Заказы            | Orders volume      | `/analytics/orders/volume`          |
+| 2   | COGS по заказам   | COGS for orders    | Calculated from orders + COGS       |
+| 3   | Выкупы            | Sales/Redemptions  | `/analytics/weekly/finance-summary` |
+| 4   | COGS по выкупам   | COGS for sales     | `/analytics/weekly/finance-summary` |
+| 5   | Рекламные затраты | Advertising spend  | `/analytics/advertising`            |
+| 6   | Логистика         | Logistics costs    | `/analytics/weekly/finance-summary` |
+| 7   | Хранение          | Storage costs      | `/analytics/weekly/finance-summary` |
+| 8   | Теор. прибыль     | Theoretical profit | Calculated                          |
 
 **Display Modes:**
+
 - По дням за последнюю (актуальную) неделю - Daily breakdown for current week
 - По дням за последний (завершённый) месяц - Daily breakdown for last month
 
@@ -55,14 +56,14 @@ Redesign dashboard presentation layer to display all 8 business metrics with dai
 
 ## Dependencies
 
-| Type | Dependency | Status |
-|------|------------|--------|
-| Frontend | Epic 60-FE (Period Context) | ✅ Completed |
-| Frontend | Epic 61-FE (Data Layer) | 📋 Ready |
-| Hooks | `useOrdersVolume` | From 61.3-FE |
-| Hooks | `useOrdersCogs` | From 61.4-FE |
-| Hooks | `useDailyMetrics` | From 61.9-FE |
-| Hooks | `calculateTheoreticalProfit()` | From 61.10-FE |
+| Type     | Dependency                     | Status        |
+| -------- | ------------------------------ | ------------- |
+| Frontend | Epic 60-FE (Period Context)    | ✅ Completed  |
+| Frontend | Epic 61-FE (Data Layer)        | 📋 Ready      |
+| Hooks    | `useOrdersVolume`              | From 61.3-FE  |
+| Hooks    | `useOrdersCogs`                | From 61.4-FE  |
+| Hooks    | `useDailyMetrics`              | From 61.9-FE  |
+| Hooks    | `calculateTheoreticalProfit()` | From 61.10-FE |
 
 **Blocking Dependencies**: Stories 62.3-62.6 require Epic 61-FE hooks to be implemented first.
 
@@ -72,24 +73,24 @@ Redesign dashboard presentation layer to display all 8 business metrics with dai
 
 ### New Components (7)
 
-| Component | Location | Purpose | SP |
-|-----------|----------|---------|---:|
-| `DashboardMetricsGrid` | `src/components/custom/dashboard/` | 8-card responsive grid layout | 2 |
-| `OrdersMetricCard` | `src/components/custom/dashboard/` | Orders volume card with comparison | 1 |
-| `OrdersCogsMetricCard` | `src/components/custom/dashboard/` | COGS by orders card | 1 |
-| `TheoreticalProfitCard` | `src/components/custom/dashboard/` | Theoretical profit with breakdown tooltip | 2 |
-| `DailyBreakdownChart` | `src/components/custom/dashboard/` | Multi-series daily chart | 5 |
-| `MetricLegend` | `src/components/custom/dashboard/` | Interactive legend for chart | 1 |
-| `DailyMetricsTable` | `src/components/custom/dashboard/` | Tabular daily data view | 2 |
+| Component               | Location                           | Purpose                                   |  SP |
+| ----------------------- | ---------------------------------- | ----------------------------------------- | --: |
+| `DashboardMetricsGrid`  | `src/components/custom/dashboard/` | 8-card responsive grid layout             |   2 |
+| `OrdersMetricCard`      | `src/components/custom/dashboard/` | Orders volume card with comparison        |   1 |
+| `OrdersCogsMetricCard`  | `src/components/custom/dashboard/` | COGS by orders card                       |   1 |
+| `TheoreticalProfitCard` | `src/components/custom/dashboard/` | Theoretical profit with breakdown tooltip |   2 |
+| `DailyBreakdownChart`   | `src/components/custom/dashboard/` | Multi-series daily chart                  |   5 |
+| `MetricLegend`          | `src/components/custom/dashboard/` | Interactive legend for chart              |   1 |
+| `DailyMetricsTable`     | `src/components/custom/dashboard/` | Tabular daily data view                   |   2 |
 
 ### Modified Components (4)
 
-| Component | Change |
-|-----------|--------|
-| `DashboardContent.tsx` | Replace 6-card grid with 8-card DashboardMetricsGrid |
+| Component                | Change                                                    |
+| ------------------------ | --------------------------------------------------------- |
+| `DashboardContent.tsx`   | Replace 6-card grid with 8-card DashboardMetricsGrid      |
 | `MetricCardEnhanced.tsx` | Add support for breakdown tooltip, negative value styling |
-| `ExpenseChart.tsx` | Add daily breakdown mode, integrate with new hooks |
-| `TrendGraph.tsx` | Support multi-metric overlay mode |
+| `ExpenseChart.tsx`       | Add daily breakdown mode, integrate with new hooks        |
+| `TrendGraph.tsx`         | Support multi-metric overlay mode                         |
 
 ---
 
@@ -100,6 +101,7 @@ Redesign dashboard presentation layer to display all 8 business metrics with dai
 ---
 
 ### Story 62.1-FE: Redesign Dashboard Metrics Grid (8 Cards)
+
 **Estimate**: 3 SP | **Priority**: P0
 
 **Title**: Редизайн сетки метрик дашборда (8 карточек)
@@ -108,6 +110,7 @@ Redesign dashboard presentation layer to display all 8 business metrics with dai
 Redesign the dashboard layout from 6-card grid to 8-card grid displaying all required business metrics.
 
 **Acceptance Criteria**:
+
 - [ ] Create `DashboardMetricsGrid` component with 8-card layout
 - [ ] Responsive grid: 4 cols on xl, 3 on lg, 2 on md, 1 on sm
 - [ ] Card order matches business priority (see Design Specs below)
@@ -116,6 +119,7 @@ Redesign the dashboard layout from 6-card grid to 8-card grid displaying all req
 - [ ] Hover states for interactive cards
 
 **Grid Layout**:
+
 ```
 Desktop (xl: 4 columns):
 ┌────────────┬────────────┬────────────┬────────────┐
@@ -135,12 +139,14 @@ Tablet (lg: 3 columns):
 ```
 
 **Files**:
+
 - `src/components/custom/dashboard/DashboardMetricsGrid.tsx` (NEW)
 - `src/app/(dashboard)/dashboard/components/DashboardContent.tsx` (MODIFY)
 
 ---
 
 ### Story 62.2-FE: Orders Volume Metric Card
+
 **Estimate**: 2 SP | **Priority**: P0
 
 **Title**: Карточка метрики объёма заказов
@@ -149,6 +155,7 @@ Tablet (lg: 3 columns):
 Create dedicated card for Orders volume (Заказы) - potential revenue from all orders.
 
 **Acceptance Criteria**:
+
 - [ ] Display `total_amount` from `useOrdersVolume` hook
 - [ ] Show comparison with previous period (↑/↓ indicator)
 - [ ] Format as currency (RUB)
@@ -157,11 +164,13 @@ Create dedicated card for Orders volume (Заказы) - potential revenue from 
 - [ ] Show order count in subtitle: "X заказов"
 
 **Design Specs**:
+
 - Icon: ShoppingCart (lucide-react)
 - Value color: Blue (#3B82F6) - represents potential/pending revenue
 - Comparison badge: Green/Red based on direction
 
 **Files**:
+
 - `src/components/custom/dashboard/OrdersMetricCard.tsx` (NEW)
 
 **Depends On**: Story 61.3-FE (useOrdersVolume hook)
@@ -169,6 +178,7 @@ Create dedicated card for Orders volume (Заказы) - potential revenue from 
 ---
 
 ### Story 62.3-FE: COGS by Orders Metric Card
+
 **Estimate**: 2 SP | **Priority**: P0
 
 **Title**: Карточка COGS по заказам
@@ -177,6 +187,7 @@ Create dedicated card for Orders volume (Заказы) - potential revenue from 
 Create card showing COGS calculated for orders (not just sales).
 
 **Acceptance Criteria**:
+
 - [ ] Display COGS total from `useOrdersCogs` hook
 - [ ] Show comparison with previous period
 - [ ] Format as currency (RUB)
@@ -185,11 +196,13 @@ Create card showing COGS calculated for orders (not just sales).
 - [ ] Handle missing COGS gracefully (show "—" with explanation)
 
 **Design Specs**:
+
 - Icon: Package (lucide-react)
 - Value color: Gray (#6B7280) - represents cost/expense
 - Warning indicator: Yellow (#F59E0B) when incomplete
 
 **Files**:
+
 - `src/components/custom/dashboard/OrdersCogsMetricCard.tsx` (NEW)
 
 **Depends On**: Story 61.4-FE (useOrdersCogs hook)
@@ -197,6 +210,7 @@ Create card showing COGS calculated for orders (not just sales).
 ---
 
 ### Story 62.4-FE: Theoretical Profit Card with Breakdown
+
 **Estimate**: 3 SP | **Priority**: P0
 
 **Title**: Карточка теоретической прибыли с разбивкой
@@ -205,6 +219,7 @@ Create card showing COGS calculated for orders (not just sales).
 Create card showing Theoretical Profit with expandable breakdown tooltip.
 
 **Acceptance Criteria**:
+
 - [ ] Display calculated theoretical profit value
 - [ ] Use `calculateTheoreticalProfit()` from lib
 - [ ] Show comparison with previous period
@@ -219,12 +234,14 @@ Create card showing Theoretical Profit with expandable breakdown tooltip.
 - [ ] "Incomplete" badge if any component missing
 
 **Design Specs**:
+
 - Icon: Calculator (lucide-react)
 - Positive value: Green (#22C55E)
 - Negative value: Red (#EF4444)
 - Breakdown popover: 300px width, table format
 
 **Files**:
+
 - `src/components/custom/dashboard/TheoreticalProfitCard.tsx` (NEW)
 
 **Depends On**: Story 61.10-FE (calculateTheoreticalProfit)
@@ -232,6 +249,7 @@ Create card showing Theoretical Profit with expandable breakdown tooltip.
 ---
 
 ### Story 62.5-FE: Expense Metrics Cards (Advertising, Logistics, Storage)
+
 **Estimate**: 2 SP | **Priority**: P0
 
 **Title**: Карточки расходов (реклама, логистика, хранение)
@@ -240,6 +258,7 @@ Create card showing Theoretical Profit with expandable breakdown tooltip.
 Create/update cards for the three expense categories.
 
 **Acceptance Criteria**:
+
 - [ ] Advertising card shows `total_spend` (not just ROAS)
 - [ ] Logistics card shows `logistics_cost`
 - [ ] Storage card shows `storage_cost`
@@ -248,6 +267,7 @@ Create/update cards for the three expense categories.
 - [ ] Consistent styling across expense cards
 
 **Design Specs**:
+
 - Advertising icon: Megaphone (lucide-react)
 - Logistics icon: Truck (lucide-react)
 - Storage icon: Warehouse (lucide-react)
@@ -255,6 +275,7 @@ Create/update cards for the three expense categories.
 - Subtitle shows % of revenue
 
 **Files**:
+
 - `src/components/custom/dashboard/AdvertisingMetricCard.tsx` (NEW or modify existing)
 - `src/components/custom/dashboard/LogisticsMetricCard.tsx` (NEW)
 - `src/components/custom/dashboard/StorageMetricCard.tsx` (NEW)
@@ -266,6 +287,7 @@ Create/update cards for the three expense categories.
 ---
 
 ### Story 62.6-FE: Daily Breakdown Chart Component
+
 **Estimate**: 5 SP | **Priority**: P1
 
 **Title**: Компонент графика разбивки по дням
@@ -274,6 +296,7 @@ Create/update cards for the three expense categories.
 Create multi-series chart showing all 8 metrics by day for selected period.
 
 **Acceptance Criteria**:
+
 - [ ] Line/area chart with 8 metric series
 - [ ] X-axis: Days (Mon-Sun for week, 1-31 for month)
 - [ ] Y-axis: Dual axis (revenue scale left, expense scale right)
@@ -284,6 +307,7 @@ Create multi-series chart showing all 8 metrics by day for selected period.
 - [ ] Month mode: 28-31 days
 
 **Chart Configuration**:
+
 ```typescript
 series: [
   { key: 'orders', label: 'Заказы', color: '#3B82F6', axis: 'left' },
@@ -298,11 +322,13 @@ series: [
 ```
 
 **Technical Notes**:
+
 - Use Recharts library (already in project)
 - Consume data from `useDailyMetrics` hook (Epic 61-FE)
 - Memoize chart data transformation
 
 **Files**:
+
 - `src/components/custom/dashboard/DailyBreakdownChart.tsx` (NEW)
 - `src/components/custom/dashboard/MetricLegend.tsx` (NEW)
 
@@ -311,6 +337,7 @@ series: [
 ---
 
 ### Story 62.7-FE: Interactive Chart Legend
+
 **Estimate**: 2 SP | **Priority**: P1
 
 **Title**: Интерактивная легенда графика
@@ -319,6 +346,7 @@ series: [
 Create clickable legend component for toggling chart series visibility.
 
 **Acceptance Criteria**:
+
 - [ ] Display all 8 metrics with color indicators
 - [ ] Click to toggle series visibility on/off
 - [ ] Visual state: active (full opacity) vs hidden (grayed out)
@@ -327,21 +355,25 @@ Create clickable legend component for toggling chart series visibility.
 - [ ] Keyboard accessible (Enter/Space to toggle)
 
 **Design Specs**:
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ ● Заказы  ● COGS  ● Выкупы  ● Реклама  ...  [Все] [Сбросить]│
 └─────────────────────────────────────────────────────────────┘
 ```
+
 - Active: Full color dot + black text
 - Hidden: Gray dot + gray text + strikethrough
 - Hover: Underline
 
 **Files**:
+
 - `src/components/custom/dashboard/MetricLegend.tsx` (NEW)
 
 ---
 
 ### Story 62.8-FE: Daily Metrics Table View
+
 **Estimate**: 3 SP | **Priority**: P1
 
 **Title**: Табличное представление метрик по дням
@@ -350,6 +382,7 @@ Create clickable legend component for toggling chart series visibility.
 Create tabular view of daily metrics as alternative to chart.
 
 **Acceptance Criteria**:
+
 - [ ] Table with columns: День, Заказы, COGS, Выкупы, ..., Теор.прибыль
 - [ ] Row per day (7 for week, 28-31 for month)
 - [ ] Totals row at bottom
@@ -359,12 +392,14 @@ Create tabular view of daily metrics as alternative to chart.
 - [ ] Export to CSV button (future - disabled for MVP)
 
 **Design Specs**:
+
 - Use shadcn/ui Table component
 - Sticky header on scroll
 - Zebra striping for readability
 - Day column: "Пн 27.01", "Вт 28.01", etc.
 
 **Files**:
+
 - `src/components/custom/dashboard/DailyMetricsTable.tsx` (NEW)
 
 **Depends On**: Story 61.9-FE (useDailyMetrics hook)
@@ -376,6 +411,7 @@ Create tabular view of daily metrics as alternative to chart.
 ---
 
 ### Story 62.9-FE: Chart/Table View Toggle
+
 **Estimate**: 2 SP | **Priority**: P2
 
 **Title**: Переключатель график/таблица
@@ -384,6 +420,7 @@ Create tabular view of daily metrics as alternative to chart.
 Add toggle to switch between chart and table views of daily breakdown.
 
 **Acceptance Criteria**:
+
 - [ ] Toggle button group: [📊 График] [📋 Таблица]
 - [ ] Persist preference in localStorage
 - [ ] Smooth transition between views
@@ -391,18 +428,21 @@ Add toggle to switch between chart and table views of daily breakdown.
 - [ ] Accessible keyboard navigation
 
 **Design Specs**:
+
 - Use shadcn/ui ToggleGroup component
 - Active state: Red background (#E53935), white text
 - Inactive state: White background, gray text
 - Position: Above chart/table, right-aligned
 
 **Files**:
+
 - `src/components/custom/dashboard/ViewToggle.tsx` (NEW)
 - `src/components/custom/dashboard/DailyBreakdownSection.tsx` (NEW - wrapper)
 
 ---
 
 ### Story 62.10-FE: E2E Tests for Dashboard Metrics
+
 **Estimate**: 3 SP | **Priority**: P2
 
 **Title**: E2E тесты метрик дашборда
@@ -411,6 +451,7 @@ Add toggle to switch between chart and table views of daily breakdown.
 Create Playwright E2E tests for new dashboard metrics display.
 
 **Acceptance Criteria**:
+
 - [ ] Test: All 8 metric cards render with data
 - [ ] Test: Metric cards show comparison indicators
 - [ ] Test: Daily breakdown chart renders
@@ -422,6 +463,7 @@ Create Playwright E2E tests for new dashboard metrics display.
 - [ ] Accessibility: All cards keyboard navigable
 
 **Files**:
+
 - `e2e/dashboard-metrics.spec.ts` (NEW)
 
 ---
@@ -430,39 +472,39 @@ Create Playwright E2E tests for new dashboard metrics display.
 
 ### Color Palette
 
-| Element | Color | Hex | Usage |
-|---------|-------|-----|-------|
-| Orders (potential) | Blue | `#3B82F6` | Orders volume, pending revenue |
-| Sales (actual) | Green | `#22C55E` | Actual sales, positive profit |
-| COGS | Gray | `#6B7280` | Cost indicators |
-| Advertising | Yellow/Orange | `#F59E0B` | Ad spend |
-| Logistics | Red | `#EF4444` | Logistics costs |
-| Storage | Purple | `#7C4DFF` | Storage costs |
-| Profit Positive | Green | `#22C55E` | Positive theoretical profit |
-| Profit Negative | Red | `#EF4444` | Negative theoretical profit |
-| Warning | Yellow | `#F59E0B` | Incomplete data warnings |
+| Element            | Color         | Hex       | Usage                          |
+| ------------------ | ------------- | --------- | ------------------------------ |
+| Orders (potential) | Blue          | `#3B82F6` | Orders volume, pending revenue |
+| Sales (actual)     | Green         | `#22C55E` | Actual sales, positive profit  |
+| COGS               | Gray          | `#6B7280` | Cost indicators                |
+| Advertising        | Yellow/Orange | `#F59E0B` | Ad spend                       |
+| Logistics          | Red           | `#EF4444` | Logistics costs                |
+| Storage            | Purple        | `#7C4DFF` | Storage costs                  |
+| Profit Positive    | Green         | `#22C55E` | Positive theoretical profit    |
+| Profit Negative    | Red           | `#EF4444` | Negative theoretical profit    |
+| Warning            | Yellow        | `#F59E0B` | Incomplete data warnings       |
 
 ### Typography
 
-| Element | Size | Weight | Color |
-|---------|------|--------|-------|
-| Card Title | 14px | 500 (medium) | `#6B7280` (gray-500) |
-| Card Value | 28px | 700 (bold) | Semantic (see colors) |
-| Card Subtitle | 12px | 400 (regular) | `#9CA3AF` (gray-400) |
-| Comparison Badge | 12px | 500 (medium) | White on colored bg |
-| Chart Axis | 12px | 400 | `#9CA3AF` |
-| Table Header | 13px | 600 | `#374151` (gray-700) |
-| Table Cell | 14px | 400 | `#1F2937` (gray-800) |
+| Element          | Size | Weight        | Color                 |
+| ---------------- | ---- | ------------- | --------------------- |
+| Card Title       | 14px | 500 (medium)  | `#6B7280` (gray-500)  |
+| Card Value       | 28px | 700 (bold)    | Semantic (see colors) |
+| Card Subtitle    | 12px | 400 (regular) | `#9CA3AF` (gray-400)  |
+| Comparison Badge | 12px | 500 (medium)  | White on colored bg   |
+| Chart Axis       | 12px | 400           | `#9CA3AF`             |
+| Table Header     | 13px | 600           | `#374151` (gray-700)  |
+| Table Cell       | 14px | 400           | `#1F2937` (gray-800)  |
 
 ### Spacing
 
-| Element | Value | Tailwind Class |
-|---------|-------|----------------|
-| Card padding | 16px | `p-4` |
-| Card gap (grid) | 16px | `gap-4` |
-| Section gap | 24px | `space-y-6` |
-| Chart height | 300px | `h-[300px]` |
-| Table row height | 48px | `h-12` |
+| Element          | Value | Tailwind Class |
+| ---------------- | ----- | -------------- |
+| Card padding     | 16px  | `p-4`          |
+| Card gap (grid)  | 16px  | `gap-4`        |
+| Section gap      | 24px  | `space-y-6`    |
+| Chart height     | 300px | `h-[300px]`    |
+| Table row height | 48px  | `h-12`         |
 
 ### Card Component Anatomy
 
@@ -616,11 +658,11 @@ src/
 
 ## Sprint Allocation
 
-| Sprint | Stories | SP | Focus |
-|--------|---------|---:|-------|
-| Sprint 1 | 62.1, 62.2, 62.3 | 7 | Core grid + Orders cards |
-| Sprint 2 | 62.4, 62.5, 62.6 | 10 | Profit card + Expenses + Chart |
-| Sprint 3 | 62.7, 62.8, 62.9, 62.10 | 10 | Legend + Table + Tests |
+| Sprint   | Stories                 |  SP | Focus                          |
+| -------- | ----------------------- | --: | ------------------------------ |
+| Sprint 1 | 62.1, 62.2, 62.3        |   7 | Core grid + Orders cards       |
+| Sprint 2 | 62.4, 62.5, 62.6        |  10 | Profit card + Expenses + Chart |
+| Sprint 3 | 62.7, 62.8, 62.9, 62.10 |  10 | Legend + Table + Tests         |
 
 **Note**: Sprint 1 can start immediately. Sprints 2-3 depend on Epic 61-FE completion.
 
@@ -628,24 +670,24 @@ src/
 
 ## Success Metrics
 
-| Metric | Current | Target | Measurement |
-|--------|---------|--------|-------------|
-| Business metrics displayed | 4/8 | 8/8 | Visual audit |
-| Daily breakdown visibility | None | Full | Feature completion |
-| User understanding of profit | Low (no breakdown) | High | User testing |
-| Time to analyze week | ~5 min (multiple screens) | < 1 min (single view) | User timing |
-| Dashboard load time | ~1.5s | < 2.5s (with new data) | Performance monitoring |
+| Metric                       | Current                   | Target                 | Measurement            |
+| ---------------------------- | ------------------------- | ---------------------- | ---------------------- |
+| Business metrics displayed   | 4/8                       | 8/8                    | Visual audit           |
+| Daily breakdown visibility   | None                      | Full                   | Feature completion     |
+| User understanding of profit | Low (no breakdown)        | High                   | User testing           |
+| Time to analyze week         | ~5 min (multiple screens) | < 1 min (single view)  | User timing            |
+| Dashboard load time          | ~1.5s                     | < 2.5s (with new data) | Performance monitoring |
 
 ---
 
 ## Risks & Mitigations
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Epic 61-FE delays block Sprint 2 | Medium | High | Start 62.1, 62.9, 62.10 in parallel |
-| Chart performance with 31 days × 8 series | Low | Medium | Memoization, virtualization if needed |
-| Information overload for users | Medium | Medium | Default to simplified view, expand on demand |
-| Mobile layout complexity with 8 cards | Medium | Low | Progressive disclosure, collapsible sections |
+| Risk                                      | Probability | Impact | Mitigation                                   |
+| ----------------------------------------- | ----------- | ------ | -------------------------------------------- |
+| Epic 61-FE delays block Sprint 2          | Medium      | High   | Start 62.1, 62.9, 62.10 in parallel          |
+| Chart performance with 31 days × 8 series | Low         | Medium | Memoization, virtualization if needed        |
+| Information overload for users            | Medium      | Medium | Default to simplified view, expand on demand |
+| Mobile layout complexity with 8 cards     | Medium      | Low    | Progressive disclosure, collapsible sections |
 
 ---
 

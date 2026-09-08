@@ -15,7 +15,7 @@ chars: 5358
 
 В этой статье:
 
-- 
+-
 - <a href="#chem-polezen-sbor-otzyvov-i-rejtinga" rel="nofollow">Чем полезен сбор отзывов и рейтинга</a>
 - <a href="#chto-nuzhno-dlya-raboty" rel="nofollow">Что нужно для работы</a>
 - <a href="#kak-zapustit-sbor-otzyvov-i-rejtinga" rel="nofollow">Как запустить сбор отзывов и рейтинга</a>

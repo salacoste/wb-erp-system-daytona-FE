@@ -11,7 +11,7 @@ chars: 3624
 
 В этой статье:
 
-- 
+-
 - <a href="#zachem-nuzhny-artikuly-postavshhikov" rel="nofollow">Зачем нужны артикулы поставщиков</a>
 - <a href="#kak-zadat-artikuly-postavshhikov" rel="nofollow">Как задать артикулы поставщиков</a>
 - <a href="#artikuly-postavshhikov-u-gruppovyh-kartochek" rel="nofollow">Артикулы поставщиков у групповых карточек</a>

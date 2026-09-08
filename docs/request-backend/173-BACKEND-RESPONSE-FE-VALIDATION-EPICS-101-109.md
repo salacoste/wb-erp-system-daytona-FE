@@ -24,11 +24,13 @@ Frontend team провёл эмпирическую валидацию доку�
 ### F1: Tax Preliminary -- Response Shape (CRITICAL) ✅ ПОДТВЕРЖДЕНО
 
 **Проблема**: #170 документировал плоский camelCase ответ:
+
 ```json
 { "from": "...", "to": "...", "taxSystem": "usn_income", "taxRate": 6, "preliminaryTax": 9000.03 }
 ```
 
 **Реальный ответ** — обёрнут в объект `tax`, snake_case поля:
+
 ```json
 {
   "tax": {
@@ -181,6 +183,7 @@ GET /v1/analytics/weekly/unit-economics?week=2026-W18&view_by=sku
 **Статус**: Поле `commission_other` **НЕ находится** в `finance-summary`.
 
 **Где оно находится**:
+
 - `GET /v1/analytics/weekly/cabinet-summary` — `commission_other` на верхнем уровне (snake_case)
 - `GET /v1/analytics/weekly/sku-financials` — аналогичное поле
 
@@ -203,6 +206,7 @@ GET /v1/analytics/weekly/unit-economics?week=2026-W18&view_by=sku
 ### I2: W16-W17 Data Re-Aggregation
 
 **Статус**: Данные за W16 и W17 исправлены:
+
 - W16: promo expenses 0 → 40,881 RUB
 - W17: promo expenses 0 → 45,144 RUB
 - `weekly_payout_total` пересчитаны с учётом исправленных promo
@@ -214,6 +218,7 @@ GET /v1/analytics/weekly/unit-economics?week=2026-W18&view_by=sku
 ### I3: Returns Analytics Test Data
 
 **Статус**: Returns data поставляется через:
+
 - `GET /v1/analytics/returns/reasons` — классификация возвратов по причинам
 - `GET /v1/analytics/buyout/reconciliation` — сверка выкупов/возвратов
 
@@ -232,10 +237,12 @@ GET /v1/monitoring/pipeline-health-grid?cabinetId=<YOUR_CABINET_ID>
 **Статус**: FBS данные синхронизируются каждые 5 минут через `orders_fbs_sync` pipeline.
 
 Endpoints:
+
 - `GET /v1/orders/fbs` — список FBS заказов
 - `GET /v1/analytics/fbs/trends` — тренды FBS
 
 Если данных нет — проверьте:
+
 1. WB API token привязан к кабинету (cabinet-settings)
 2. Есть ли FBS заказы за запрошенный период
 3. Pipeline status через monitoring dashboard
@@ -245,10 +252,12 @@ Endpoints:
 ## Action Items
 
 ### Backend (выполнено)
+
 - [x] Исправлена #170 Section 2 — корректный tax preliminary response shape
 - [x] Создан документ #171 — детальный ответ на findings
 
 ### Frontend (рекомендации)
+
 - [ ] Обновить типы `usePreliminaryTax` hook: `tax_amount`/`tax_system`/`usn6`/`usn15` вместо `preliminaryTax`/`usn_income`
 - [ ] Обновить unit-economics query: `view_by` (snake_case), не `viewBy`
 - [ ] Использовать `meta.cost_category_order` для waterfall chart ordering
@@ -260,12 +269,14 @@ Endpoints:
 ## Endpoint Quick Reference (Corrected)
 
 ### Tax Preliminary
+
 ```
 GET /v1/analytics/tax/preliminary?from=2026-05-05&to=2026-05-11
 Response: { tax: { tax_amount, tax_system: "usn6"|"usn15"|"manual"|null, ... } | null }
 ```
 
 ### Unit Economics
+
 ```
 GET /v1/analytics/unit-economics?week=2026-W18&view_by=sku
 Response: { meta: { cost_category_order: [...] }, summary: {...}, data: [...costs_rub: { delivery_to_warehouse }, costs_pct: { delivery_to_warehouse }...] }
@@ -273,6 +284,7 @@ Note: path is /v1/analytics/unit-economics (no weekly/ prefix). view_by=sku is R
 ```
 
 ### Cabinet Summary (commission_other)
+
 ```
 GET /v1/analytics/weekly/cabinet-summary
 GET /v1/analytics/weekly/cabinet-summary?weeks=4

@@ -15,6 +15,7 @@
 **Good News**: Most of Epic 18 already exists! We only needed to add missing fields.
 
 **What Changed**:
+
 - ✅ Phase 1: Added 9 new fields to `GET /v1/products/:nmId` response
 - ✅ Phase 1: Integrated margin calculation from Epic 17 analytics
 - ✅ Phase 1: Added sales statistics (last_sale_date, total_sales_qty)
@@ -24,6 +25,7 @@
 - ✅ Build passing, ready for integration
 
 **Unblocked Stories**:
+
 - ✅ Story 4.1: Single Product COGS Assignment Interface
 - ✅ Story 4.2: Bulk COGS Assignment Capability
 - ✅ Story 4.3: COGS Input Validation & Error Handling
@@ -32,14 +34,14 @@
 
 ## What's Already Available (Epic 12 + Epic 10)
 
-| Endpoint | Status | Notes |
-|----------|--------|-------|
-| `GET /v1/products` | ✅ Ready | Product catalog with `has_cogs` filter |
-| `GET /v1/products/:nmId` | ✅ **Enhanced** | **9 new fields added** |
-| `POST /v1/products/cogs/bulk` | ✅ Ready | Bulk COGS upload (max 1000 items) |
-| `GET /v1/cogs` | ✅ Ready | COGS retrieval with temporal lookup |
-| `GET /v1/products/missing-cogs` | ✅ Ready | Products without COGS |
-| `GET /v1/products/cogs-coverage` | ✅ Ready | COGS coverage metrics |
+| Endpoint                         | Status          | Notes                                  |
+| -------------------------------- | --------------- | -------------------------------------- |
+| `GET /v1/products`               | ✅ Ready        | Product catalog with `has_cogs` filter |
+| `GET /v1/products/:nmId`         | ✅ **Enhanced** | **9 new fields added**                 |
+| `POST /v1/products/cogs/bulk`    | ✅ Ready        | Bulk COGS upload (max 1000 items)      |
+| `GET /v1/cogs`                   | ✅ Ready        | COGS retrieval with temporal lookup    |
+| `GET /v1/products/missing-cogs`  | ✅ Ready        | Products without COGS                  |
+| `GET /v1/products/cogs-coverage` | ✅ Ready        | COGS coverage metrics                  |
 
 ---
 
@@ -68,6 +70,7 @@
 ## Margin Calculation Logic
 
 **How it works** (updated 2025-01-26):
+
 1. **Try last completed week** (most recent data)
    - Query Epic 17: `GET /v1/analytics/weekly/by-sku?week=2025-W46&includeCogs=true`
    - Uses `IsoWeekService.getLastCompletedWeek()` to avoid incomplete weeks (Epic 19)
@@ -84,10 +87,11 @@
    - `"COGS_NOT_ASSIGNED"` - Product has sales but no COGS assigned
    - `"NO_SALES_DATA"` - Product has never had any sales
    - `"ANALYTICS_UNAVAILABLE"` - Analytics service unavailable (graceful degradation)
-   
+
    **Note**: See Request #16 for complete documentation on margin data structure.
 
 **Why weekly (not monthly)**:
+
 - ✅ More recent data (1 week vs 1 month)
 - ✅ Consistent with Epic 17 analytics
 - ✅ WB uses weekly reports
@@ -106,6 +110,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Response**:
+
 ```json
 {
   "nm_id": "12345678",
@@ -170,12 +175,13 @@ X-Cabinet-Id: <cabinet_id>
 
 ## Performance Notes
 
-| Endpoint | Margin Calculation | Response Time |
-|----------|-------------------|---------------|
-| `GET /v1/products` (list) | ❌ Disabled | ~300ms (no change) |
-| `GET /v1/products/:nmId` | ✅ Enabled | ~250ms (+100ms overhead) |
+| Endpoint                  | Margin Calculation | Response Time            |
+| ------------------------- | ------------------ | ------------------------ |
+| `GET /v1/products` (list) | ❌ Disabled        | ~300ms (no change)       |
+| `GET /v1/products/:nmId`  | ✅ Enabled         | ~250ms (+100ms overhead) |
 
 **Why margin disabled in list**:
+
 - Product list with 50 items: 50 × 100ms = **+5 seconds** (unacceptable UX)
 - Single product view: +100ms = **acceptable** for detailed view
 
@@ -195,6 +201,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Request**:
+
 ```json
 {
   "items": [
@@ -210,6 +217,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Response**:
+
 ```json
 {
   "totalItems": 1,
@@ -220,6 +228,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Note**: Field naming differs slightly from Request #09 spec:
+
 - `items` instead of `assignments` (can use adapter)
 - `unit_cost_rub` instead of `unit_cost` (explicit currency)
 
@@ -232,6 +241,7 @@ GET /v1/cogs?nm_id=12345678&valid_at=2025-11-23
 ```
 
 **Features**:
+
 - ✅ Filter by `nm_id`, `sa_name`, `valid_at`
 - ✅ Temporal lookup (COGS valid at specific date)
 - ✅ Current COGS: `GET /v1/cogs/:nmId/current`
@@ -243,17 +253,19 @@ GET /v1/cogs?nm_id=12345678&valid_at=2025-11-23
 
 ### Field Naming - RESOLVED
 
-| Request #09 | Current Backend | Phase 2 Solution |
-|-------------|-----------------|------------------|
-| `assignments` | `items` | ✅ **Both accepted** |
-| `unit_cost` | `unit_cost_rub` | ✅ Keep (explicit currency) |
+| Request #09   | Current Backend | Phase 2 Solution            |
+| ------------- | --------------- | --------------------------- |
+| `assignments` | `items`         | ✅ **Both accepted**        |
+| `unit_cost`   | `unit_cost_rub` | ✅ Keep (explicit currency) |
 
 **What Changed**:
+
 - Backend now accepts both `items` and `assignments` field names
 - Zero breaking changes - original format still works
 - Use whichever field name you prefer
 
 **Example** (both work):
+
 ```typescript
 // Option 1: Original format
 await api.post('/v1/cogs/bulk', { items: [...] });
@@ -269,11 +281,13 @@ await api.post('/v1/cogs/bulk', { assignments: [...] });
 **V2 Format Available** (`?format=v2` query parameter)
 
 **Default Response** (backward compatible):
+
 ```json
 { "totalItems": 2, "createdItems": 2, "skippedItems": 0, "errors": [] }
 ```
 
 **V2 Response** (`POST /v1/cogs/bulk?format=v2`):
+
 ```json
 {
   "data": {
@@ -295,17 +309,20 @@ await api.post('/v1/cogs/bulk', { assignments: [...] });
 ### ✅ Phase 3: Currency Support (COMPLETED 2025-11-23)
 
 **What Changed**:
+
 - Backend now supports multi-currency COGS
 - Added optional `currency` field to bulk upload
 - Default: 'RUB' (backward compatible)
 
 **Supported Currencies**:
+
 - `RUB` (Russian Ruble) - default
 - `USD` (US Dollar)
 - `EUR` (Euro)
 - `CNY` (Chinese Yuan)
 
 **Example**:
+
 ```typescript
 // With currency (optional)
 await api.post('/v1/cogs/bulk', {
@@ -336,6 +353,7 @@ await api.post('/v1/cogs/bulk', {
 ```
 
 **Implementation Details**:
+
 - Validation: 3-character ISO 4217 code
 - Database: `currency VARCHAR(3) DEFAULT 'RUB'`
 - Backward compatible: Existing records default to 'RUB'
@@ -381,11 +399,13 @@ await api.post('/v1/cogs/bulk', {
 ## Questions?
 
 **Need help with integration?**
+
 - Check full docs: `/docs/backend-response-09-epic-18-products-api-enhancement.md`
 - Swagger: `http://localhost:3000/api` (when backend running)
 - Test endpoints: `test-api/08-products.http` (Products & COGS Assignment)
 
 **Missing something?**
+
 - Current implementation covers 80% of Epic 18
 - Remaining 20% = field naming alignment (Phase 2, optional)
 - Let us know if you need anything prioritized!

@@ -18,7 +18,7 @@ chars: 5637
 
 В этой статье:
 
-- 
+-
 - <a href="#zachem-nuzhen-dannyj-otchet-i-gipotezy" rel="nofollow">Зачем нужен данный отчет и гипотезы</a>
 - <a href="#filtry-i-poisk" rel="nofollow">Фильтры и поиск</a>
 - <a href="#kak-zapustit-gipotezu-i-otslezhivat-prodazhi" rel="nofollow">Как запустить Гипотезу и отслеживать продажи</a>
@@ -47,6 +47,7 @@ chars: 5637
 ## Как запустить Гипотезу и отслеживать продажи
 
 Начать работу с гипотезой Вы можете из двух разделов:\
+
 1. Чтобы перейти в этот отчет откройте раздел [Аналитика и финансы-Отчёты](https://selsup.ru/application/reports/) и выберите отчет [«Аналитика по гипотезам»](https://selsup.ru/application/hypothesis/).
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/04/screenshot_306.png.webp)
@@ -61,7 +62,7 @@ chars: 5637
 
 2\. Создать гипотезу можно и сразу из раздела [«Товары»](https://selsup.ru/application/products), выберите нужный и продолжите добавление по шагам, описанным выше.
 
-Далее Вы начинаете тестировать гипотезу. Для примера возьмем метод - **Изменить SEO-описание товара.\**
+Далее Вы начинаете тестировать гипотезу. Для примера возьмем метод - *_Изменить SEO-описание товара.\*_
 Перейдите в карточку и нажмите на вкладку «Ключевые слова»\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/04/kluchevie-slova-e1748252880665.png.webp)SelSup автоматически создает SEO-описание товара. Можете менять его когда угодно, добавлять свои фразы. Для улучшения продаж этого товара попробуйте заменить ключевое слово или убрать и оценить конверсию на маркетплейсе. В [этой инструкции](https://selsup.ru/blog/seo-kartochki-tovara-podrobnaya-poshagovaya-instruktsiya-s-primerami/) мы по шагам рассказали, как подбирать ключевые слова и создавать SEO-описание.
 

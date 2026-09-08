@@ -12,12 +12,13 @@
 
 The Price Calculator API provides **two approaches** for logistics cost calculation:
 
-| Approach | Use Case | Data Required |
-|----------|----------|---------------|
-| **Manual Input** | User knows exact logistics costs | `logistics_forward_rub`, `logistics_reverse_rub` |
-| **Auto-fill** | Quick calculation with warehouse data | `warehouse_name`, `volume_liters` or `dimensions` |
+| Approach         | Use Case                              | Data Required                                     |
+| ---------------- | ------------------------------------- | ------------------------------------------------- |
+| **Manual Input** | User knows exact logistics costs      | `logistics_forward_rub`, `logistics_reverse_rub`  |
+| **Auto-fill**    | Quick calculation with warehouse data | `warehouse_name`, `volume_liters` or `dimensions` |
 
 ### Key Features
+
 - **Automatic logistics calculation** from warehouse tariffs
 - **Volume calculation** from dimensions (length × width × height)
 - **Cargo type detection** (MGT ≤60cm, SGT ≤120cm, KGT >120cm)
@@ -83,6 +84,7 @@ const request3 = {
 Calculates recommended price based on target margin.
 
 **Request Headers**:
+
 ```http
 Authorization: Bearer {JWT_TOKEN}
 X-Cabinet-Id: {CABINET_UUID}
@@ -90,6 +92,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
   "result": {
@@ -217,6 +220,7 @@ Returns warehouse-specific coefficients with embedded base rates.
 **Frontend Receives**: `1.15` (number)
 
 **Example**:
+
 ```typescript
 // ❌ WRONG - Don't divide again!
 const cost = baseAmount * (tariff.coefficient / 100);
@@ -236,6 +240,7 @@ const cost = baseAmount * tariff.coefficient;
 **Use Case**: User knows exact logistics costs from invoices or previous shipments.
 
 **Request**:
+
 ```json
 {
   "target_margin_pct": 20,
@@ -249,6 +254,7 @@ const cost = baseAmount * tariff.coefficient;
 ```
 
 **Response**:
+
 ```json
 {
   "result": {
@@ -266,6 +272,7 @@ const cost = baseAmount * tariff.coefficient;
 ```
 
 **UI Behavior**:
+
 - Show input fields for logistics costs
 - No auto-fill indicators
 - User has full control
@@ -277,6 +284,7 @@ const cost = baseAmount * tariff.coefficient;
 **Use Case**: Quick calculation when warehouse and volume are known.
 
 **Request**:
+
 ```json
 {
   "target_margin_pct": 20,
@@ -291,6 +299,7 @@ const cost = baseAmount * tariff.coefficient;
 ```
 
 **Response**:
+
 ```json
 {
   "result": {
@@ -314,6 +323,7 @@ const cost = baseAmount * tariff.coefficient;
 ```
 
 **UI Behavior**:
+
 - Show "Auto" badge next to logistics/storage fields
 - Display warehouse name and tariff date
 - Allow manual override by editing values
@@ -325,6 +335,7 @@ const cost = baseAmount * tariff.coefficient;
 **Use Case**: User knows product dimensions but not volume.
 
 **Request**:
+
 ```json
 {
   "target_margin_pct": 20,
@@ -343,6 +354,7 @@ const cost = baseAmount * tariff.coefficient;
 ```
 
 **Response**:
+
 ```json
 {
   "result": {
@@ -376,6 +388,7 @@ const cost = baseAmount * tariff.coefficient;
 ```
 
 **UI Behavior**:
+
 - Display calculated volume: "9.0 L (from dimensions)"
 - Show cargo type badge: "MGT" (green)
 - Show dimensions breakdown
@@ -407,7 +420,7 @@ interface CostBreakdownProps {
 
 export function CostBreakdown({ breakdown, autoFill }: CostBreakdownProps) {
   const { fixed_costs } = breakdown;
-  
+
   return (
     <div className="space-y-4">
       {/* COGS */}
@@ -415,7 +428,7 @@ export function CostBreakdown({ breakdown, autoFill }: CostBreakdownProps) {
         <span className="text-sm text-gray-600">Себестоимость</span>
         <span className="font-semibold">{formatCurrency(fixed_costs.cogs)}</span>
       </div>
-      
+
       {/* Logistics */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
@@ -428,7 +441,7 @@ export function CostBreakdown({ breakdown, autoFill }: CostBreakdownProps) {
         </div>
         <span className="font-semibold">{formatCurrency(fixed_costs.logistics_total)}</span>
       </div>
-      
+
       {/* Storage */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
@@ -441,7 +454,7 @@ export function CostBreakdown({ breakdown, autoFill }: CostBreakdownProps) {
         </div>
         <span className="font-semibold">{formatCurrency(fixed_costs.storage)}</span>
       </div>
-      
+
       {/* Total */}
       <Separator />
       <div className="flex justify-between items-center">
@@ -464,7 +477,7 @@ interface AutoFillIndicatorProps {
 
 export function AutoFillIndicator({ source, label, details }: AutoFillIndicatorProps) {
   if (source === 'manual') return null;
-  
+
   return (
     <Tooltip content={details}>
       <div className="flex items-center gap-1.5 text-xs text-blue-600">
@@ -491,7 +504,7 @@ const CARGO_TYPE_CONFIG = {
 
 export function CargoTypeBadge({ cargoType }: CargoTypeBadgeProps) {
   const config = CARGO_TYPE_CONFIG[cargoType];
-  
+
   return (
     <Badge className={config.color}>
       {config.label}
@@ -514,56 +527,56 @@ interface VolumeDisplayProps {
   source?: 'manual' | 'dimensions';
 }
 
-export function VolumeDisplay({ 
-  volume, 
-  dimensions, 
-  calculatedVolume, 
-  source 
+export function VolumeDisplay({
+  volume,
+  dimensions,
+  calculatedVolume,
+  source
 }: VolumeDisplayProps) {
   const displayVolume = source === 'dimensions' ? calculatedVolume : volume;
-  
+
   return (
     <div className="space-y-2">
       {/* Volume Input */}
       <div className="flex items-center gap-2">
         <Label>Объём (литры)</Label>
-        <Input 
-          type="number" 
-          value={displayVolume || ''} 
+        <Input
+          type="number"
+          value={displayVolume || ''}
           onChange={(e) => /* update handler */}
         />
         {source === 'dimensions' && (
-          <AutoFillIndicator 
-            source="auto" 
+          <AutoFillIndicator
+            source="auto"
             label="Из габаритов"
             details={`${dimensions?.length_cm}×${dimensions?.width_cm}×${dimensions?.height_cm} см`}
           />
         )}
       </div>
-      
+
       {/* Dimensions Input */}
       <div className="grid grid-cols-3 gap-2">
         <div>
           <Label className="text-xs">Длина (см)</Label>
-          <Input 
-            type="number" 
-            value={dimensions?.length_cm || ''} 
+          <Input
+            type="number"
+            value={dimensions?.length_cm || ''}
             onChange={(e) => /* update handler */}
           />
         </div>
         <div>
           <Label className="text-xs">Ширина (см)</Label>
-          <Input 
-            type="number" 
-            value={dimensions?.width_cm || ''} 
+          <Input
+            type="number"
+            value={dimensions?.width_cm || ''}
             onChange={(e) => /* update handler */}
           />
         </div>
         <div>
           <Label className="text-xs">Высота (см)</Label>
-          <Input 
-            type="number" 
-            value={dimensions?.height_cm || ''} 
+          <Input
+            type="number"
+            value={dimensions?.height_cm || ''}
             onChange={(e) => /* update handler */}
           />
         </div>
@@ -579,12 +592,12 @@ export function VolumeDisplay({
 
 ### Common Errors Table
 
-| Error Code | Message | Cause | Solution |
-|------------|---------|-------|----------|
-| `WAREHOUSE_NOT_FOUND` | Склад '{name}' не найден | Invalid warehouse name | Show available warehouses list |
-| `KGT_CARGO_DETECTED` | Крупногабаритный груз требует ручного ввода | Max dimension > 120cm | Show manual input fields |
-| `VALIDATION_ERROR` | Negative value for costs | Negative number in request | Client-side validation |
-| `TOTAL_PERCENTAGE_RATE_EXCEEDS_100` | Division by zero | Sum of percentages ≥ 100% | Reduce margin or costs |
+| Error Code                          | Message                                     | Cause                      | Solution                       |
+| ----------------------------------- | ------------------------------------------- | -------------------------- | ------------------------------ |
+| `WAREHOUSE_NOT_FOUND`               | Склад '{name}' не найден                    | Invalid warehouse name     | Show available warehouses list |
+| `KGT_CARGO_DETECTED`                | Крупногабаритный груз требует ручного ввода | Max dimension > 120cm      | Show manual input fields       |
+| `VALIDATION_ERROR`                  | Negative value for costs                    | Negative number in request | Client-side validation         |
+| `TOTAL_PERCENTAGE_RATE_EXCEEDS_100` | Division by zero                            | Sum of percentages ≥ 100%  | Reduce margin or costs         |
 
 ### Validation Examples
 
@@ -599,25 +612,25 @@ export const priceCalculatorSchema = z.object({
   buyback_pct: z.number().min(0).max(100),
   advertising_pct: z.number().min(0).max(100),
   storage_rub: z.number().min(0),
-  
+
   // Optional fields
   warehouse_name: z.string().optional(),
   volume_liters: z.number().min(0).optional(),
   delivery_type: z.enum(['fbo', 'fbs']).optional(),
   storage_days: z.number().int().min(0).optional(),
-  
+
   dimensions: z.object({
     length_cm: z.number().min(0),
     width_cm: z.number().min(0),
     height_cm: z.number().min(0)
   }).optional(),
-  
+
   overrides: z.object({
     commission_pct: z.number().min(0).max(100).optional()
   }).optional()
 }).refine(
   (data) => {
-    const totalPercentage = 
+    const totalPercentage =
       (data.overrides?.commission_pct || 10) +
       1.8 + // acquiring
       data.advertising_pct +
@@ -670,7 +683,7 @@ export function ErrorDisplay({ error }: ErrorDisplayProps) {
             </AlertDescription>
           </Alert>
         );
-        
+
       case 'KGT_CARGO_DETECTED':
         return (
           <Alert variant="destructive">
@@ -684,7 +697,7 @@ export function ErrorDisplay({ error }: ErrorDisplayProps) {
             </AlertDescription>
           </Alert>
         );
-        
+
       default:
         return (
           <Alert variant="destructive">
@@ -695,7 +708,7 @@ export function ErrorDisplay({ error }: ErrorDisplayProps) {
         );
     }
   };
-  
+
   return <div className="my-4">{renderErrorContent()}</div>;
 }
 ```
@@ -707,12 +720,14 @@ export function ErrorDisplay({ error }: ErrorDisplayProps) {
 ### Manual Test Cases
 
 #### Scenario 1: Manual Input
+
 - [ ] Enter all required fields manually
 - [ ] Verify price calculation matches expected formula
 - [ ] Check cost breakdown displays correctly
 - [ ] Verify no auto-fill indicators shown
 
 #### Scenario 2: Auto-fill Warehouse
+
 - [ ] Select warehouse from dropdown
 - [ ] Enter volume in liters
 - [ ] Select delivery type (FBO/FBS)
@@ -723,6 +738,7 @@ export function ErrorDisplay({ error }: ErrorDisplayProps) {
 - [ ] Verify manual override works
 
 #### Scenario 3: Auto-fill Dimensions
+
 - [ ] Enter dimensions (L×W×H)
 - [ ] Verify volume calculated correctly
 - [ ] Check cargo type badge shown
@@ -731,6 +747,7 @@ export function ErrorDisplay({ error }: ErrorDisplayProps) {
 - [ ] Verify error for KGT >120cm
 
 #### Error Scenarios
+
 - [ ] Test invalid warehouse name
 - [ ] Test negative values (client-side validation)
 - [ ] Test percentage sum ≥100%
@@ -750,25 +767,25 @@ import { rest } from 'msw';
 describe('PriceCalculatorForm - Manual Input', () => {
   it('should calculate price with manual logistics input', async () => {
     render(<PriceCalculatorForm />);
-    
+
     // Fill required fields
     const targetMarginInput = screen.getByLabelText(/Целевая маржа/);
     const cogsInput = screen.getByLabelText(/Себестоимость/);
     const logisticsInput = screen.getByLabelText(/Логистика прямая/);
-    
+
     await userEvent.type(targetMarginInput, '20');
     await userEvent.type(cogsInput, '1500');
     await userEvent.type(logisticsInput, '200');
-    
+
     // Submit form
     const submitButton = screen.getByRole('button', { name: /Рассчитать/ });
     await userEvent.click(submitButton);
-    
+
     // Verify results
     await waitFor(() => {
       expect(screen.getByText(/4 057,87 ₽/)).toBeInTheDocument();
     });
-    
+
     // Verify no auto-fill indicators
     expect(screen.queryByText(/Auto/)).not.toBeInTheDocument();
   });
@@ -791,22 +808,22 @@ describe('PriceCalculatorForm - Auto-fill Warehouse', () => {
       })
     );
   });
-  
+
   it('should auto-calculate logistics from warehouse', async () => {
     render(<PriceCalculatorForm />);
-    
+
     // Select warehouse
     const warehouseSelect = screen.getByLabelText(/Склад/);
     await userEvent.selectOptions(warehouseSelect, 'Коледино');
-    
+
     // Enter volume
     const volumeInput = screen.getByLabelText(/Объём/);
     await userEvent.type(volumeInput, '15');
-    
+
     // Submit form
     const submitButton = screen.getByRole('button', { name: /Рассчитать/ });
     await userEvent.click(submitButton);
-    
+
     // Verify auto-fill indicators shown
     await waitFor(() => {
       expect(screen.getAllByText(/Auto/)).toHaveLength(2); // logistics + storage
@@ -817,36 +834,36 @@ describe('PriceCalculatorForm - Auto-fill Warehouse', () => {
 describe('PriceCalculatorForm - Dimensions Calculation', () => {
   it('should calculate volume from dimensions', async () => {
     render(<PriceCalculatorForm />);
-    
+
     // Enter dimensions
     const lengthInput = screen.getByLabelText(/Длина/);
     const widthInput = screen.getByLabelText(/Ширина/);
     const heightInput = screen.getByLabelText(/Высота/);
-    
+
     await userEvent.type(lengthInput, '30');
     await userEvent.type(widthInput, '20');
     await userEvent.type(heightInput, '15');
-    
+
     // Verify calculated volume
     await waitFor(() => {
       expect(screen.getByText(/9,0 L/)).toBeInTheDocument();
     });
-    
+
     // Verify cargo type badge
     expect(screen.getByText(/Мелкогабаритный/)).toBeInTheDocument();
   });
-  
+
   it('should show error for KGT cargo', async () => {
     render(<PriceCalculatorForm />);
-    
+
     // Enter large dimensions (>120cm)
     const lengthInput = screen.getByLabelText(/Длина/);
     await userEvent.type(lengthInput, '150');
-    
+
     // Submit form
     const submitButton = screen.getByRole('button', { name: /Рассчитать/ });
     await userEvent.click(submitButton);
-    
+
     // Verify error message
     await waitFor(() => {
       expect(screen.getByText(/Крупногабаритный груз/)).toBeInTheDocument();
@@ -861,17 +878,20 @@ describe('PriceCalculatorForm - Dimensions Calculation', () => {
 
 ### Q1: What's the difference between `logistics_forward_rub` and `logistics_reverse_rub`?
 
-**A**: 
+**A**:
+
 - **Logistics forward**: Cost to ship product TO warehouse (seller → WB)
 - **Logistics reverse**: Cost for returns (customer → warehouse → seller)
 
 ### Q2: How is storage calculated?
 
 **A**:
+
 ```
 daily_cost = (base_rate + max(0, volume - 1) × per_liter_rate) × coefficient
 total_storage = daily_cost × storage_days
 ```
+
 Note: Coefficient is already divided by 100 in the backend!
 
 Free storage period: 60 days (configurable in `/v1/tariffs/settings`)
@@ -879,6 +899,7 @@ Free storage period: 60 days (configurable in `/v1/tariffs/settings`)
 ### Q3: What are cargo types (MGT, SGT, KGT)?
 
 **A**:
+
 - **MGT** (Мелкогабаритный): Max dimension ≤60cm
 - **SGT** (Среднегабаритный): Max dimension ≤120cm
 - **KGT** (Крупногабаритный): Max dimension >120cm (requires manual input)
@@ -886,6 +907,7 @@ Free storage period: 60 days (configurable in `/v1/tariffs/settings`)
 ### Q4: How do coefficients work?
 
 **A**: Coefficients are regional multipliers:
+
 - **1.0** = Standard rate
 - **1.2** = 120% of standard rate (remote regions)
 - **0.8** = 80% of standard rate (promotional)
@@ -894,7 +916,8 @@ Applied to both logistics and storage costs.
 
 ### Q5: What if warehouse is not found?
 
-**A**: 
+**A**:
+
 1. Show error with list of available warehouses
 2. Suggest manual input mode
 3. Cache warehouse list for autocomplete
@@ -902,6 +925,7 @@ Applied to both logistics and storage costs.
 ### Q6: Can I override auto-calculated values?
 
 **A**: Yes! Manual values always have priority:
+
 ```
 manual > auto-fill (warehouse) > default
 ```
@@ -909,12 +933,14 @@ manual > auto-fill (warehouse) > default
 ### Q7: How often are tariffs updated?
 
 **A**:
+
 - **Warehouse tariffs**: 1 hour cache (fetched from WB API)
 - **Global settings**: 24 hour cache (database defaults)
 
 ### Q8: What's the formula for recommended price?
 
 **A**:
+
 ```
 recommended_price = fixed_total / (1 - total_percentage_rate / 100)
 
@@ -941,24 +967,24 @@ export interface PriceCalculatorRequest {
   buyback_pct: number;
   advertising_pct: number;
   storage_rub?: number;
-  
+
   // Optional fields
   warehouse_name?: string;
   volume_liters?: number;
   delivery_type?: 'fbo' | 'fbs';
   storage_days?: number;
-  
+
   dimensions?: {
     length_cm: number;
     width_cm: number;
     height_cm: number;
   };
-  
+
   overrides?: {
     commission_pct?: number;
     nm_id?: number;
   };
-  
+
   commission_pct?: number;
   vat_pct?: number;
   acquiring_pct?: number;
@@ -1031,13 +1057,13 @@ import type { PriceCalculatorRequest, PriceCalculatorResponse } from '@/types/pr
 
 export const priceCalculatorQueryKeys = {
   all: ['price-calculator'] as const,
-  calculate: (params: PriceCalculatorRequest) => 
+  calculate: (params: PriceCalculatorRequest) =>
     ['price-calculator', 'calculate', params] as const
 };
 
 export function usePriceCalculator() {
   return useMutation({
-    mutationFn: (request: PriceCalculatorRequest) => 
+    mutationFn: (request: PriceCalculatorRequest) =>
       apiClient.post<PriceCalculatorResponse>('/v1/products/price-calculator', request),
     onSuccess: (data) => {
       // Track calculation success
@@ -1077,21 +1103,21 @@ interface WarehousesResponse {
   };
 }
 
-export function WarehouseSelector({ 
-  value, 
-  onChange 
-}: { 
-  value?: string; 
-  onChange: (name: string) => void 
+export function WarehouseSelector({
+  value,
+  onChange
+}: {
+  value?: string;
+  onChange: (name: string) => void
 }) {
   const { data: warehousesData, isLoading } = useQuery({
     queryKey: ['warehouses'],
     queryFn: () => apiClient.get<WarehousesResponse>('/v1/tariffs/warehouses'),
     staleTime: 24 * 60 * 60 * 1000 // 24 hours
   });
-  
+
   const warehouses = warehousesData?.data?.warehouses || [];
-  
+
   return (
     <div className="space-y-2">
       <Label htmlFor="warehouse">Склад</Label>
@@ -1124,6 +1150,7 @@ export function WarehouseSelector({
 This guide provides comprehensive information for frontend developers integrating with the Price Calculator API:
 
 ### Key Takeaways
+
 1. **Two modes**: Manual input vs Auto-fill from warehouse
 2. **Auto-fill sources**: Warehouse name + volume or dimensions
 3. **Cargo types**: MGT (≤60cm), SGT (≤120cm), KGT (>120cm)
@@ -1131,6 +1158,7 @@ This guide provides comprehensive information for frontend developers integratin
 5. **Fallback support**: Graceful degradation when data unavailable
 
 ### Implementation Checklist
+
 - [ ] Implement manual input form
 - [ ] Add warehouse selector with autocomplete
 - [ ] Add volume input with dimensions calculator
@@ -1143,11 +1171,13 @@ This guide provides comprehensive information for frontend developers integratin
 - [ ] Display cost breakdown with auto/manual badges
 
 ### Rate Limits
+
 - **Price Calculator**: 100 req/min (scope: `products`)
 - **Warehouses**: 10 req/min (scope: `tariffs`)
 - **Acceptance Coefficients**: 6 req/min (scope: `orders_fbw`)
 
 ### Cache Strategy
+
 - **Warehouse list**: 24 hours
 - **Acceptance coefficients**: 1 hour
 - **Global settings**: 24 hours
@@ -1155,6 +1185,7 @@ This guide provides comprehensive information for frontend developers integratin
 ---
 
 **Related Documentation**:
+
 - [Epic 43 README](./epics/epic-43/README.md) - Complete epic documentation
 - [Price Calculator API Guide](../frontend/docs/request-backend/95-epic-43-price-calculator-api.md) - API reference
 - [Tariffs Formulas Validation Report](104-tariffs-formulas-validation-report.md) - Complete formula validation with calculation examples

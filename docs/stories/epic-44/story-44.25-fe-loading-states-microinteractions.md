@@ -16,6 +16,7 @@
 **So that** the experience feels polished and responsive to my actions.
 
 **Non-goals**:
+
 - Complex animations requiring external libraries
 - Performance-heavy effects
 - Sound effects
@@ -25,6 +26,7 @@
 ## Background: Current State
 
 The current Price Calculator has minimal loading and feedback states:
+
 - Loading shows plain "Расчёт..." text with basic spinner
 - No skeleton loading for results
 - Copy buttons show icon swap but no animation
@@ -32,6 +34,7 @@ The current Price Calculator has minimal loading and feedback states:
 - Results appear abruptly
 
 ### UX Audit Findings
+
 - **#8**: "Скучный loading state" - Loading indicator is boring
 - **#9**: "Copy buttons нет success animation" - No celebration on copy
 
@@ -40,6 +43,7 @@ The current Price Calculator has minimal loading and feedback states:
 ## Acceptance Criteria
 
 ### AC1: Enhanced Loading State
+
 - [ ] Replace plain text with skeleton loader for results
 - [ ] Skeleton matches result card layout
 - [ ] Pulse animation on skeleton elements
@@ -47,12 +51,14 @@ The current Price Calculator has minimal loading and feedback states:
 - [ ] Loading state has subtle background gradient animation
 
 ### AC2: Value Transition Animations
+
 - [ ] Price values animate on change (count up/down effect)
 - [ ] Use CSS transitions: `transition-all duration-300`
 - [ ] Numbers slide in from direction of change (up if increasing)
 - [ ] Currency symbol stays static while value animates
 
 ### AC3: Copy Button Success Animation
+
 - [ ] On copy: button scales briefly `scale-110`
 - [ ] Checkmark icon enters with slide animation
 - [ ] Brief green glow/pulse on button
@@ -60,12 +66,14 @@ The current Price Calculator has minimal loading and feedback states:
 - [ ] Smooth icon transition with `transition-transform`
 
 ### AC4: Form Submit Feedback
+
 - [ ] Submit button shows loading spinner inside
 - [ ] Button width stays constant during loading
 - [ ] Subtle pulse effect while calculating
 - [ ] Success state: brief green flash on results card
 
 ### AC5: Hover & Focus Micro-interactions
+
 - [ ] Input fields: subtle lift on focus (`shadow-sm` to `shadow-md`)
 - [ ] Cards: slight scale on hover (`hover:scale-[1.01]`)
 - [ ] Collapsible sections: smooth height animation
@@ -77,13 +85,13 @@ The current Price Calculator has minimal loading and feedback states:
 
 ### Files to Modify
 
-| File | Change | Lines Est. |
-|------|--------|------------|
-| `src/components/custom/price-calculator/PriceCalculatorResults.tsx` | Skeleton + transitions | ~25 |
-| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx` | Value animations | ~15 |
-| `src/components/custom/price-calculator/PriceSummaryFooter.tsx` | Copy animation | ~20 |
-| `src/components/custom/price-calculator/FormActionsSection.tsx` | Submit feedback | ~15 |
-| New: `src/components/custom/price-calculator/ResultsSkeleton.tsx` | Skeleton component | ~50 |
+| File                                                                | Change                 | Lines Est. |
+| ------------------------------------------------------------------- | ---------------------- | ---------- |
+| `src/components/custom/price-calculator/PriceCalculatorResults.tsx` | Skeleton + transitions | ~25        |
+| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx`    | Value animations       | ~15        |
+| `src/components/custom/price-calculator/PriceSummaryFooter.tsx`     | Copy animation         | ~20        |
+| `src/components/custom/price-calculator/FormActionsSection.tsx`     | Submit feedback        | ~15        |
+| New: `src/components/custom/price-calculator/ResultsSkeleton.tsx`   | Skeleton component     | ~50        |
 
 ### Tailwind Animation Classes
 
@@ -141,6 +149,7 @@ const loadingPulseClasses = "animate-pulse bg-gradient-to-r from-muted via-muted
 ## Design Specifications
 
 ### Loading Skeleton Layout
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  ┌─────────────────────────────────────────────────────┐   │
@@ -164,6 +173,7 @@ const loadingPulseClasses = "animate-pulse bg-gradient-to-r from-muted via-muted
 ```
 
 ### Copy Button Animation States
+
 ```
 Default:        Copying:         Success:
 ┌─────┐        ┌─────┐          ┌─────┐
@@ -176,6 +186,7 @@ Default:        Copying:         Success:
 ```
 
 ### Value Change Animation
+
 ```
 Before: 4 057,87 ₽
 
@@ -347,16 +358,16 @@ export function useAnimatedValue(value: number, duration = 300) {
 
 ### Test Cases
 
-| # | Test | Expected Result |
-|---|------|-----------------|
-| 1 | Trigger calculation | Skeleton loader appears with progress |
-| 2 | Results load | Skeleton transitions smoothly to content |
-| 3 | Click copy button | Button scales, checkmark animates in |
-| 4 | Hover over card | Slight scale lift (1.01) |
-| 5 | Focus on input | Shadow transitions from sm to md |
-| 6 | Submit with Enter | Button shows spinner, stays same width |
-| 7 | Value changes | Number animates (counts up/down) |
-| 8 | Set `prefers-reduced-motion` | Animations disabled/reduced |
+| #   | Test                         | Expected Result                          |
+| --- | ---------------------------- | ---------------------------------------- |
+| 1   | Trigger calculation          | Skeleton loader appears with progress    |
+| 2   | Results load                 | Skeleton transitions smoothly to content |
+| 3   | Click copy button            | Button scales, checkmark animates in     |
+| 4   | Hover over card              | Slight scale lift (1.01)                 |
+| 5   | Focus on input               | Shadow transitions from sm to md         |
+| 6   | Submit with Enter            | Button shows spinner, stays same width   |
+| 7   | Value changes                | Number animates (counts up/down)         |
+| 8   | Set `prefers-reduced-motion` | Animations disabled/reduced              |
 
 ### Reduced Motion Support
 
@@ -417,16 +428,18 @@ className={cn(
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/ResultsSkeleton.tsx` | CREATE | ~50 | New skeleton component |
-| `src/components/custom/price-calculator/PriceCalculatorResults.tsx` | UPDATE | ~25 | Use skeleton, add transitions |
-| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx` | UPDATE | ~15 | Value animations |
-| `src/components/custom/price-calculator/PriceSummaryFooter.tsx` | UPDATE | ~20 | Copy button animation |
-| `src/components/custom/price-calculator/FormActionsSection.tsx` | UPDATE | ~15 | Submit feedback |
-| `src/hooks/useAnimatedValue.ts` | CREATE | ~30 | Animation hook (optional) |
+
+| File                                                                | Change Type | Lines (Est.) | Description                   |
+| ------------------------------------------------------------------- | ----------- | ------------ | ----------------------------- |
+| `src/components/custom/price-calculator/ResultsSkeleton.tsx`        | CREATE      | ~50          | New skeleton component        |
+| `src/components/custom/price-calculator/PriceCalculatorResults.tsx` | UPDATE      | ~25          | Use skeleton, add transitions |
+| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx`    | UPDATE      | ~15          | Value animations              |
+| `src/components/custom/price-calculator/PriceSummaryFooter.tsx`     | UPDATE      | ~20          | Copy button animation         |
+| `src/components/custom/price-calculator/FormActionsSection.tsx`     | UPDATE      | ~15          | Submit feedback               |
+| `src/hooks/useAnimatedValue.ts`                                     | CREATE      | ~30          | Animation hook (optional)     |
 
 ### Change Log
+
 _(To be filled by Dev Agent during implementation)_
 
 ---
@@ -438,13 +451,14 @@ _(To be filled by Dev Agent during implementation)_
 **Gate Decision**: ✅ PASSED
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Enhanced loading state | ✅ PASSED | ResultsSkeleton.tsx created (lines 1-67) - skeleton with animate-pulse, Progress component with % indicator, matches result card layout |
-| AC2 | Value transition animations | ✅ PASSED | TwoLevelPriceHeader.tsx:111 - `transition-all duration-300` on recommended price |
-| AC3 | Copy button success animation | ✅ PASSED | PriceSummaryFooter.tsx:139-156 - CopyButton with `transition-all duration-200`, `scale-110 text-green-600` on copied state, CheckCircle2 with `animate-in zoom-in-50 duration-200` |
-| AC4 | Form submit feedback | ✅ PASSED | FormActionsSection.tsx:49-54 - Loading state with Loader2 spinner; lines 71-76 gradient button with `transition-all duration-200` |
-| AC5 | Hover & focus micro-interactions | ✅ PASSED | PriceCalculatorForm.tsx:107 `hover:shadow-md transition-shadow duration-200`; FormActionsSection.tsx buttons have `transition-all duration-200` |
+
+| AC  | Requirement                      | Status    | Evidence                                                                                                                                                                           |
+| --- | -------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AC1 | Enhanced loading state           | ✅ PASSED | ResultsSkeleton.tsx created (lines 1-67) - skeleton with animate-pulse, Progress component with % indicator, matches result card layout                                            |
+| AC2 | Value transition animations      | ✅ PASSED | TwoLevelPriceHeader.tsx:111 - `transition-all duration-300` on recommended price                                                                                                   |
+| AC3 | Copy button success animation    | ✅ PASSED | PriceSummaryFooter.tsx:139-156 - CopyButton with `transition-all duration-200`, `scale-110 text-green-600` on copied state, CheckCircle2 with `animate-in zoom-in-50 duration-200` |
+| AC4 | Form submit feedback             | ✅ PASSED | FormActionsSection.tsx:49-54 - Loading state with Loader2 spinner; lines 71-76 gradient button with `transition-all duration-200`                                                  |
+| AC5 | Hover & focus micro-interactions | ✅ PASSED | PriceCalculatorForm.tsx:107 `hover:shadow-md transition-shadow duration-200`; FormActionsSection.tsx buttons have `transition-all duration-200`                                    |
 
 ---
 

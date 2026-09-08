@@ -19,6 +19,7 @@
 **So that** I can quickly understand my order pipeline health and identify potential issues.
 
 **Non-goals**:
+
 - Historical status comparison (future epic)
 - Drill-down to individual orders by status (covered in Orders page)
 - Status change notifications (separate feature)
@@ -195,23 +196,23 @@ interface StatusBreakdownItem {
 
 ### Main Component
 
-| Component | Location | Lines | Description |
-|-----------|----------|-------|-------------|
-| `OrdersStatusBreakdown.tsx` | `src/app/(dashboard)/components/` | ~150 | Main container with view toggle |
+| Component                   | Location                          | Lines | Description                     |
+| --------------------------- | --------------------------------- | ----- | ------------------------------- |
+| `OrdersStatusBreakdown.tsx` | `src/app/(dashboard)/components/` | ~150  | Main container with view toggle |
 
 ### Chart Components
 
-| Component | Location | Lines | Description |
-|-----------|----------|-------|-------------|
-| `StatusStackedBar.tsx` | `src/app/(dashboard)/components/` | ~100 | Horizontal stacked bar chart |
-| `StatusPieChart.tsx` | `src/app/(dashboard)/components/` | ~100 | Pie/donut chart variant |
-| `StatusLegend.tsx` | `src/app/(dashboard)/components/` | ~50 | Reusable legend component |
+| Component              | Location                          | Lines | Description                  |
+| ---------------------- | --------------------------------- | ----- | ---------------------------- |
+| `StatusStackedBar.tsx` | `src/app/(dashboard)/components/` | ~100  | Horizontal stacked bar chart |
+| `StatusPieChart.tsx`   | `src/app/(dashboard)/components/` | ~100  | Pie/donut chart variant      |
+| `StatusLegend.tsx`     | `src/app/(dashboard)/components/` | ~50   | Reusable legend component    |
 
 ### Supporting Components
 
-| Component | Location | Lines | Description |
-|-----------|----------|-------|-------------|
-| `StatusTooltip.tsx` | `src/app/(dashboard)/components/` | ~40 | Custom tooltip for charts |
+| Component           | Location                          | Lines | Description               |
+| ------------------- | --------------------------------- | ----- | ------------------------- |
+| `StatusTooltip.tsx` | `src/app/(dashboard)/components/` | ~40   | Custom tooltip for charts |
 
 ---
 
@@ -371,21 +372,21 @@ export function useOrdersVolumeAnalytics(from: string, to: string) {
 
 ### Unit Tests
 
-| Test | File | Description |
-|------|------|-------------|
-| Status colors | `StatusStackedBar.test.tsx` | Verify correct colors for each status |
-| Percentage calculation | `OrdersStatusBreakdown.test.tsx` | Verify percentages sum to 100% |
-| Empty state | `OrdersStatusBreakdown.test.tsx` | Show message when no data |
-| View toggle | `OrdersStatusBreakdown.test.tsx` | Switch between bar and pie |
-| Tooltip content | `StatusTooltip.test.tsx` | Show status, count, percentage |
+| Test                   | File                             | Description                           |
+| ---------------------- | -------------------------------- | ------------------------------------- |
+| Status colors          | `StatusStackedBar.test.tsx`      | Verify correct colors for each status |
+| Percentage calculation | `OrdersStatusBreakdown.test.tsx` | Verify percentages sum to 100%        |
+| Empty state            | `OrdersStatusBreakdown.test.tsx` | Show message when no data             |
+| View toggle            | `OrdersStatusBreakdown.test.tsx` | Switch between bar and pie            |
+| Tooltip content        | `StatusTooltip.test.tsx`         | Show status, count, percentage        |
 
 ### Integration Tests
 
-| Scenario | Description |
-|----------|-------------|
-| Data fetch | Load status breakdown from API |
-| Chart render | Both bar and pie charts render correctly |
-| Responsive layout | Verify mobile/tablet/desktop views |
+| Scenario          | Description                              |
+| ----------------- | ---------------------------------------- |
+| Data fetch        | Load status breakdown from API           |
+| Chart render      | Both bar and pie charts render correctly |
+| Responsive layout | Verify mobile/tablet/desktop views       |
 
 ---
 
@@ -453,6 +454,7 @@ export function useOrdersVolumeAnalytics(from: string, to: string) {
 **Config**: `src/lib/orders-status-config.ts`
 **Lines**: 200
 **Key Features**:
+
 - Stacked bar chart and pie chart views with toggle
 - Status color coding (complete=green, confirm=blue, new=yellow, cancel=red)
 - Total orders count in header

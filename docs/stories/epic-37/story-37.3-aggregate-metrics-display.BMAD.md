@@ -50,6 +50,7 @@
 ## Tasks / Subtasks
 
 ### Task 1: Create Calculation Utility Functions (AC: 7-12)
+
 - [ ] Create file: `frontend/src/app/(dashboard)/analytics/advertising/utils/metrics-calculator.ts`
 - [ ] Implement `calculateTotalSales(products: ProductMetrics[]): number`
   - [ ] Sum all `products[].totalSales` values
@@ -69,6 +70,7 @@
   - [ ] If `spend === 0`, return `null`
 
 ### Task 2: Create Formatting Utility Functions (AC: 13-17)
+
 - [ ] Create file: `frontend/src/app/(dashboard)/analytics/advertising/utils/formatters.ts`
 - [ ] Implement `formatCurrency(value: number): string`
   - [ ] Use `Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' })`
@@ -86,6 +88,7 @@
   - [ ] Example outputs: "0.90", "—"
 
 ### Task 3: Integrate Calculations in MergedGroupTable (AC: 1-6)
+
 - [ ] Open `frontend/src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.tsx`
 - [ ] Import calculation functions from `metrics-calculator.ts`
 - [ ] Import formatting functions from `formatters.ts`
@@ -108,6 +111,7 @@
   - [ ] ROAS: `{formatROAS(aggregateMetrics.roas)}`
 
 ### Task 4: Add Tooltips (AC: 20)
+
 - [ ] Install tooltip library if not present: `npm install @radix-ui/react-tooltip` (or use existing)
 - [ ] Wrap aggregate row "ГРУППА #imtId" cell with tooltip:
   - [ ] Tooltip content: "Сумма всех товаров в склейке"
@@ -115,6 +119,7 @@
   - [ ] Tooltip content: "Доход с рекламы / Расход. Показывает возврат на вложенный рубль."
 
 ### Task 5: Apply Right Alignment to Numeric Columns (AC: 18)
+
 - [ ] Add `text-right` class to all numeric table cells:
   - [ ] Всего продаж column cells
   - [ ] Из рекламы column cells
@@ -123,6 +128,7 @@
   - [ ] ROAS column cells
 
 ### Task 6: Testing (AC: All)
+
 - [ ] Unit test calculation functions with known inputs/outputs
 - [ ] Unit test formatting functions
 - [ ] Manual browser test: Verify aggregate row calculations match Excel validation
@@ -139,6 +145,7 @@
 All formulas derive from Epic 35 "Total Sales & Organic Split" feature:
 
 **Formula 1: Total Sales**
+
 ```typescript
 const totalSales = products.reduce((sum, p) => sum + p.totalSales, 0);
 // Meaning: Complete revenue from all sources (organic + advertising)
@@ -146,6 +153,7 @@ const totalSales = products.reduce((sum, p) => sum + p.totalSales, 0);
 ```
 
 **Formula 2: Ad Revenue**
+
 ```typescript
 const revenue = products.reduce((sum, p) => sum + p.revenue, 0);
 // Meaning: Revenue attributed to advertising campaigns only
@@ -153,6 +161,7 @@ const revenue = products.reduce((sum, p) => sum + p.revenue, 0);
 ```
 
 **Formula 3: Organic Sales**
+
 ```typescript
 const organicSales = totalSales - revenue;
 // OR if pre-calculated:
@@ -162,6 +171,7 @@ const organicSales = products.reduce((sum, p) => sum + p.organicSales, 0);
 ```
 
 **Formula 4: Organic Contribution**
+
 ```typescript
 const organicContribution = (organicSales / totalSales) * 100;
 // Meaning: Percentage of total sales from organic sources
@@ -169,6 +179,7 @@ const organicContribution = (organicSales / totalSales) * 100;
 ```
 
 **Formula 5: Total Spend**
+
 ```typescript
 const spend = products.reduce((sum, p) => sum + p.spend, 0);
 // Meaning: Total advertising budget spent for this group
@@ -177,6 +188,7 @@ const spend = products.reduce((sum, p) => sum + p.spend, 0);
 ```
 
 **Formula 6: ROAS**
+
 ```typescript
 const roas = spend > 0 ? revenue / spend : null;
 // Meaning: Revenue generated per 1₽ of ad spend
@@ -187,22 +199,26 @@ const roas = spend > 0 ? revenue / spend : null;
 ### Edge Cases (PO Decisions)
 
 **Edge Case 1: Division by Zero (totalSales = 0)**
+
 - **Scenario**: Group with all returns, no sales
 - **Calculation**: `organicContribution = (0 / 0) × 100 = NaN`
 - **Handling**: Check for NaN, return 0 or display "—"
 - **Code**: `const pct = isNaN(organicContribution) ? 0 : organicContribution;`
 
 **Edge Case 2: Negative Revenue**
+
 - **Scenario**: Returns exceed sales
 - **Expected**: Display as-is with red color
 - **Code**: `<span className={revenue < 0 ? 'text-red-600' : ''}>{formatCurrency(revenue)}</span>`
 
 **Edge Case 3: Very Small ROAS (<0.01)**
+
 - **Scenario**: revenue = 50₽, spend = 10,000₽, roas = 0.005
 - **Display**: "0.01" (rounded to 2 decimals) or "0.00"
 - **Decision**: Show as formatted (0.00), no special handling for MVP
 
 **Edge Case 4: Large Numbers (>1,000,000₽)**
+
 - **PO Decision**: NO abbreviation (no "1.2M₽")
 - **Display**: "1,234,567₽" in full
 - **Reason**: Financial data requires precision
@@ -210,6 +226,7 @@ const roas = spend > 0 ? revenue / spend : null;
 ### Test Scenarios
 
 **Test 1: Normal Group Calculation**
+
 ```typescript
 const products = [
   { totalSales: 15000, revenue: 4000, spend: 6000 },
@@ -227,6 +244,7 @@ Expected:
 ```
 
 **Test 2: Zero Spend**
+
 ```typescript
 const products = [
   { totalSales: 12000, revenue: 0, spend: 0 }
@@ -253,6 +271,7 @@ Expected:
 **Test Coverage Requirements**: ≥90% for calculation and formatting functions
 
 **Manual Validation**:
+
 - Compare aggregate row calculations to Excel spreadsheet (source data)
 - Verify formatting matches mockup in Epic 37
 - Test edge cases (zero spend, negative revenue)
@@ -261,30 +280,34 @@ Expected:
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-12-29 | 1.0 | Initial story draft | Sally (UX Expert) |
-| 2025-12-29 | 1.1 | PO decisions filled | Sarah (PO) |
-| 2025-12-29 | 2.0 | Converted to BMad template | Sarah (PO) |
-| 2025-12-29 | 3.0 | ✅ Story COMPLETE - All 21 ACs passed | Dev Agent |
+| Date       | Version | Description                           | Author            |
+| ---------- | ------- | ------------------------------------- | ----------------- |
+| 2025-12-29 | 1.0     | Initial story draft                   | Sally (UX Expert) |
+| 2025-12-29 | 1.1     | PO decisions filled                   | Sarah (PO)        |
+| 2025-12-29 | 2.0     | Converted to BMad template            | Sarah (PO)        |
+| 2025-12-29 | 3.0     | ✅ Story COMPLETE - All 21 ACs passed | Dev Agent         |
 
 ---
 
 ## Dev Agent Record
 
 ### Agent Model Used
+
 Claude Sonnet 4.5 (2025-12-29)
 
 ### Debug Log References
+
 - PM2 logs: TypeScript compilation successful ✅
 - Server status: Online, Ready in 1590ms
 - Runtime: http://localhost:3100
 
 ### Completion Notes
+
 **Time Spent**: 2h (on target for 2-3h estimate)
 **Status**: ✅ COMPLETE - All 21 ACs PASS
 
 **Implemented Features**:
+
 - ✅ 6 Epic 35 calculation formulas (metrics-calculator.ts, 176 lines)
 - ✅ 4 formatting utilities (formatters.ts, 103 lines)
 - ✅ Aggregate row integration (MergedGroupTable.tsx, lines 159-164, 208-222)
@@ -292,17 +315,20 @@ Claude Sonnet 4.5 (2025-12-29)
 - ✅ Edge case handling (division by zero, null ROAS → "—")
 
 **Validation Results**:
+
 - mockMergedGroup1 calculations: ALL VALUES MATCH ✅
 - TypeScript strict mode: NO errors ✅
 - Russian locale formatting: "35 570 ₽", "71.2%" ✅
 
 **Key Achievements**:
+
 - ProductMetrics interface uses correct backend field names (totalRevenue, totalSpend)
 - All formulas match Epic 35 specification exactly
 - Comprehensive JSDoc documentation with real-world examples
 - O(n) performance for all calculations
 
 ### File List
+
 - `frontend/src/app/(dashboard)/analytics/advertising/utils/metrics-calculator.ts` (created, 176 lines)
 - `frontend/src/app/(dashboard)/analytics/advertising/utils/formatters.ts` (created, 103 lines)
 - `frontend/src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.tsx` (modified, +45 lines)
@@ -331,6 +357,7 @@ Claude Sonnet 4.5 (2025-12-29)
 **Overall Assessment**: Exceptional utility implementation with professional patterns, comprehensive tests, and production-ready code.
 
 **Strengths**:
+
 1. **Formula Excellence**: All 6 Epic 35 formulas correctly implemented with exact specification compliance
 2. **Edge Case Handling**: Division by zero, NaN handling, null ROAS - all cases covered
 3. **Documentation**: Outstanding JSDoc with real-world examples and business context
@@ -341,6 +368,7 @@ Claude Sonnet 4.5 (2025-12-29)
 8. **Code Style**: Consistent naming (calculateX, formatX), clear function structure
 
 **Code Architecture**:
+
 - Pure functions: No side effects, easy to test
 - Single Responsibility: Each function has one purpose
 - Composability: Functions can be combined (calculateOrganicSales uses calculateTotalSales)
@@ -351,7 +379,7 @@ Claude Sonnet 4.5 (2025-12-29)
 ### Compliance Check
 
 - ✅ **Coding Standards**: TypeScript strict mode, no `any` types, consistent naming
-- ✅ **Project Structure**: Proper utils directory, __tests__ subdirectory
+- ✅ **Project Structure**: Proper utils directory, **tests** subdirectory
 - ✅ **Testing Strategy**: Comprehensive unit tests (≥90% coverage), edge case coverage
 - ✅ **All ACs Met**: 21/21 acceptance criteria fully implemented and validated
 
@@ -360,12 +388,14 @@ Claude Sonnet 4.5 (2025-12-29)
 ### Test Coverage Analysis
 
 **Current Coverage**: ✅ **EXCELLENT**
+
 - ✅ metrics-calculator.test.ts: 55 tests (100% pass)
 - ✅ formatters.test.ts: 22 tests (100% pass)
 - ✅ Total: 77 tests, 15ms execution time
 - ✅ Coverage: ≥90% for all 10 functions (6 calculators + 4 formatters)
 
 **Test Quality**:
+
 1. **Happy Path**: Normal calculations with 6-product group
 2. **Edge Cases**: Division by zero, null values, NaN handling, negative numbers
 3. **Precision**: toBeCloseTo() for floating point (0.01 tolerance)
@@ -379,24 +409,28 @@ Claude Sonnet 4.5 (2025-12-29)
 ### NFR Validation
 
 #### Security: ✅ PASS
+
 - Pure calculation/formatting functions (no side effects)
 - No user input validation needed (typed parameters)
 - No XSS vulnerabilities (React escapes formatted values)
 - No sensitive data handling
 
 #### Performance: ✅ PASS
+
 - Calculation functions: O(n) complexity (single reduce pass) - optimal
 - Formatting utilities: O(1) complexity - optimal
 - Server compilation: <2.5s build time
 - Runtime: <1ms per calculation call
 
 #### Reliability: ✅ PASS
+
 - Edge case handling: Division by zero returns 0 (not NaN/Infinity)
 - Null safety: Optional parameter for organicSales (can be pre-calculated)
 - NaN prevention: isNaN() check in calculateOrganicContribution
 - Type safety: ProductMetrics interface prevents runtime errors
 
 #### Maintainability: ✅ PASS
+
 - Excellent JSDoc documentation with real-world examples
 - Clear function naming and parameter names
 - Comprehensive test suite for regression prevention
@@ -418,12 +452,14 @@ Claude Sonnet 4.5 (2025-12-29)
 ### Performance Considerations
 
 **Current Performance**: ✅ **OPTIMAL**
+
 - Calculation functions: O(n) complexity (cannot be improved further)
 - Formatting utilities: O(1) complexity (optimal)
 - No unnecessary allocations
 - No repeated calculations
 
 **Optimization Opportunities**: ✅ **NONE NEEDED**
+
 - Functions are already optimally implemented
 - Memoization would add overhead without benefit (functions are cheap)
 - Only optimization would be caching at call site (MergedGroupTable already does this)
@@ -433,6 +469,7 @@ Claude Sonnet 4.5 (2025-12-29)
 ### Improvements Checklist
 
 **Handled by Dev**:
+
 - [x] All 6 Epic 35 calculation formulas (AC 7-12)
 - [x] All 4 formatting utilities (AC 13-17)
 - [x] ProductMetrics interface matching backend fields
@@ -446,6 +483,7 @@ Claude Sonnet 4.5 (2025-12-29)
 **Pending**: ✅ **NONE** - All work complete
 
 **Optional Future Enhancements**: ✅ **NONE NEEDED**
+
 - Current implementation is production-ready as-is
 
 ---
@@ -465,6 +503,7 @@ Claude Sonnet 4.5 (2025-12-29)
 **Quality Score**: 95/100 (Exceptional)
 
 **Risk Level**: LOW
+
 - 0 critical risks
 - 0 high risks
 - 0 medium risks
@@ -477,6 +516,7 @@ Claude Sonnet 4.5 (2025-12-29)
 ✅ **Ready for Story 37.4 (Full Approval)**
 
 **Justification**:
+
 - All 21 ACs passed with comprehensive validation
 - Exceptional code quality with 95/100 score
 - 77 unit tests, 100% pass rate, ≥90% coverage
@@ -485,6 +525,7 @@ Claude Sonnet 4.5 (2025-12-29)
 - Zero security, performance, or reliability concerns
 
 **Next Steps**:
+
 1. ✅ **PROCEED** to Story 37.4 (Visual Styling & Hierarchy)
 2. ✅ **NO CHANGES REQUIRED** - Story 37.3 complete and production-ready
 
@@ -501,6 +542,7 @@ Claude Sonnet 4.5 (2025-12-29)
 ---
 
 **QA Checklist** (Updated):
+
 - [x] All 21 acceptance criteria validated
 - [x] Aggregate calculations match Excel validation (mockMergedGroup1 verified)
 - [x] Formatting correct (Russian locale with \u00A0 non-breaking space, ₽ symbol)

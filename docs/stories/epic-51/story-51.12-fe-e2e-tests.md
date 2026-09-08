@@ -22,6 +22,7 @@
 ## Background
 
 This story implements Playwright end-to-end tests covering:
+
 - FBS Analytics page navigation and interactions
 - Analytics Hub card integration
 - Backfill admin page (owner role)
@@ -523,22 +524,22 @@ projects: [
 
 ### Test Coverage
 
-| Feature | Unit | Integration | E2E | A11y |
-|---------|------|-------------|-----|------|
-| Analytics Page | Story 51.8 | Story 51.8 | This story | This story |
-| Trends Tab | Story 51.4 | Story 51.8 | This story | This story |
-| Seasonal Tab | Story 51.6 | Story 51.8 | This story | This story |
-| Comparison Tab | Story 51.7 | Story 51.8 | This story | This story |
-| Hub Card | Story 51.9 | Story 51.9 | This story | This story |
+| Feature        | Unit        | Integration | E2E        | A11y       |
+| -------------- | ----------- | ----------- | ---------- | ---------- |
+| Analytics Page | Story 51.8  | Story 51.8  | This story | This story |
+| Trends Tab     | Story 51.4  | Story 51.8  | This story | This story |
+| Seasonal Tab   | Story 51.6  | Story 51.8  | This story | This story |
+| Comparison Tab | Story 51.7  | Story 51.8  | This story | This story |
+| Hub Card       | Story 51.9  | Story 51.9  | This story | This story |
 | Backfill Admin | Story 51.11 | Story 51.11 | This story | This story |
 
 ### Browser Matrix
 
-| Browser | Desktop | Mobile |
-|---------|---------|--------|
-| Chromium | Yes | Yes (Pixel 5) |
-| Firefox | Yes | - |
-| WebKit | Yes | Yes (iPhone 12) |
+| Browser  | Desktop | Mobile          |
+| -------- | ------- | --------------- |
+| Chromium | Yes     | Yes (Pixel 5)   |
+| Firefox  | Yes     | -               |
+| WebKit   | Yes     | Yes (iPhone 12) |
 
 ---
 

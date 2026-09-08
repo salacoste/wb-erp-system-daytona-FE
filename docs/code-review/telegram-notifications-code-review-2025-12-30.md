@@ -26,6 +26,7 @@
 **Impact**: Maintenance, code consistency
 
 **Current Implementation**:
+
 ```typescript
 // lib/api/notifications.ts (INCONSISTENT)
 import { useAuthStore } from '@/stores/authStore';
@@ -52,6 +53,7 @@ export async function startTelegramBinding() {
 ```
 
 **Project Standard** (Used by all other API clients):
+
 ```typescript
 // lib/api/storage-analytics.ts (CORRECT)
 import { apiClient } from '../api-client'
@@ -67,16 +69,18 @@ export async function getStorageBySku(
 ```
 
 **Comparison**:
-| Aspect | notifications.ts | Other API clients |
-|--------|------------------|-------------------|
-| Base client | Raw `fetch` | `apiClient` class |
-| Auth headers | Manual injection | Auto-injected |
-| Error handling | Custom function | Built-in `ApiError` |
-| Base URL | Manual env var | Centralized config |
+
+| Aspect         | notifications.ts | Other API clients   |
+| -------------- | ---------------- | ------------------- |
+| Base client    | Raw `fetch`      | `apiClient` class   |
+| Auth headers   | Manual injection | Auto-injected       |
+| Error handling | Custom function  | Built-in `ApiError` |
+| Base URL       | Manual env var   | Centralized config  |
 
 **Recommendation**: ✅ **Refactor Required**
 
 Refactor `lib/api/notifications.ts` to use `apiClient`:
+
 ```typescript
 // RECOMMENDED IMPLEMENTATION
 import { apiClient } from '../api-client'
@@ -103,6 +107,7 @@ export async function unbindTelegram(): Promise<void> {
 ```
 
 **Benefits**:
+
 - ✅ Consistent error handling across all APIs
 - ✅ Automatic JWT + Cabinet-Id headers
 - ✅ Centralized config (no duplicate env var access)
@@ -119,6 +124,7 @@ export async function unbindTelegram(): Promise<void> {
 **Impact**: Cache management, maintainability
 
 **Current Implementation**:
+
 ```typescript
 // hooks/useTelegramBinding.ts (INCONSISTENT)
 export function useTelegramBinding() {
@@ -135,6 +141,7 @@ export function useTelegramBinding() {
 ```
 
 **Project Standard** (Used in advertising analytics):
+
 ```typescript
 // hooks/useAdvertisingAnalytics.ts (CORRECT)
 export const advertisingQueryKeys = {
@@ -156,6 +163,7 @@ export function useAdvertisingAnalytics(params: AdvertisingAnalyticsParams) {
 **Recommendation**: ✅ **Refactor Required**
 
 Add query keys factory to `hooks/useTelegramBinding.ts`:
+
 ```typescript
 // RECOMMENDED IMPLEMENTATION
 export const telegramQueryKeys = {
@@ -186,6 +194,7 @@ export function useTelegramBinding() {
 ```
 
 **Benefits**:
+
 - ✅ Type-safe query key management
 - ✅ Easier refactoring (centralized keys)
 - ✅ Better cache invalidation patterns
@@ -199,6 +208,7 @@ export function useTelegramBinding() {
 ### ✅ Strengths
 
 **1. TelegramBindingModal.tsx** - Excellent UX patterns:
+
 ```typescript
 // ✅ Dynamic polling messages based on elapsed time
 const getPollingMessage = () => {
@@ -216,6 +226,7 @@ const getProgressColor = () => {
 ```
 
 **2. Settings Page** - Excellent empty state handling:
+
 ```typescript
 // ✅ Hero banner when not bound (good onboarding)
 {!isBound && (
@@ -235,6 +246,7 @@ const getProgressColor = () => {
 ```
 
 **3. Accessibility**:
+
 ```typescript
 // ✅ ARIA labels and roles
 <div
@@ -251,6 +263,7 @@ const getProgressColor = () => {
 ```
 
 **4. Component Composition**:
+
 ```typescript
 // ✅ Clear separation of concerns
 TelegramBindingCard         // Status display + trigger bind/unbind
@@ -263,6 +276,7 @@ UnbindConfirmationDialog   // Unbind confirmation
 ### Minor Suggestions (Non-blocking)
 
 **1. Bot username hardcoded**:
+
 ```typescript
 // Current (hardcoded)
 <p>Отправьте боту @Kernel_crypto_bot:</p>
@@ -272,6 +286,7 @@ UnbindConfirmationDialog   // Unbind confirmation
 ```
 
 **2. Magic numbers**:
+
 ```typescript
 // Current
 const [timeRemaining, setTimeRemaining] = useState(600); // What is 600?
@@ -290,6 +305,7 @@ const [timeRemaining, setTimeRemaining] = useState(BINDING_CODE_TTL_SECONDS);
 **File**: `src/types/notifications.ts`
 
 **Strengths**:
+
 - ✅ Complete DTOs matching backend contract
 - ✅ Enums for type-safe constants
 - ✅ JSDoc comments for all interfaces
@@ -297,6 +313,7 @@ const [timeRemaining, setTimeRemaining] = useState(BINDING_CODE_TTL_SECONDS);
 - ✅ Error response types
 
 **Example**:
+
 ```typescript
 /**
  * Response from POST /v1/notifications/telegram/bind
@@ -330,6 +347,7 @@ export enum BindingFlowState {
 **Status**: ⚠️ **Test files exist but need verification**
 
 **Recommendation**: Verify test coverage before Phase 2:
+
 ```bash
 npm test -- --coverage src/components/notifications
 ```
@@ -353,6 +371,7 @@ Route (app)                      Size  First Load JS
 ```
 
 **Analysis**:
+
 - ✅ No TypeScript errors
 - ✅ Route `/settings/notifications` built successfully
 - ✅ Bundle size reasonable (185 KB First Load JS)
@@ -361,12 +380,12 @@ Route (app)                      Size  First Load JS
 
 ## Summary of Issues & Recommendations
 
-| # | Issue | Severity | Effort | Priority |
-|---|-------|----------|--------|----------|
-| 1 | API client uses raw `fetch` instead of `apiClient` | Moderate | 1-2h | **HIGH** |
-| 2 | Hooks lack query keys factory pattern | Moderate | 30min | **HIGH** |
-| 3 | Bot username hardcoded | Low | 5min | Low |
-| 4 | Magic numbers in timer | Low | 10min | Low |
+| #   | Issue                                              | Severity | Effort | Priority |
+| --- | -------------------------------------------------- | -------- | ------ | -------- |
+| 1   | API client uses raw `fetch` instead of `apiClient` | Moderate | 1-2h   | **HIGH** |
+| 2   | Hooks lack query keys factory pattern              | Moderate | 30min  | **HIGH** |
+| 3   | Bot username hardcoded                             | Low      | 5min   | Low      |
+| 4   | Magic numbers in timer                             | Low      | 10min  | Low      |
 
 ---
 
@@ -375,6 +394,7 @@ Route (app)                      Size  First Load JS
 ### Priority 1: API Client (1-2h)
 
 **Steps**:
+
 1. Read `lib/api-client.ts` to understand `apiClient` class interface
 2. Refactor all 6 functions in `lib/api/notifications.ts` to use `apiClient`
 3. Remove `getAuthHeaders()` and `handleApiError()` helper functions
@@ -389,6 +409,7 @@ Route (app)                      Size  First Load JS
 ### Priority 2: Query Keys Factory (30min)
 
 **Steps**:
+
 1. Add `telegramQueryKeys` factory to `hooks/useTelegramBinding.ts`
 2. Replace all inline `['telegram-status']` with factory calls
 3. Update invalidation calls in mutations
@@ -402,6 +423,7 @@ Route (app)                      Size  First Load JS
 ### Priority 3: Minor Improvements (15min)
 
 **Steps**:
+
 1. Extract bot username to env var
 2. Replace magic numbers with named constants
 3. Update tests if needed
@@ -414,17 +436,20 @@ Route (app)                      Size  First Load JS
 ## Code Review Checklist
 
 ### API Client
+
 - [ ] Uses centralized `apiClient` class
 - [ ] Follows project error handling patterns
 - [ ] No duplicate auth header logic
 
 ### Hooks
+
 - [ ] Query keys factory pattern
 - [ ] Proper TypeScript typing
 - [ ] Consistent caching strategies
 - [ ] Mutation error handling
 
 ### Components
+
 - [x] Accessibility (ARIA labels, roles)
 - [x] Loading states
 - [x] Error states
@@ -433,12 +458,14 @@ Route (app)                      Size  First Load JS
 - [ ] No hardcoded values (bot username)
 
 ### TypeScript
+
 - [x] Complete type definitions
 - [x] No `any` types
 - [x] JSDoc comments
 - [x] Type exports
 
 ### Testing
+
 - [ ] Unit tests passing
 - [ ] Integration tests passing
 - [ ] Manual test plan created

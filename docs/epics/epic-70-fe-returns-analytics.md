@@ -35,15 +35,15 @@ Sits in the Marketing Analytics cluster: Epic 68 (Funnel), Epic 69 (Buyout), Epi
 
 Epic 70 Returns shipped pre-workflow; per-story ACs are not in `implementation-artifacts/`. The features below were delivered as one coherent epic:
 
-| Capability | Evidence |
-|---|---|
-| Return reasons API integration | `src/lib/api/return-analytics.ts` — 2 endpoints |
-| Aggregated pie chart view | `components/ReturnReasonsPieChart.tsx` |
-| Summary cards (total returns, % rate, top reason) | `components/ReturnsSummaryCards.tsx` |
-| Per-SKU return breakdown table with cursor pagination | `components/ReturnsTable.tsx` |
-| Anomaly detection flags | `getReturnsBySku({ anomalyOnly })` parameter |
+| Capability                                                  | Evidence                                                                                                                                                                 |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Return reasons API integration                              | `src/lib/api/return-analytics.ts` — 2 endpoints                                                                                                                          |
+| Aggregated pie chart view                                   | `components/ReturnReasonsPieChart.tsx`                                                                                                                                   |
+| Summary cards (total returns, % rate, top reason)           | `components/ReturnsSummaryCards.tsx`                                                                                                                                     |
+| Per-SKU return breakdown table with cursor pagination       | `components/ReturnsTable.tsx`                                                                                                                                            |
+| Anomaly detection flags                                     | `getReturnsBySku({ anomalyOnly })` parameter                                                                                                                             |
 | Dual-format handling (raw classification vs pre-aggregated) | `return-analytics.ts:47-55` docstring (detection comment at lines 51-53) — auto-detects by checking first item for `returnCategory` (raw) vs `totalReturns` (aggregated) |
-| Locale-aware reason labels | `getReturnReasons(from, to, locale)` supports `'ru' | 'en'` |
+| Locale-aware reason labels                                  | `getReturnReasons(from, to, locale)` supports `'ru'                                                                                                                      | 'en'` |
 
 Post-Epic-70 touches: Story 88.5-FE (this story) — drive-by code-comment correction at `ReturnsPageContent.tsx:3`.
 
@@ -52,20 +52,24 @@ Post-Epic-70 touches: Story 88.5-FE (this story) — drive-by code-comment corre
 ## File List
 
 **Route / page**:
+
 - `src/app/(dashboard)/analytics/returns/page.tsx`
 
 **Components** (`src/app/(dashboard)/analytics/returns/components/`):
+
 - `ReturnsPageContent.tsx` — orchestrator
 - `ReturnReasonsPieChart.tsx` — category distribution pie chart
 - `ReturnsSummaryCards.tsx` — top-level summary
 - `ReturnsTable.tsx` — per-SKU breakdown with cursor pagination
 
 **State / data layer**:
+
 - `src/hooks/use-return-analytics.ts` — TanStack Query wrapper
 - `src/lib/api/return-analytics.ts` — API client; includes dual-format detection helper
 - `src/types/analytics-returns.ts` — `ReturnReasonsResponse`, `BySkuReturnResponse`, `ReturnsBySkuParams`
 
 **Navigation**:
+
 - `src/lib/routes.ts` — `/analytics/returns` registration
 
 ---
@@ -74,10 +78,10 @@ Post-Epic-70 touches: Story 88.5-FE (this story) — drive-by code-comment corre
 
 Per `docs/request-backend/151-EPICS-68-71-ANALYTICS-API.md` (note: BE #151 labels these as Epic 71; frontend canonicalizes to Epic 70):
 
-| Method | Endpoint | Cache TTL | Purpose |
-|---|---|---|---|
-| GET | `/v1/analytics/returns/reasons` | 5 min | Aggregated return reasons by category (for pie chart) |
-| GET | `/v1/analytics/returns/reasons/by-sku` | 5 min | Per-SKU breakdown with anomaly flags (cursor-paginated) |
+| Method | Endpoint                               | Cache TTL | Purpose                                                 |
+| ------ | -------------------------------------- | --------- | ------------------------------------------------------- |
+| GET    | `/v1/analytics/returns/reasons`        | 5 min     | Aggregated return reasons by category (for pie chart)   |
+| GET    | `/v1/analytics/returns/reasons/by-sku` | 5 min     | Per-SKU breakdown with anomaly flags (cursor-paginated) |
 
 Runnable examples: `test-api/33-return-analytics.http`.
 

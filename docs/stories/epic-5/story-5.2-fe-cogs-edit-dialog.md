@@ -1,6 +1,7 @@
 # Story 5.2-fe: COGS Edit Dialog
 
 ## Status
+
 Approved
 
 ## Story
@@ -12,11 +13,13 @@ Approved
 ## Acceptance Criteria
 
 ### Dialog Trigger
+
 1. Edit button в COGS History table dropdown открывает диалог
 2. Диалог может быть открыт для любой активной записи COGS
 3. Кнопка недоступна для Analyst (только Manager/Owner/Admin)
 
 ### Dialog UI
+
 4. Modal dialog с заголовком "Редактирование COGS"
 5. Показывает read-only информацию: `nm_id`, `product_name`, `valid_from`, `source`
 6. Редактируемые поля:
@@ -40,6 +43,7 @@ Approved
    - Показывается только если значение изменено
 
 ### Validation
+
 10. `unit_cost_rub` обязателен и должен быть > 0
 11. `notes` максимум 1000 символов
 12. Хотя бы одно поле должно быть изменено для сохранения
@@ -49,12 +53,14 @@ Approved
     - Цвет: text-muted-foreground, text-destructive при >950
 
 ### Form Actions
+
 15. Кнопка "Сохранить" — submit формы (primary)
 16. Кнопка "Отмена" — закрыть диалог без сохранения
 17. Loading state во время сохранения (spinner + disabled buttons)
 18. Кнопка "Сохранить" disabled пока форма невалидна или нет изменений
 
 ### Success Flow
+
 19. После успешного сохранения:
     - Toast notification "✅ COGS обновлён"
     - Описание: "Маржа будет пересчитана для N недель (~X сек)"
@@ -65,6 +71,7 @@ Approved
     - Информирует о фоновом пересчёте
 
 ### Error Handling
+
 21. 400 (validation) — показать ошибки под полями
 22. 403 (forbidden) — toast "Недостаточно прав для редактирования"
 23. 404 (not found) — toast "Запись не найдена, возможно была удалена"
@@ -116,14 +123,17 @@ Approved
 ### API Integration
 
 **Backend Endpoint:** `PATCH /v1/cogs/:cogsId`
+
 - Backend Story: `docs/stories/epic-5/story-5.2-edit-cogs.md`
 - Backend Status: ✅ Done (QA PASSED 90/100)
 
 **Headers:**
+
 - `Authorization: Bearer <token>`
 - `X-Cabinet-Id: <uuid>`
 
 **Request body:**
+
 ```typescript
 interface UpdateCogsRecordDto {
   unit_cost_rub?: number;  // Positive decimal, optional
@@ -133,6 +143,7 @@ interface UpdateCogsRecordDto {
 ```
 
 **Response (200 OK):**
+
 ```typescript
 interface EditCogsResponse {
   cogs_id: string;
@@ -157,6 +168,7 @@ interface EditCogsResponse {
 ```
 
 **Error Responses:**
+
 - `400 Bad Request` — Validation errors (empty body, invalid values)
 - `403 Forbidden` — Analyst role or wrong cabinet
 - `404 Not Found` — COGS not found or already deleted
@@ -186,6 +198,7 @@ type EditCogsFormData = z.infer<typeof editCogsSchema>;
 ### Relevant Source Tree
 
 **New Files:**
+
 ```
 src/
 ├── components/custom/
@@ -197,6 +210,7 @@ src/
 ### Component Patterns
 
 **Dialog with Form (UX Decision - Vertical Layout):**
+
 ```tsx
 <Dialog open={open} onOpenChange={setOpen}>
   <DialogContent className="sm:max-w-[500px]">
@@ -293,6 +307,7 @@ src/
 ```
 
 **Mutation Hook with Toast (UX Decision):**
+
 ```typescript
 const mutation = useMutation({
   mutationFn: (data: UpdateCogsRecordDto) =>
@@ -336,6 +351,7 @@ const mutation = useMutation({
 **Test file:** `src/components/custom/CogsEditDialog.test.tsx`
 
 **Test scenarios:**
+
 - Form renders with current values pre-filled
 - Current value displayed above input
 - Validation error: empty unit_cost_rub when cleared
@@ -364,33 +380,36 @@ const mutation = useMutation({
 
 ## UX Decisions (Resolved 2025-11-28)
 
-| # | Question | Decision | Rationale |
-|---|----------|----------|-----------|
-| 1 | Layout полей | Вертикальный стек | Простота, мобильность, 2 поля |
-| 2 | Warning о марже | Inline под полем | Контекстуально, не блокирует |
-| 3 | Счётчик символов | Показывать при >800 | Релевантно когда приближается к лимиту |
-| 4 | Margin recalculation | В toast notification | Достаточно информативно, не прерывает flow |
+| #   | Question             | Decision             | Rationale                                  |
+| --- | -------------------- | -------------------- | ------------------------------------------ |
+| 1   | Layout полей         | Вертикальный стек    | Простота, мобильность, 2 поля              |
+| 2   | Warning о марже      | Inline под полем     | Контекстуально, не блокирует               |
+| 3   | Счётчик символов     | Показывать при >800  | Релевантно когда приближается к лимиту     |
+| 4   | Margin recalculation | В toast notification | Достаточно информативно, не прерывает flow |
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-11-28 | 1.0 | Initial story creation | Sarah (PO) |
-| 2025-11-28 | 1.1 | UX decisions applied, status → Approved | Sarah (PO) |
-| 2025-11-28 | 1.2 | Implementation complete, 24 tests passing, status → Dev Complete | James (Dev Agent) |
-| 2025-11-28 | 1.3 | QA PASS (95/100), status → Approved | Quinn (QA) |
+| Date       | Version | Description                                                      | Author            |
+| ---------- | ------- | ---------------------------------------------------------------- | ----------------- |
+| 2025-11-28 | 1.0     | Initial story creation                                           | Sarah (PO)        |
+| 2025-11-28 | 1.1     | UX decisions applied, status → Approved                          | Sarah (PO)        |
+| 2025-11-28 | 1.2     | Implementation complete, 24 tests passing, status → Dev Complete | James (Dev Agent) |
+| 2025-11-28 | 1.3     | QA PASS (95/100), status → Approved                              | Quinn (QA)        |
 
 ## Dev Agent Record
 
 ### Agent Model Used
+
 Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
+
 - Initial component created as part of Story 5.1-fe (CogsHistoryTable dependency)
 - Refactored to use separate hook with exported helper functions
 - Fixed validateUnitCost to use strict regex check (parseFloat('12abc') returns 12)
 
 ### Completion Notes List
+
 1. Created `useCogsEdit.ts` hook with exported helper functions for testability
 2. Refactored `CogsEditDialog.tsx` to use the hook and helper functions
 3. Hook handles all toast notifications and query invalidation
@@ -398,18 +417,22 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 5. All 24 AC covered by implementation
 
 ### File List
+
 **New Files Created:**
+
 ```
 src/hooks/useCogsEdit.ts                    # Mutation hook + helpers
 src/hooks/useCogsEdit.test.ts               # 24 unit tests
 ```
 
 **Modified Files:**
+
 ```
 src/components/custom/CogsEditDialog.tsx    # Refactored to use hook
 ```
 
 ### Test Results
+
 - `useCogsEdit.test.ts`: 24 tests passed ✅
 
 ## QA Results
@@ -419,26 +442,31 @@ src/components/custom/CogsEditDialog.tsx    # Refactored to use hook
 **Date**: 2025-11-28
 
 ### Summary
+
 Complete implementation with all 24 ACs met, 24 unit tests passing, proper form validation, margin warning, and toast notifications.
 
 ### NFR Validation
-| NFR | Status | Notes |
-|-----|--------|-------|
-| Security | ✅ PASS | Role-based access (Analyst cannot edit), Authorization headers sent, input validation |
-| Performance | ✅ PASS | TanStack Mutation with proper query invalidation, optimistic form state |
-| Reliability | ✅ PASS | Comprehensive error handling (400/403/404/network), toast notifications |
-| Maintainability | ✅ PASS | Validation helpers exported for unit testing, clear separation hook/component |
-| Accessibility | ✅ PASS | Form labels properly associated, disabled states during loading |
+
+| NFR             | Status  | Notes                                                                                 |
+| --------------- | ------- | ------------------------------------------------------------------------------------- |
+| Security        | ✅ PASS | Role-based access (Analyst cannot edit), Authorization headers sent, input validation |
+| Performance     | ✅ PASS | TanStack Mutation with proper query invalidation, optimistic form state               |
+| Reliability     | ✅ PASS | Comprehensive error handling (400/403/404/network), toast notifications               |
+| Maintainability | ✅ PASS | Validation helpers exported for unit testing, clear separation hook/component         |
+| Accessibility   | ✅ PASS | Form labels properly associated, disabled states during loading                       |
 
 ### Test Coverage
+
 - **24 unit tests** covering validation and payload construction
 - All 24 acceptance criteria verified
 - Strict numeric validation (rejects '12abc')
 
 ### Risks Identified
+
 None
 
 ### Recommendations
+
 - Future: Consider component tests for form interactions (submit flow)
 - Future: Consider E2E test for edit workflow end-to-end
 

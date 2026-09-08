@@ -10,10 +10,10 @@ However, buyout summary (using `wb_finance_raw`) reports **63 returns** out of 5
 
 **Two different data sources disagree on returns:**
 
-| Source | Data Table | Returns Found |
-|--------|-----------|---------------|
-| Buyout Summary (Epic 69) | `wb_finance_raw` | 63 returns |
-| Return Classification (Epic 71) | `orders_fbs` + `order_status_history` | 0 classified |
+| Source                          | Data Table                            | Returns Found |
+| ------------------------------- | ------------------------------------- | ------------- |
+| Buyout Summary (Epic 69)        | `wb_finance_raw`                      | 63 returns    |
+| Return Classification (Epic 71) | `orders_fbs` + `order_status_history` | 0 classified  |
 
 The return classification service (`return-classification.service.ts`) looks at FBS order statuses to classify returns into 3 categories. It found 84 orders in the date range but ALL were skipped because:
 
@@ -56,10 +56,12 @@ Returns API: totalReturns=0, categories all 0
 ## Suggested Fix
 
 If the 63 returns are mostly FBO:
+
 - Add FBO return detection path (query `wb_finance_raw` directly for return doc_types)
 - Don't require `orders_fbs` match for classification
 
 If SRID linking is broken:
+
 - Fix the JOIN between `orders_fbs.srid` and `wb_finance_raw.srid`
 
 ---

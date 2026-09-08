@@ -13,6 +13,7 @@
 ## Impact
 
 Low — frontend calculation works correctly. Backend support would enable:
+
 - Server-side validation of box_type against actual warehouse tariff schedules
 - Server-side turnover_days factor in storage cost (currently frontend-only)
 

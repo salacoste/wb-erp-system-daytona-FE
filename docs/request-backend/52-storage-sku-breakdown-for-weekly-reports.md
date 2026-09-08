@@ -9,6 +9,7 @@
 ## Problem Statement
 
 Weekly Report (`weekly_payout_summary`) contains only **aggregate** storage cost:
+
 ```json
 {
   "week": "2025-W49",
@@ -17,6 +18,7 @@ Weekly Report (`weekly_payout_summary`) contains only **aggregate** storage cost
 ```
 
 Frontend needs **per-SKU storage costs** to:
+
 1. Show storage cost breakdown by product in weekly analytics
 2. Calculate per-product profitability (revenue - COGS - storage - logistics)
 3. Identify high-storage-cost products
@@ -27,10 +29,10 @@ Frontend needs **per-SKU storage costs** to:
 
 ### Data Sources
 
-| Source | Granularity | SKU Breakdown | Update Freq |
-|--------|-------------|---------------|-------------|
-| `weekly_payout_summary.storageCost` | Weekly total | ❌ No | Weekly (Mon 12:00 MSK) |
-| `paid_storage_daily` | Daily per-SKU | ✅ Yes | Daily (06:00 MSK) |
+| Source                              | Granularity   | SKU Breakdown | Update Freq            |
+| ----------------------------------- | ------------- | ------------- | ---------------------- |
+| `weekly_payout_summary.storageCost` | Weekly total  | ❌ No         | Weekly (Mon 12:00 MSK) |
+| `paid_storage_daily`                | Daily per-SKU | ✅ Yes        | Daily (06:00 MSK)      |
 
 ### Data Accuracy (Verified W49: Dec 1-7, 2025)
 
@@ -44,6 +46,7 @@ Difference:                    26.18₽ (1.36%)
 ✅ **Data sources match with 98.6% accuracy**
 
 Small discrepancy (~1-2%) is expected due to:
+
 - Different date attribution methods in WB systems
 - Cutoff time differences (midnight vs business day boundary)
 
@@ -60,6 +63,7 @@ Authorization: Bearer {token}
 ```
 
 Response:
+
 ```json
 {
   "data": {
@@ -82,6 +86,7 @@ Authorization: Bearer {token}
 ```
 
 Response:
+
 ```json
 {
   "data": [
@@ -112,6 +117,7 @@ X-Cabinet-Id: {cabinetId}
 ```
 
 Response:
+
 ```json
 {
   "data": {
@@ -139,21 +145,21 @@ Response:
  */
 function getWeekDateRange(isoWeek: string): { dateFrom: string; dateTo: string } {
   const [year, weekNum] = isoWeek.replace('W', '').split('-').map(Number);
-  
+
   // Find first Monday of the year
   const jan4 = new Date(year, 0, 4);
   const dayOfWeek = jan4.getDay() || 7;
   const firstMonday = new Date(jan4);
   firstMonday.setDate(jan4.getDate() - dayOfWeek + 1);
-  
+
   // Calculate week start (Monday)
   const weekStart = new Date(firstMonday);
   weekStart.setDate(firstMonday.getDate() + (weekNum - 1) * 7);
-  
+
   // Calculate week end (Sunday)
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 6);
-  
+
   return {
     dateFrom: weekStart.toISOString().slice(0, 10),
     dateTo: weekEnd.toISOString().slice(0, 10)
@@ -174,14 +180,14 @@ getWeekDateRange('2025-W49')
 ```typescript
 interface WeeklyReportWithStorageBreakdown {
   week: string;
-  
+
   // From weekly_payout_summary (official total)
   storageCostOfficial: number;
-  
+
   // From paid_storage_daily (SKU breakdown)
   storageCostFromSkus: number;
   storageBySkus: StorageSkuData[];
-  
+
   // Discrepancy tracking
   discrepancyAmount: number;
   discrepancyPercent: number;
@@ -193,22 +199,22 @@ async function getWeeklyReportWithStorageBreakdown(
   week: string
 ): Promise<WeeklyReportWithStorageBreakdown> {
   const { dateFrom, dateTo } = getWeekDateRange(week);
-  
+
   // Fetch both sources in parallel
   const [weeklyReport, storageBySkus] = await Promise.all([
     api.get(`/v1/analytics/weekly/${week}`),
     api.get(`/v1/analytics/storage/by-sku?dateFrom=${dateFrom}&dateTo=${dateTo}`)
   ]);
-  
+
   const storageCostFromSkus = storageBySkus.data.reduce(
     (sum, sku) => sum + sku.totalCost, 0
   );
-  
+
   const discrepancyAmount = Math.abs(
     weeklyReport.storageCost - storageCostFromSkus
   );
   const discrepancyPercent = (discrepancyAmount / weeklyReport.storageCost) * 100;
-  
+
   return {
     week,
     storageCostOfficial: weeklyReport.storageCost,
@@ -233,16 +239,17 @@ function getDiscrepancyStatus(percent: number): 'ok' | 'warning' | 'error' {
 
 ### 1. Which Storage Value to Display?
 
-| Use Case | Recommended Source | Reason |
-|----------|-------------------|--------|
-| Dashboard "Storage" card | `storageCostOfficial` | Matches WB reports |
-| Per-product breakdown | `storageBySkus` | Only available source |
-| Product profitability | `storageBySkus` | Need per-SKU values |
-| Reconciliation | Show both + diff | Transparency |
+| Use Case                 | Recommended Source    | Reason                |
+| ------------------------ | --------------------- | --------------------- |
+| Dashboard "Storage" card | `storageCostOfficial` | Matches WB reports    |
+| Per-product breakdown    | `storageBySkus`       | Only available source |
+| Product profitability    | `storageBySkus`       | Need per-SKU values   |
+| Reconciliation           | Show both + diff      | Transparency          |
 
 ### 2. Expected Discrepancy (~1-2%)
 
 Always expect small variance between sources:
+
 ```typescript
 // UI: Show discrepancy status
 {discrepancyPercent < 3 && (
@@ -258,11 +265,11 @@ Always expect small variance between sources:
 
 ### 3. Data Availability
 
-| Data | When Available |
-|------|----------------|
-| Storage for yesterday | 06:00 MSK today |
-| Storage for today | Same day (may be partial) |
-| Weekly Report | Monday 12:00 MSK (after week ends) |
+| Data                  | When Available                     |
+| --------------------- | ---------------------------------- |
+| Storage for yesterday | 06:00 MSK today                    |
+| Storage for today     | Same day (may be partial)          |
+| Weekly Report         | Monday 12:00 MSK (after week ends) |
 
 **Important**: If querying for current week, Paid Storage API will have partial data!
 
@@ -299,7 +306,7 @@ interface ProductProfitabilityProps {
 function ProductProfitabilityCard(props: ProductProfitabilityProps) {
   const profit = props.revenue - props.cogs - props.storageCost - props.logisticsCost;
   const margin = (profit / props.revenue) * 100;
-  
+
   return (
     <Card>
       <CardHeader>{props.week} Profitability</CardHeader>
@@ -343,7 +350,7 @@ WHERE cabinet_id = $1
 
 ```sql
 -- Get product profitability for a week
-SELECT 
+SELECT
   wmf.nm_id,
   wmf.sa_name,
   wmf.revenue_net_rub,
@@ -364,10 +371,10 @@ WHERE wmf.cabinet_id = $1 AND wmf.week = $4;
 
 ## Cron Schedules Reference
 
-| Task | Cron | Time (MSK) | Description |
-|------|------|------------|-------------|
-| Paid Storage Import | `0 6 * * *` | 06:00 daily | Yesterday's storage data |
-| Weekly Finance Import | `0 9 * * 1` | 12:00 Monday | Previous week's report |
+| Task                  | Cron        | Time (MSK)   | Description              |
+| --------------------- | ----------- | ------------ | ------------------------ |
+| Paid Storage Import   | `0 6 * * *` | 06:00 daily  | Yesterday's storage data |
+| Weekly Finance Import | `0 9 * * 1` | 12:00 Monday | Previous week's report   |
 
 ---
 

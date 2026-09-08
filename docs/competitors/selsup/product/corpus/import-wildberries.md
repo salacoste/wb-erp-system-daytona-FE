@@ -13,7 +13,7 @@ chars: 13364
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-importiruyutsya-tovary-s-wildberries" rel="nofollow">Как импортируются товары с Wildberries</a>
 - <a href="#nastrojki-importa" rel="nofollow">Настройки импорта</a>
 - <a href="#avtomaticheski-importirovat-tovary-nochyu" rel="nofollow">Автоматически импортировать товары ночью</a>
@@ -83,7 +83,7 @@ SelSup использует специальный номер объединен
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/05/chrome_a7icnyynwd-1024x474.png.webp)
 
-------------------------------------------------------------------------
+---
 
 **Если переключатель «Не объединять карточки по цветам и размерам» включен:** в поле «Артикул (объединять на карточке)» будет артикул товара, как на Wildberries, но карточки будут создаваться отдельно для каждого цвета и размера.
 
@@ -202,7 +202,7 @@ SelSup использует специальный номер объединен
 
 Если вы столкнулись с ошибками импорта карточек товаров, ознакомьтесь с этой [статьей](../vozmozhnye-oshibki-pri-importe-kartochek-iz-marketplejsov/index.html).
 
-------------------------------------------------------------------------
+---
 
 Полную инструкцию о возможностях интеграции с Wildberries можно найти [здесь](../integration-s-wildberries/index.html).
 

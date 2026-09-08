@@ -8,6 +8,7 @@
 ---
 
 ## Title (RU)
+
 E2E тесты метрик дашборда
 
 ---
@@ -17,6 +18,7 @@ E2E тесты метрик дашборда
 Create comprehensive Playwright E2E tests for the new dashboard metrics display features implemented in Epic 62-FE. These tests ensure that all 8 metric cards, the daily breakdown chart/table, and the interactive legend work correctly in a real browser environment.
 
 The test suite should cover:
+
 - All 8 metric cards rendering with data
 - Metric card comparison indicators
 - Daily breakdown chart visualization
@@ -452,12 +454,12 @@ Tests should use seeded test data or mock API responses:
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
-| `e2e/dashboard-metrics.spec.ts` | CREATE | Main E2E test file |
-| `e2e/pages/DashboardPage.ts` | CREATE | Page object model (optional) |
-| `e2e/fixtures/dashboard-metrics.json` | CREATE | Test data fixtures |
-| `src/components/custom/dashboard/*.tsx` | MODIFY | Add data-testid attributes |
+| File                                    | Action | Description                  |
+| --------------------------------------- | ------ | ---------------------------- |
+| `e2e/dashboard-metrics.spec.ts`         | CREATE | Main E2E test file           |
+| `e2e/pages/DashboardPage.ts`            | CREATE | Page object model (optional) |
+| `e2e/fixtures/dashboard-metrics.json`   | CREATE | Test data fixtures           |
+| `src/components/custom/dashboard/*.tsx` | MODIFY | Add data-testid attributes   |
 
 ---
 
@@ -465,34 +467,34 @@ Tests should use seeded test data or mock API responses:
 
 Components must include these test selectors:
 
-| Component | Selector |
-|-----------|----------|
-| Metric cards | `data-testid="metric-card-{metric}"` |
-| Metric value | `data-testid="metric-value"` |
-| Comparison badge | `data-testid="comparison-badge"` |
-| Daily chart | `data-testid="daily-breakdown-chart"` |
-| Chart tooltip | `data-testid="chart-tooltip"` |
-| Legend items | `data-testid="legend-item-{metric}"` |
-| Legend buttons | `data-testid="legend-show-all"`, `legend-reset` |
-| View toggle | `data-testid="view-toggle"` |
-| View buttons | `data-testid="view-chart"`, `view-table` |
-| Metrics table | `data-testid="daily-metrics-table"` |
-| Table headers | `data-testid="table-header-{column}"` |
-| Table rows | `data-testid="table-row"` |
-| Totals row | `data-testid="totals-row"` |
-| Loading skeleton | `data-testid="loading-skeleton"` |
-| Error state | `data-testid="error-state"` |
+| Component        | Selector                                        |
+| ---------------- | ----------------------------------------------- |
+| Metric cards     | `data-testid="metric-card-{metric}"`            |
+| Metric value     | `data-testid="metric-value"`                    |
+| Comparison badge | `data-testid="comparison-badge"`                |
+| Daily chart      | `data-testid="daily-breakdown-chart"`           |
+| Chart tooltip    | `data-testid="chart-tooltip"`                   |
+| Legend items     | `data-testid="legend-item-{metric}"`            |
+| Legend buttons   | `data-testid="legend-show-all"`, `legend-reset` |
+| View toggle      | `data-testid="view-toggle"`                     |
+| View buttons     | `data-testid="view-chart"`, `view-table`        |
+| Metrics table    | `data-testid="daily-metrics-table"`             |
+| Table headers    | `data-testid="table-header-{column}"`           |
+| Table rows       | `data-testid="table-row"`                       |
+| Totals row       | `data-testid="totals-row"`                      |
+| Loading skeleton | `data-testid="loading-skeleton"`                |
+| Error state      | `data-testid="error-state"`                     |
 
 ---
 
 ## Dependencies
 
-| Type | Dependency | Status |
-|------|------------|--------|
-| Library | `@playwright/test` | Installed |
-| Library | `@axe-core/playwright` | Install if missing |
-| Stories | 62.1-62.9 | Must be completed first |
-| Environment | `.env.e2e` | Test credentials |
+| Type        | Dependency             | Status                  |
+| ----------- | ---------------------- | ----------------------- |
+| Library     | `@playwright/test`     | Installed               |
+| Library     | `@axe-core/playwright` | Install if missing      |
+| Stories     | 62.1-62.9              | Must be completed first |
+| Environment | `.env.e2e`             | Test credentials        |
 
 ---
 

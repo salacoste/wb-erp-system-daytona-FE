@@ -10,13 +10,13 @@
 
 ## Coverage summary against Epic 108-FE retro § A-2 checklist
 
-| A-2 verification item | Status | Notes |
-|---|---|---|
-| 1. Engine status badge renders correctly (green/red/amber dots) | ✅ Pass | Header shows `"Движок: подключён"` with green status semantics. |
-| 2. AI preferences toggle persists across reload | ✅ Pass (visible) | Switch rendered with `label="Переключить AI прогнозы"` + status `"AI прогнозы включены"`. Cross-reload persistence not retested — see future-work below. |
-| 3. Collecting state renders for new cabinets | ✅ Pass | `CollectingProgressTracker` rendered with progress bar, COGS alert, activation date, embedded Top-5 SKU table. |
-| 4. Sneak-preview state renders for cabinets with 6-11 weeks | ⚠️ Deferred | No cabinet in `sneak_preview` state available in test environment. |
-| 5. Trend indicators show Russian text + accessible icons (WCAG fix) | ⚠️ Deferred | `SneakPreviewSection` not rendered in `collecting` state — cannot exercise the WCAG-fixed `TrendIcon`. |
+| A-2 verification item                                               | Status            | Notes                                                                                                                                                    |
+| ------------------------------------------------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Engine status badge renders correctly (green/red/amber dots)     | ✅ Pass           | Header shows `"Движок: подключён"` with green status semantics.                                                                                          |
+| 2. AI preferences toggle persists across reload                     | ✅ Pass (visible) | Switch rendered with `label="Переключить AI прогнозы"` + status `"AI прогнозы включены"`. Cross-reload persistence not retested — see future-work below. |
+| 3. Collecting state renders for new cabinets                        | ✅ Pass           | `CollectingProgressTracker` rendered with progress bar, COGS alert, activation date, embedded Top-5 SKU table.                                           |
+| 4. Sneak-preview state renders for cabinets with 6-11 weeks         | ⚠️ Deferred       | No cabinet in `sneak_preview` state available in test environment.                                                                                       |
+| 5. Trend indicators show Russian text + accessible icons (WCAG fix) | ⚠️ Deferred       | `SneakPreviewSection` not rendered in `collecting` state — cannot exercise the WCAG-fixed `TrendIcon`.                                                   |
 
 **Net coverage**: 3 of 5 items verified. A-2 marked **partially closed**; remaining 2 items deferred until cabinets reach `sneak_preview` / `ready` states.
 
@@ -31,6 +31,7 @@
 **Expected**: `"2 из N недель"` where N is the backend-published threshold for ready-state graduation (per backend integration guide, typically 12 weeks).
 
 **Likely root cause**: One of:
+
 - (a) Backend response `weeksRequired` field returns `0` for this cabinet (possible if the cabinet's recommended model type has no minimum threshold, OR if backend returns `weeksRequired` only when status is `collecting` AND some other gate is met).
 - (b) Frontend reads the wrong field from the AI status response (e.g., reads `cabinetWeeksRequired` instead of `weeksRequired`).
 - (c) Field is genuinely missing (`undefined`) and code coalesces to `0` via implicit Number conversion or `?? 0`.
@@ -40,6 +41,7 @@
 **Defensive Frontend Principle alignment** (CLAUDE-PATTERNS.md): per the principle, the frontend should NOT silently coerce `0` or `null` into a "fake correct" value. Instead, render a warning indicator AND preserve the raw value (or omit the X/Y display entirely if denominator is missing).
 
 **Recommended fix** (frontend-side, defensive):
+
 ```tsx
 // in CollectingProgressTracker.tsx (collecting state body)
 const { weeksCollected = 0, weeksRequired } = status
@@ -51,6 +53,7 @@ const denominatorValid = typeof weeksRequired === 'number' && weeksRequired > 0
 If investigation reveals a backend bug (response misses `weeksRequired`), file a separate backend ticket and link both directions.
 
 **Files to investigate**:
+
 - `src/app/(dashboard)/analytics/forecast/components/CollectingProgressTracker.tsx` (frontend display)
 - `src/types/ai/status.ts` + `src/lib/api/ai/status.ts` (response shape + normalizer)
 - Backend `/v1/ai/status` response payload for `Space Chemical` cabinet (curl test)
@@ -70,11 +73,13 @@ If investigation reveals a backend bug (response misses `weeksRequired`), file a
 **Severity**: LOW — the page is functional, the heading is just an empty promise. No data integrity issue.
 
 **Recommended fix**:
+
 - Investigate `CollectingProgressTracker.tsx` for the section's render block.
 - If placeholder (no content authored): file a polish story under Epic 109 or a follow-up sprint to author 2-4 actionable items.
 - If render bug (content exists but doesn't display): fix the conditional logic.
 
 **Files to investigate**:
+
 - `src/app/(dashboard)/analytics/forecast/components/CollectingProgressTracker.tsx`
 
 **Triage owner**: Frontend (small content/UX polish).
@@ -83,11 +88,11 @@ If investigation reveals a backend bug (response misses `weeksRequired`), file a
 
 ## Deferred A-2 items (re-run UAT when conditions met)
 
-| Item | Condition required | How to seed |
-|---|---|---|
-| Sneak-preview state UI | Cabinet with 6-11 weeks of sales data | Either (a) wait until `Space Chemical` reaches 6 weeks (~6 weeks from 2026-05-17), or (b) seed a test cabinet in the dev database with 6-11 weeks of fake sales rows. |
-| Trend indicators (WCAG fix) | Cabinet in `sneak_preview` state with SKU rows in `SneakPreviewSection` | Same as above; once `SneakPreviewSection` renders, verify each `TrendIcon` has `aria-label` + visible Russian text per Epic 108-FE retro § C-3 fix. |
-| Ready-state forecast UI | Cabinet with 12+ weeks of sales data | Either (a) wait, or (b) seed test cabinet. Note: Story 109.1 implementation lands new UI in `ready` state — re-run UAT after 109.1 ships. |
+| Item                        | Condition required                                                      | How to seed                                                                                                                                                           |
+| --------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sneak-preview state UI      | Cabinet with 6-11 weeks of sales data                                   | Either (a) wait until `Space Chemical` reaches 6 weeks (~6 weeks from 2026-05-17), or (b) seed a test cabinet in the dev database with 6-11 weeks of fake sales rows. |
+| Trend indicators (WCAG fix) | Cabinet in `sneak_preview` state with SKU rows in `SneakPreviewSection` | Same as above; once `SneakPreviewSection` renders, verify each `TrendIcon` has `aria-label` + visible Russian text per Epic 108-FE retro § C-3 fix.                   |
+| Ready-state forecast UI     | Cabinet with 12+ weeks of sales data                                    | Either (a) wait, or (b) seed test cabinet. Note: Story 109.1 implementation lands new UI in `ready` state — re-run UAT after 109.1 ships.                             |
 
 ---
 

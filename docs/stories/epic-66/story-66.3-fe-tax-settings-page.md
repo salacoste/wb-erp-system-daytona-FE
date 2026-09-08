@@ -17,12 +17,14 @@ Create new `/settings/tax` page with form for configuring income tax system and 
 ## Acceptance Criteria
 
 ### AC1: Route & Page
+
 - [ ] `/settings/tax` page accessible from sidebar
 - [ ] Route added to `src/lib/routes.ts` as `SETTINGS.TAX`
 - [ ] Page title: "Налоговые настройки"
 - [ ] Sidebar navigation link added under Settings section
 
 ### AC2: Income Tax Section
+
 - [ ] Section header: "Система налогообложения"
 - [ ] RadioGroup with options:
   - ○ Не настроена (value: null)
@@ -33,6 +35,7 @@ Create new `/settings/tax` page with form for configuring income tax system and 
 - [ ] Tax rate input hidden for other options
 
 ### AC3: VAT Section
+
 - [ ] Section header: "НДС (Налог на добавленную стоимость)"
 - [ ] Checkbox: "Мой кабинет является плательщиком НДС"
 - [ ] When checked → show VAT rate radio group:
@@ -43,6 +46,7 @@ Create new `/settings/tax` page with form for configuring income tax system and 
 - [ ] VAT rate radio hidden when checkbox unchecked
 
 ### AC4: Form Submission
+
 - [ ] "Сохранить" button sends PUT request with all fields
 - [ ] Success toast: "Налоговые настройки сохранены"
 - [ ] Error toast with server error message
@@ -50,12 +54,14 @@ Create new `/settings/tax` page with form for configuring income tax system and 
 - [ ] Form resets to server state on cancel or re-fetch
 
 ### AC5: Validation
+
 - [ ] `taxSystem: 'manual'` → taxRate required, range 0-100
 - [ ] `vatPayer: true` → vatRate required
 - [ ] Client-side validation before submission
 - [ ] Server-side 400 errors displayed inline
 
 ### AC6: Accessibility (WCAG 2.1 AA)
+
 - [ ] All form inputs have associated labels
 - [ ] Keyboard navigation works (Tab, Space, Enter)
 - [ ] Focus management on section expand/collapse
@@ -97,14 +103,17 @@ Create new `/settings/tax` page with form for configuring income tax system and 
 ## Technical Implementation
 
 ### Files to Create
+
 - `src/app/(dashboard)/settings/tax/page.tsx` — Page component
 - `src/components/custom/settings/TaxSettingsForm.tsx` — Form component
 
 ### Files to Modify
+
 - `src/lib/routes.ts` — Add `SETTINGS.TAX`
 - Sidebar component — Add navigation link
 
 ### Component Breakdown
+
 - `TaxSettingsForm` — Main form (RadioGroup + Checkbox + conditional inputs)
 - Uses `useCabinetTaxSettings()` for initial values
 - Uses `useUpdateTaxSettings()` for mutation
@@ -124,7 +133,7 @@ Create new `/settings/tax` page with form for configuring income tax system and 
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-02-22 | BMad Master | Initial story creation (income tax only) |
-| 2026-02-23 | Claude | Added full НДС section (checkbox + rate selector), +2 SP (5→7) |
+| Date       | Author      | Change                                                         |
+| ---------- | ----------- | -------------------------------------------------------------- |
+| 2026-02-22 | BMad Master | Initial story creation (income tax only)                       |
+| 2026-02-23 | Claude      | Added full НДС section (checkbox + rate selector), +2 SP (5→7) |

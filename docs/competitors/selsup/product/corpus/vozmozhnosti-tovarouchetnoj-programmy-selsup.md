@@ -9,7 +9,7 @@ chars: 13504
 
 В этой статье:
 
-- 
+-
 - <a href="#sozdanie-tovara" rel="nofollow">Создание товара</a>
 - <a href="#markirovka-chestnyj-znak-i-pechat-etiketok" rel="nofollow">Маркировка Честный знак и печать этикеток</a>
 - <a href="#vedenie-skladskogo-ucheta-kontrol-ostatkov-i-zakupki-po-fbs" rel="nofollow">Ведение складского учета, контроль остатков и закупки по FBS</a>

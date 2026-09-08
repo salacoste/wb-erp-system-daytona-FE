@@ -13,21 +13,21 @@
 
 ### ✅ What's Available NOW for Frontend
 
-| Story | Feature | Status | Endpoint |
-|-------|---------|--------|----------|
-| **5.1** | COGS History | ✅ DONE | `GET /v1/cogs/history?nm_id=...` |
-| **6.1** | Date Range Analytics | ✅ DONE | `?weekStart=...&weekEnd=...` |
-| **6.3** | ROI & Profit Metrics | ✅ DONE | `roi`, `profit_per_unit` fields |
+| Story   | Feature              | Status  | Endpoint                         |
+| ------- | -------------------- | ------- | -------------------------------- |
+| **5.1** | COGS History         | ✅ DONE | `GET /v1/cogs/history?nm_id=...` |
+| **6.1** | Date Range Analytics | ✅ DONE | `?weekStart=...&weekEnd=...`     |
+| **6.3** | ROI & Profit Metrics | ✅ DONE | `roi`, `profit_per_unit` fields  |
 
 ### 📋 Remaining Stories (Not Yet Implemented)
 
-| Story | Feature | Status |
-|-------|---------|--------|
-| 5.2 | Edit COGS | 📋 Planned |
-| 5.3 | Delete COGS | 📋 Planned |
-| 6.2 | Period Comparison | 📋 Planned |
-| 6.4 | Cabinet Dashboard | 📋 Planned |
-| 6.5 | Export to CSV/Excel | 📋 Planned |
+| Story | Feature             | Status     |
+| ----- | ------------------- | ---------- |
+| 5.2   | Edit COGS           | 📋 Planned |
+| 5.3   | Delete COGS         | 📋 Planned |
+| 6.2   | Period Comparison   | 📋 Planned |
+| 6.4   | Cabinet Dashboard   | 📋 Planned |
+| 6.5   | Export to CSV/Excel | 📋 Planned |
 
 **Remaining Effort**: ~12-15 days (Stories 5.2, 5.3, 6.2, 6.4, 6.5)
 
@@ -40,6 +40,7 @@
 **Answer**: ✅ **YES** - Available
 
 **Current Schema** (`prisma/schema.prisma:388`):
+
 ```prisma
 model Cogs {
   id String @id @default(uuid()) @db.Uuid  // ← UUID available as `cogs_id`
@@ -48,6 +49,7 @@ model Cogs {
 ```
 
 **API Response Example**:
+
 ```json
 {
   "cogs_id": "550e8400-e29b-41d4-a716-446655440000",  // Use `id` field
@@ -63,6 +65,7 @@ model Cogs {
 **Answer**: ✅ **Already Implemented** - Automatic versioning
 
 **Current Logic** (`src/cogs/services/cogs.service.ts:169-191`):
+
 ```typescript
 // When new version created:
 // 1. Close old version: set valid_to = new_version.valid_from
@@ -82,6 +85,7 @@ const [, newVersion] = await this.prisma.$transaction([
 ```
 
 **Timeline Example**:
+
 ```
 Version 1: valid_from=2025-01-01, valid_to=2025-02-01 (closed)
 Version 2: valid_from=2025-02-01, valid_to=null       (current)
@@ -94,6 +98,7 @@ Version 2: valid_from=2025-02-01, valid_to=null       (current)
 **Answer**: ✅ **YES** - Already stored
 
 **Current Schema** (`prisma/schema.prisma:405`):
+
 ```prisma
 model Cogs {
   createdBy String   @map("created_by") @db.VarChar(100) // User ID or 'system'
@@ -104,6 +109,7 @@ model Cogs {
 ```
 
 **Stored Values**:
+
 - User email/ID from JWT when assigned via API
 - `"system"` when assigned via import
 - `"manual"` source + user ID for manual entries
@@ -117,13 +123,15 @@ model Cogs {
 **Reason**: Changing `valid_from` would break temporal lookup logic and could corrupt margin calculations for past weeks.
 
 **Recommended Approach**:
-| Use Case | Solution |
-|----------|----------|
-| Fix typo in cost | PATCH endpoint - update `unit_cost_rub` and `notes` (same `valid_from`) |
-| Change effective date | Create new version with new `valid_from` |
-| Backdate COGS | Create new version with past `valid_from` |
+
+| Use Case              | Solution                                                                |
+| --------------------- | ----------------------------------------------------------------------- |
+| Fix typo in cost      | PATCH endpoint - update `unit_cost_rub` and `notes` (same `valid_from`) |
+| Change effective date | Create new version with new `valid_from`                                |
+| Backdate COGS         | Create new version with past `valid_from`                               |
 
 **PATCH Endpoint Design**:
+
 ```http
 PATCH /v1/cogs/:cogsId
 {
@@ -140,13 +148,14 @@ PATCH /v1/cogs/:cogsId
 **Answer**: 🔒 **Owner/Manager Only** - Same as create
 
 **Role Matrix** (consistent with Story 23.10):
-| Role | View History | Create COGS | Edit COGS | Delete COGS |
-|------|-------------|-------------|-----------|-------------|
-| **Admin** | ✅ | ✅ | ✅ | ✅ |
-| **Owner** | ✅ | ✅ | ✅ | ✅ |
-| **Manager** | ✅ | ✅ | ✅ | ✅ |
-| **Analyst** | ✅ | ❌ | ❌ | ❌ |
-| **Service** | ✅ | ✅ | ✅ | ✅ |
+
+| Role        | View History | Create COGS | Edit COGS | Delete COGS |
+| ----------- | ------------ | ----------- | --------- | ----------- |
+| **Admin**   | ✅           | ✅          | ✅        | ✅          |
+| **Owner**   | ✅           | ✅          | ✅        | ✅          |
+| **Manager** | ✅           | ✅          | ✅        | ✅          |
+| **Analyst** | ✅           | ❌          | ❌        | ❌          |
+| **Service** | ✅           | ✅          | ✅        | ✅          |
 
 **Implementation**: Use existing `RolesGuard` with `@Roles(Role.MANAGER, Role.OWNER, Role.ADMIN)` decorator.
 
@@ -157,6 +166,7 @@ PATCH /v1/cogs/:cogsId
 **Answer**: 💡 **SOFT DELETE** - Recommended
 
 **Proposed Schema Enhancement**:
+
 ```prisma
 model Cogs {
   // ... existing fields
@@ -167,15 +177,18 @@ model Cogs {
 ```
 
 **Benefits**:
+
 - ✅ Audit trail preserved
 - ✅ Can restore accidentally deleted COGS
 - ✅ Margin history remains explainable
 - ✅ Temporal lookup still works (filter `is_active = true`)
 
 **API Behavior**:
+
 ```http
 DELETE /v1/cogs/:cogsId
 ```
+
 ```json
 {
   "deleted": true,
@@ -193,13 +206,14 @@ DELETE /v1/cogs/:cogsId
 
 **Scenario Analysis**:
 
-| Scenario | Before Delete | After Delete | Result |
-|----------|---------------|--------------|--------|
+| Scenario                                  | Before Delete             | After Delete            | Result                                              |
+| ----------------------------------------- | ------------------------- | ----------------------- | --------------------------------------------------- |
 | Product has 2 COGS versions, delete older | W44-W45: 100₽, W46+: 150₽ | W44-W45: ❌, W46+: 150₽ | W44-W45 margin = null, reason = `COGS_NOT_ASSIGNED` |
-| Product has 1 COGS, delete it | W46+: 150₽ | No COGS | All weeks = null, reason = `COGS_NOT_ASSIGNED` |
-| Product has 2 versions, delete newer | W44-W45: 100₽, W46+: 150₽ | W44+: 100₽ (reopened) | Old version becomes current (`valid_to = null`) |
+| Product has 1 COGS, delete it             | W46+: 150₽                | No COGS                 | All weeks = null, reason = `COGS_NOT_ASSIGNED`      |
+| Product has 2 versions, delete newer      | W44-W45: 100₽, W46+: 150₽ | W44+: 100₽ (reopened)   | Old version becomes current (`valid_to = null`)     |
 
 **Automatic Recalculation**:
+
 - DELETE triggers `enqueueMarginRecalculation()` (same as Epic 20)
 - Affected weeks determined by deleted COGS's `valid_from`/`valid_to`
 - Task queued: `recalculate_weekly_margin`
@@ -213,11 +227,13 @@ DELETE /v1/cogs/:cogsId
 **Answer**: ⚠️ **NOT YET** - Requires new implementation
 
 **Current State**:
+
 - `weekly_margin_fact` stores per-week, per-product data
 - Each row = 1 week + 1 product
 - No aggregate views for multi-week periods
 
 **Required Implementation**:
+
 ```sql
 -- Example: Aggregate W40 to W47
 SELECT
@@ -246,10 +262,11 @@ weighted_margin_pct = SUM(profit) / SUM(revenue) × 100
 ```
 
 **Example**:
-| Week | Revenue | COGS | Profit | Margin % |
-|------|---------|------|--------|----------|
-| W45 | 100,000 | 60,000 | 40,000 | 40.0% |
-| W46 | 50,000 | 35,000 | 15,000 | 30.0% |
+
+| Week      | Revenue     | COGS       | Profit     | Margin %   |
+| --------- | ----------- | ---------- | ---------- | ---------- |
+| W45       | 100,000     | 60,000     | 40,000     | 40.0%      |
+| W46       | 50,000      | 35,000     | 15,000     | 30.0%      |
 | **Total** | **150,000** | **95,000** | **55,000** | **36.67%** |
 
 **Note**: Simple average would be `(40 + 30) / 2 = 35%` — INCORRECT!
@@ -262,19 +279,22 @@ Weighted average: `55,000 / 150,000 × 100 = 36.67%` — CORRECT!
 **Answer**: 💡 **Manageable with SQL aggregation**
 
 **Strategy**:
+
 1. **SQL-level aggregation** - NOT N+1 queries per week
 2. **Index optimization** - Already have indexes on `(cabinet_id, week)`
 3. **Pagination** - Return top N products, not all
 4. **Caching** - Cache aggregates for historical periods (immutable)
 
 **Benchmark Estimates** (based on current data volumes):
-| Period | Products | Expected p95 |
-|--------|----------|--------------|
-| 4 weeks | 1,000 | < 200ms |
-| 12 weeks | 1,000 | < 500ms |
-| 52 weeks | 1,000 | < 1.5s |
+
+| Period   | Products | Expected p95 |
+| -------- | -------- | ------------ |
+| 4 weeks  | 1,000    | < 200ms      |
+| 12 weeks | 1,000    | < 500ms      |
+| 52 weeks | 1,000    | < 1.5s       |
 
 **Mitigation for Slow Queries**:
+
 - Add summary table `weekly_margin_aggregate` if needed
 - Pre-calculate monthly/quarterly aggregates
 
@@ -285,11 +305,13 @@ Weighted average: `55,000 / 150,000 × 100 = 36.67%` — CORRECT!
 **Answer**: ✅ **YES** - Feasible
 
 **Implementation Approach**:
+
 1. Execute two aggregate queries (one per period)
 2. Join results on `nm_id` / `brand` / `category`
 3. Calculate deltas (absolute and percentage)
 
 **Query Structure**:
+
 ```sql
 -- Period 1: W40-W43
 WITH period1 AS (
@@ -324,19 +346,22 @@ FULL OUTER JOIN period2 p2 ON p1.nm_id = p2.nm_id;
 **Answer**: 💡 **Return `null`** (undefined)
 
 **Edge Cases**:
-| Scenario | `cogs_total` | `profit` | ROI Result |
-|----------|-------------|----------|------------|
-| Normal | 60,000 | 40,000 | `66.67%` |
-| No COGS assigned | 0 | 100,000 | `null` |
-| COGS = 0 (free sample) | 0 | 50,000 | `null` |
-| Negative profit | 60,000 | -10,000 | `-16.67%` |
+
+| Scenario               | `cogs_total` | `profit` | ROI Result |
+| ---------------------- | ------------ | -------- | ---------- |
+| Normal                 | 60,000       | 40,000   | `66.67%`   |
+| No COGS assigned       | 0            | 100,000  | `null`     |
+| COGS = 0 (free sample) | 0            | 50,000   | `null`     |
+| Negative profit        | 60,000       | -10,000  | `-16.67%`  |
 
 **Formula with Safety**:
+
 ```typescript
 const roi = cogs_total > 0 ? (profit / cogs_total) * 100 : null;
 ```
 
 **profit_per_unit Edge Cases**:
+
 ```typescript
 const profit_per_unit = qty > 0 ? profit / qty : null;
 ```
@@ -348,11 +373,13 @@ const profit_per_unit = qty > 0 ? profit / qty : null;
 **Answer**: ✅ **YES** - Use existing BullMQ pattern
 
 **Current Infrastructure**:
+
 - BullMQ queue: `queue:default`
 - Export table: `exports` (already exists, see `prisma/schema.prisma:656-692`)
 - Task pattern: same as `finances_weekly_ingest`
 
 **Existing Export Schema**:
+
 ```prisma
 model Export {
   id          String       @id @default(uuid())
@@ -370,6 +397,7 @@ model Export {
 ```
 
 **Flow**:
+
 1. `POST /v1/exports/analytics` → 202 Accepted + `export_id`
 2. BullMQ processes export
 3. `GET /v1/exports/:exportId` → status + download URL
@@ -381,18 +409,21 @@ model Export {
 **Answer**: 💡 **S3 with presigned URLs** (recommended)
 
 **Options Analysis**:
-| Option | Pros | Cons | Recommendation |
-|--------|------|------|----------------|
-| **S3** | Scalable, secure, CDN | Setup required | ✅ Production |
-| **Local** | Simple, fast dev | No scaling | Dev only |
-| **Database BLOB** | No external deps | Size limits, slow | ❌ Not recommended |
+
+| Option            | Pros                  | Cons              | Recommendation     |
+| ----------------- | --------------------- | ----------------- | ------------------ |
+| **S3**            | Scalable, secure, CDN | Setup required    | ✅ Production      |
+| **Local**         | Simple, fast dev      | No scaling        | Dev only           |
+| **Database BLOB** | No external deps      | Size limits, slow | ❌ Not recommended |
 
 **Current Implementation** (already prepared):
+
 - `fileUrl` field in `exports` table for S3 URL
 - `expiresAt` field for TTL (48 hours default)
 - Cleanup job removes expired files
 
 **Presigned URL Pattern**:
+
 ```typescript
 // Generate presigned URL (valid 1 hour)
 const downloadUrl = await s3.getSignedUrl('getObject', {
@@ -408,32 +439,32 @@ const downloadUrl = await s3.getSignedUrl('getObject', {
 
 ### ✅ Sprint 1: COMPLETED (2025-11-26)
 
-| Story | Feature | Status | QA Score |
-|-------|---------|--------|----------|
-| **5.1** | `GET /v1/cogs/history` | ✅ **DONE** | 90/100 |
-| **6.1** | `weekStart`/`weekEnd` params for analytics | ✅ **DONE** | 90/100 |
-| **6.3** | `roi`, `profit_per_unit` fields | ✅ **DONE** | 95/100 |
+| Story   | Feature                                    | Status      | QA Score |
+| ------- | ------------------------------------------ | ----------- | -------- |
+| **5.1** | `GET /v1/cogs/history`                     | ✅ **DONE** | 90/100   |
+| **6.1** | `weekStart`/`weekEnd` params for analytics | ✅ **DONE** | 90/100   |
+| **6.3** | `roi`, `profit_per_unit` fields            | ✅ **DONE** | 95/100   |
 
 **Migration Applied**: `is_active` column added to `cogs` table for soft delete support.
 
 ### 📋 Sprint 2: Planned (Pending PO Prioritization)
 
-| Story | Feature | Estimate | Status |
-|-------|---------|----------|--------|
-| **5.2** | `PATCH /v1/cogs/:cogsId` + recalculation | 3-4 days | 📋 Ready |
+| Story   | Feature                                          | Estimate | Status   |
+| ------- | ------------------------------------------------ | -------- | -------- |
+| **5.2** | `PATCH /v1/cogs/:cogsId` + recalculation         | 3-4 days | 📋 Ready |
 | **5.3** | `DELETE /v1/cogs/:cogsId` (soft) + recalculation | 2-3 days | 📋 Ready |
 
 ### 📋 Sprint 3: Planned
 
-| Story | Feature | Estimate | Status |
-|-------|---------|----------|--------|
-| **6.2** | `GET /v1/analytics/weekly/comparison` | 4-5 days | 📋 Depends on 6.1 ✅ |
-| **6.4** | `GET /v1/analytics/cabinet-summary` | 3-4 days | 📋 Depends on 6.1, 6.3 ✅ |
+| Story   | Feature                               | Estimate | Status                    |
+| ------- | ------------------------------------- | -------- | ------------------------- |
+| **6.2** | `GET /v1/analytics/weekly/comparison` | 4-5 days | 📋 Depends on 6.1 ✅      |
+| **6.4** | `GET /v1/analytics/cabinet-summary`   | 3-4 days | 📋 Depends on 6.1, 6.3 ✅ |
 
 ### 📋 Sprint 4: Export
 
-| Story | Feature | Estimate | Status |
-|-------|---------|----------|--------|
+| Story   | Feature                      | Estimate | Status                 |
+| ------- | ---------------------------- | -------- | ---------------------- |
 | **6.5** | `POST /v1/exports/analytics` | 3-4 days | 📋 Uses existing infra |
 
 ---
@@ -442,27 +473,27 @@ const downloadUrl = await s3.getSignedUrl('getObject', {
 
 ### Epic 5: COGS History & Management
 
-| # | Question | Answer | Notes |
-|---|----------|--------|-------|
-| Q1 | `cogs_id` available? | ✅ YES | UUID field `id` |
-| Q2 | `valid_to` calculation? | ✅ Implemented | Automatic versioning |
-| Q3 | `created_by` stored? | ✅ YES | Audit trail exists |
-| Q4 | Can change `valid_from`? | ⚠️ Not recommended | Use versioning |
-| Q5 | Role restrictions? | 🔒 Owner/Manager | Same as create |
-| Q6 | Hard/soft delete? | 💡 Soft delete | Add `is_active` flag |
-| Q7 | Margin after delete? | Recalculated | `COGS_NOT_ASSIGNED` |
+| #   | Question                 | Answer             | Notes                |
+| --- | ------------------------ | ------------------ | -------------------- |
+| Q1  | `cogs_id` available?     | ✅ YES             | UUID field `id`      |
+| Q2  | `valid_to` calculation?  | ✅ Implemented     | Automatic versioning |
+| Q3  | `created_by` stored?     | ✅ YES             | Audit trail exists   |
+| Q4  | Can change `valid_from`? | ⚠️ Not recommended | Use versioning       |
+| Q5  | Role restrictions?       | 🔒 Owner/Manager   | Same as create       |
+| Q6  | Hard/soft delete?        | 💡 Soft delete     | Add `is_active` flag |
+| Q7  | Margin after delete?     | Recalculated       | `COGS_NOT_ASSIGNED`  |
 
 ### Epic 6: Advanced Analytics
 
-| # | Question | Answer | Notes |
-|---|----------|--------|-------|
-| Q8 | Cross-week aggregation? | ⚠️ New implementation | SQL aggregation |
-| Q9 | Weighted average margin? | ✅ Confirmed | `SUM(profit)/SUM(revenue)*100` |
-| Q10 | Performance 52 weeks? | 💡 Manageable | < 1.5s with indexes |
-| Q11 | Range comparison? | ✅ Feasible | FULL OUTER JOIN |
-| Q12 | ROI when cogs=0? | 💡 Return `null` | Undefined case |
-| Q13 | Async export? | ✅ YES | BullMQ pattern |
-| Q14 | File storage? | 💡 S3 | Presigned URLs |
+| #   | Question                 | Answer                | Notes                          |
+| --- | ------------------------ | --------------------- | ------------------------------ |
+| Q8  | Cross-week aggregation?  | ⚠️ New implementation | SQL aggregation                |
+| Q9  | Weighted average margin? | ✅ Confirmed          | `SUM(profit)/SUM(revenue)*100` |
+| Q10 | Performance 52 weeks?    | 💡 Manageable         | < 1.5s with indexes            |
+| Q11 | Range comparison?        | ✅ Feasible           | FULL OUTER JOIN                |
+| Q12 | ROI when cogs=0?         | 💡 Return `null`      | Undefined case                 |
+| Q13 | Async export?            | ✅ YES                | BullMQ pattern                 |
+| Q14 | File storage?            | 💡 S3                 | Presigned URLs                 |
 
 ---
 
@@ -482,12 +513,14 @@ const downloadUrl = await s3.getSignedUrl('getObject', {
 ### Story 6.1: Date Range Analytics - HOW TO USE
 
 **Available on ALL analytics endpoints:**
+
 - `GET /v1/analytics/weekly/by-sku`
 - `GET /v1/analytics/weekly/by-brand`
 - `GET /v1/analytics/weekly/by-category`
 - `GET /v1/analytics/weekly/margin-trends`
 
 **Query Parameters:**
+
 ```typescript
 interface DateRangeParams {
   weekStart: string;  // ISO week, e.g., "2025-W40"
@@ -497,6 +530,7 @@ interface DateRangeParams {
 ```
 
 **Example Requests:**
+
 ```http
 # By SKU - aggregate 8 weeks
 GET /v1/analytics/weekly/by-sku?weekStart=2025-W40&weekEnd=2025-W47&includeCogs=true
@@ -511,6 +545,7 @@ GET /v1/analytics/weekly/by-category?weekStart=2025-W35&weekEnd=2025-W47&include
 ```
 
 **Response includes NEW fields:**
+
 ```json
 {
   "data": [...],
@@ -528,11 +563,13 @@ GET /v1/analytics/weekly/by-category?weekStart=2025-W35&weekEnd=2025-W47&include
 ```
 
 **Validation Rules:**
+
 - `weekEnd` must be >= `weekStart` → Error: `INVALID_WEEK_RANGE`
 - Maximum 52 weeks → Error: `WEEK_RANGE_TOO_LARGE`
 - Cannot combine `week` with `weekStart`/`weekEnd` → Use one or the other
 
 **TypeScript Integration:**
+
 ```typescript
 // Example: Fetch aggregated analytics for date range
 async function fetchAnalyticsForRange(
@@ -558,12 +595,14 @@ async function fetchAnalyticsForRange(
 ### Story 6.3: ROI & Profit Metrics - HOW TO USE
 
 **Available when `includeCogs=true` on:**
+
 - `GET /v1/analytics/weekly/by-sku?includeCogs=true`
 - `GET /v1/analytics/weekly/by-brand?includeCogs=true`
 - `GET /v1/analytics/weekly/by-category?includeCogs=true`
 - `GET /v1/analytics/weekly/margin-trends` (always included)
 
 **New Response Fields:**
+
 ```typescript
 interface AnalyticsWithROI {
   // Existing fields
@@ -581,6 +620,7 @@ interface AnalyticsWithROI {
 ```
 
 **Example Response:**
+
 ```json
 {
   "data": [
@@ -600,15 +640,17 @@ interface AnalyticsWithROI {
 ```
 
 **Edge Cases (Frontend should handle):**
-| Scenario | `cogs` | `qty` | `roi` | `profit_per_unit` |
-|----------|--------|-------|-------|-------------------|
-| Normal | 60000 | 50 | 108.33 | 1300.00 |
-| No COGS | null | 50 | null | null |
-| Free samples | 0 | 50 | **null** | 100.00 |
-| No sales | 60000 | 0 | 108.33 | **null** |
-| Loss | 80000 | 50 | **-25.00** | **-400.00** |
+
+| Scenario     | `cogs` | `qty` | `roi`      | `profit_per_unit` |
+| ------------ | ------ | ----- | ---------- | ----------------- |
+| Normal       | 60000  | 50    | 108.33     | 1300.00           |
+| No COGS      | null   | 50    | null       | null              |
+| Free samples | 0      | 50    | **null**   | 100.00            |
+| No sales     | 60000  | 0     | 108.33     | **null**          |
+| Loss         | 80000  | 50    | **-25.00** | **-400.00**       |
 
 **TypeScript Types:**
+
 ```typescript
 // Update your types to include new fields
 interface SkuAnalyticsResponse {
@@ -638,6 +680,7 @@ function formatProfitPerUnit(ppu: number | null): string {
 ```
 
 **UI Recommendations:**
+
 - Show `roi` as percentage with color coding (green > 0, red < 0)
 - Show `profit_per_unit` as currency (₽)
 - Display "—" for `null` values (not "0" or "N/A")
@@ -648,11 +691,13 @@ function formatProfitPerUnit(ppu: number | null): string {
 ### Combined Usage: Date Range + ROI
 
 **Most Powerful Query:**
+
 ```http
 GET /v1/analytics/weekly/by-sku?weekStart=2025-W40&weekEnd=2025-W47&includeCogs=true&limit=100
 ```
 
 **Returns aggregated data with:**
+
 - Total revenue across 8 weeks
 - Total COGS across 8 weeks
 - Total profit across 8 weeks
@@ -664,15 +709,15 @@ GET /v1/analytics/weekly/by-sku?weekStart=2025-W40&weekEnd=2025-W47&includeCogs=
 
 ## Documentation References
 
-| Feature | Documentation |
-|---------|---------------|
-| Story 5.1 | [story-5.1-view-cogs-history.md](../../../docs/stories/epic-5/story-5.1-view-cogs-history.md) |
-| Story 6.1 | [story-6.1-date-range-analytics.md](../../../docs/stories/epic-6/story-6.1-date-range-analytics.md) |
-| Story 6.3 | [story-6.3-roi-profit-metrics.md](../../../docs/stories/epic-6/story-6.3-roi-profit-metrics.md) |
-| QA Gate 5.1 | [5.1-view-cogs-history.yml](../../../docs/qa/gates/5.1-view-cogs-history.yml) |
-| QA Gate 6.1 | [6.1-date-range-analytics.yml](../../../docs/qa/gates/6.1-date-range-analytics.yml) |
-| QA Gate 6.3 | [6.3-roi-profit-metrics.yml](../../../docs/qa/gates/6.3-roi-profit-metrics.yml) |
-| API Reference | [API-PATHS-REFERENCE.md](../../../docs/API-PATHS-REFERENCE.md) |
+| Feature       | Documentation                                                                                                 |
+| ------------- | ------------------------------------------------------------------------------------------------------------- |
+| Story 5.1     | [story-5.1-view-cogs-history.md](../../../docs/stories/epic-5/story-5.1-view-cogs-history.md)                 |
+| Story 6.1     | [story-6.1-date-range-analytics.md](../../../docs/stories/epic-6/story-6.1-date-range-analytics.md)           |
+| Story 6.3     | [story-6.3-roi-profit-metrics.md](../../../docs/stories/epic-6/story-6.3-roi-profit-metrics.md)               |
+| QA Gate 5.1   | [5.1-view-cogs-history.yml](../../../docs/qa/gates/5.1-view-cogs-history.yml)                                 |
+| QA Gate 6.1   | [6.1-date-range-analytics.yml](../../../docs/qa/gates/6.1-date-range-analytics.yml)                           |
+| QA Gate 6.3   | [6.3-roi-profit-metrics.yml](../../../docs/qa/gates/6.3-roi-profit-metrics.yml)                               |
+| API Reference | [API-PATHS-REFERENCE.md](../../../docs/API-PATHS-REFERENCE.md)                                                |
 | Test Examples | [test-api/](../../../test-api/) (см. 05-analytics-basic.http, 06-analytics-advanced.http, SECTION-MAPPING.md) |
 
 ---
@@ -683,4 +728,5 @@ GET /v1/analytics/weekly/by-sku?weekStart=2025-W40&weekEnd=2025-W47&includeCogs=
 **Status**: ✅ Sprint 1 Complete - Frontend Can Start Integration
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.

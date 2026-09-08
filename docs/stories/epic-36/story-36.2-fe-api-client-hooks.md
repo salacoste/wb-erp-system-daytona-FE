@@ -16,6 +16,7 @@
 ## Background
 
 Story 36.1 added TypeScript types for Epic 36. Now we need to update the API client and hooks to:
+
 - Send `group_by` parameter to backend
 - Map backend response to include new Epic 36 fields (`type`, `imtId`, `mergedProducts`)
 - Provide convenience hook for merged groups (`useAdvertisingMergedGroups`)
@@ -25,24 +26,28 @@ Story 36.1 added TypeScript types for Epic 36. Now we need to update the API cli
 ## Acceptance Criteria
 
 ### AC1: API Client Parameter Support
+
 - [ ] `getAdvertisingAnalytics()` accepts `group_by` parameter
 - [ ] Parameter is included in query string when provided
 - [ ] Default behavior unchanged (no `group_by` = Epic 33 format)
 - [ ] Console logs include `group_by` mode for debugging
 
 ### AC2: Response Mapping
+
 - [ ] Backend `type` field mapped to frontend `AdvertisingItem.type`
 - [ ] Backend `imtId` field mapped to frontend `AdvertisingItem.imtId`
 - [ ] Backend `mergedProducts` array mapped to frontend `AdvertisingItem.mergedProducts`
 - [ ] Existing Epic 33 field mapping unchanged
 
 ### AC3: Convenience Hook
+
 - [ ] New `useAdvertisingMergedGroups()` hook created
 - [ ] Hook automatically sets `group_by='imtId'`
 - [ ] Hook uses same caching as `useAdvertisingAnalytics`
 - [ ] Hook signature: `useAdvertisingMergedGroups(params, options?)`
 
 ### AC4: Backward Compatibility
+
 - [ ] Existing Epic 33 components work without changes
 - [ ] `useAdvertisingAnalytics()` without `group_by` returns Epic 33 format
 - [ ] No breaking changes to hook API
@@ -50,6 +55,7 @@ Story 36.1 added TypeScript types for Epic 36. Now we need to update the API cli
 ## Tasks / Subtasks
 
 ### Phase 1: Update API Client (30 min)
+
 - [ ] Open `src/lib/api/advertising-analytics.ts`
 - [ ] Update `getAdvertisingAnalytics()` to handle `group_by` parameter
 - [ ] Add Epic 36 fields to response mapping (lines ~165-191)
@@ -57,12 +63,14 @@ Story 36.1 added TypeScript types for Epic 36. Now we need to update the API cli
 - [ ] Test with both `group_by=sku` and `group_by=imtId`
 
 ### Phase 2: Create Convenience Hook (15 min)
+
 - [ ] Open `src/hooks/useAdvertisingAnalytics.ts`
 - [ ] Add `useAdvertisingMergedGroups()` hook at end of file
 - [ ] Use `useAdvertisingAnalytics` internally with `group_by='imtId'`
 - [ ] Add JSDoc with usage examples
 
 ### Phase 3: Verification (15 min)
+
 - [ ] Run `npm run type-check` - must pass
 - [ ] Run `npm run lint` - must pass
 - [ ] Test API call with `group_by=imtId` in browser console
@@ -79,6 +87,7 @@ Story 36.1 added TypeScript types for Epic 36. Now we need to update the API cli
 #### Change 1: Update Console Logging (line ~122)
 
 **Before** (Epic 33):
+
 ```typescript
 console.info('[Advertising Analytics] Fetching analytics:', {
   from: params.from,
@@ -91,6 +100,7 @@ console.info('[Advertising Analytics] Fetching analytics:', {
 ```
 
 **After** (Epic 36):
+
 ```typescript
 console.info('[Advertising Analytics] Fetching analytics:', {
   from: params.from,
@@ -106,6 +116,7 @@ console.info('[Advertising Analytics] Fetching analytics:', {
 #### Change 2: Add Epic 36 Fields to Response Mapping (line ~165)
 
 **Before** (Epic 33):
+
 ```typescript
 data: (backendResponse.items || []).map((item: any, index: number) => ({
   key: item.key || `item-${index}`,
@@ -119,6 +130,7 @@ data: (backendResponse.items || []).map((item: any, index: number) => ({
 ```
 
 **After** (Epic 36):
+
 ```typescript
 data: (backendResponse.items || []).map((item: any, index: number) => ({
   // Use backend's unique key
@@ -145,6 +157,7 @@ data: (backendResponse.items || []).map((item: any, index: number) => ({
 #### Change 3: Update Response Console Log (line ~194)
 
 **After** (Epic 36):
+
 ```typescript
 console.info('[Advertising Analytics] Response:', {
   itemCount: response.data?.length ?? 0,
@@ -206,18 +219,21 @@ The existing `buildQueryString()` helper (line ~57) already handles all paramete
 ## Testing Checklist
 
 ### API Client Tests
+
 - [ ] Call `getAdvertisingAnalytics({ from: '...', to: '...', group_by: 'imtId' })`
 - [ ] Verify `group_by=imtId` in request URL
 - [ ] Verify response includes `type`, `imtId`, `mergedProducts` fields
 - [ ] Call without `group_by` - verify Epic 33 format returned
 
 ### Hook Tests
+
 - [ ] Call `useAdvertisingMergedGroups({ from: '...', to: '...' })`
 - [ ] Verify `group_by=imtId` sent automatically
 - [ ] Verify caching works (same query key as `useAdvertisingAnalytics`)
 - [ ] Verify `options` parameter works (staleTime, enabled, etc.)
 
 ### Backward Compatibility Tests
+
 - [ ] Open existing advertising page (`/analytics/advertising`)
 - [ ] Verify page loads without errors
 - [ ] Verify table displays Epic 33 data correctly
@@ -282,17 +298,18 @@ Should merged groups data have different staleTime than SKU data?
 ### Estimated Time
 
 **Total**: 60 minutes (1 hour)
+
 - Phase 1: 30 min (API client)
 - Phase 2: 15 min (hook)
 - Phase 3: 15 min (verification)
 
 ### Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Response mapping error | Medium | High | Comprehensive manual testing |
-| Cache invalidation issues | Low | Medium | Use same query key structure |
-| Breaking changes | Low | High | All changes backward compatible |
+| Risk                      | Probability | Impact | Mitigation                      |
+| ------------------------- | ----------- | ------ | ------------------------------- |
+| Response mapping error    | Medium      | High   | Comprehensive manual testing    |
+| Cache invalidation issues | Low         | Medium | Use same query key structure    |
+| Breaking changes          | Low         | High   | All changes backward compatible |
 
 ---
 

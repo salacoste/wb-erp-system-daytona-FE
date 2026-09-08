@@ -19,7 +19,7 @@ chars: 10511
 
 В этой статье:
 
-- 
+-
 - <a href="#kogda-kody-markirovki-uzhe-est" rel="nofollow">Когда коды маркировки уже есть</a>
 - <a href="#kogda-kody-markirovki-nuzhno-poluchit-cherez-selsup" rel="nofollow">Когда коды маркировки нужно получить через SelSup</a>
 - <a href="#hranilishhe-kodov-markirovki" rel="nofollow">Хранилище кодов маркировки</a>

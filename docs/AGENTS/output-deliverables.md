@@ -4,7 +4,8 @@
   - A summary of the change-checklist analysis (issue, impact, rationale for the chosen path).
   - Specific, clearly drafted proposed edits for all affected project artifacts.
 - **Implicit:** An annotated change-checklist (or the record of its completion) reflecting the discussions, findings, and decisions made during the process.
-```
+
+````
 
 ## Task: brownfield-create-story
 Source: .bmad-core/tasks/brownfield-create-story.md
@@ -12,3 +13,4 @@ Source: .bmad-core/tasks/brownfield-create-story.md
 
 ```md
 <!-- Powered by BMAD™ Core -->
+````

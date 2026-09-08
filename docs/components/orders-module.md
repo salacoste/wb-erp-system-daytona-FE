@@ -54,20 +54,21 @@ The Orders module provides UI for viewing and managing FBS (Fulfillment by Selle
 
 ## API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/v1/orders` | GET | List orders with filters |
-| `/v1/orders/:id` | GET | Order details |
-| `/v1/orders/:id/history` | GET | Local status history |
-| `/v1/orders/:id/wb-history` | GET | WB native history (40+ statuses) |
-| `/v1/orders/:id/full-history` | GET | Merged timeline |
-| `/v1/analytics/orders/velocity` | GET | Processing metrics |
-| `/v1/analytics/orders/sla` | GET | SLA compliance |
-| `/v1/orders/sync` | POST | Manual sync trigger |
+| Endpoint                        | Method | Description                      |
+| ------------------------------- | ------ | -------------------------------- |
+| `/v1/orders`                    | GET    | List orders with filters         |
+| `/v1/orders/:id`                | GET    | Order details                    |
+| `/v1/orders/:id/history`        | GET    | Local status history             |
+| `/v1/orders/:id/wb-history`     | GET    | WB native history (40+ statuses) |
+| `/v1/orders/:id/full-history`   | GET    | Merged timeline                  |
+| `/v1/analytics/orders/velocity` | GET    | Processing metrics               |
+| `/v1/analytics/orders/sla`      | GET    | SLA compliance                   |
+| `/v1/orders/sync`               | POST   | Manual sync trigger              |
 
 ## State Management
 
 ### URL State (Filter Persistence)
+
 - `from`, `to` - Date range
 - `supplier_status` - Supplier status filter
 - `wb_status` - WB status filter
@@ -76,10 +77,12 @@ The Orders module provides UI for viewing and managing FBS (Fulfillment by Selle
 - `page` - Pagination
 
 ### Component State
+
 - `selectedOrderId` - Modal control (open/close)
 - `searchInput` - Debounced search input
 
 ### Server State (React Query)
+
 - `ordersQueryKeys.list(params)` - Orders list
 - `ordersQueryKeys.detail(id)` - Order details
 - `ordersQueryKeys.fullHistory(id)` - Merged timeline
@@ -88,19 +91,20 @@ The Orders module provides UI for viewing and managing FBS (Fulfillment by Selle
 
 ## Hooks Catalog
 
-| Hook | Purpose | Location |
-|------|---------|----------|
-| `useOrders` | Fetch orders list | `src/hooks/useOrders.ts` |
-| `useOrderDetails` | Fetch single order | `src/hooks/useOrders.ts` |
-| `useFullHistory` | Fetch merged timeline | `src/hooks/useOrderHistory.ts` |
-| `useWbHistory` | Fetch WB native history | `src/hooks/useOrderHistory.ts` |
-| `useLocalHistory` | Fetch local history | `src/hooks/useOrderHistory.ts` |
-| `useOrdersSyncStatus` | Get sync status | `src/hooks/useOrders.ts` |
-| `useOrdersSync` | Trigger manual sync | `src/hooks/useOrders.ts` |
+| Hook                  | Purpose                 | Location                       |
+| --------------------- | ----------------------- | ------------------------------ |
+| `useOrders`           | Fetch orders list       | `src/hooks/useOrders.ts`       |
+| `useOrderDetails`     | Fetch single order      | `src/hooks/useOrders.ts`       |
+| `useFullHistory`      | Fetch merged timeline   | `src/hooks/useOrderHistory.ts` |
+| `useWbHistory`        | Fetch WB native history | `src/hooks/useOrderHistory.ts` |
+| `useLocalHistory`     | Fetch local history     | `src/hooks/useOrderHistory.ts` |
+| `useOrdersSyncStatus` | Get sync status         | `src/hooks/useOrders.ts`       |
+| `useOrdersSync`       | Trigger manual sync     | `src/hooks/useOrders.ts`       |
 
 ## Components
 
 ### OrdersErrorBoundary
+
 Catches rendering errors and displays fallback UI with retry button.
 
 ```tsx
@@ -110,6 +114,7 @@ Catches rendering errors and displays fallback UI with retry button.
 ```
 
 ### OrdersPageHeader
+
 Displays page title, last sync time, and manual sync button.
 
 ```tsx
@@ -121,6 +126,7 @@ Displays page title, last sync time, and manual sync button.
 ```
 
 ### OrdersFilters
+
 Date range picker, status dropdowns, and search input.
 
 ```tsx
@@ -141,6 +147,7 @@ Date range picker, status dropdowns, and search input.
 ```
 
 ### OrderDetailsModal
+
 Lazy-loaded modal with order details and history tabs.
 
 ```tsx
@@ -160,13 +167,16 @@ Lazy-loaded modal with order details and history tabs.
 ## Testing
 
 ### Unit Tests
+
 - `src/components/custom/orders/__tests__/*.test.tsx`
 
 ### Integration Tests
+
 - `src/app/(dashboard)/orders/__tests__/integration.test.tsx`
 - `src/app/(dashboard)/orders/__tests__/lazy-loading.test.tsx`
 
 ### E2E Tests
+
 - `e2e/orders.spec.ts`
 - `e2e/orders-accessibility.spec.ts`
 

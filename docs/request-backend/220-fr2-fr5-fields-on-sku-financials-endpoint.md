@@ -6,6 +6,7 @@
 **Component**: Backend — Analytics (`sku-financials`)
 **Requester**: Frontend Team
 **Related**:
+
 - Backend contract #219 (FR-2…FR-5 LIVE on `/weekly/by-sku|by-brand|by-category`)
 - This request: expose the SAME fields on `/v1/analytics/sku-financials`
 
@@ -32,11 +33,11 @@ Add the FR-2…FR-5 fields (same names/shapes/nullability as #219) to the `/v1/a
 GET /v1/analytics/sku-financials?week=YYYY-Www&include_cogs=true&include_ads=true&include_stock=true
 ```
 
-| Flag | Fields (identical to #219) |
-|---|---|
-| `include_cogs` | `tax_allocated`, `net_profit_after_tax`, `net_margin_after_tax_pct`, `spp_rub`, `spp_pct`, `cancellations_qty` |
-| `include_ads` | `advertising_cost`, `drr_pct`, `ad_cost_per_unit` |
-| `include_stock` | `stock_fbs`, `stock_fbo`, `stock_total`, `stock_value_rub`, `stock_value_share_pct` |
+| Flag            | Fields (identical to #219)                                                                                     |
+| --------------- | -------------------------------------------------------------------------------------------------------------- |
+| `include_cogs`  | `tax_allocated`, `net_profit_after_tax`, `net_margin_after_tax_pct`, `spp_rub`, `spp_pct`, `cancellations_qty` |
+| `include_ads`   | `advertising_cost`, `drr_pct`, `ad_cost_per_unit`                                                              |
+| `include_stock` | `stock_fbs`, `stock_fbo`, `stock_total`, `stock_value_rub`, `stock_value_share_pct`                            |
 
 All `?: number | null` (null, never 0, when N/A — FE renders `—`). Same v1 boundaries as #219 (single-week; `stock_fbo` null until FBO sync; auto-campaign ДРР approximate).
 
@@ -52,14 +53,15 @@ Brand/category (`/weekly/by-brand|by-category`) already serve these fields — F
 
 The FR fields are already computed in the **`/weekly/by-sku`** path. To add them to `/sku-financials`, modify these files (all paths from repo root):
 
-| File | What to do |
-|---|---|
-| `src/analytics/dto/query/sku-financials-query.dto.ts` | Add `include_ads?: boolean` + `include_stock?: boolean` query params (mirror the existing `include_visibility` pattern). |
-| `src/analytics/dto/response/sku-financials-response.dto.ts` | Add the 13 FR fields (`advertising_cost`, `drr_pct`, `ad_cost_per_unit`, `tax_allocated`, `net_profit_after_tax`, `net_margin_after_tax_pct`, `spp_rub`, `spp_pct`, `cancellations_qty`, `stock_fbs`, `stock_fbo`, `stock_total`, `stock_value_rub`, `stock_value_share_pct`) — all `number | null`. |
-| `src/analytics/controllers/sku-financials.controller.ts` | Pass `include_ads`/`include_stock` from the query DTO to the service. |
-| `src/analytics/services/sku-financials.service.ts` + `sku-financials-data.service.ts` | When the flags are set, compute/attach the FR fields per SKU. |
+| File                                                                                  | What to do                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/analytics/dto/query/sku-financials-query.dto.ts`                                 | Add `include_ads?: boolean` + `include_stock?: boolean` query params (mirror the existing `include_visibility` pattern).                                                                                                                                                                    |
+| `src/analytics/dto/response/sku-financials-response.dto.ts`                           | Add the 13 FR fields (`advertising_cost`, `drr_pct`, `ad_cost_per_unit`, `tax_allocated`, `net_profit_after_tax`, `net_margin_after_tax_pct`, `spp_rub`, `spp_pct`, `cancellations_qty`, `stock_fbs`, `stock_fbo`, `stock_total`, `stock_value_rub`, `stock_value_share_pct`) — all `number | null`. |
+| `src/analytics/controllers/sku-financials.controller.ts`                              | Pass `include_ads`/`include_stock` from the query DTO to the service.                                                                                                                                                                                                                       |
+| `src/analytics/services/sku-financials.service.ts` + `sku-financials-data.service.ts` | When the flags are set, compute/attach the FR fields per SKU.                                                                                                                                                                                                                               |
 
 **FR logic source to reuse** (the `/weekly/by-sku` implementation):
+
 - `src/analytics/services/sku-analytics.service.ts` — the FR field computation (gated by `includeCogs`/`includeAds`/`includeStock`).
 - `src/analytics/services/sku-analytics.mapper.ts` — the mapper that sets `advertising_cost`, `drr_pct`, `tax_allocated`, `net_profit_after_tax`, `spp_rub`, `stock_value_rub`, etc.
 

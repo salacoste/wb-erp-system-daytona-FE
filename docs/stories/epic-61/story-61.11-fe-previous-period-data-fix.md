@@ -25,16 +25,16 @@ Fix missing previous period comparison data for Dashboard metrics
 
 On the Dashboard, only **2 of 8 metrics** show comparison with the previous period. The remaining **6 metrics always show "No data for previous period"** even when data exists.
 
-| Metric | Current Data | Previous Period Comparison | Status |
-|--------|--------------|---------------------------|--------|
-| Заказы (Orders) | Works | Works | OK |
-| COGS заказов (Orders COGS) | Works | **Always null** | **BUG** |
-| Выкупы (Sales) | Placeholder | N/A | Placeholder |
-| COGS выкупов (Sales COGS) | Placeholder | N/A | Placeholder |
-| Реклама (Advertising) | Works | Works | OK |
-| Логистика (Logistics) | Works | **Always null** | **BUG** |
-| Хранение (Storage) | Works | **Always null** | **BUG** |
-| Теор.прибыль (Theoretical Profit) | Works | **Always null** | **BUG** |
+| Metric                            | Current Data | Previous Period Comparison | Status      |
+| --------------------------------- | ------------ | -------------------------- | ----------- |
+| Заказы (Orders)                   | Works        | Works                      | OK          |
+| COGS заказов (Orders COGS)        | Works        | **Always null**            | **BUG**     |
+| Выкупы (Sales)                    | Placeholder  | N/A                        | Placeholder |
+| COGS выкупов (Sales COGS)         | Placeholder  | N/A                        | Placeholder |
+| Реклама (Advertising)             | Works        | Works                      | OK          |
+| Логистика (Logistics)             | Works        | **Always null**            | **BUG**     |
+| Хранение (Storage)                | Works        | **Always null**            | **BUG**     |
+| Теор.прибыль (Theoretical Profit) | Works        | **Always null**            | **BUG**     |
 
 **Impact**: Users cannot see trends or compare metrics between periods, which is a core feature of the analytics dashboard.
 
@@ -78,12 +78,12 @@ const previousPeriodData = useMemo<PreviousPeriodData | undefined>(() => {
 
 ### Required Changes
 
-| Field | Fix Required | Implementation |
-|-------|-------------|----------------|
-| `ordersCogs` | Create `useOrdersCogsWithComparison` hook | Similar to `useOrdersVolumeWithComparison` |
-| `logisticsCost` | Add `useFinancialSummaryComparison` call | Hook already exists, need to use it |
-| `storageCost` | Same as above | From `useFinancialSummaryComparison` |
-| `theoreticalProfit` | Calculate from previous period values | Use `calculateTheoreticalProfit` with previous values |
+| Field               | Fix Required                              | Implementation                                        |
+| ------------------- | ----------------------------------------- | ----------------------------------------------------- |
+| `ordersCogs`        | Create `useOrdersCogsWithComparison` hook | Similar to `useOrdersVolumeWithComparison`            |
+| `logisticsCost`     | Add `useFinancialSummaryComparison` call  | Hook already exists, need to use it                   |
+| `storageCost`       | Same as above                             | From `useFinancialSummaryComparison`                  |
+| `theoreticalProfit` | Calculate from previous period values     | Use `calculateTheoreticalProfit` with previous values |
 
 ### Data Flow (After Fix)
 
@@ -254,16 +254,16 @@ const previousPeriodData = useMemo<PreviousPeriodData | undefined>(() => {
 
 ## Files to Create
 
-| File | Description |
-|------|-------------|
+| File   | Description                                     |
+| ------ | ----------------------------------------------- |
 | (none) | All changes are modifications to existing files |
 
 ## Files to Modify
 
-| File | Change |
-|------|--------|
-| `src/hooks/useOrdersCogs.ts` | Add `useOrdersCogsWithComparison` hook + helper functions |
-| `src/app/(dashboard)/dashboard/components/DashboardContent.tsx` | Use new comparison hooks, populate previousPeriodData |
+| File                                                            | Change                                                    |
+| --------------------------------------------------------------- | --------------------------------------------------------- |
+| `src/hooks/useOrdersCogs.ts`                                    | Add `useOrdersCogsWithComparison` hook + helper functions |
+| `src/app/(dashboard)/dashboard/components/DashboardContent.tsx` | Use new comparison hooks, populate previousPeriodData     |
 
 ---
 
@@ -369,6 +369,7 @@ test.describe('Dashboard Previous Period Comparison', () => {
 ### Additional API Calls
 
 This fix adds:
+
 - 1 additional call for previous period COGS (`useOrdersCogsWithComparison`)
 - 1 additional call for previous period financial summary
 

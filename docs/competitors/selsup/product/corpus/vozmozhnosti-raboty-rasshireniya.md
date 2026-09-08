@@ -22,7 +22,7 @@ chars: 6845
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-umeet-rasshirenie-selsup" rel="nofollow">Что умеет расширение SelSup</a>
 - <a href="#kopirovanie-kartochek-konkurentov" rel="nofollow">Копирование карточек конкурентов</a>
 - <a href="#nastrojka-integratsii-selsup-s-rasshireniem" rel="nofollow">Настройка интеграции SelSup с расширением</a>

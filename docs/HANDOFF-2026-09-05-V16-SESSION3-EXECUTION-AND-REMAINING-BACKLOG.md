@@ -11,19 +11,19 @@
 
 ## 1. Сессии-2/3 (2026-09-02/05): 13 PR, всё merged, cleanup 0/0/0
 
-| # | Item | PR / merge | Ключевое |
-|---|---|---|---|
-| 1 | D-1 (PB-1) silent cabinet-create | #390 / `56529ced` | nonce-mint + recovery alert; e2e true-pin; флор →19421 |
-| 2 | D-2 → BE-стоп + request #230 | #391 / `36916754` | refresh-эндпоинта нет (на момент) |
-| 3 | P2 /10-family ASB | #392 / `c21a571e` | solid-пары; эскалация /60-vs-/40 |
-| 4 | P2 C13+C15 | #393 / `c4c7bf3c` | SR-дедуп; ScenarioUrgencyTier; флор →19424 |
-| 5 | P2 boundary волна-1 (finsum ×11) | #394 / `d7205094` | 459→401; house-rule + харнесс-канон |
-| 6 | P2 boundary волна-2 (Margin + D-4 fold-in) | #395 / `86fb550c` | 401→372; **живой AA-fail 4.19/4.42, скрытый аттестацией D-4** → /15→/5 + registry-коррекция |
-| 7-8 | BE-пакет (handoff + аннекс контракта) | #396/#397 | PB-3 → CONTRACT-READY; 2 FE-хазарда |
-| 9 | **D-2 (PB-3) реактивный 401-refresh** | #403 / `f772eee6` | interceptor (single-flight + каскад-гейт + replay-once + 10s-дедлайн); nonce-safe пративная ветка; opt-outs ×3; G4=12; e2e EXIT=0; **live-цепочка верифицирована**; флор →19436; 4 ревью-прохода |
-| 10 | Handoff сессии-2 + V16-промпт | #398/#400 | документация передачи |
-| 11 | owner-ок + live-статус D-2 | #401 | BE пересобран локально |
-| 12 | **P2 волна-3 AA-quick-wins** | #404 / `afb2915f` | 19 тинт-миграций → **открытие: слоистая композитинг-модель** (over-card фальсифицирован); структурные ремедии (fg-on-tint/solid); хост-фолд-ины (2.79 — худший AA-сайт); флор →**19439**; 3 ревью-прохода |
+| #   | Item                                       | PR / merge        | Ключевое                                                                                                                                                                                                  |
+| --- | ------------------------------------------ | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | D-1 (PB-1) silent cabinet-create           | #390 / `56529ced` | nonce-mint + recovery alert; e2e true-pin; флор →19421                                                                                                                                                    |
+| 2   | D-2 → BE-стоп + request #230               | #391 / `36916754` | refresh-эндпоинта нет (на момент)                                                                                                                                                                         |
+| 3   | P2 /10-family ASB                          | #392 / `c21a571e` | solid-пары; эскалация /60-vs-/40                                                                                                                                                                          |
+| 4   | P2 C13+C15                                 | #393 / `c4c7bf3c` | SR-дедуп; ScenarioUrgencyTier; флор →19424                                                                                                                                                                |
+| 5   | P2 boundary волна-1 (finsum ×11)           | #394 / `d7205094` | 459→401; house-rule + харнесс-канон                                                                                                                                                                       |
+| 6   | P2 boundary волна-2 (Margin + D-4 fold-in) | #395 / `86fb550c` | 401→372; **живой AA-fail 4.19/4.42, скрытый аттестацией D-4** → /15→/5 + registry-коррекция                                                                                                               |
+| 7-8 | BE-пакет (handoff + аннекс контракта)      | #396/#397         | PB-3 → CONTRACT-READY; 2 FE-хазарда                                                                                                                                                                       |
+| 9   | **D-2 (PB-3) реактивный 401-refresh**      | #403 / `f772eee6` | interceptor (single-flight + каскад-гейт + replay-once + 10s-дедлайн); nonce-safe пративная ветка; opt-outs ×3; G4=12; e2e EXIT=0; **live-цепочка верифицирована**; флор →19436; 4 ревью-прохода          |
+| 10  | Handoff сессии-2 + V16-промпт              | #398/#400         | документация передачи                                                                                                                                                                                     |
+| 11  | owner-ок + live-статус D-2                 | #401              | BE пересобран локально                                                                                                                                                                                    |
+| 12  | **P2 волна-3 AA-quick-wins**               | #404 / `afb2915f` | 19 тинт-миграций → **открытие: слоистая композитинг-модель** (over-card фальсифицирован); структурные ремедии (fg-on-tint/solid); хост-фолд-ины (2.79 — худший AA-сайт); флор →**19439**; 3 ревью-прохода |
 
 Артефакты: `_bmad-output/implementation-artifacts/debt-{d1-pb1-silent-cabinet-create, p2-10-family-asb, p2-c13-c15-quality-wave, p2-boundary-wave1-finsum, p2-boundary-wave2-margin, d2-pb3-reactive-refresh, p2-wave3-aa-quickwins}.md`. **Артефакт волны-3 = актуальный WCAG-канон** (слоистая модель; APPEND-ноты в волны 1-2 уже внесены).
 
@@ -42,6 +42,7 @@
 > **Update 2026-09-05 (сессия-4)**: волна-4 исполнена — 16 файлов / 105 сайтов, boundary **372→267**, манифест 174.3 регенерирован раннером, 3 ревью-прохода (сходимость). Артефакт: `debt-p2-w4-component-families.md`; прецеденты: purple→status-pending, hover-стек таблиц, ANCHOR-2=remedy. Chart-hex компонентов (37) отложен до C5. **Следующий item — §3.1 волна-5 lib-residue.** Каталог ниже — исторический срез.
 
 Каталог-остаток после волн 1-3 (src/components = 142): `badges/SourceBadge.tsx` 16 · `jam/RequireJam.tsx` 13 · `AdvertisingEmptyState.tsx` 13 · `expense-chart-badge.tsx` 13 · `MissingCogsAlert.tsx` 12 · `ComparisonBadge.tsx` 6 · `analytics/FbsTrendsTooltip.tsx` 6 · `SidebarCabinetInfo.tsx` 7 · `ComparisonHelpers.tsx` 4 · `AllocatedMarker.tsx`/`TrendIndicator.tsx` ×2 · `DataSourceIndicator.tsx` 9 · `CogsSubRows`-хвосты... (полный live-скан: grep-команда в §5-точках входа; **каталог 174.2 дрейфует — всегда live-пересчёт**).
+
 - Канон: волны 1-2 (маппинг по смыслу) + **волна-3 (слоистая модель — ОБЯЗАТЕЛЬНА: трассировать цепочку монтирования каждого сайта; харнесс `/tmp/p2-w3-aa-contrast.mjs` паттерн — стеки + worst-end)**; structural-ремедии когда база тонирована
 - Ratchet ↓ 372 → ожидаемо ~290-300; baseline + CLAUDE.md тем же коммитом
 - Consumer-тест-пины в свипе (44 тест-файла с legacy-пинами суммарно — идут со своими компонентами)
@@ -73,13 +74,13 @@ harness restart-per-run раннер · FR-7 (reseed nmId 202867769 W26 ИЛИ r
 
 ### 3.5 Owner-decision ledger (2026-09-05)
 
-| Решение | Статус / рекомендация |
-|---|---|
-| **C5 chart-palette** (гейтит chart-hex трек ~50 сайтов: waterfall 11 hex + route-charts + lib-константы) | ⏳ варианты: categorical token-set (рекомендовано) / расширенные exceptions / отложить |
-| **WCAG 1.4.11 valence-каналы** (НОВОЕ, волна-3: tint 1.07-1.21 / border 1.52-1.89 < 3:1 — валентность чипов после fg-on-tint миграций на суб-перцептивных каналах) | ⏳ дизайн-решение: ≥3:1-носитель (solid-бордер/иконка) или accept |
-| financial-foreground токены | рекомендация: отложить (fg-on-tint закрывает; добавить при спросе на solid financial-чипы) |
-| logger-redact волна | рекомендация: после boundary-волн |
-| FR-7 / AT-матрица / Manager-creds / docs-95 / prettier-md / pm2-id5 | ⏳ P3 |
+| Решение                                                                                                                                                            | Статус / рекомендация                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| **C5 chart-palette** (гейтит chart-hex трек ~50 сайтов: waterfall 11 hex + route-charts + lib-константы)                                                           | ⏳ варианты: categorical token-set (рекомендовано) / расширенные exceptions / отложить     |
+| **WCAG 1.4.11 valence-каналы** (НОВОЕ, волна-3: tint 1.07-1.21 / border 1.52-1.89 < 3:1 — валентность чипов после fg-on-tint миграций на суб-перцептивных каналах) | ⏳ дизайн-решение: ≥3:1-носитель (solid-бордер/иконка) или accept                          |
+| financial-foreground токены                                                                                                                                        | рекомендация: отложить (fg-on-tint закрывает; добавить при спросе на solid financial-чипы) |
+| logger-redact волна                                                                                                                                                | рекомендация: после boundary-волн                                                          |
+| FR-7 / AT-матрица / Manager-creds / docs-95 / prettier-md / pm2-id5                                                                                                | ⏳ P3                                                                                      |
 
 ## 4. Реестр технического долга (полный, накопленный; детерминанты в артефактах)
 

@@ -8,6 +8,7 @@
 **Depends On**: Story 44.12 (Warehouse Selection) ✅, Story 44.13 (Auto-fill Coefficients) ✅
 
 **Related Stories**:
+
 - **Story 44.40-FE** (Two Tariff Systems Integration) - EXTENDS THIS STORY
 
 ---
@@ -21,12 +22,14 @@
 > switch to the **SUPPLY system**.
 
 ### Current Implementation (INVENTORY Only)
+
 - ✅ Fetches warehouse list from `/v1/tariffs/warehouses`
 - ✅ Parses tariff expressions (`boxDeliveryBase`, etc.)
 - ✅ Uses static tariffs for calculations
 - ❌ Does NOT account for date-specific SUPPLY tariffs
 
 ### Required Enhancement (Story 44.40)
+
 - [ ] Add `tariffSystem` prop to `WarehouseSection`
 - [ ] When `tariffSystem='supply'`: Display SUPPLY tariffs (from Story 44.26a)
 - [ ] Show tariff system indicator in UI
@@ -39,9 +42,11 @@
 ## Background
 
 **Проблема пользователя:**
+
 > "У нас на нашей странице все так же не внедрено и отсутствует возможность выбора склада, куда товар будет отгружен. Также из-за этого не реализован функционал получения коэффициентов для хранения в случае ФБО и для логистики в обоих случаях."
 
 **Текущее состояние:**
+
 - ✅ `WarehouseSelect.tsx` - создан и работает
 - ✅ `WarehouseSection.tsx` - создан, включает коэффициенты и хранение
 - ✅ `useWarehouseCoefficients.ts` - hook для получения коэффициентов
@@ -50,6 +55,7 @@
 - ❌ **НЕ учитывает систему SUPPLY для будущих дат** (see Story 44.40)
 
 **Бизнес-логика коэффициентов:**
+
 1. **Базовая ставка** - единая для всех складов (backend знает)
 2. **Коэффициент склада** - повышающий/понижающий множитель (100 = 1.0, 125 = 1.25)
 3. **Итоговая ставка** = Базовая × Коэффициент
@@ -59,6 +65,7 @@
    - Логистика возврата (ФБО и ФБС)
 
 **ВАЖНО (Story 44.40)**: Базовые ставки различаются между системами:
+
 - **INVENTORY**: Текущие фактические ставки (для финансовых отчётов)
 - **SUPPLY**: Ставки планирования (для будущих поставок, обычно выше)
 
@@ -71,6 +78,7 @@
 **So that** I can get accurate price calculations based on actual WB tariffs for my chosen fulfillment warehouse.
 
 **Non-goals**:
+
 - Warehouse recommendation based on location
 - Multiple warehouse comparison
 - Warehouse capacity/availability indicators
@@ -81,12 +89,14 @@
 ## Acceptance Criteria
 
 ### AC1: WarehouseSection Integration
+
 - [x] Add `WarehouseSection` component to `PriceCalculatorForm.tsx`
 - [x] Place after `FulfillmentTypeSelector`, before `CategorySelector`
 - [x] Pass required props: `warehouseId`, `storageDays`, `volumeLiters`, `fulfillmentType`
 - [x] Component visible in both FBO and FBS modes
 
 ### AC2: Form State for Warehouse
+
 - [x] Add form state: `warehouseId: number | null`
 - [x] Add form state: `warehouseName: string | null`
 - [x] Add form state: `turnover_days: number` (default: 20) - storage duration in days
@@ -95,18 +105,21 @@
 - [x] Add form state: `storageCoefficient: number` (default: 1.0)
 
 ### AC3: Volume Calculation for Warehouse
+
 - [x] Calculate volume from dimensions: `(length × width × height) / 1000` liters
 - [x] Pass calculated volume to `WarehouseSection`
 - [x] Volume updates in real-time as dimensions change
 - [x] Minimum volume: 0.1 liters (validation)
 
 ### AC4: Coefficient Application to Logistics
+
 - [x] When coefficients auto-fill, recalculate logistics costs
 - [x] Forward logistics: `base_tariff × logistics_coefficient`
 - [x] Return logistics: `base_tariff × logistics_coefficient × return_rate`
 - [x] Show coefficient impact in logistics breakdown
 
 ### AC5: Storage Cost Integration (FBO only)
+
 - [x] Calculate `storage_rub` as: `dailyStorageCost × turnover_days`
 - [x] `dailyStorageCost` comes from warehouse tariffs (`boxStorageBase` + volume calculation)
 - [x] `turnover_days` input handled by `TurnoverDaysInput` component (Story 44.32)
@@ -114,12 +127,14 @@
 - [x] Hide storage section when FBS mode selected
 
 ### AC6: Delivery Date Selection (Story 44.26a)
+
 - [x] When warehouse selected, show delivery date picker
 - [x] Calendar shows 14-day coefficient preview
 - [x] Selected date determines which coefficient applies
 - [x] Default: tomorrow or first available date with coefficient > 0
 
 ### AC7: API Request Integration
+
 - [x] Include `warehouse_id` in API request (if selected)
 - [x] Include `logistics_coefficient` in API request
 - [x] Include `storage_coefficient` in API request (FBO)
@@ -127,6 +142,7 @@
 - [x] Backend uses coefficients in price calculation
 
 ### AC8: Two Tariff Systems Support (NEW - Story 44.40) ⏳
+
 > **Enhancement Required**: This AC is for Story 44.40 integration.
 
 - [ ] Accept `tariffSystem: 'inventory' | 'supply'` prop
@@ -148,6 +164,7 @@
 ### Backend Endpoints Used
 
 **1. Get Warehouses List** (Story 44.12)
+
 ```http
 GET /v1/tariffs/warehouses
 Authorization: Bearer {token}
@@ -155,6 +172,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Response:**
+
 ```json
 {
   "data": {
@@ -173,6 +191,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **2. Get Acceptance Coefficients** (Story 44.13)
+
 ```http
 GET /v1/tariffs/acceptance/coefficients?warehouseId=507
 Authorization: Bearer {token}
@@ -180,6 +199,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Response:**
+
 ```json
 {
   "data": {
@@ -197,6 +217,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Coefficient Normalization:**
+
 ```typescript
 const normalizedCoefficient = rawCoefficient / 100
 // 100 → 1.0, 125 → 1.25, 150 → 1.5
@@ -364,19 +385,19 @@ export function toApiRequest(data: FormData): PriceCalculatorRequest {
 
 ## Invariants & Edge Cases
 
-| Case | Expected Behavior |
-|------|-------------------|
-| No warehouse selected | Coefficients = 1.0, storage manual input |
-| Warehouse API error | Show error, allow manual coefficient entry |
-| FBS mode | Hide storage section, show logistics coefficient only |
-| FBO mode | Show storage section + storage coefficient |
-| Volume = 0 | Show "Введите габариты" warning, storage = 0 |
-| Coefficient > 2.0 | Allow but show warning about high cost |
-| Warehouse cleared | Reset all coefficients to 1.0 |
-| Delivery date unavailable | Use first available date with coefficient > 0 |
-| **NEW: tariffSystem='inventory'** | Display static INVENTORY tariffs (default behavior) |
-| **NEW: tariffSystem='supply'** | Display SUPPLY tariffs from `supplyTariffs` prop |
-| **NEW: supplyTariffs is null** | Fall back to INVENTORY tariffs with warning |
+| Case                              | Expected Behavior                                     |
+| --------------------------------- | ----------------------------------------------------- |
+| No warehouse selected             | Coefficients = 1.0, storage manual input              |
+| Warehouse API error               | Show error, allow manual coefficient entry            |
+| FBS mode                          | Hide storage section, show logistics coefficient only |
+| FBO mode                          | Show storage section + storage coefficient            |
+| Volume = 0                        | Show "Введите габариты" warning, storage = 0          |
+| Coefficient > 2.0                 | Allow but show warning about high cost                |
+| Warehouse cleared                 | Reset all coefficients to 1.0                         |
+| Delivery date unavailable         | Use first available date with coefficient > 0         |
+| **NEW: tariffSystem='inventory'** | Display static INVENTORY tariffs (default behavior)   |
+| **NEW: tariffSystem='supply'**    | Display SUPPLY tariffs from `supplyTariffs` prop      |
+| **NEW: supplyTariffs is null**    | Fall back to INVENTORY tariffs with warning           |
 
 ---
 
@@ -411,27 +432,27 @@ export function toApiRequest(data: FormData): PriceCalculatorRequest {
 
 ### Unit Tests
 
-| Test | Input | Expected |
-|------|-------|----------|
-| Volume calculation | 30×20×10 cm | 6.0 liters |
-| Coefficient normalization | 125 | 1.25 |
-| Storage cost | 6L, 14 days, coeff 1.0 | calculated value |
+| Test                      | Input                  | Expected         |
+| ------------------------- | ---------------------- | ---------------- |
+| Volume calculation        | 30×20×10 cm            | 6.0 liters       |
+| Coefficient normalization | 125                    | 1.25             |
+| Storage cost              | 6L, 14 days, coeff 1.0 | calculated value |
 
 ### Integration Tests
 
-| Test | Scenario | Expected |
-|------|----------|----------|
-| Warehouse select | Select Коледино | Coefficients auto-fill |
-| Mode switch | FBO → FBS | Storage section hides |
-| Dimension change | Update height | Volume recalculates |
-| API request | Submit form | Request includes warehouse_id |
+| Test             | Scenario        | Expected                      |
+| ---------------- | --------------- | ----------------------------- |
+| Warehouse select | Select Коледино | Coefficients auto-fill        |
+| Mode switch      | FBO → FBS       | Storage section hides         |
+| Dimension change | Update height   | Volume recalculates           |
+| API request      | Submit form     | Request includes warehouse_id |
 
 ### E2E Tests
 
-| Test | Scenario | Expected |
-|------|----------|----------|
-| Full flow | Select warehouse, enter data, calculate | Price includes coefficients |
-| No warehouse | Calculate without warehouse | Works with default 1.0 |
+| Test         | Scenario                                | Expected                    |
+| ------------ | --------------------------------------- | --------------------------- |
+| Full flow    | Select warehouse, enter data, calculate | Price includes coefficients |
+| No warehouse | Calculate without warehouse             | Works with default 1.0      |
 
 ---
 
@@ -439,16 +460,18 @@ export function toApiRequest(data: FormData): PriceCalculatorRequest {
 
 ### File List
 
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `PriceCalculatorForm.tsx` | UPDATE | +50 | Add WarehouseSection integration |
-| `usePriceCalculatorForm.ts` | UPDATE | +20 | Add warehouse form state |
-| `priceCalculatorUtils.ts` | UPDATE | +10 | Add warehouse to API request |
+| File                        | Change Type | Lines (Est.) | Description                      |
+| --------------------------- | ----------- | ------------ | -------------------------------- |
+| `PriceCalculatorForm.tsx`   | UPDATE      | +50          | Add WarehouseSection integration |
+| `usePriceCalculatorForm.ts` | UPDATE      | +20          | Add warehouse form state         |
+| `priceCalculatorUtils.ts`   | UPDATE      | +10          | Add warehouse to API request     |
 
 ### Change Log
+
 _(To be filled during implementation)_
 
 ### Review Follow-ups
+
 _(To be filled after code review)_
 
 ---
@@ -473,24 +496,24 @@ _(To be filled after code review)_
 
 ### Functional Verification
 
-| Test Case | Expected Result | Status |
-|-----------|-----------------|--------|
-| WarehouseSection visible | Shows in form | [ ] |
-| Select warehouse | Coefficients auto-fill | [ ] |
-| FBO mode | Storage section visible | [ ] |
-| FBS mode | Storage section hidden | [ ] |
-| Change dimensions | Volume updates | [ ] |
-| Submit form | Request includes warehouse | [ ] |
-| Clear warehouse | Coefficients reset to 1.0 | [ ] |
+| Test Case                | Expected Result            | Status |
+| ------------------------ | -------------------------- | ------ |
+| WarehouseSection visible | Shows in form              | [ ]    |
+| Select warehouse         | Coefficients auto-fill     | [ ]    |
+| FBO mode                 | Storage section visible    | [ ]    |
+| FBS mode                 | Storage section hidden     | [ ]    |
+| Change dimensions        | Volume updates             | [ ]    |
+| Submit form              | Request includes warehouse | [ ]    |
+| Clear warehouse          | Coefficients reset to 1.0  | [ ]    |
 
 ### Accessibility Verification
 
-| Check | Status |
-|-------|--------|
-| Keyboard navigation | [ ] |
-| Screen reader | [ ] |
-| Color contrast | [ ] |
-| Focus management | [ ] |
+| Check               | Status |
+| ------------------- | ------ |
+| Keyboard navigation | [ ]    |
+| Screen reader       | [ ]    |
+| Color contrast      | [ ]    |
+| Focus management    | [ ]    |
 
 ---
 

@@ -8,6 +8,7 @@
 **UX Design Status**: ✅ COMPLETE (Sally, 2025-12-29)
 
 **📄 See Also**:
+
 - [Epic 34-FE Specification](epics/epic-34-fe-telegram-notifications-ui.md)
 - **[Developer Handoff Guide](DEV-HANDOFF-EPIC-34-FE.md)** ← Production deployment guide
 - [API Integration Guide](API-INTEGRATION-GUIDE-EPIC-34-FE.md)
@@ -19,6 +20,7 @@
 **Цель**: Создать UI для настройки Telegram-уведомлений о фоновых задачах (импорты, синхронизации, расчёты).
 
 **Основные возможности**:
+
 1. ✅ Привязка Telegram-аккаунта через код верификации
 2. ✅ Настройка типов уведомлений (успех, ошибки, зависание, дайджест)
 3. ✅ Конфигурация тихих часов и timezone
@@ -34,6 +36,7 @@
 ## 📚 Documentation Index
 
 ### 🚀 Production Deployment
+
 - **[DEV-HANDOFF-EPIC-34-FE.md](DEV-HANDOFF-EPIC-34-FE.md)** - Complete handoff guide
   - [Bot Configuration](DEV-HANDOFF-EPIC-34-FE.md#-telegram-bot-configuration-urgent-action-required) - Update `@Kernel_crypto_bot`
   - [Monitoring Implementation](DEV-HANDOFF-EPIC-34-FE.md#-monitoring--analytics-implementation-recommended) - 2-3h setup
@@ -42,38 +45,39 @@
 
 ### Main Documents
 
-| Document | Purpose | Link |
-|----------|---------|------|
-| **Epic 34-FE** | Полное описание эпика, 6 stories, API integration | [epic-34-fe-telegram-notifications-ui.md](epics/epic-34-fe-telegram-notifications-ui.md) |
-| **UX Requirements** | 25 вопросов для UX Expert, wireframe guidelines | [epic-34-fe-UX-REQUIREMENTS.md](epics/epic-34-fe-UX-REQUIREMENTS.md) |
-| **UX Answers** | ✅ 25 ответов UX Expert'а с детальными спецификациями | [UX-ANSWERS-EPIC-34-FE.md](epics/UX-ANSWERS-EPIC-34-FE.md) |
-| **Backend API (Request #73)** | API endpoints, TypeScript types, примеры | [request-backend/73-telegram-notifications-epic-34.md](request-backend/73-telegram-notifications-epic-34.md) |
+| Document                      | Purpose                                               | Link                                                                                                         |
+| ----------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Epic 34-FE**                | Полное описание эпика, 6 stories, API integration     | [epic-34-fe-telegram-notifications-ui.md](epics/epic-34-fe-telegram-notifications-ui.md)                     |
+| **UX Requirements**           | 25 вопросов для UX Expert, wireframe guidelines       | [epic-34-fe-UX-REQUIREMENTS.md](epics/epic-34-fe-UX-REQUIREMENTS.md)                                         |
+| **UX Answers**                | ✅ 25 ответов UX Expert'а с детальными спецификациями | [UX-ANSWERS-EPIC-34-FE.md](epics/UX-ANSWERS-EPIC-34-FE.md)                                                   |
+| **Backend API (Request #73)** | API endpoints, TypeScript types, примеры              | [request-backend/73-telegram-notifications-epic-34.md](request-backend/73-telegram-notifications-epic-34.md) |
 
 ### Story Files (Individual Implementation Specs)
 
-| Story | Document | Status |
-|-------|----------|--------|
-| **Story 34.1-FE** | [Types & API Client](stories/epic-34/story-34.1-fe-types-api-client.md) | ✅ Ready |
-| **Story 34.2-FE** | [Telegram Binding Flow](stories/epic-34/story-34.2-fe-telegram-binding-flow.md) | ✅ Ready |
+| Story             | Document                                                                                    | Status   |
+| ----------------- | ------------------------------------------------------------------------------------------- | -------- |
+| **Story 34.1-FE** | [Types & API Client](stories/epic-34/story-34.1-fe-types-api-client.md)                     | ✅ Ready |
+| **Story 34.2-FE** | [Telegram Binding Flow](stories/epic-34/story-34.2-fe-telegram-binding-flow.md)             | ✅ Ready |
 | **Story 34.3-FE** | [Notification Preferences](stories/epic-34/story-34.3-fe-notification-preferences-panel.md) | ✅ Ready |
-| **Story 34.4-FE** | [Quiet Hours & Timezone](stories/epic-34/story-34.4-fe-quiet-hours-timezone.md) | ✅ Ready |
-| **Story 34.5-FE** | [Settings Page Layout](stories/epic-34/story-34.5-fe-settings-page-layout.md) | ✅ Ready |
-| **Story 34.6-FE** | [Testing & Documentation](stories/epic-34/story-34.6-fe-testing-documentation.md) | ✅ Ready |
+| **Story 34.4-FE** | [Quiet Hours & Timezone](stories/epic-34/story-34.4-fe-quiet-hours-timezone.md)             | ✅ Ready |
+| **Story 34.5-FE** | [Settings Page Layout](stories/epic-34/story-34.5-fe-settings-page-layout.md)               | ✅ Ready |
+| **Story 34.6-FE** | [Testing & Documentation](stories/epic-34/story-34.6-fe-testing-documentation.md)           | ✅ Ready |
 
 ### Backend References (для справки)
 
-| Document | Purpose | Location |
-|----------|---------|----------|
-| **TELEGRAM-NOTIFICATIONS-GUIDE.md** | Полный технический гайд бэкенда | `../docs/TELEGRAM-NOTIFICATIONS-GUIDE.md` |
-| **Epic 34 (Backend)** | Backend эпик | `../docs/epics/epic-34-telegram-notifications.md` |
-| **API Reference** | API paths reference | `../docs/API-PATHS-REFERENCE.md#telegram-notifications` |
-| **Test API** | HTTP requests для тестирования | `../test-api/13-notifications.http` |
+| Document                            | Purpose                         | Location                                                |
+| ----------------------------------- | ------------------------------- | ------------------------------------------------------- |
+| **TELEGRAM-NOTIFICATIONS-GUIDE.md** | Полный технический гайд бэкенда | `../docs/TELEGRAM-NOTIFICATIONS-GUIDE.md`               |
+| **Epic 34 (Backend)**               | Backend эпик                    | `../docs/epics/epic-34-telegram-notifications.md`       |
+| **API Reference**                   | API paths reference             | `../docs/API-PATHS-REFERENCE.md#telegram-notifications` |
+| **Test API**                        | HTTP requests для тестирования  | `../test-api/13-notifications.http`                     |
 
 ---
 
 ## 📊 Stories Breakdown
 
 ### ✅ Story 34.1-FE: TypeScript Types & API Client
+
 - **Effort**: 2 SP (4-6 hours)
 - **Status**: ✅ Ready for Development (no design dependencies)
 - **Story Doc**: [story-34.1-fe-types-api-client.md](stories/epic-34/story-34.1-fe-types-api-client.md)
@@ -85,6 +89,7 @@
   - `src/hooks/useQuietHours.ts`
 
 ### ✅ Story 34.2-FE: Telegram Binding Flow
+
 - **Effort**: 5 SP (8-12 hours)
 - **Status**: ✅ Ready for Development (UX Design approved: Q1-Q5)
 - **Story Doc**: [story-34.2-fe-telegram-binding-flow.md](stories/epic-34/story-34.2-fe-telegram-binding-flow.md)
@@ -100,6 +105,7 @@
   - Unbind confirmation dialog
 
 ### ✅ Story 34.3-FE: Notification Preferences Panel
+
 - **Effort**: 5 SP (8-12 hours)
 - **Status**: ✅ Ready for Development (UX Design approved: Q6-Q10)
 - **Story Doc**: [story-34.3-fe-notification-preferences-panel.md](stories/epic-34/story-34.3-fe-notification-preferences-panel.md)
@@ -115,6 +121,7 @@
   - ⭐ **Manual save button** (Primary Red #E53935)
 
 ### ✅ Story 34.4-FE: Quiet Hours & Timezone
+
 - **Effort**: 3 SP (5-7 hours)
 - **Status**: ✅ Ready for Development (UX Design approved: Q11-Q15)
 - **Story Doc**: [story-34.4-fe-quiet-hours-timezone.md](stories/epic-34/story-34.4-fe-quiet-hours-timezone.md)
@@ -129,6 +136,7 @@
   - Active quiet hours badge (🌙 when in period)
 
 ### ✅ Story 34.5-FE: Settings Page Layout
+
 - **Effort**: 3 SP (5-7 hours)
 - **Status**: ✅ Ready for Development (UX Design approved: Q16-Q20)
 - **Story Doc**: [story-34.5-fe-settings-page-layout.md](stories/epic-34/story-34.5-fe-settings-page-layout.md)
@@ -145,6 +153,7 @@
   - Test notification button
 
 ### ✅ Story 34.6-FE: Testing & Documentation
+
 - **Effort**: 3 SP (5-7 hours)
 - **Status**: ✅ Ready for Development
 - **Story Doc**: [story-34.6-fe-testing-documentation.md](stories/epic-34/story-34.6-fe-testing-documentation.md)
@@ -164,6 +173,7 @@
 ### ✅ UX Design Complete (Sally, 2025-12-29)
 
 **Deliverables**:
+
 - ✅ All 25 design questions answered with detailed specifications
 - ✅ ASCII wireframes for all components (desktop + mobile)
 - ✅ Complete technical specs (CSS, HTML, JavaScript patterns)
@@ -174,18 +184,19 @@
 
 ### ✅ Critical Design Decisions Approved
 
-| Question | Decision | Impact |
-|----------|----------|--------|
-| **Q1: Modal Layout** | ✅ Centered modal overlay | Story 34.2-FE |
-| **Q2: Countdown Timer** | ✅ Progress bar + text | Story 34.2-FE |
-| **Q10: Save Strategy** | ✅ Manual save button | Story 34.3-FE ⭐ |
-| **Q16: Card Layout** | ✅ Vertical stack | Story 34.5-FE ⭐ |
-| **Q19: Empty State** | ✅ Hero banner with CTA | Story 34.5-FE ⭐ |
+| Question                  | Decision                   | Impact           |
+| ------------------------- | -------------------------- | ---------------- |
+| **Q1: Modal Layout**      | ✅ Centered modal overlay  | Story 34.2-FE    |
+| **Q2: Countdown Timer**   | ✅ Progress bar + text     | Story 34.2-FE    |
+| **Q10: Save Strategy**    | ✅ Manual save button      | Story 34.3-FE ⭐ |
+| **Q16: Card Layout**      | ✅ Vertical stack          | Story 34.5-FE ⭐ |
+| **Q19: Empty State**      | ✅ Hero banner with CTA    | Story 34.5-FE ⭐ |
 | **Q20: Status Indicator** | ✅ Bell icon 🔔 with badge | Story 34.5-FE ⭐ |
 
 ### ✅ All Design Specifications
 
 **Story 34.2-FE (Q1-Q5)**: ✅ Approved
+
 - Modal: Centered overlay, 480-560px, shadcn/ui Dialog
 - Timer: Linear progress bar + text, color changes (Blue→Orange→Red)
 - Deep Link: Telegram Blue button with paper plane icon
@@ -193,6 +204,7 @@
 - Unbind: Confirmation dialog with warning, danger button
 
 **Story 34.3-FE (Q6-Q10)**: ✅ Approved
+
 - Event Cards: Border highlight (2px Blue enabled, 1px Gray disabled)
 - Descriptions: Always visible (max 2 lines, truncate)
 - Language: Radio buttons with flags (🇷🇺 🇬🇧), horizontal layout
@@ -200,6 +212,7 @@
 - Save: Manual button (Primary Red), dirty state detection, navigation prevention
 
 **Story 34.4-FE (Q11-Q15)**: ✅ Approved
+
 - Time Pickers: Native `<input type="time">`, 15-min intervals, 24-hour format
 - Timezone: Grouped dropdown (10-15 zones), shadcn/ui Select
 - Time Preview: Inline text, updates every 60s, "Сейчас в {tz}: {time}"
@@ -207,6 +220,7 @@
 - Active Badge: Conditional (🌙 Light Blue banner when in period)
 
 **Story 34.5-FE (Q16-Q20)**: ✅ Approved
+
 - Layout: Vertical stack, max-width 1024px, 24px spacing (desktop)
 - Spacing: 16/24/32px scale, responsive (24→20→16px)
 - Mobile: Full-width cards, vertical scroll, reduced padding
@@ -219,19 +233,19 @@
 
 ### Telegram Account Binding
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/v1/notifications/telegram/bind` | POST | Generate binding code |
-| `/v1/notifications/telegram/status` | GET | Poll binding status |
-| `/v1/notifications/telegram/unbind` | DELETE | Remove binding |
+| Endpoint                            | Method | Purpose               |
+| ----------------------------------- | ------ | --------------------- |
+| `/v1/notifications/telegram/bind`   | POST   | Generate binding code |
+| `/v1/notifications/telegram/status` | GET    | Poll binding status   |
+| `/v1/notifications/telegram/unbind` | DELETE | Remove binding        |
 
 ### Notification Preferences
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/v1/notifications/preferences` | GET | Get current preferences |
-| `/v1/notifications/preferences` | PUT | Update preferences (partial) |
-| `/v1/notifications/test` | POST | Send test notification |
+| Endpoint                        | Method | Purpose                      |
+| ------------------------------- | ------ | ---------------------------- |
+| `/v1/notifications/preferences` | GET    | Get current preferences      |
+| `/v1/notifications/preferences` | PUT    | Update preferences (partial) |
+| `/v1/notifications/test`        | POST   | Send test notification       |
 
 **Full API documentation**: See Request #73
 
@@ -313,12 +327,14 @@
 ## 📦 Dependencies
 
 ### Backend
+
 - ✅ Epic 34 (Backend) - COMPLETE
 - ✅ Request #73 API - COMPLETE
 - ✅ Telegram Bot (@Kernel_crypto_bot) - LIVE
 - ✅ Test API endpoints - WORKING
 
 ### Frontend
+
 - ✅ UX Expert design - COMPLETE (Sally, 2025-12-29)
 - ✅ Wireframes/specifications - COMPLETE (ASCII mockups, technical specs)
 - ✅ shadcn/ui components - AVAILABLE (Dialog, Switch, Select, Button, Alert, Badge)
@@ -329,14 +345,17 @@
 ## 🎯 Success Metrics
 
 ### Adoption Metrics
+
 - **Target**: >30% of active users bind Telegram within 1 month
 - **Measurement**: Track `telegram_user_bindings` table growth
 
 ### Engagement Metrics
+
 - **Target**: >50% users customize preferences
 - **Measurement**: Track `PUT /preferences` API calls
 
 ### Quality Metrics
+
 - **Target**: <5% unbind rate
 - **Measurement**: Track `DELETE /unbind` calls vs total bindings
 
@@ -350,12 +369,14 @@
 **Status**: Epic planning complete
 
 **Decisions**:
+
 - Total effort: 21 SP (~7-10 days)
 - UX Expert involvement required
 - 25 design questions prepared
 - Story breakdown finalized
 
 **Action Items**:
+
 - [ ] Sarah: Assign UX Expert
 - [ ] Sarah: Schedule design review meeting
 - [ ] UX Expert: Review Epic 34-FE and UX Requirements documents
@@ -369,11 +390,13 @@
 ## 🔗 Related Epics
 
 ### Backend
+
 - **Epic 34**: Telegram Notifications (backend) - ✅ COMPLETE
 - **Epic 23**: Task Scheduler - ✅ COMPLETE (provides events to notify)
 - **Epic 21**: Worker Reliability - ✅ COMPLETE (provides task monitoring)
 
 ### Frontend
+
 - **Epic 4-FE**: COGS & Margin - ✅ COMPLETE (may send notifications)
 - **Epic 24-FE**: Paid Storage Analytics - ✅ COMPLETE (may send notifications)
 - **Epic 6-FE**: Advanced Analytics - ✅ COMPLETE (may send notifications)
@@ -387,6 +410,7 @@
 **Frontend Team**: [To be assigned]
 
 **For Questions**:
+
 - Epic scope: See [epic-34-fe-telegram-notifications-ui.md](epics/epic-34-fe-telegram-notifications-ui.md)
 - Design questions: See [epic-34-fe-UX-REQUIREMENTS.md](epics/epic-34-fe-UX-REQUIREMENTS.md)
 - API integration: See [request-backend/73-telegram-notifications-epic-34.md](request-backend/73-telegram-notifications-epic-34.md)
@@ -404,24 +428,26 @@
 
 ### Stories Delivered
 
-| Story | Status | Files Created | Notes |
-|-------|--------|---------------|-------|
-| **34.1-FE** | ✅ Complete | 3 types, 6 API functions, 3 hooks, 7 tests | SSR-safe, React Query v5 |
-| **34.2-FE** | ✅ Complete | 3 components | Modal with countdown, polling, deep link |
-| **34.3-FE** | ✅ Complete | 3 components | Manual save, dirty detection, 4 event types |
-| **34.4-FE** | ✅ Complete | 2 components | Native time pickers, 13 timezones |
-| **34.5-FE** | ✅ Complete | 1 page | Hero banner, lock overlays, responsive |
-| **34.6-FE** | ✅ Complete | WCAG fix, docs | DialogDescription added, CHANGELOG updated |
+| Story       | Status      | Files Created                              | Notes                                       |
+| ----------- | ----------- | ------------------------------------------ | ------------------------------------------- |
+| **34.1-FE** | ✅ Complete | 3 types, 6 API functions, 3 hooks, 7 tests | SSR-safe, React Query v5                    |
+| **34.2-FE** | ✅ Complete | 3 components                               | Modal with countdown, polling, deep link    |
+| **34.3-FE** | ✅ Complete | 3 components                               | Manual save, dirty detection, 4 event types |
+| **34.4-FE** | ✅ Complete | 2 components                               | Native time pickers, 13 timezones           |
+| **34.5-FE** | ✅ Complete | 1 page                                     | Hero banner, lock overlays, responsive      |
+| **34.6-FE** | ✅ Complete | WCAG fix, docs                             | DialogDescription added, CHANGELOG updated  |
 
 ### Key Implementations
 
 **Architecture**:
+
 - ✅ TypeScript strict mode compliance
 - ✅ React Query v5 for server state
 - ✅ Zustand for client state (SSR-safe)
 - ✅ shadcn/ui components (Dialog, Card, Button, Alert, Switch, Select)
 
 **API Client** (`src/lib/api/notifications.ts`):
+
 ```typescript
 // 6 endpoints implemented with error handling
 - startBinding(): BindingCodeResponseDto
@@ -433,6 +459,7 @@
 ```
 
 **React Query Hooks**:
+
 ```typescript
 // 3 hooks with polling, mutations, optimistic updates
 - useTelegramBinding() // 3s polling, auto-stop on success
@@ -441,6 +468,7 @@
 ```
 
 **Components Created** (8 total):
+
 ```
 src/components/notifications/
 ├── TelegramBindingCard.tsx           # Bound/unbound states
@@ -455,6 +483,7 @@ src/components/notifications/
 ```
 
 **Page Integration**:
+
 ```
 src/app/(dashboard)/settings/notifications/page.tsx
 - Hero banner (empty state with 3 features)
@@ -466,21 +495,25 @@ src/app/(dashboard)/settings/notifications/page.tsx
 ### Critical Fixes Applied
 
 **1. SSR Safety** ✅
+
 - Issue: localStorage breaks Next.js SSR
 - Fix: Replaced with `useAuthStore.getState()` in API client
 - Impact: Zero SSR errors, works client + server
 
 **2. React Query v5 Compatibility** ✅
+
 - Issue: Polling syntax changed in v5
 - Fix: Updated to `refetchInterval: (query) => query.state.data?.bound ? false : 3000`
 - Impact: 3-second polling works perfectly
 
 **3. WCAG 2.1 AA Compliance** ✅
+
 - Issue: Missing `DialogDescription` caused screen reader warning
 - Fix: Added `<DialogDescription>Подключите Telegram для получения уведомлений о задачах</DialogDescription>`
 - Impact: Zero accessibility warnings
 
 **4. Modal Visibility** ✅
+
 - Issue: Overlay too transparent (80%), modal used `bg-background`
 - Fix: Changed to `bg-black/90` overlay + `bg-white` modal background
 - Impact: Perfect contrast, excellent readability
@@ -488,6 +521,7 @@ src/app/(dashboard)/settings/notifications/page.tsx
 ### Browser Testing Results
 
 **Tested in Chrome** (localhost:3100):
+
 - ✅ Modal opens with binding code
 - ✅ Copy button works
 - ✅ Deep link opens Telegram correctly
@@ -502,16 +536,19 @@ src/app/(dashboard)/settings/notifications/page.tsx
 ### Quality Metrics
 
 **Code Coverage**:
+
 - API client: 7/7 tests passing (100%)
 - Component tests: Deferred to future sprint (nice-to-have)
 
 **Accessibility**:
+
 - ✅ WCAG 2.1 AA compliant (DialogDescription added)
 - ✅ Semantic HTML (proper headings, labels, roles)
 - ✅ Keyboard navigation (all interactive elements)
 - ✅ Screen reader friendly (aria-labels, live regions)
 
 **Performance**:
+
 - ✅ Next.js build: All pages compile successfully
 - ✅ PM2 restart: <5 seconds
 - ✅ Page load: <1 second on localhost
@@ -532,6 +569,7 @@ src/app/(dashboard)/settings/notifications/page.tsx
 ### Known Limitations
 
 **Deferred to Future Sprints**:
+
 - E2E tests with Playwright (nice-to-have)
 - Full component test coverage (basic coverage only)
 - Accessibility audit with axe-core (manual testing done)
@@ -541,12 +579,14 @@ src/app/(dashboard)/settings/notifications/page.tsx
 ### Deployment Notes
 
 **PM2 Configuration**:
+
 - Service: `wb-repricer-frontend-dev`
 - Port: 3100
 - Process ID: 16
 - Status: Online, healthy
 
 **Next Steps for Deployment**:
+
 1. Backend API integration (Request #73 endpoints)
 2. Environment variables (API URLs)
 3. Production build (`npm run build`)

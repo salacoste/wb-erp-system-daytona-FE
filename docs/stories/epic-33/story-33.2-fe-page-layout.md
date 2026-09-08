@@ -16,27 +16,32 @@
 ## Acceptance Criteria
 
 ### AC1: Route & Navigation
+
 - [ ] Page accessible at `/analytics/advertising`
 - [ ] Sidebar shows "Реклама" under "Аналитика" section
 - [ ] Breadcrumbs: `Главная > Аналитика > Реклама`
 
 ### AC2: Page Header
+
 - [ ] Title: "Рекламная аналитика"
 - [ ] Icon: Lucide `Megaphone` or `BarChart3`
 - [ ] Sync status indicator in header (from 33.6-fe)
 
 ### AC3: Date Range Filter
+
 - [ ] From/To date pickers
 - [ ] **Default: last 14 days** (PO decision: standard two-week period)
 - [ ] Validation: `to` >= `from`
 - [ ] Max range: 90 days (TBD: confirm with backend if API has limit)
 
 ### AC4: View Mode Toggle
+
 - [ ] Switch between: SKU | Campaign | Brand | Category
 - [ ] Default: SKU
 - [ ] Persist selection in URL query params
 
 ### AC5: Summary Cards
+
 - [ ] Card 1: Total Spend (₽)
 - [ ] Card 2: Overall ROAS (x multiplier)
 - [ ] Card 3: Overall ROI (%)
@@ -45,17 +50,20 @@
 - [ ] Error state with retry
 
 ### AC6: Page Layout
+
 - [ ] Responsive grid: 4 columns on desktop, 2 on tablet, 1 on mobile
 - [ ] Sections: Header → Filters → Summary Cards → Table
 - [ ] Max width: 1400px centered
 
 ### AC7: Empty State
+
 - [ ] When no data for selected period, show empty state
 - [ ] Message: "Нет данных за выбранный период"
 - [ ] Suggestion: "Попробуйте выбрать другой период или проверьте, есть ли рекламные кампании"
 - [ ] Include illustration (TBD by UX)
 
 ### AC8: Accessibility
+
 - [ ] Keyboard navigation works (Tab, Enter, Escape)
 - [ ] Focus states visible on all interactive elements
 - [ ] Color contrast meets WCAG AA (4.5:1)
@@ -64,22 +72,26 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Route Setup
+
 - [ ] Create `src/app/(dashboard)/analytics/advertising/page.tsx`
 - [ ] Create `src/app/(dashboard)/analytics/advertising/loading.tsx`
 - [ ] Create `src/app/(dashboard)/analytics/advertising/error.tsx`
 - [ ] Add route to sidebar navigation
 
 ### Phase 2: Page Components
+
 - [ ] Create `components/AdvertisingPageHeader.tsx`
 - [ ] Create `components/AdvertisingFilters.tsx`
 - [ ] Create `components/AdvertisingSummaryCards.tsx`
 
 ### Phase 3: State Management
+
 - [ ] Implement URL query param sync for filters
 - [ ] Add date range state with validation
 - [ ] Add view mode state
 
 ### Phase 4: Integration
+
 - [ ] Connect to `useAdvertisingAnalytics` hook
 - [ ] Handle loading states
 - [ ] Handle error states
@@ -262,9 +274,9 @@ function getDefaultToDate(): string {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-12-22 | James (Dev Agent) | Initial draft |
+| Date       | Author            | Change                                                                     |
+| ---------- | ----------------- | -------------------------------------------------------------------------- |
+| 2025-12-22 | James (Dev Agent) | Initial draft                                                              |
 | 2025-12-22 | James (Dev Agent) | PO Review: Changed default to 14 days, added AC7 (empty state), AC8 (a11y) |
 
 ---

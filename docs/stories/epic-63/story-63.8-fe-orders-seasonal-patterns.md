@@ -19,6 +19,7 @@
 **So that** I can plan inventory, staffing, and marketing campaigns around peak periods.
 
 **Non-goals**:
+
 - Year-over-year comparison (future epic)
 - Predictive forecasting (requires ML backend)
 - Export to calendar format (future enhancement)
@@ -258,24 +259,24 @@ interface WeekdayPattern {
 
 ### Main Component
 
-| Component | Location | Lines | Description |
-|-----------|----------|-------|-------------|
-| `SeasonalPatternsSection.tsx` | `src/app/(dashboard)/components/` | ~150 | Main container with insights + charts |
+| Component                     | Location                          | Lines | Description                           |
+| ----------------------------- | --------------------------------- | ----- | ------------------------------------- |
+| `SeasonalPatternsSection.tsx` | `src/app/(dashboard)/components/` | ~150  | Main container with insights + charts |
 
 ### Chart Components
 
-| Component | Location | Lines | Description |
-|-----------|----------|-------|-------------|
-| `MonthlyPatternsChart.tsx` | `src/app/(dashboard)/components/` | ~120 | Bar chart for monthly patterns |
-| `WeekdayPatternsChart.tsx` | `src/app/(dashboard)/components/` | ~100 | Bar chart for weekday patterns |
-| `SeasonalHeatmap.tsx` | `src/app/(dashboard)/components/` | ~150 | Optional heatmap visualization |
+| Component                  | Location                          | Lines | Description                    |
+| -------------------------- | --------------------------------- | ----- | ------------------------------ |
+| `MonthlyPatternsChart.tsx` | `src/app/(dashboard)/components/` | ~120  | Bar chart for monthly patterns |
+| `WeekdayPatternsChart.tsx` | `src/app/(dashboard)/components/` | ~100  | Bar chart for weekday patterns |
+| `SeasonalHeatmap.tsx`      | `src/app/(dashboard)/components/` | ~150  | Optional heatmap visualization |
 
 ### Supporting Components
 
-| Component | Location | Lines | Description |
-|-----------|----------|-------|-------------|
-| `SeasonalInsightsCard.tsx` | `src/app/(dashboard)/components/` | ~80 | Key insights summary |
-| `PatternTooltip.tsx` | `src/app/(dashboard)/components/` | ~40 | Custom tooltip for charts |
+| Component                  | Location                          | Lines | Description               |
+| -------------------------- | --------------------------------- | ----- | ------------------------- |
+| `SeasonalInsightsCard.tsx` | `src/app/(dashboard)/components/` | ~80   | Key insights summary      |
+| `PatternTooltip.tsx`       | `src/app/(dashboard)/components/` | ~40   | Custom tooltip for charts |
 
 ---
 
@@ -547,22 +548,22 @@ export function useSeasonalPatterns(months: number = 12) {
 
 ### Unit Tests
 
-| Test | File | Description |
-|------|------|-------------|
-| Month localization | `seasonal-localization.test.ts` | Verify all months translate correctly |
-| Weekday localization | `seasonal-localization.test.ts` | Verify all days translate correctly |
-| Peak highlighting | `MonthlyPatternsChart.test.tsx` | Verify peak/low months highlighted |
-| Insights display | `SeasonalInsightsCard.test.tsx` | Verify correct data shown |
-| Empty state | `SeasonalPatternsSection.test.tsx` | Show message when no data |
+| Test                 | File                               | Description                           |
+| -------------------- | ---------------------------------- | ------------------------------------- |
+| Month localization   | `seasonal-localization.test.ts`    | Verify all months translate correctly |
+| Weekday localization | `seasonal-localization.test.ts`    | Verify all days translate correctly   |
+| Peak highlighting    | `MonthlyPatternsChart.test.tsx`    | Verify peak/low months highlighted    |
+| Insights display     | `SeasonalInsightsCard.test.tsx`    | Verify correct data shown             |
+| Empty state          | `SeasonalPatternsSection.test.tsx` | Show message when no data             |
 
 ### Integration Tests
 
-| Scenario | Description |
-|----------|-------------|
-| Data fetch | Load seasonal patterns from API |
-| Charts render | Both monthly and weekday charts display |
-| Responsive layout | Verify mobile/tablet/desktop views |
-| Heatmap interaction | Hover shows correct data |
+| Scenario            | Description                             |
+| ------------------- | --------------------------------------- |
+| Data fetch          | Load seasonal patterns from API         |
+| Charts render       | Both monthly and weekday charts display |
+| Responsive layout   | Verify mobile/tablet/desktop views      |
+| Heatmap interaction | Hover shows correct data                |
 
 ---
 
@@ -616,6 +617,7 @@ export function useSeasonalPatterns(months: number = 12) {
 4. **Implementation Complexity**: Heatmap visualization and time-based patterns require additional design work.
 
 **Recommended Prerequisites**:
+
 - Complete Story 63.7 (Status Breakdown)
 - Complete basic dashboard metrics
 - Accumulate 30+ days of production data
@@ -653,6 +655,7 @@ export function useSeasonalPatterns(months: number = 12) {
 **Config**: `src/lib/seasonal-localization.ts`
 **Lines**: 175
 **Key Features**:
+
 - Monthly patterns bar chart with localized Russian month names
 - Weekday patterns bar chart with peak hour indicators
 - Insights summary cards (peak month, low month, peak day)

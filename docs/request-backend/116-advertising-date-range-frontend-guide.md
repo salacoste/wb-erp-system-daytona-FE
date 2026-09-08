@@ -11,18 +11,18 @@
 
 ### Available Data Range
 
-| Metric | Value |
-|--------|-------|
-| **Data Start** | 2025-12-01 |
-| **Data End** | 2026-01-28 |
-| **Weeks** | 2025-W49 to 2026-05 |
+| Metric         | Value               |
+| -------------- | ------------------- |
+| **Data Start** | 2025-12-01          |
+| **Data End**   | 2026-01-28          |
+| **Weeks**      | 2025-W49 to 2026-05 |
 
 ### Key Endpoints
 
-| Endpoint | Purpose |
-|----------|---------|
-| `GET /v1/analytics/advertising/sync-status` | Get available date range |
-| `GET /v1/analytics/advertising?from=DATE&to=DATE` | Query advertising data |
+| Endpoint                                          | Purpose                  |
+| ------------------------------------------------- | ------------------------ |
+| `GET /v1/analytics/advertising/sync-status`       | Get available date range |
+| `GET /v1/analytics/advertising?from=DATE&to=DATE` | Query advertising data   |
 
 ---
 
@@ -36,6 +36,7 @@
 **Resolution date**: 2026-01-30
 **Summary**: Date range validation guide for advertising analytics. Documents available data range and how to check it programmatically. Companion to Request #115.
 **Remaining frontend action**: None - use as reference for advertising date filtering.
+
 ### 1. Fetch Available Date Range
 
 ```typescript

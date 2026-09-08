@@ -13,7 +13,7 @@ chars: 9563
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-obedinit-ostatki" rel="nofollow">Как объединить остатки</a>
 - <a href="#kak-razdelit-ostatki" rel="nofollow">Как разделить остатки</a>
 - <a href="#massovoe-obedinenie-razdelenie-ostatkov" rel="nofollow">Массовое объединение/разделение остатков</a>
@@ -108,7 +108,7 @@ chars: 9563
 
 - Обновите страницу (F5), чтобы изменения вступили в силу
 
-1.  
+1.
 
 После этих действий текущая карточка станет дубликатом указанной оригинальной карточки.
 

@@ -15,7 +15,7 @@ chars: 13715
 
 В этой статье:
 
-- 
+-
 - <a href="#importirujte-tovary-v-selsup" rel="nofollow">Импортируйте товары в Selsup</a>
 - <a href="#prostavte-kategorii-ozon-dlya-vashih-tovarov-i-nastrojte-obyazatelnye-" rel="nofollow">Проставьте категории Ozon для Ваших товаров и настройте обязательные параметры</a>
 - <a href="#zapolnite-1-tovar-vruchnuyu-v-interfejse-selsup" rel="nofollow">Заполните 1 товар вручную в интерфейсе Selsup</a>
@@ -67,7 +67,7 @@ chars: 13715
 
 ## Заполните параметры создаваемых товаров массово
 
-Перейдите в ****Товары — Импорт товаров**** во вкладку **[**Массовое редактирование**](https://selsup.ru/application/productsImport/import)** и нажмите ****Скачать Excel**.\**
+Перейдите в ****Товары — Импорт товаров**** во вкладку **[**Массовое редактирование**](https://selsup.ru/application/productsImport/import)** и нажмите *_**Скачать Excel**.\*_
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/02/screenshot_106-1.png.webp)
 
@@ -77,7 +77,7 @@ chars: 13715
 
 Заполните необходимые поля, для Ozon они выделены светло-голубым.
 
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/09/screenshot_11.png.webp)***Обратите внимание, что есть несколько параметров, обязательных к заполнению для корректного создания карточек. А также есть несколько важных моментов по заполнению:***\
+![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/09/screenshot_11.png.webp)_**Обратите внимание, что есть несколько параметров, обязательных к заполнению для корректного создания карточек. А также есть несколько важных моментов по заполнению:**_\
 
 - Поле размер заполняется только числовыми значениями;
 - В поле цвет товара, необходимо указывать **только цвет из справочника озона** с маленькой буквы;

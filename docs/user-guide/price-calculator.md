@@ -19,26 +19,26 @@ The Price Calculator is a tool that helps Wildberries sellers determine the opti
 
 #### Required Fields
 
-| Field | Description | Example |
-|-------|-------------|---------|
-| **Target Margin %** | Desired profit margin (0-50%) | 20% |
-| **COGS** | Cost of goods sold (what you paid) | 1500 ₽ |
-| **Logistics Forward** | Delivery to warehouse (auto-filled) | 200 ₽ |
-| **Logistics Reverse** | Return delivery cost (enter manually) | 150 ₽ |
-| **Buyback %** | Percent of sales that aren't returned | 98% |
-| **Advertising %** | Ad spend as % of price | 5% |
-| **Storage** | Storage cost (free first 60 days) | 50 ₽ |
+| Field                 | Description                           | Example |
+| --------------------- | ------------------------------------- | ------- |
+| **Target Margin %**   | Desired profit margin (0-50%)         | 20%     |
+| **COGS**              | Cost of goods sold (what you paid)    | 1500 ₽  |
+| **Logistics Forward** | Delivery to warehouse (auto-filled)   | 200 ₽   |
+| **Logistics Reverse** | Return delivery cost (enter manually) | 150 ₽   |
+| **Buyback %**         | Percent of sales that aren't returned | 98%     |
+| **Advertising %**     | Ad spend as % of price                | 5%      |
+| **Storage**           | Storage cost (free first 60 days)     | 50 ₽    |
 
 #### Optional Fields (Advanced)
 
 Click **Advanced Options** to reveal:
 
-| Field | Description | Default |
-|-------|-------------|---------|
-| **VAT %** | Tax rate | 20% |
-| **Acquiring %** | Payment processing fee | 1.8% |
-| **Commission %** | Override WB commission | Use default |
-| **Product ID** | Filter for specific product | Any product |
+| Field            | Description                 | Default     |
+| ---------------- | --------------------------- | ----------- |
+| **VAT %**        | Tax rate                    | 20%         |
+| **Acquiring %**  | Payment processing fee      | 1.8%        |
+| **Commission %** | Override WB commission      | Use default |
+| **Product ID**   | Filter for specific product | Any product |
 
 ### 3. Automatic Calculation
 
@@ -59,31 +59,32 @@ You can also click **Calculate Price** to calculate immediately.
 
 Shows the optimal price based on your target margin:
 
-| Metric | Description |
-|--------|-------------|
-| **Recommended Price** | Price to set for your product |
-| **Target Margin** | Your desired margin (from input) |
-| **Actual Margin** | The margin achieved at this price |
-| **Margin in ₽** | Your profit per unit in rubles |
+| Metric                | Description                       |
+| --------------------- | --------------------------------- |
+| **Recommended Price** | Price to set for your product     |
+| **Target Margin**     | Your desired margin (from input)  |
+| **Actual Margin**     | The margin achieved at this price |
+| **Margin in ₽**       | Your profit per unit in rubles    |
 
 ### Cost Breakdown Table
 
 Detailed view of all costs:
 
-| Category | Amount | Description |
-|----------|--------|-------------|
-| **COGS** | 1500 ₽ | Cost of goods |
-| **Logistics** | 350 ₽ | Forward + reverse delivery |
-| **Storage** | 50 ₽ | Warehousing |
-| **Commission** | 250 ₽ | Wildberries fee |
-| **Acquiring** | 45 ₽ | Payment processing |
-| **Advertising** | 125 ₽ | Ad spend |
-| **VAT** | 500 ₽ | Tax |
-| **Margin** | 812 ₽ | Your profit |
+| Category        | Amount | Description                |
+| --------------- | ------ | -------------------------- |
+| **COGS**        | 1500 ₽ | Cost of goods              |
+| **Logistics**   | 350 ₽  | Forward + reverse delivery |
+| **Storage**     | 50 ₽   | Warehousing                |
+| **Commission**  | 250 ₽  | Wildberries fee            |
+| **Acquiring**   | 45 ₽   | Payment processing         |
+| **Advertising** | 125 ₽  | Ad spend                   |
+| **VAT**         | 500 ₽  | Tax                        |
+| **Margin**      | 812 ₽  | Your profit                |
 
 ### Visual Chart
 
 The **Cost Distribution** chart shows:
+
 - Color-coded segments for each cost category
 - Relative size of each cost
 - Quick visual breakdown
@@ -122,6 +123,7 @@ The **Buyback %** (also called "retention rate") is the percentage of units sold
 ### Logistics Costs
 
 #### Forward Logistics (Auto-Calculated)
+
 - **Logistics Forward** is automatically calculated based on:
   - Your warehouse location
   - Product dimensions (length, width, height)
@@ -129,6 +131,7 @@ The **Buyback %** (also called "retention rate") is the percentage of units sold
 - You don't need to enter this manually—it's filled automatically
 
 #### Reverse Logistics (Manual Entry Required)
+
 - **Logistics Reverse** is the cost of return shipping to your warehouse
 - This MUST be entered manually because it depends on:
   - Your actual return rate (varies by product category)
@@ -138,7 +141,9 @@ The **Buyback %** (also called "retention rate") is the percentage of units sold
 - **Typical range**: 100-300 ₽ depending on product weight and region
 
 #### Cargo Type Warnings
+
 If you see a **"Large cargo (KGT) detected"** warning:
+
 - Your product exceeds 120cm in one dimension
 - Reverse logistics for KGT cargo is MORE expensive
 - You may need to enter a higher reverse logistics cost manually
@@ -161,6 +166,7 @@ If you see a **"Large cargo (KGT) detected"** warning:
 ### Understanding Warnings
 
 If you see yellow warning banners:
+
 - **Target margin may not be achievable** - Costs exceed what the market will bear
 - **Consider adjusting**: Lower your target margin or reduce costs
 - **Large cargo (KGT) detected** - Your product requires special handling and may have higher reverse logistics costs
@@ -169,10 +175,10 @@ If you see yellow warning banners:
 
 ## Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
-| **Esc** | Reset form (with confirmation if results exist) |
-| **Enter** | Calculate immediately |
+| Key       | Action                                          |
+| --------- | ----------------------------------------------- |
+| **Esc**   | Reset form (with confirmation if results exist) |
+| **Enter** | Calculate immediately                           |
 
 ---
 

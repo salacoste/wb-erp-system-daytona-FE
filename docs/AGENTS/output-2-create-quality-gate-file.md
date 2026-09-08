@@ -19,3 +19,4 @@ updated: '{ISO-8601 timestamp}'
 
 top_issues: [] # Empty if no issues
 waiver: { active: false } # Set active: true only if WAIVED
+```

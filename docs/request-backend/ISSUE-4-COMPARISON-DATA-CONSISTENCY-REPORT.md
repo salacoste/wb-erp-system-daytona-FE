@@ -25,7 +25,7 @@
 Frontend показывает для сравнения W04 vs W03:
 
 | Метрика | Текущее значение (W04) | Предыдущее значение (W03) | Изменение |
-|---------|------------------------|---------------------------|-----------|
+| ------- | ---------------------- | ------------------------- | --------- |
 | Выкупы  | 84 377,52 ₽            | 115 545,95 ₽              | -27,0%    |
 
 ---
@@ -40,13 +40,13 @@ Frontend показывает для сравнения W04 vs W03:
 
 ### Потенциальные причины несоответствия
 
-| # | Причина | Вероятность | Проверка |
-|---|---------|-------------|----------|
-| 1 | Frontend использует `sales_gross` вместо `wb_sales_gross` | Высокая | См. раздел 3 |
-| 2 | Frontend использует `finance-summary` вместо `comparison` API | Средняя | См. раздел 2 |
-| 3 | Неверное маппирование полей `revenue` из comparison | Средняя | См. раздел 3 |
-| 4 | Расчёт delta производится на клиенте некорректно | Низкая | См. раздел 4 |
-| 5 | Кэширование устаревших данных | Низкая | Очистить кэш |
+| #   | Причина                                                       | Вероятность | Проверка     |
+| --- | ------------------------------------------------------------- | ----------- | ------------ |
+| 1   | Frontend использует `sales_gross` вместо `wb_sales_gross`     | Высокая     | См. раздел 3 |
+| 2   | Frontend использует `finance-summary` вместо `comparison` API | Средняя     | См. раздел 2 |
+| 3   | Неверное маппирование полей `revenue` из comparison           | Средняя     | См. раздел 3 |
+| 4   | Расчёт delta производится на клиенте некорректно              | Низкая      | См. раздел 4 |
+| 5   | Кэширование устаревших данных                                 | Низкая      | Очистить кэш |
 
 ---
 
@@ -61,6 +61,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Преимущества:**
+
 - Сервер вычисляет `delta.absolute` и `delta.percent`
 - Гарантированная консистентность расчётов
 - Единый источник правды
@@ -76,6 +77,7 @@ GET /v1/analytics/weekly/finance-summary?week=2026-W03
 ```
 
 **Недостатки:**
+
 - Два сетевых запроса вместо одного
 - Delta рассчитывается на клиенте (риск ошибок)
 - Возможны race conditions
@@ -104,11 +106,11 @@ export async function getAnalyticsComparison(params: ComparisonParams): Promise<
 
 ### КРИТИЧЕСКИ ВАЖНО: Выбор правильного поля для "Выкупы"
 
-| Поле в API | Значение | Что означает | Использовать для "Выкупы"? |
-|------------|----------|--------------|---------------------------|
-| `sales_gross` | ~197 000 ₽ | Цена для покупателя (retail_price_with_discount) | ❌ НЕТ |
-| `wb_sales_gross` | ~131 000 ₽ | Выручка продавца после комиссии WB | ✅ ДА |
-| `sale_gross` | ~292 000 ₽ | NET = sales - returns (retail price) | ❌ НЕТ |
+| Поле в API       | Значение   | Что означает                                     | Использовать для "Выкупы"? |
+| ---------------- | ---------- | ------------------------------------------------ | -------------------------- |
+| `sales_gross`    | ~197 000 ₽ | Цена для покупателя (retail_price_with_discount) | ❌ НЕТ                     |
+| `wb_sales_gross` | ~131 000 ₽ | Выручка продавца после комиссии WB               | ✅ ДА                      |
+| `sale_gross`     | ~292 000 ₽ | NET = sales - returns (retail price)             | ❌ НЕТ                     |
 
 ### Структура ответа Comparison API
 
@@ -139,14 +141,14 @@ export async function getAnalyticsComparison(params: ComparisonParams): Promise<
 
 ### Маппинг для UI компонентов
 
-| Метрика UI | Поле из API Response | Frontend Type |
-|------------|---------------------|---------------|
-| Выкупы / Выручка | `period1.data.revenue_net` или `period1.revenue` | `PeriodMetrics.revenue` |
-| Прибыль | `period1.data.profit` или `period1.profit` | `PeriodMetrics.profit` |
-| Маржа | `period1.data.margin_pct` или `period1.margin_pct` | `PeriodMetrics.margin_pct` |
-| Заказы | `period1.data.qty` или `period1.orders` | `PeriodMetrics.orders` |
-| Логистика | `period1.logistics` | `PeriodMetrics.logistics` |
-| Хранение | `period1.storage` | `PeriodMetrics.storage` |
+| Метрика UI       | Поле из API Response                               | Frontend Type              |
+| ---------------- | -------------------------------------------------- | -------------------------- |
+| Выкупы / Выручка | `period1.data.revenue_net` или `period1.revenue`   | `PeriodMetrics.revenue`    |
+| Прибыль          | `period1.data.profit` или `period1.profit`         | `PeriodMetrics.profit`     |
+| Маржа            | `period1.data.margin_pct` или `period1.margin_pct` | `PeriodMetrics.margin_pct` |
+| Заказы           | `period1.data.qty` или `period1.orders`            | `PeriodMetrics.orders`     |
+| Логистика        | `period1.logistics`                                | `PeriodMetrics.logistics`  |
+| Хранение         | `period1.storage`                                  | `PeriodMetrics.storage`    |
 
 ### Проверка типов Frontend
 
@@ -180,7 +182,7 @@ delta.percent = ((period1 - period2) / period2) × 100
 ### Пример расчёта
 
 | Метрика | Period1 (W04) | Period2 (W03) | Delta Absolute | Delta Percent |
-|---------|---------------|---------------|----------------|---------------|
+| ------- | ------------- | ------------- | -------------- | ------------- |
 | Выручка | 100 000 ₽     | 85 000 ₽      | +15 000 ₽      | +17.65%       |
 | Прибыль | 40 000 ₽      | 30 000 ₽      | +10 000 ₽      | +33.33%       |
 
@@ -221,11 +223,11 @@ export function calculateDelta(current: number, previous: number): DeltaValue {
 YYYY-Www
 ```
 
-| Компонент | Описание | Пример |
-|-----------|----------|--------|
-| `YYYY` | ISO year (может отличаться от календарного) | 2026 |
-| `W` | Литерал "W" (заглавная) | W |
-| `ww` | Номер недели (01-53) | 04 |
+| Компонент | Описание                                    | Пример |
+| --------- | ------------------------------------------- | ------ |
+| `YYYY`    | ISO year (может отличаться от календарного) | 2026   |
+| `W`       | Литерал "W" (заглавная)                     | W      |
+| `ww`      | Номер недели (01-53)                        | 04     |
 
 ### Правила ISO-недель
 
@@ -235,15 +237,15 @@ YYYY-Www
 
 ### Границы недели 2026-W04
 
-| День | Дата | Входит в W04? |
-|------|------|---------------|
-| Понедельник | 2026-01-19 | ✅ Начало |
-| Вторник | 2026-01-20 | ✅ |
-| Среда | 2026-01-21 | ✅ |
-| Четверг | 2026-01-22 | ✅ |
-| Пятница | 2026-01-23 | ✅ |
-| Суббота | 2026-01-24 | ✅ |
-| Воскресенье | 2026-01-25 | ✅ Конец |
+| День        | Дата       | Входит в W04? |
+| ----------- | ---------- | ------------- |
+| Понедельник | 2026-01-19 | ✅ Начало     |
+| Вторник     | 2026-01-20 | ✅            |
+| Среда       | 2026-01-21 | ✅            |
+| Четверг     | 2026-01-22 | ✅            |
+| Пятница     | 2026-01-23 | ✅            |
+| Суббота     | 2026-01-24 | ✅            |
+| Воскресенье | 2026-01-25 | ✅ Конец      |
 
 ### Получение списка доступных недель
 
@@ -492,14 +494,14 @@ queryClient.clear()
 
 ## Связанные документы
 
-| Документ | Описание |
-|----------|----------|
+| Документ                                                                           | Описание                        |
+| ---------------------------------------------------------------------------------- | ------------------------------- |
 | [143-DASHBOARD-MAIN-PAGE-PERIODS-API.md](./143-DASHBOARD-MAIN-PAGE-PERIODS-API.md) | API периодов, сравнение, тренды |
-| [122-DASHBOARD-MAIN-PAGE-SALES-API.md](./122-DASHBOARD-MAIN-PAGE-SALES-API.md) | API продаж, finance-summary |
-| [125-DASHBOARD-MAIN-PAGE-GUIDE.md](./125-DASHBOARD-MAIN-PAGE-GUIDE.md) | Сводное руководство дашборда |
-| `test-api/05-analytics-basic.http` | HTTP примеры запросов |
-| `src/types/analytics-comparison.ts` | TypeScript типы comparison |
-| `src/lib/api/analytics-comparison.ts` | API клиент comparison |
+| [122-DASHBOARD-MAIN-PAGE-SALES-API.md](./122-DASHBOARD-MAIN-PAGE-SALES-API.md)     | API продаж, finance-summary     |
+| [125-DASHBOARD-MAIN-PAGE-GUIDE.md](./125-DASHBOARD-MAIN-PAGE-GUIDE.md)             | Сводное руководство дашборда    |
+| `test-api/05-analytics-basic.http`                                                 | HTTP примеры запросов           |
+| `src/types/analytics-comparison.ts`                                                | TypeScript типы comparison      |
+| `src/lib/api/analytics-comparison.ts`                                              | API клиент comparison           |
 
 ---
 
@@ -508,6 +510,7 @@ queryClient.clear()
 ### Наиболее вероятная причина проблемы
 
 **Несоответствие маппинга полей:**
+
 - Backend возвращает `revenue_net` (который может быть `sale_gross` вместо `wb_sales_gross`)
 - Или frontend ожидает `revenue` но backend возвращает другое поле
 

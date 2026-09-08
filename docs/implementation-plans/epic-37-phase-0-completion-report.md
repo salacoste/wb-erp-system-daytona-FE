@@ -22,6 +22,7 @@ Phase 0 (Preparation) успешно завершён. Все инфрастру
 **File Created**: `src/mocks/data/epic-37-merged-groups.ts`
 
 **Content**:
+
 - ✅ **Test Group 1**: Normal merged group (6 products, imtId=328632)
   - Main product: ter-09 (spend > 0)
   - 5 child products (spend = 0)
@@ -38,11 +39,13 @@ Phase 0 (Preparation) успешно завершён. Все инфрастру
   - No merged group (individual display)
 
 **Validation Utilities**:
+
 - `validateAggregateIntegrity()` - ensures aggregate = SUM(products)
 - `validateMainProduct()` - validates main product rules
 - `validateSortOrder()` - validates sort within group
 
 **Documentation**:
+
 ```typescript
 /**
  * ⚠️ TEMPORARY DATA - REPLACE WHEN BACKEND READY
@@ -65,6 +68,7 @@ Phase 0 (Preparation) успешно завершён. Все инфрастру
 **File Created**: `src/config/features.ts`
 
 **Feature Flags**:
+
 ```typescript
 export const epic37MergedGroups: Epic37FeatureConfig = {
   enabled: true,              // Enable Epic 37 feature
@@ -74,6 +78,7 @@ export const epic37MergedGroups: Epic37FeatureConfig = {
 ```
 
 **Environment Variables**:
+
 ```bash
 # .env.local (development)
 NEXT_PUBLIC_EPIC_37_MERGED_GROUPS_ENABLED=true
@@ -84,6 +89,7 @@ NEXT_PUBLIC_EPIC_37_USE_REAL_API=true   # Use real backend API
 ```
 
 **Usage Pattern**:
+
 ```typescript
 import { features } from '@/config/features'
 
@@ -99,6 +105,7 @@ if (features.epic37MergedGroups.useRealApi) {
 ```
 
 **Documentation**:
+
 ```typescript
 /**
  * 🔄 REPLACEMENT PROCESS (After Story 37.0 Complete):
@@ -128,6 +135,7 @@ if (features.epic37MergedGroups.useRealApi) {
 **New Types Added**:
 
 1. **`MainProduct`** - Reference to main product in group
+
    ```typescript
    export interface MainProduct {
      nmId: number;
@@ -137,6 +145,7 @@ if (features.epic37MergedGroups.useRealApi) {
    ```
 
 2. **`AggregateMetrics`** - Sum of all products in group
+
    ```typescript
    export interface AggregateMetrics {
      totalViews: number;
@@ -157,6 +166,7 @@ if (features.epic37MergedGroups.useRealApi) {
    ```
 
 3. **`MergedGroupProduct`** - Individual product with full metrics
+
    ```typescript
    export interface MergedGroupProduct {
      nmId: number;
@@ -183,6 +193,7 @@ if (features.epic37MergedGroups.useRealApi) {
    ```
 
 **Documentation**:
+
 ```typescript
 /**
  * ⚠️ TEMPORARY TYPE - Uses mock data during development
@@ -199,6 +210,7 @@ if (features.epic37MergedGroups.useRealApi) {
 ## 📊 Deliverables
 
 ### Files Created
+
 1. ✅ `src/mocks/data/epic-37-merged-groups.ts` (645 lines)
    - 3 test groups with complete metrics
    - Validation utilities
@@ -214,6 +226,7 @@ if (features.epic37MergedGroups.useRealApi) {
    - Timeline and dependencies
 
 ### Files Updated
+
 1. ✅ `src/types/advertising-analytics.ts`
    - Added 4 new interfaces (158 lines added)
    - Epic 37 type definitions
@@ -224,6 +237,7 @@ if (features.epic37MergedGroups.useRealApi) {
 ## 🔄 Mock Data → Real API Migration Path
 
 ### Current State (Development)
+
 ```
 Frontend (Epic 37 UI)
     ↓
@@ -235,6 +249,7 @@ MergedGroupTable Component
 ```
 
 ### Future State (Production)
+
 ```
 Frontend (Epic 37 UI)
     ↓
@@ -248,6 +263,7 @@ MergedGroupTable Component
 ```
 
 ### Migration Checklist
+
 - [ ] Backend completes Story 37.0 (Request #88)
 - [ ] Execute Story 37.1: API Validation
 - [ ] Set `NEXT_PUBLIC_EPIC_37_USE_REAL_API=true`
@@ -266,7 +282,9 @@ MergedGroupTable Component
 ## 🎯 Next Steps
 
 ### Immediate (Day 1)
+
 ✅ **Story 37.2: MergedGroupTable Component** (3-4 hours)
+
 - Create `<MergedGroupTable>` component
 - Implement rowspan logic (3-tier structure)
 - Handle standalone products (no rowspan)
@@ -275,12 +293,16 @@ MergedGroupTable Component
 **Can start immediately** - uses mock data from Phase 0 ✅
 
 ### Parallel Track
+
 ⏳ **Backend Story 37.0** (11-17 hours) - In progress
+
 - Backend team working on Request #88
 - Expected completion: 2026-01-02
 
 ### After Story 37.0 Complete (Day 3)
+
 ⏳ **Story 37.1: API Validation** (1-2 hours)
+
 - Test real backend API
 - Validate response structure
 - Switch feature flag to `useRealApi: true`
@@ -290,16 +312,19 @@ MergedGroupTable Component
 ## 📚 Reference Links
 
 ### Documentation
+
 - **Epic 37 Main**: `docs/epics/epic-37-merged-group-table-display.md`
 - **Request #88**: `frontend/docs/request-backend/88-epic-37-individual-product-metrics.md`
 - **Implementation Plan**: `docs/implementation-plans/epic-37-frontend-implementation-plan.md`
 
 ### Code Files
+
 - **Mock Data**: `src/mocks/data/epic-37-merged-groups.ts`
 - **Feature Flags**: `src/config/features.ts`
 - **Types**: `src/types/advertising-analytics.ts`
 
 ### Stories
+
 - **Story 37.1**: `docs/stories/epic-37/story-37.1-backend-api-validation.BMAD.md`
 - **Story 37.2**: `docs/stories/epic-37/story-37.2-merged-group-table-component.BMAD.md`
 

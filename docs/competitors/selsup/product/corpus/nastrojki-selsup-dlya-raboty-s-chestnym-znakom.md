@@ -15,7 +15,7 @@ chars: 7361
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojte-integratsiyu" rel="nofollow">Настройте интеграцию</a>
 - <a href="#dobavte-proizvoditelej" rel="nofollow">Добавьте производителей</a>
 - <a href="#ukazhite-inn" rel="nofollow">Укажите ИНН</a>
@@ -44,7 +44,7 @@ chars: 7361
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/05/screenshot_150-1.png.webp)\
 Также проверьте правильность заполнения ИНН в разделе [Настройки - Мои организации.](https://selsup.ru/application/organizations/)
 
-*Если ИНН не указан или указан неверно, это необходимо исправить, иначе при получении маркировки Честный знак будет отдавать ошибки.*\
+_Если ИНН не указан или указан неверно, это необходимо исправить, иначе при получении маркировки Честный знак будет отдавать ошибки._\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/05/screenshot_151.png.webp)
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
@@ -107,16 +107,16 @@ chars: 7361
 
 **Ключевое отличие этикетки из SelSup от этикетки из Честного знака **в том, что на ней отображается название товара. Можно добавить ещё дополнительные сведения. На этикетке из Честного знака – только код без названия.
 
-Чтобы настроить размер этикетки, перейдите в раздел [Настройки – Этикетки,](https://selsup.ru/application/labels/) выберите шаблон - Маркировка. На открывшейся странице редактирования этикетки в полях *"Ширина этикетки, мм"* и *"Высота этикетки, мм"* укажите нужные параметры.\
-***Для стандартной этикетки из Честного знака:***\
+Чтобы настроить размер этикетки, перейдите в раздел [Настройки – Этикетки,](https://selsup.ru/application/labels/) выберите шаблон - Маркировка. На открывшейся странице редактирования этикетки в полях _"Ширина этикетки, мм"_ и _"Высота этикетки, мм"_ укажите нужные параметры.\
+_**Для стандартной этикетки из Честного знака:**_\
 В поле "Ширина этикетки, мм" укажите - 58;\
 В поле "Высота этикетки, мм" укажите - 40.\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/05/standart-etiketka-e1745205519129.png.webp)***58\*40 – стандартная, где печатается только код маркировки:***\
+![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/05/standart-etiketka-e1745205519129.png.webp)_**58\*40 – стандартная, где печатается только код маркировки:**_\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/03/prosto-markirovka.png.webp)\
-***Для этикетки с ШК товара и кодом маркировки из SelSup:***\
+_**Для этикетки с ШК товара и кодом маркировки из SelSup:**_\
 В поле "Ширина этикетки, мм" укажите - 58;\
 В поле "Высота этикетки, мм" укажите - 80.\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/05/etiketka-sel-e1745205562648.png.webp)***58\*80 – на ней печатается этикетка товара и код маркировки:***\
+![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/05/etiketka-sel-e1745205562648.png.webp)_**58\*80 – на ней печатается этикетка товара и код маркировки:**_\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/03/markirovka-s-shk.png.webp)\
 
 Обратите внимание, что добавить одновременно две этикетки нельзя, нужно удалить одну, чтобы добавить другую.

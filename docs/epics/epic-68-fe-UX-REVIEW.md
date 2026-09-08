@@ -15,11 +15,11 @@
 
 Мониторинг — технически сложная страница. Ключевая задача UX — сделать её **понятной для бизнес-пользователя**, а не только для технического специалиста. Рекомендую трёхуровневую иерархию:
 
-| Уровень | Что видит пользователь | Когда |
-|---------|----------------------|-------|
+| Уровень           | Что видит пользователь                                  | Когда                                 |
+| ----------------- | ------------------------------------------------------- | ------------------------------------- |
 | **L1 — Светофор** | Один индикатор: "Всё ОК" / "Есть проблемы" / "Критично" | Всегда (sidebar badge + первый экран) |
-| **L2 — Обзор** | Health Score + карточки пайплайнов + полнота данных | Вкладка "Обзор" (default) |
-| **L3 — Детали** | Heatmap, Telegram, Recovery, История | По навигации на конкретную вкладку |
+| **L2 — Обзор**    | Health Score + карточки пайплайнов + полнота данных     | Вкладка "Обзор" (default)             |
+| **L3 — Детали**   | Heatmap, Telegram, Recovery, История                    | По навигации на конкретную вкладку    |
 
 **Ключевое UX-правило**: Пользователь НИКОГДА не должен уходить с дашборда, чтобы понять, есть ли проблемы. Индикация должна быть встроена в sidebar.
 
@@ -32,6 +32,7 @@
 ```
 
 **Обоснование**: Число алертов менее информативно, чем цветовой индикатор. Пользователь должен видеть статус системы **не заходя на страницу**. Точка-индикатор:
+
 - `🟢` (hidden) — healthScore >= 80, нет алертов
 - `🟡` — healthScore 50-79 или 1-2 алерта
 - `🔴` — healthScore < 50 или 3+ алертов
@@ -41,14 +42,14 @@
 **Проблема в текущем эпике**: Терминология слишком техническая для целевой аудитории.
 
 | Техническое (текущее) | Рекомендуемое (user-friendly) |
-|-----------------------|------------------------------|
-| Pipeline | Источник данных |
-| Health Score | Состояние системы |
-| Recovery | Восстановление |
-| Heatmap | Карта активности |
-| Data Completeness | Полнота данных |
-| fbo_orders_sync | FBO Заказы |
-| Task Execution | Выполнение задач |
+| --------------------- | ----------------------------- |
+| Pipeline              | Источник данных               |
+| Health Score          | Состояние системы             |
+| Recovery              | Восстановление                |
+| Heatmap               | Карта активности              |
+| Data Completeness     | Полнота данных                |
+| fbo_orders_sync       | FBO Заказы                    |
+| Task Execution        | Выполнение задач              |
 
 **Правило**: В UI всегда использовать русские названия из колонки `displayName`, технические ID — только в tooltips или при hover.
 
@@ -59,6 +60,7 @@
 **Проблема**: 7 цветов в heatmap — слишком много для быстрого считывания. Пользователь не запомнит разницу между `missed` (gray-500) и `no_data` (gray-100).
 
 **Рекомендация**: Группировка в 3 семантических кластера:
+
 - **Позитивные** (не требуют внимания): success (green), recovered (emerald)
 - **Требуют внимания**: partial (amber), pending (blue)
 - **Проблемные**: failed (red), missed (gray-500)
@@ -71,6 +73,7 @@
 **Приоритет**: Мониторинг — страница, которую часто проверяют с телефона ("Всё ли ОК?").
 
 **Рекомендации по breakpoints**:
+
 - **Mobile (<768px)**: Только L1 (светофор) + упрощённый L2 (список карточек вертикально). Heatmap недоступен — вместо него текстовый список проблем.
 - **Tablet (768-1024px)**: Полный L2 + упрощённый heatmap (daily resolution only).
 - **Desktop (>1024px)**: Полный функционал.
@@ -89,14 +92,14 @@
 
 Все компоненты Epic 68 ДОЛЖНЫ визуально соответствовать Design Kit проекта:
 
-| Элемент | Design Kit стандарт | Применение в мониторинге |
-|---------|--------------------|-------------------------|
-| **Primary Button** | Красный (#E53935), белый текст, rounded | "Восстановить", "Применить фильтр" |
-| **Secondary Button** | Белая подложка, красная рамка | "Отмена", "Сбросить фильтры" |
-| **Text Button** | Красный текст, без фона, underline on hover | "Подробнее", "Показать все" |
-| **Active sidebar** | Красная полоска слева + красный текст | Пункт "Мониторинг" при активном маршруте |
-| **Cards** | Белый фон, border, rounded-xl, shadow-sm, hover:shadow-md | Pipeline cards, Health Score, Telegram status |
-| **Dropdown/Select** | Белый фон, красный highlight на выбранном | Фильтр пайплайнов, Period selector |
+| Элемент              | Design Kit стандарт                                       | Применение в мониторинге                      |
+| -------------------- | --------------------------------------------------------- | --------------------------------------------- |
+| **Primary Button**   | Красный (#E53935), белый текст, rounded                   | "Восстановить", "Применить фильтр"            |
+| **Secondary Button** | Белая подложка, красная рамка                             | "Отмена", "Сбросить фильтры"                  |
+| **Text Button**      | Красный текст, без фона, underline on hover               | "Подробнее", "Показать все"                   |
+| **Active sidebar**   | Красная полоска слева + красный текст                     | Пункт "Мониторинг" при активном маршруте      |
+| **Cards**            | Белый фон, border, rounded-xl, shadow-sm, hover:shadow-md | Pipeline cards, Health Score, Telegram status |
+| **Dropdown/Select**  | Белый фон, красный highlight на выбранном                 | Фильтр пайплайнов, Period selector            |
 
 **Критично**: Кнопки в Recovery Panel (`Story 68.6`) — "Восстановить" = Primary Button (красный), "Отмена" = Secondary Button (outline). Кнопка "Принудительно" = destructive variant (красный + предупреждение).
 
@@ -112,21 +115,21 @@ MCP: /llmstxt/ui_shadcn_llms_txt
 
 **shadcn/ui Components Mapping** (что уже установлено в проекте):
 
-| Задача | shadcn компонент | Пример использования |
-|--------|-----------------|---------------------|
-| Навигация по вкладкам | `Tabs` | MonitoringPageContent — 4 вкладки |
-| Карточки метрик | `Card` + `CardContent` | PipelineStatusCard, HealthScoreWidget |
-| Статус-бейджи | `Badge` | Pipeline status (healthy/warning/critical) |
-| Подсказки | `Tooltip` | Info-иконки, heatmap cell details |
-| Progress bars | `Progress` | Data completeness ratios, success rates |
-| Skeleton loading | `Skeleton` | Все loading states (паттерн BaseMetricCardSkeleton) |
-| Таблицы | `Table` + rows | DataCompletenessTable, RecoveryPanel, EventBreakdown |
-| Confirmation | `AlertDialog` | Recovery confirm, Force retry confirm |
-| Date picker | `Popover` + `Calendar` | Heatmap date range, Recovery date range |
-| Side panel | `Sheet` | Health History detail (slide-over справа) |
-| Expandable | `Collapsible` | Data completeness expand, Telegram details |
-| Notifications | `sonner` (toast) | Recovery success/error feedback |
-| Dropdown (mobile) | `Select` | Tab selector на мобильных |
+| Задача                | shadcn компонент       | Пример использования                                 |
+| --------------------- | ---------------------- | ---------------------------------------------------- |
+| Навигация по вкладкам | `Tabs`                 | MonitoringPageContent — 4 вкладки                    |
+| Карточки метрик       | `Card` + `CardContent` | PipelineStatusCard, HealthScoreWidget                |
+| Статус-бейджи         | `Badge`                | Pipeline status (healthy/warning/critical)           |
+| Подсказки             | `Tooltip`              | Info-иконки, heatmap cell details                    |
+| Progress bars         | `Progress`             | Data completeness ratios, success rates              |
+| Skeleton loading      | `Skeleton`             | Все loading states (паттерн BaseMetricCardSkeleton)  |
+| Таблицы               | `Table` + rows         | DataCompletenessTable, RecoveryPanel, EventBreakdown |
+| Confirmation          | `AlertDialog`          | Recovery confirm, Force retry confirm                |
+| Date picker           | `Popover` + `Calendar` | Heatmap date range, Recovery date range              |
+| Side panel            | `Sheet`                | Health History detail (slide-over справа)            |
+| Expandable            | `Collapsible`          | Data completeness expand, Telegram details           |
+| Notifications         | `sonner` (toast)       | Recovery success/error feedback                      |
+| Dropdown (mobile)     | `Select`               | Tab selector на мобильных                            |
 
 **Важно**: НЕ создавать кастомные UI-примитивы. Использовать ТОЛЬКО shadcn/ui компоненты из `@/components/ui/`. При необходимости нового компонента — добавить через `npx shadcn@latest add [component]`.
 
@@ -236,6 +239,7 @@ MCP: /llmstxt/ui_shadcn_llms_txt
    - Это даёт пользователю визуальное представление, КОГДА именно были пропуски, без необходимости expand
 
 2. **Overall health indicator**: Вместо просто текста "Все данные загружены" — использовать тот же паттерн, что и Health Score, но упрощённый:
+
    ```
    Полнота данных: ████████░░ 94% — Незначительные пропуски
    ```
@@ -264,6 +268,7 @@ MCP: /llmstxt/ui_shadcn_llms_txt
 **Если отдельная вкладка всё же нужна**, дополнения к AC:
 
 1. **Bot status CTA**: Для `not_configured` — не просто текст, а полноценный CTA-блок:
+
    ```
    ┌────────────────────────────────────────┐
    │  🤖 Telegram-бот не настроен           │
@@ -275,6 +280,7 @@ MCP: /llmstxt/ui_shadcn_llms_txt
    │  [Настроить Telegram →]                │
    └────────────────────────────────────────┘
    ```
+
    Кнопка ведёт на `/settings/notifications` (существующий маршрут).
 
 2. **Delivery stats визуализация**: Вместо таблицы цифр — **donut chart** (sent vs failed vs rate_limited vs quiet_hours). Числа менее информативны, чем пропорции.
@@ -288,6 +294,7 @@ MCP: /llmstxt/ui_shadcn_llms_txt
 **Дополнения к AC**:
 
 1. **Confirmation dialog**: Для ЛЮБОГО recovery action — confirmation dialog:
+
    ```
    ┌────────────────────────────────────────┐
    │  Восстановить данные?                  │
@@ -301,6 +308,7 @@ MCP: /llmstxt/ui_shadcn_llms_txt
    │  [Отмена]          [Восстановить]      │
    └────────────────────────────────────────┘
    ```
+
    Для `forceRetry` — усиленный dialog с предупреждением: "Принудительное восстановление игнорирует cooldown и может создать нагрузку на API."
 
 2. **Recovery progress**: После запуска recovery — показать inline progress:
@@ -325,12 +333,14 @@ MCP: /llmstxt/ui_shadcn_llms_txt
 **UX-оценка**: Хорошо для MVP. Дополнения:
 
 1. **Timeline вместо ячеек**: Вместо ряда цветных ячеек — **timeline visualization** (вертикальная для mobile, горизонтальная для desktop):
+
    ```
    ── 🟢 ── 🟢 ── 🟡 ── 🟢 ── 🔴 ── 🟢 ── 🟢 ──
    Пн    Вт    Ср    Чт    Пт    Сб    Вс
                                   ▲
                            5 проблем
    ```
+
    Преимущество: timeline лучше передаёт хронологию, чем таблица.
 
 2. **Detail modal**: При клике на день — НЕ modal, а **slide-over panel** (справа), чтобы пользователь видел таймлайн и детали одновременно:
@@ -399,41 +409,41 @@ MCP: /llmstxt/ui_shadcn_llms_txt
 
 ### Структурные изменения
 
-| Изменение | Обоснование |
-|-----------|-------------|
-| 5 табов → 4 таба (убрать отдельный "Telegram") | Снижение навигационной сложности |
-| Sidebar badge (цветовая точка) | L1-индикация без захода на страницу |
-| Auto resolution в heatmap | Снижение когнитивной нагрузки |
-| Slide-over вместо modal (история) | Сохранение контекста при просмотре деталей |
-| Preset date ranges | Ускорение основных сценариев на 60% |
+| Изменение                                      | Обоснование                                |
+| ---------------------------------------------- | ------------------------------------------ |
+| 5 табов → 4 таба (убрать отдельный "Telegram") | Снижение навигационной сложности           |
+| Sidebar badge (цветовая точка)                 | L1-индикация без захода на страницу        |
+| Auto resolution в heatmap                      | Снижение когнитивной нагрузки              |
+| Slide-over вместо modal (история)              | Сохранение контекста при просмотре деталей |
+| Preset date ranges                             | Ускорение основных сценариев на 60%        |
 
 ### Новые AC для добавления
 
-| Story | Новый AC | Приоритет |
-|-------|---------|-----------|
-| 68.1 | Sidebar badge с цветовым индикатором здоровья | P1 |
-| 68.1 | Breadcrumb навигация | P2 |
-| 68.1 | 4 таба вместо 5 (Telegram → секция на "Обзор") | P1 |
-| 68.2 | Полукруговой gauge (180°) | P1 |
-| 68.2 | Micro-sparkline в pipeline cards | P2 |
-| 68.2 | Pipeline cards сортировка по severity | P1 |
-| 68.2 | Expand при клике на pipeline card | P2 |
-| 68.3 | Preset period buttons | P1 |
-| 68.3 | Auto resolution (убрать ручной переключатель) | P1 |
-| 68.3 | Sticky pipeline labels при скролле | P1 |
-| 68.3 | Легенда цветов под heatmap | P1 |
-| 68.3 | Filter preset groups ("С проблемами") | P2 |
-| 68.4 | Segmented progress bar | P2 |
-| 68.4 | Inline recovery в expand (без перехода) | P1 |
-| 68.4 | Сортировка по completeness ASC | P1 |
-| 68.5 | Expandable section вместо отдельной вкладки | P1 |
-| 68.5 | CTA для not_configured | P1 |
-| 68.6 | Confirmation dialog для всех actions | P1 |
-| 68.6 | Inline recovery progress | P1 |
-| 68.6 | Date range inline validation | P1 |
-| 68.7 | Timeline visualization | P2 |
-| 68.7 | Slide-over panel вместо modal | P2 |
-| 68.7 | Trend summary | P2 |
+| Story | Новый AC                                       | Приоритет |
+| ----- | ---------------------------------------------- | --------- |
+| 68.1  | Sidebar badge с цветовым индикатором здоровья  | P1        |
+| 68.1  | Breadcrumb навигация                           | P2        |
+| 68.1  | 4 таба вместо 5 (Telegram → секция на "Обзор") | P1        |
+| 68.2  | Полукруговой gauge (180°)                      | P1        |
+| 68.2  | Micro-sparkline в pipeline cards               | P2        |
+| 68.2  | Pipeline cards сортировка по severity          | P1        |
+| 68.2  | Expand при клике на pipeline card              | P2        |
+| 68.3  | Preset period buttons                          | P1        |
+| 68.3  | Auto resolution (убрать ручной переключатель)  | P1        |
+| 68.3  | Sticky pipeline labels при скролле             | P1        |
+| 68.3  | Легенда цветов под heatmap                     | P1        |
+| 68.3  | Filter preset groups ("С проблемами")          | P2        |
+| 68.4  | Segmented progress bar                         | P2        |
+| 68.4  | Inline recovery в expand (без перехода)        | P1        |
+| 68.4  | Сортировка по completeness ASC                 | P1        |
+| 68.5  | Expandable section вместо отдельной вкладки    | P1        |
+| 68.5  | CTA для not_configured                         | P1        |
+| 68.6  | Confirmation dialog для всех actions           | P1        |
+| 68.6  | Inline recovery progress                       | P1        |
+| 68.6  | Date range inline validation                   | P1        |
+| 68.7  | Timeline visualization                         | P2        |
+| 68.7  | Slide-over panel вместо modal                  | P2        |
+| 68.7  | Trend summary                                  | P2        |
 
 ### Accessibility checklist для всех историй
 

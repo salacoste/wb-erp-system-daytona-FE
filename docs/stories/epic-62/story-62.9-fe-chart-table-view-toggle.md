@@ -8,6 +8,7 @@
 ---
 
 ## Title (RU)
+
 Переключатель график/таблица
 
 ---
@@ -17,6 +18,7 @@
 Add a toggle control that allows users to switch between chart and table views of the daily breakdown data. This provides flexibility for users who prefer different data visualization styles.
 
 The toggle should:
+
 - Use a segmented button group pattern
 - Persist user preference in localStorage
 - Provide smooth transition between views
@@ -61,6 +63,7 @@ This story also creates the `DailyBreakdownSection` wrapper component that orche
 ### Button States
 
 **Active Button:**
+
 ```css
 .toggle-button-active {
   background-color: #E53935; /* Primary Red */
@@ -71,6 +74,7 @@ This story also creates the `DailyBreakdownSection` wrapper component that orche
 ```
 
 **Inactive Button:**
+
 ```css
 .toggle-button-inactive {
   background-color: white;
@@ -86,6 +90,7 @@ This story also creates the `DailyBreakdownSection` wrapper component that orche
 ```
 
 **Focus State:**
+
 ```css
 .toggle-button:focus-visible {
   outline: 2px solid #E53935;
@@ -95,14 +100,14 @@ This story also creates the `DailyBreakdownSection` wrapper component that orche
 
 ### Button Dimensions
 
-| Property | Value |
-|----------|-------|
-| Height | 36px |
-| Padding | 8px 16px |
-| Font Size | 14px |
+| Property      | Value                                 |
+| ------------- | ------------------------------------- |
+| Height        | 36px                                  |
+| Padding       | 8px 16px                              |
+| Font Size     | 14px                                  |
 | Border Radius | First: 6px 0 0 6px, Last: 0 6px 6px 0 |
-| Icon Size | 16px |
-| Icon-Text Gap | 6px |
+| Icon Size     | 16px                                  |
+| Icon-Text Gap | 6px                                   |
 
 ### Section Layout
 
@@ -286,28 +291,28 @@ export function DailyBreakdownSection({ className }: DailyBreakdownSectionProps)
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/components/custom/dashboard/ViewToggle.tsx` | CREATE | Toggle button group component |
-| `src/components/custom/dashboard/DailyBreakdownSection.tsx` | CREATE | Section wrapper component |
-| `src/hooks/useViewPreference.ts` | CREATE | View preference hook |
-| `src/components/custom/dashboard/__tests__/ViewToggle.test.tsx` | CREATE | Unit tests |
-| `src/components/custom/dashboard/__tests__/DailyBreakdownSection.test.tsx` | CREATE | Integration tests |
-| `src/components/custom/dashboard/index.ts` | MODIFY | Add barrel exports |
-| `src/app/(dashboard)/dashboard/components/DashboardContent.tsx` | MODIFY | Add DailyBreakdownSection |
+| File                                                                       | Action | Description                   |
+| -------------------------------------------------------------------------- | ------ | ----------------------------- |
+| `src/components/custom/dashboard/ViewToggle.tsx`                           | CREATE | Toggle button group component |
+| `src/components/custom/dashboard/DailyBreakdownSection.tsx`                | CREATE | Section wrapper component     |
+| `src/hooks/useViewPreference.ts`                                           | CREATE | View preference hook          |
+| `src/components/custom/dashboard/__tests__/ViewToggle.test.tsx`            | CREATE | Unit tests                    |
+| `src/components/custom/dashboard/__tests__/DailyBreakdownSection.test.tsx` | CREATE | Integration tests             |
+| `src/components/custom/dashboard/index.ts`                                 | MODIFY | Add barrel exports            |
+| `src/app/(dashboard)/dashboard/components/DashboardContent.tsx`            | MODIFY | Add DailyBreakdownSection     |
 
 ---
 
 ## Dependencies
 
-| Type | Dependency | Status |
-|------|------------|--------|
-| Component | `ToggleGroup` from shadcn/ui | Available |
-| Icons | `BarChart3`, `Table2` from lucide-react | Available |
-| Animation | `framer-motion` (AnimatePresence) | Optional |
-| Story | 62.6-FE DailyBreakdownChart | Same sprint |
-| Story | 62.7-FE MetricLegend | Same sprint |
-| Story | 62.8-FE DailyMetricsTable | Same sprint |
+| Type      | Dependency                              | Status      |
+| --------- | --------------------------------------- | ----------- |
+| Component | `ToggleGroup` from shadcn/ui            | Available   |
+| Icons     | `BarChart3`, `Table2` from lucide-react | Available   |
+| Animation | `framer-motion` (AnimatePresence)       | Optional    |
+| Story     | 62.6-FE DailyBreakdownChart             | Same sprint |
+| Story     | 62.7-FE MetricLegend                    | Same sprint |
+| Story     | 62.8-FE DailyMetricsTable               | Same sprint |
 
 **Note**: If framer-motion is not installed, use CSS transitions instead.
 

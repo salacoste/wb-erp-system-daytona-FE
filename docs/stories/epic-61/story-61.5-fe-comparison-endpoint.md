@@ -15,12 +15,12 @@
 
 ## Problem Statement
 
-| Current Implementation | Required Implementation |
-|------------------------|------------------------|
+| Current Implementation                             | Required Implementation       |
+| -------------------------------------------------- | ----------------------------- |
 | 2 separate API calls for current + previous period | Single `/comparison` endpoint |
-| Manual delta calculation on frontend | Server-calculated deltas |
-| Date ranges (YYYY-MM-DD) | ISO week format (YYYY-Www) |
-| No breakdown by SKU/brand/category | Supports groupBy parameter |
+| Manual delta calculation on frontend               | Server-calculated deltas      |
+| Date ranges (YYYY-MM-DD)                           | ISO week format (YYYY-Www)    |
+| No breakdown by SKU/brand/category                 | Supports groupBy parameter    |
 
 **Backend provides dedicated comparison endpoint that is NOT used**.
 
@@ -31,18 +31,21 @@
 **Endpoint**: `GET /v1/analytics/weekly/comparison`
 
 **Parameters**:
-| Param | Type | Required | Example |
-|-------|------|----------|---------|
-| `period1` | string | Yes | `2026-W05` or `2026-W01:W05` |
-| `period2` | string | Yes | `2026-W04` or `2025-W49:W52` |
-| `groupBy` | string | No | `sku`, `brand`, or `category` |
+
+| Param     | Type   | Required | Example                       |
+| --------- | ------ | -------- | ----------------------------- |
+| `period1` | string | Yes      | `2026-W05` or `2026-W01:W05`  |
+| `period2` | string | Yes      | `2026-W04` or `2025-W49:W52`  |
+| `groupBy` | string | No       | `sku`, `brand`, or `category` |
 
 **Period Formats**:
+
 - Single week: `2026-W05`
 - Range (short): `2026-W01:W05` (same year)
 - Range (full): `2025-W49:2026-W04` (cross-year)
 
 **Response**:
+
 ```typescript
 interface ComparisonResponse {
   period1: {
@@ -373,6 +376,7 @@ function getPreviousIsoWeek(week: string): string {
 ### Replace Current Pattern
 
 **Before** (2 separate calls):
+
 ```typescript
 const currentQuery = useDashboardMetrics(currentWeek);
 const previousQuery = useDashboardMetrics(previousWeek);
@@ -382,6 +386,7 @@ const revenueChange = ((current - previous) / previous) * 100;
 ```
 
 **After** (single call):
+
 ```typescript
 const { metrics } = useDashboardComparison(currentWeek);
 
@@ -393,11 +398,11 @@ const revenueChange = metrics.revenue.changePercent;
 
 ## Files to Create
 
-| File | Description |
-|------|-------------|
-| `src/types/analytics-comparison.ts` | TypeScript interfaces |
-| `src/lib/api/analytics-comparison.ts` | API client + helpers |
-| `src/hooks/useAnalyticsComparison.ts` | React Query hooks |
+| File                                  | Description           |
+| ------------------------------------- | --------------------- |
+| `src/types/analytics-comparison.ts`   | TypeScript interfaces |
+| `src/lib/api/analytics-comparison.ts` | API client + helpers  |
+| `src/hooks/useAnalyticsComparison.ts` | React Query hooks     |
 
 ---
 

@@ -13,7 +13,7 @@ SelSup ежеминутно обновляет данные, отправляе�
 
 В этой статье:
 
-- 
+-
 - <a href="#filtry" rel="nofollow">Фильтры</a>
 - <a href="#interfejs-tablitsy-po-zadacham" rel="nofollow">Интерфейс таблицы по задачам</a>
 - <a href="#statusy" rel="nofollow">Статусы</a>

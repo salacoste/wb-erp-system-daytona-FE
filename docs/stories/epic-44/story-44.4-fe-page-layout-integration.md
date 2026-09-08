@@ -15,6 +15,7 @@
 **So that** I can easily calculate prices without leaving the application.
 
 **Non-goals**:
+
 - Form component (separate story)
 - Results component (separate story)
 - Real-time calculation (separate story)
@@ -24,27 +25,32 @@
 ## Acceptance Criteria
 
 ### AC1: Page Route
+
 - [x] Create `/cogs/price-calculator` route (existing COGS section)
 - [x] Page accessible from authenticated routes only
 - [x] Redirect to login if not authenticated
 
 ### AC2: Page Layout
+
 - [x] Use existing dashboard layout with Sidebar
 - [x] Page title: "Price Calculator"
 - [x] Breadcrumb navigation: COGS Management > Price Calculator
 - [x] Responsive two-column layout (form left, results right on desktop)
 
 ### AC3: Navigation Integration
+
 - [x] Add "Price Calculator" link to Sidebar (COGS section)
 - [x] Icon: `DollarSign` (Calculator icon already used for Unit Economics)
 - [x] Position: After "COGS Management" link
 
 ### AC4: Responsive Layout
+
 - [x] Desktop (≥1024px): Two columns (form | results)
 - [x] Tablet (768-1023px): Stacked with form above results
 - [x] Mobile (<768px): Single column, full-width inputs
 
 ### AC5: SEO & Metadata
+
 - [x] Page title: "Price Calculator - WB Repricer"
 - [x] Meta description: "Calculate optimal selling price for Wildberries products"
 
@@ -148,6 +154,7 @@ COGS: {
 ### Layout Variants
 
 **Desktop (≥1024px):**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  [Form Column 45%] │ [Results Column 55%]                   │
@@ -160,6 +167,7 @@ COGS: {
 ```
 
 **Mobile (<768px):**
+
 ```
 ┌─────────────────────────────┐
 │  Form Section               │
@@ -175,6 +183,7 @@ COGS: {
 ```
 
 ### Invariants & Edge Cases
+
 - **Invariant**: Page only accessible when authenticated
 - **Edge case**: Small mobile screens (<375px) - ensure horizontal scroll not needed
 - **Edge case**: Very large screens (>1920px) - max-width container
@@ -203,6 +212,7 @@ COGS: {
 - [x] Touch targets ≥ 44×44px
 
 ### Review Follow-ups (AI-Code-Review 2026-01-17)
+
 - All accessibility items verified and passing
 - Two-column responsive layout with proper grid breakpoints
 - Breadcrumb navigation for screen readers
@@ -212,19 +222,22 @@ COGS: {
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines | Description |
-|------|-------------|------|-------------|
-| `src/app/(dashboard)/cogs/price-calculator/page.tsx` | CREATE | 43 | Calculator page with form + results |
-| `src/components/custom/Sidebar.tsx` | UPDATE | 214 | Added Price Calculator link, DollarSign icon |
-| `src/lib/routes.ts` | UPDATE | 93 | Added COGS.PRICE_CALCULATOR constant |
+
+| File                                                 | Change Type | Lines | Description                                  |
+| ---------------------------------------------------- | ----------- | ----- | -------------------------------------------- |
+| `src/app/(dashboard)/cogs/price-calculator/page.tsx` | CREATE      | 43    | Calculator page with form + results          |
+| `src/components/custom/Sidebar.tsx`                  | UPDATE      | 214   | Added Price Calculator link, DollarSign icon |
+| `src/lib/routes.ts`                                  | UPDATE      | 93    | Added COGS.PRICE_CALCULATOR constant         |
 
 ### Change Log
+
 1. Created Price Calculator page with layout
 2. ✅ Code Review 2026-01-17: Fixed route from `/tools/` to `/cogs/` (existing pattern)
 3. ✅ Code Review 2026-01-17: Changed icon from `Calculator` to `DollarSign` (avoid conflict)
 4. ✅ Implementation 2026-01-17: Created page, updated Sidebar and routes, all lint-clean
 
 ### Implementation Notes (2026-01-17)
+
 - Created `src/app/(dashboard)/cogs/price-calculator/page.tsx` (43 lines):
   - Two-column grid layout: form left, results right on desktop
   - Mobile responsive: stacked layout on smaller screens
@@ -239,6 +252,7 @@ COGS: {
   - Added to isProtectedRoute for auth protection
 
 ### Review Follow-ups (AI-Code-Review 2026-01-17)
+
 - [x] [AI-Review][MEDIUM] Changed route from `/tools/price-calculator` to `/cogs/price-calculator` (follows existing pattern)
 - [x] [AI-Review][MEDIUM] Updated to use Sidebar instead of Navbar (existing navigation pattern)
 - [x] [AI-Review][LOW] Changed icon from `Calculator` to `DollarSign` (Unit Economics uses Calculator)
@@ -253,31 +267,35 @@ COGS: {
 **Gate Decision**: ✅ READY FOR REVIEW
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Page route | ✅ | `/cogs/price-calculator` route created, protected route check |
-| AC2 | Page layout | ✅ | Two-column grid layout, responsive with `lg:grid-cols-2` |
-| AC3 | Navigation integration | ✅ | Sidebar updated with DollarSign icon after COGS Management |
-| AC4 | Responsive layout | ✅ | Grid: 2 cols (≥1024px), 1 col (<1024px) |
-| AC5 | SEO & metadata | ✅ | Page title in h1, Next.js metadata handling |
+
+| AC  | Requirement            | Status | Evidence                                                      |
+| --- | ---------------------- | ------ | ------------------------------------------------------------- |
+| AC1 | Page route             | ✅     | `/cogs/price-calculator` route created, protected route check |
+| AC2 | Page layout            | ✅     | Two-column grid layout, responsive with `lg:grid-cols-2`      |
+| AC3 | Navigation integration | ✅     | Sidebar updated with DollarSign icon after COGS Management    |
+| AC4 | Responsive layout      | ✅     | Grid: 2 cols (≥1024px), 1 col (<1024px)                       |
+| AC5 | SEO & metadata         | ✅     | Page title in h1, Next.js metadata handling                   |
 
 ### Responsive Testing
-| Viewport | Expected Layout | Status | Evidence |
-|----------|----------------|--------|----------|
-| 1920×1080 | Two columns | ✅ | lg:grid-cols-2 breakpoint applies |
-| 1024×768 | Two columns | ✅ | lg breakpoint applies |
-| 768×1024 | Stacked | ✅ | Default grid-cols-1 stacked |
-| 375×667 | Single column | ✅ | Full-width inputs |
+
+| Viewport  | Expected Layout | Status | Evidence                          |
+| --------- | --------------- | ------ | --------------------------------- |
+| 1920×1080 | Two columns     | ✅     | lg:grid-cols-2 breakpoint applies |
+| 1024×768  | Two columns     | ✅     | lg breakpoint applies             |
+| 768×1024  | Stacked         | ✅     | Default grid-cols-1 stacked       |
+| 375×667   | Single column   | ✅     | Full-width inputs                 |
 
 ### Accessibility Check
+
 - [x] Skip navigation link (breadcrumb acts as skip link)
 - [x] Proper heading hierarchy (h1 > h2)
 - [x] Focus visible on interactive elements
 - [x] Touch targets ≥ 44×44px
 
 ### File List (Updated)
-| File | Change Type | Lines | Description |
-|------|-------------|------|-------------|
-| `src/app/(dashboard)/cogs/price-calculator/page.tsx` | CREATE | 43 | Calculator page with form + results |
-| `src/components/custom/Sidebar.tsx` | UPDATE | 214 | Added Price Calculator link, DollarSign icon |
-| `src/lib/routes.ts` | UPDATE | 93 | Added COGS.PRICE_CALCULATOR constant |
+
+| File                                                 | Change Type | Lines | Description                                  |
+| ---------------------------------------------------- | ----------- | ----- | -------------------------------------------- |
+| `src/app/(dashboard)/cogs/price-calculator/page.tsx` | CREATE      | 43    | Calculator page with form + results          |
+| `src/components/custom/Sidebar.tsx`                  | UPDATE      | 214   | Added Price Calculator link, DollarSign icon |
+| `src/lib/routes.ts`                                  | UPDATE      | 93    | Added COGS.PRICE_CALCULATOR constant         |

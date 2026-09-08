@@ -13,7 +13,7 @@ chars: 29245
 
 В этой статье:
 
-- 
+-
 - <a href="#pochemu-udobno-sozdavat-kartochki-cherez-selsup" rel="nofollow">Почему удобно создавать карточки через SelSup</a>
 - <a href="#sposoby-dobavleniya-tovara" rel="nofollow">Способы добавления товара</a>
 - <a href="#shag-1-vyberite-kategoriyu" rel="nofollow">Шаг 1. Выберите категорию</a>
@@ -256,6 +256,7 @@ chars: 29245
 </p>
 
 Правила при работе с Excel - файлом при массовом редактировании или создании карточек:<br />
+
 1. НЕЛЬЗЯ менять названия колонок.<br />
 2. При работе с ссылками не используйте «Enter‎»‎ для перехода на другую строку.
 

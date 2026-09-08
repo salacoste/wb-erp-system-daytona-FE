@@ -4,6 +4,7 @@
 **Версия**: 1.0
 **Целевая аудитория**: Frontend-разработчики
 **Связанные документы**:
+
 - `docs/TARIFFS-FORMULA-VALIDATION-REPORT.md`
 - `docs/stories/epic-43/story-43.12-default-box-storage-rates.md`
 - `frontend/docs/request-backend/102-tariffs-base-rates-frontend-guide.md`
@@ -27,6 +28,7 @@
 ### Симптомы
 
 **Что вы можете увидеть**:
+
 - API возвращает `"storage.base_per_day_rub": 0` для некоторых складов
 - API может не возвращать поле `storage` вообще (`null`/`undefined`)
 - В Price Calculator отображается `0₽` стоимость хранения (неверно!)
@@ -46,12 +48,14 @@
 ```
 
 **Почему это происходит**:
+
 1. У WB API нет тарифа хранения для конкретного склада
 2. WB API токен имеет ограниченные права доступа
 3. Новый склад ещё не добавлен в базу тарифов WB
 4. Временный сбой в API Wildberries
 
 **Результат без fallback**:
+
 ```typescript
 // ❌ Неправильный расчёт с "0"
 storageCost = (0 + (volume - 1) * 0) * coefficient * days = 0₽
@@ -144,9 +148,9 @@ try {
 
 **Источник**: WB PDF "Стоимость логистики, приёмки и хранения"
 
-| Поле | Значение | Описание | Источник |
-|------|----------|----------|----------|
-| `storageBoxBasePerDay` | **0.11₽/день** | Первый литр в день | База данных `WbTariffSettings` |
+| Поле                    | Значение            | Описание                   | Источник                       |
+| ----------------------- | ------------------- | -------------------------- | ------------------------------ |
+| `storageBoxBasePerDay`  | **0.11₽/день**      | Первый литр в день         | База данных `WbTariffSettings` |
 | `storageBoxLiterPerDay` | **0.11₽/литр/день** | Каждый дополнительный литр | База данных `WbTariffSettings` |
 
 **Пример расчёта с дефолтными значениями**:
@@ -515,13 +519,13 @@ open http://localhost:3000/api
 
 ### Тестовые кейсы
 
-| Сценарий | Входные данные (WB API) | Ожидаемый результат (Frontend) |
-|----------|-------------------------|-------------------------------|
-| **Склад с тарифами** | `base: 0.07`, `liter: 0.05` | Используются значения от API (0.07, 0.05) |
-| **Склад с 0** | `base: 0`, `liter: 0` | Fallback на 0.11, 0.11 |
-| **Склад без storage** | `storage: null` | Fallback на 0.11, 0.11 |
-| **Склад без tariffs** | `tariffs: null` | Fallback на TARIFF_DEFAULTS |
-| **Новый склад** | Отсутствует в списке | Warehouse не отображается в UI |
+| Сценарий              | Входные данные (WB API)     | Ожидаемый результат (Frontend)            |
+| --------------------- | --------------------------- | ----------------------------------------- |
+| **Склад с тарифами**  | `base: 0.07`, `liter: 0.05` | Используются значения от API (0.07, 0.05) |
+| **Склад с 0**         | `base: 0`, `liter: 0`       | Fallback на 0.11, 0.11                    |
+| **Склад без storage** | `storage: null`             | Fallback на 0.11, 0.11                    |
+| **Склад без tariffs** | `tariffs: null`             | Fallback на TARIFF_DEFAULTS               |
+| **Новый склад**       | Отсутствует в списке        | Warehouse не отображается в UI            |
 
 ---
 
@@ -534,6 +538,7 @@ open http://localhost:3000/api
 **A**: Это может происходить по двум причинам:
 
 1. **Frontend использует `??` вместо `||`**:
+
    ```typescript
    // ❌ Неправильно
    const storageBase = tariffs?.storage?.base_per_day_rub ?? 0.11;
@@ -541,17 +546,20 @@ open http://localhost:3000/api
    ```
 
    **Решение**:
+
    ```typescript
    // ✅ Правильно
    const storageBase = tariffs?.storage?.base_per_day_rub || 0.11;
    ```
 
 2. **Backend не применил fallback** (проверьте логи):
+
    ```bash
    pm2 logs wb-repricer-backend --lines 100
    ```
 
    Ищите:
+
    ```
    DEBUG: Using default storage rates: base=0.11₽, liter=0.11₽
    ```
@@ -605,6 +613,7 @@ const mockWarehouseRealTariffs = {
 **A**: Три способа:
 
 1. **Проверить логи backend** (при `LOG_LEVEL=debug`):
+
    ```
    DEBUG: Using default storage rates: base=0.11₽, liter=0.11₽
    ```
@@ -647,10 +656,10 @@ npx prisma studio
 
 **A**:
 
-| Оператор | Срабатывает на | Пример |
-|----------|----------------|--------|
-| `??` (nullish coalescing) | `null`, `undefined` | `0 ?? 11 = 0` |
-| `||` (logical or) | **Ложные значения** (`0`, `""`, `false`, `null`, `undefined`) | `0 || 11 = 11` |
+| Оператор                  | Срабатывает на      | Пример         |
+| ------------------------- | ------------------- | -------------- |
+| `??` (nullish coalescing) | `null`, `undefined` | `0 ?? 11 = 0`  |
+| `                         |                     | ` (logical or) | **Ложные значения** (`0`, `""`, `false`, `null`, `undefined`) | `0  |     | 11 = 11` |
 
 **Для тарифов хранения** используем `||`, потому что `0` — это невалидное значение.
 
@@ -703,19 +712,19 @@ const storageTariffs = {
 
 ### Дефолтные значения (Story 43.12)
 
-| Параметр | Значение | Описание |
-|----------|----------|----------|
-| `storageBaseLiterRub` | 0.11₽/день | Первый литр |
-| `storagePerLiterRub` | 0.11₽/литр/день | Дополнительные литры |
-| `storageCoefficient` | 1.0 | Коэффициент (100%) |
+| Параметр              | Значение        | Описание             |
+| --------------------- | --------------- | -------------------- |
+| `storageBaseLiterRub` | 0.11₽/день      | Первый литр          |
+| `storagePerLiterRub`  | 0.11₽/литр/день | Дополнительные литры |
+| `storageCoefficient`  | 1.0             | Коэффициент (100%)   |
 
 ### API Endpoints
 
-| Endpoint | Метод | Описание |
-|----------|-------|----------|
-| `/v1/tariffs/warehouses-with-tariffs` | GET | Получить склады с тарифами (с fallback) |
-| `/v1/tariffs/settings` | GET | Получить дефолтные настройки |
-| `/v1/admin/tariff-settings` | PATCH | Изменить дефолтные настройки (Admin only) |
+| Endpoint                              | Метод | Описание                                  |
+| ------------------------------------- | ----- | ----------------------------------------- |
+| `/v1/tariffs/warehouses-with-tariffs` | GET   | Получить склады с тарифами (с fallback)   |
+| `/v1/tariffs/settings`                | GET   | Получить дефолтные настройки              |
+| `/v1/admin/tariff-settings`           | PATCH | Изменить дефолтные настройки (Admin only) |
 
 ---
 

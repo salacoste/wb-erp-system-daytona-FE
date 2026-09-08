@@ -23,7 +23,7 @@ chars: 5852
 
 В этой статье:
 
-- 
+-
 - <a href="#gde-nahoditsya-strategiya-tsenoobrazovaniya" rel="nofollow">Где находится стратегия ценообразования</a>
 - <a href="#kak-sozdat-sobstvennuyu-strategiyu" rel="nofollow">Как создать собственную стратегию</a>
 - <a href="#primenenie-strategii-k-tovaru" rel="nofollow">Применение стратегии к товару</a>

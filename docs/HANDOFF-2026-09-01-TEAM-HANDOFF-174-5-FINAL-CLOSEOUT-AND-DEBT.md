@@ -10,13 +10,14 @@
 
 ## 0. Executive snapshot — что делать
 
-| # | Действие | Authoritative | Готовность |
-|---|---|---|---|
-| 1 | **Story 174.5** — финальный documentation/repository closeout → **94/94** | [`.omx/plans/174.5-finalize-documentation-and-repository-cleanup.md`](../.omx/plans/174.5-finalize-documentation-and-repository-cleanup.md) | Branch `cdx/epic-174-story-5-docs-cleanup`, worktree `/private/tmp/wb-repricer-fe-174-5-docs-cleanup` |
-| 2 | Эпик-174 flip + **программная retrospective** (накоплено: см. §4) | sprint-status.yaml | Прецедент flip: PR #326 |
-| 3 | Post-close: владелец решает судьбу НЕ-миграционного долга (§3A-B, §3F — вне 174.5) | — | escalation через PR/issue |
+| #   | Действие                                                                           | Authoritative                                                                                                                               | Готовность                                                                                            |
+| --- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| 1   | **Story 174.5** — финальный documentation/repository closeout → **94/94**          | [`.omx/plans/174.5-finalize-documentation-and-repository-cleanup.md`](../.omx/plans/174.5-finalize-documentation-and-repository-cleanup.md) | Branch `cdx/epic-174-story-5-docs-cleanup`, worktree `/private/tmp/wb-repricer-fe-174-5-docs-cleanup` |
+| 2   | Эпик-174 flip + **программная retrospective** (накоплено: см. §4)                  | sprint-status.yaml                                                                                                                          | Прецедент flip: PR #326                                                                               |
+| 3   | Post-close: владелец решает судьбу НЕ-миграционного долга (§3A-B, §3F — вне 174.5) | —                                                                                                                                           | escalation через PR/issue                                                                             |
 
 **174.5 — documentation-only стори** (runtime-прод неизменен). Её обязательный объём (из плана):
+
 1. Синхронизировать canonical design-system/migration docs с фактически merged системой (tokens, primitives, compositions, ownership, responsive, a11y, delivery contracts).
 2. **Route-ledger: 79 строк со статусом `planned` → `verified`** — только при полном linked evidence (implementation + validation + visual/a11y + review + merge + cleanup). 174.1 доказал parity множеств; 174.3 дал visual/a11y-матрицу; 174.4 — функциональную регрессию. Ссылки на evidence — из артефактов сторий.
 3. Проверить ВСЕ doc/evidence-ссылки; собрать final delivery manifest.
@@ -41,15 +42,15 @@
 
 ## 2. Верифицированные гейты/числа (на `c8b59455`)
 
-| Гейт | Значение | Источник |
-|---|---|---|
-| Vitest floor | **19 363 / 0 / (1270+4) файлов** | live run 174.4 (19118 после 174.2-чистки + 237 окно 174.3 + 8 контрактов 174.4) |
-| UI boundary | **459** (ratchet; ↓64 от 523 — дроп из 174.3-окна, lowering 174.4) | `node scripts/check-shadcn-ui-boundary.mjs` |
-| Boundary self-suite | 10/10 node:test | там же |
-| Lint / tsc / max-lines / prettier-changed / build --webpack / diff --check | 0 / 0 / OK / clean / 0 / clean | 174.4 closeout |
-| check:docs | exit 0, baseline **95** broken (исторические) | `scripts/.check-docs-baseline.txt` |
-| lessons / locale-percent | 0 / 4 | гейты |
-| Full e2e (`test:e2e:full`) | свежий сервер ~924 passed; полный зелёный недостижим за 1 прогон на общей машине — см. §3E harness | логи `/tmp/174.4-*.log` (эфемерны; ключевые числа — в артефактах 174-2/174-4) |
+| Гейт                                                                       | Значение                                                                                           | Источник                                                                        |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Vitest floor                                                               | **19 363 / 0 / (1270+4) файлов**                                                                   | live run 174.4 (19118 после 174.2-чистки + 237 окно 174.3 + 8 контрактов 174.4) |
+| UI boundary                                                                | **459** (ratchet; ↓64 от 523 — дроп из 174.3-окна, lowering 174.4)                                 | `node scripts/check-shadcn-ui-boundary.mjs`                                     |
+| Boundary self-suite                                                        | 10/10 node:test                                                                                    | там же                                                                          |
+| Lint / tsc / max-lines / prettier-changed / build --webpack / diff --check | 0 / 0 / OK / clean / 0 / clean                                                                     | 174.4 closeout                                                                  |
+| check:docs                                                                 | exit 0, baseline **95** broken (исторические)                                                      | `scripts/.check-docs-baseline.txt`                                              |
+| lessons / locale-percent                                                   | 0 / 4                                                                                              | гейты                                                                           |
+| Full e2e (`test:e2e:full`)                                                 | свежий сервер ~924 passed; полный зелёный недостижим за 1 прогон на общей машине — см. §3E harness | логи `/tmp/174.4-*.log` (эфемерны; ключевые числа — в артефактах 174-2/174-4)   |
 
 **Дев-сервер = переменная окружения, не код**: рестарт на каждый тяжёлый прогон (канон 174.3 tmp-worktree; урок 174.4). Auth = Bearer/localStorage; storageState протухает ~час — префлait может не обновить (rm `e2e/.auth/user.json` при странностях). BE-логин троттл **5/ч общий** — каждая wrapper-инвокация = попытка.
 
@@ -61,18 +62,18 @@
 
 ### A. Продуктовые дефекты (filed, требуют owner-координации; не блокируют 174.5)
 
-| ID | Статус | Дефект | Evidence |
-|---|---|---|---|
+| ID       | Статус         | Дефект                                                                                                                                                                                                                                                                                                                                  | Evidence                                                                                        |
+| -------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | **PB-1** | confirmed-live | **Silent cabinet-create failure**: nonce-less session → `evaluateCabinetSettlement='indeterminate'` → `handleCreateCabinet` молча скипает → recovery-алерт не рендерится. `src/lib/api.ts:128` (`createCabinet`) + `src/stores/authStore.ts:28`-89 (sessionNonce lifecycle); точные строки settlement-скипа — артефакт 174.4 (D3-волна) | devserver-лог 503 + settlement-skip (артефакт 174.4); e2e-сид nonce обходит — реальный юзер нет |
-| **PB-2** | confirmed-live | Nested `<main>` на `/analytics/ai-admin/preferences` | report-only (D3) |
-| **PB-3** | confirmed-live | **Нет реактивного 401-refresh** в api-client (только proactive `useAuth.refreshTokenIfNeeded`; при протухшем между тиками токене — 401 без replay) | G4-тест пинит фактическое поведение: `src/lib/api/__tests__/api-client-401-refresh.test.ts` |
+| **PB-2** | confirmed-live | Nested `<main>` на `/analytics/ai-admin/preferences`                                                                                                                                                                                                                                                                                    | report-only (D3)                                                                                |
+| **PB-3** | confirmed-live | **Нет реактивного 401-refresh** в api-client (только proactive `useAuth.refreshTokenIfNeeded`; при протухшем между тиками токене — 401 без replay)                                                                                                                                                                                      | G4-тест пинит фактическое поведение: `src/lib/api/__tests__/api-client-401-refresh.test.ts`     |
 
 ### B. WCAG / контраст (P2, качество; канон фикса известен)
 
-| ID | Статус | Что | Фикс-канон |
-|---|---|---|---|
-| **/15-family** | confirmed-live | `margin-status-helpers.ts:13,16` + `AcceptanceStatusBadge.tsx:49` — text-status на /15-тинтах <4.5:1 (та же семья, что DrrSlider 3.96/4.21 в 174.4) | solid-пары `bg-status-X text-status-X-foreground` (173.12/174.4-D5) |
-| **/80-sweep** | confirmed-live | repo-wide `text-*/80` (pricing/automation/cashflow/popover + hover-варианты) — исторические 3.2–3.45:1 (§11.3) | замер light/dark → replace/`accepted-exception`; кандидат на расширение boundary-сканера |
+| ID             | Статус         | Что                                                                                                                                                 | Фикс-канон                                                                               |
+| -------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| **/15-family** | confirmed-live | `margin-status-helpers.ts:13,16` + `AcceptanceStatusBadge.tsx:49` — text-status на /15-тинтах <4.5:1 (та же семья, что DrrSlider 3.96/4.21 в 174.4) | solid-пары `bg-status-X text-status-X-foreground` (173.12/174.4-D5)                      |
+| **/80-sweep**  | confirmed-live | repo-wide `text-*/80` (pricing/automation/cashflow/popover + hover-варианты) — исторические 3.2–3.45:1 (§11.3)                                      | замер light/dark → replace/`accepted-exception`; кандидат на расширение boundary-сканера |
 
 ### C. Design-system residue (ratchet-registered, не runtime-дефекты)
 
@@ -83,11 +84,11 @@
 
 ### D. Environment / данные (не код)
 
-| ID | Статус | Что | Next-best |
-|---|---|---|---|
-| **FR-7** | environment-gap | Live-данные缺: nmId 202867769 W26 FBS-варианты отсутствуют (DB пересеян) → 2 e2e теста непрогоняемы | ресеев данных ИЛИ re-pin на актуальный nmId/неделю (owner); graceful-empty доказан снапшотом |
-| **AT-матрица** | environment-gap | Реальные VoiceOver+Nafari / NVDA / JAWS / TalkBack не исполнялись; ENV-WEBKIT-TAB (Safari Tab reachability — daemon-среда) | 174.5: owner явный выбор — прогнать ИЛИ принять как остаточный release-risk (§11.6); уже доказано: Chromium+Firefox keyboard, WebKit semantic proxy, axe, 200% zoom real-browser (76 роутов × 2 темы) |
-| **Credential skips** | частично классифицированы | Manager-креды не настроены (optional skips в owner-наборе 22-23 шт.); 174.4 закрыл классификацию каркасом | прогнать Manager-джорни с кредами ИЛИ зафиксировать optional-статус |
+| ID                   | Статус                    | Что                                                                                                                        | Next-best                                                                                                                                                                                             |
+| -------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **FR-7**             | environment-gap           | Live-данные缺: nmId 202867769 W26 FBS-варианты отсутствуют (DB пересеян) → 2 e2e теста непрогоняемы                        | ресеев данных ИЛИ re-pin на актуальный nmId/неделю (owner); graceful-empty доказан снапшотом                                                                                                          |
+| **AT-матрица**       | environment-gap           | Реальные VoiceOver+Nafari / NVDA / JAWS / TalkBack не исполнялись; ENV-WEBKIT-TAB (Safari Tab reachability — daemon-среда) | 174.5: owner явный выбор — прогнать ИЛИ принять как остаточный release-risk (§11.6); уже доказано: Chromium+Firefox keyboard, WebKit semantic proxy, axe, 200% zoom real-browser (76 роутов × 2 темы) |
+| **Credential skips** | частично классифицированы | Manager-креды не настроены (optional skips в owner-наборе 22-23 шт.); 174.4 закрыл классификацию каркасом                  | прогнать Manager-джорни с кредами ИЛИ зафиксировать optional-статус                                                                                                                                   |
 
 ### E. Harness / процесс (подтверждено боем 174.4)
 
@@ -119,16 +120,16 @@ FE-D1 (mutation retry:1 ретраит 4xx; WB-token PUT может дважды
 
 ## 5. Authoritative link index
 
-| Ресурс | Путь |
-|---|---|
-| Этот handoff | `docs/HANDOFF-2026-09-01-TEAM-HANDOFF-174-5-FINAL-CLOSEOUT-AND-DEBT.md` |
-| План 174.5 | `.omx/plans/174.5-finalize-documentation-and-repository-cleanup.md` |
-| Глубокий канон §11 | `docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md` |
-| Промпт V12 (конвейер) | `docs/ORCHESTRATOR-PROMPT-2026-08-31-V12-TEAM-HANDOFF-EXECUTION.md` |
-| Реестры | `_bmad-output/implementation-artifacts/sprint-status.yaml`, `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`, `shadcn-route-ledger.md`, `shadcn-ui-boundary-classification-manifest.md` |
-| Артефакты финальных сторий | `_bmad-output/implementation-artifacts/174-{2,4}-fe-*.md` (+ 174.1/174.3 от параллельной lane) |
-| Гарды-эталоны | supplies 173.12 (boundary), monitoring 172.12, `scripts/check-shadcn-ui-boundary.mjs` |
-| Ключевые PR | 174.1 #369/#370/#371 · 174.2 #372/#373 · 174.3 #374 · 174.4 #375/#376 |
+| Ресурс                     | Путь                                                                                                                                                                                                                  |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Этот handoff               | `docs/HANDOFF-2026-09-01-TEAM-HANDOFF-174-5-FINAL-CLOSEOUT-AND-DEBT.md`                                                                                                                                               |
+| План 174.5                 | `.omx/plans/174.5-finalize-documentation-and-repository-cleanup.md`                                                                                                                                                   |
+| Глубокий канон §11         | `docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md`                                                                                                                                                     |
+| Промпт V12 (конвейер)      | `docs/ORCHESTRATOR-PROMPT-2026-08-31-V12-TEAM-HANDOFF-EXECUTION.md`                                                                                                                                                   |
+| Реестры                    | `_bmad-output/implementation-artifacts/sprint-status.yaml`, `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`, `shadcn-route-ledger.md`, `shadcn-ui-boundary-classification-manifest.md` |
+| Артефакты финальных сторий | `_bmad-output/implementation-artifacts/174-{2,4}-fe-*.md` (+ 174.1/174.3 от параллельной lane)                                                                                                                        |
+| Гарды-эталоны              | supplies 173.12 (boundary), monitoring 172.12, `scripts/check-shadcn-ui-boundary.mjs`                                                                                                                                 |
+| Ключевые PR                | 174.1 #369/#370/#371 · 174.2 #372/#373 · 174.3 #374 · 174.4 #375/#376                                                                                                                                                 |
 
 ## 6. Environment quick-facts
 
@@ -144,4 +145,4 @@ Node **24.18.0** (PATH-пин `/opt/homebrew/opt/node@24/bin` на каждую 
 
 Обновляй §0/§2/§3 этого документа в closeout-PR каждой следующей работы (APPEND-ONLY для долга — новые ID + статус §11.9). При завершении 174.5 — замени финальным 94/94 handoff.
 
-*Подготовлено сессией-оркестратором 174.2+174.4 (V12-конвейер, делегация сабагентам); факты сверены с живыми реестрами на main `c8b59455`.*
+_Подготовлено сессией-оркестратором 174.2+174.4 (V12-конвейер, делегация сабагентам); факты сверены с живыми реестрами на main `c8b59455`._

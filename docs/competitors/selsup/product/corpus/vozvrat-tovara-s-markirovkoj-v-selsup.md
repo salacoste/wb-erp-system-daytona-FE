@@ -11,7 +11,7 @@ chars: 4447
 
 В этой статье:
 
-- 
+-
 - <a href="#vozvrat-cherez-zadanie" rel="nofollow">Возврат через задание</a>
 - <a href="#tri-sposoba-najti-zakaz-dlya-vozvrata-v-zadanii" rel="nofollow">Три способа найти заказ для возврата в задании</a>
 - <a href="#vozvrat-cherez-razdel-zakazy-na-otgruzku-vruchnuyu" rel="nofollow">Возврат через раздел «Заказы на отгрузку» (вручную)</a>

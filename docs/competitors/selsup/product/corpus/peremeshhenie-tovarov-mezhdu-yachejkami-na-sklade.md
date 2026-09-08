@@ -11,7 +11,7 @@ chars: 3902
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-peremestit-tovar" rel="nofollow">Как переместить товар</a>
 - <a href="#istoriya-peremeshhenij" rel="nofollow">История перемещений</a>
 - <a href="#list-sborki-dlya-peremeshhenij" rel="nofollow">Лист сборки для перемещений</a>

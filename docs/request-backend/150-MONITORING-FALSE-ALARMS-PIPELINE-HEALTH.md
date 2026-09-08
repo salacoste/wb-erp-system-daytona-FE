@@ -13,19 +13,19 @@ The monitoring dashboard (`GET /v1/monitoring/dashboard`) reports **false critic
 
 ### Affected Pipelines
 
-| Pipeline | Reported Status | lastSuccessAt | successRate24h | Actual State |
-|----------|----------------|---------------|----------------|--------------|
-| **FBO Продажи** | `critical` | `null` | `0` | Data flows correctly |
-| **Поставки** | `critical` | `null` | `0` | Data flows correctly |
-| **FBO Заказы** | `no_data` | `null` | `0` | Data flows correctly |
-| FBS Заказы | `healthy` | `2026-02-17T19:40:00` | `1` | Correct |
+| Pipeline        | Reported Status | lastSuccessAt         | successRate24h | Actual State         |
+| --------------- | --------------- | --------------------- | -------------- | -------------------- |
+| **FBO Продажи** | `critical`      | `null`                | `0`            | Data flows correctly |
+| **Поставки**    | `critical`      | `null`                | `0`            | Data flows correctly |
+| **FBO Заказы**  | `no_data`       | `null`                | `0`            | Data flows correctly |
+| FBS Заказы      | `healthy`       | `2026-02-17T19:40:00` | `1`            | Correct              |
 
 ### Affected Data Completeness
 
-| Table | Reported Ratio | Reported Status | Actual State |
-|-------|---------------|-----------------|--------------|
-| **weekly_payout_summary** | `0` | `critical` | Financial data IS imported |
-| inventory_snapshots | `0.71` | `incomplete` | Needs verification |
+| Table                     | Reported Ratio | Reported Status | Actual State               |
+| ------------------------- | -------------- | --------------- | -------------------------- |
+| **weekly_payout_summary** | `0`            | `critical`      | Financial data IS imported |
+| inventory_snapshots       | `0.71`         | `incomplete`    | Needs verification         |
 
 ### Health Score Contradiction
 
@@ -46,6 +46,7 @@ The monitoring dashboard (`GET /v1/monitoring/dashboard`) reports **false critic
 **Resolution date**: 2026-05-06 (confirmed in #170 backend update)
 **Summary**: Fixed with StaleTaskReaperService (Post-Fix #150). The service automatically cancels stuck tasks: `in_progress` tasks exceeding `timeout_seconds * 2` are failed, `pending` tasks older than 2 hours are cancelled. This eliminates the false critical alarms that were caused by zombie tasks in the pipeline.
 **Remaining frontend action**: None - monitoring dashboard no longer generates false alarms.
+
 1. **Pipeline execution tracking gap**: FBO Продажи, Поставки, and FBO Заказы may not have entries in `task_execution_log` (or equivalent) because they use a different execution path not instrumented by the monitoring system.
 
 2. **Health score calculation ignores critical pipelines**: The `healthScore: 83` and `overallStatus: "healthy"` appear to be calculated from only the pipelines that DO have execution data (daily + weekly), ignoring the high-frequency ones with `null` lastSuccess.
@@ -101,6 +102,7 @@ The monitoring dashboard (`GET /v1/monitoring/dashboard`) reports **false critic
 ## Resolution Required
 
 **Backend team** needs to:
+
 1. Instrument FBO Продажи, Поставки, FBO Заказы pipeline executions in the monitoring system
 2. Fix health score calculation to account for all pipeline statuses
 3. Set `activeAlerts > 0` when any pipeline is critical

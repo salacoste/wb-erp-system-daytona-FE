@@ -45,13 +45,13 @@ Implement unified period selection system with comparison indicators:
 
 ## Dependencies
 
-| Type | Dependency | Status |
-|------|------------|--------|
-| Frontend | Existing `useAvailableWeeks` hook | ✅ Available |
-| Frontend | Existing `useDashboardMetrics` hook | ✅ Available |
-| Frontend | shadcn/ui Tabs, Select components | ✅ Available |
-| Backend | `/v1/analytics/weekly/finance-summary?week=` | ✅ Supports week param |
-| Backend | `/v1/analytics/weekly/expenses` | ⚠️ Verify week param support |
+| Type     | Dependency                                   | Status                       |
+| -------- | -------------------------------------------- | ---------------------------- |
+| Frontend | Existing `useAvailableWeeks` hook            | ✅ Available                 |
+| Frontend | Existing `useDashboardMetrics` hook          | ✅ Available                 |
+| Frontend | shadcn/ui Tabs, Select components            | ✅ Available                 |
+| Backend  | `/v1/analytics/weekly/finance-summary?week=` | ✅ Supports week param       |
+| Backend  | `/v1/analytics/weekly/expenses`              | ⚠️ Verify week param support |
 
 **Note**: Backend API already supports week parameter for finance-summary. Verify expenses endpoint supports optional week filter.
 
@@ -61,12 +61,12 @@ Implement unified period selection system with comparison indicators:
 
 All existing endpoints - no new backend work required:
 
-| Method | Endpoint | Change Required |
-|--------|----------|-----------------|
-| GET | `/v1/analytics/weekly/finance-summary` | None - already supports `?week=YYYY-Www` |
-| GET | `/v1/analytics/weekly/expenses` | Verify `?week=` param support |
-| GET | `/v1/analytics/weekly/margin-trends` | None - verify highlight support |
-| GET | `/v1/analytics/advertising` | None - accepts date range |
+| Method | Endpoint                               | Change Required                          |
+| ------ | -------------------------------------- | ---------------------------------------- |
+| GET    | `/v1/analytics/weekly/finance-summary` | None - already supports `?week=YYYY-Www` |
+| GET    | `/v1/analytics/weekly/expenses`        | Verify `?week=` param support            |
+| GET    | `/v1/analytics/weekly/margin-trends`   | None - verify highlight support          |
+| GET    | `/v1/analytics/advertising`            | None - accepts date range                |
 
 ---
 
@@ -80,29 +80,30 @@ No new routes required. All changes are to existing `/dashboard` page.
 
 ### New Components (6)
 
-| Component | Location | Purpose | SP |
-|-----------|----------|---------|---:|
-| `DashboardPeriodProvider` | `src/contexts/` | React context for period state | 3 |
-| `DashboardPeriodSelector` | `src/components/custom/` | Unified week/month toggle | 3 |
-| `MetricCardEnhanced` | `src/components/custom/` | Card with comparison indicators | 3 |
-| `PeriodContextLabel` | `src/components/custom/` | "Обзор за: Неделя 5, 2026" header | 1 |
-| `ComparisonBadge` | `src/components/custom/` | +5.2% / -2.1% badge | - |
-| `TrendIndicator` | `src/components/custom/` | ↑/↓ arrow with color | - |
+| Component                 | Location                 | Purpose                           |  SP |
+| ------------------------- | ------------------------ | --------------------------------- | --: |
+| `DashboardPeriodProvider` | `src/contexts/`          | React context for period state    |   3 |
+| `DashboardPeriodSelector` | `src/components/custom/` | Unified week/month toggle         |   3 |
+| `MetricCardEnhanced`      | `src/components/custom/` | Card with comparison indicators   |   3 |
+| `PeriodContextLabel`      | `src/components/custom/` | "Обзор за: Неделя 5, 2026" header |   1 |
+| `ComparisonBadge`         | `src/components/custom/` | +5.2% / -2.1% badge               |   - |
+| `TrendIndicator`          | `src/components/custom/` | ↑/↓ arrow with color              |   - |
 
 ### Modified Components (4)
 
-| Component | Change |
-|-----------|--------|
-| `page.tsx` (dashboard) | Add PeriodProvider, use enhanced cards |
+| Component                    | Change                                     |
+| ---------------------------- | ------------------------------------------ |
+| `page.tsx` (dashboard)       | Add PeriodProvider, use enhanced cards     |
 | `AdvertisingDashboardWidget` | Remove local period selector, accept props |
-| `InitialDataSummary` | Remove duplicate metrics, conditional CTA |
-| `ExpenseChart` | Accept week param from context |
+| `InitialDataSummary`         | Remove duplicate metrics, conditional CTA  |
+| `ExpenseChart`               | Accept week param from context             |
 
 ---
 
 ## Stories
 
 ### Story 60.1-FE: Dashboard Period State Management
+
 **Estimate**: 3 SP
 
 **Title**: Создать управление состоянием периода дашборда
@@ -111,6 +112,7 @@ No new routes required. All changes are to existing `/dashboard` page.
 Create React context and Zustand store for managing dashboard period selection state with URL synchronization.
 
 **Acceptance Criteria**:
+
 - [ ] Create `DashboardPeriodContext` with `periodType` (week/month), `selectedWeek`, `selectedMonth`
 - [ ] Create `useDashboardPeriod` hook for consuming context
 - [ ] Default to current completed week on load
@@ -120,11 +122,13 @@ Create React context and Zustand store for managing dashboard period selection s
 - [ ] Compute previous period automatically for comparison
 
 **Technical Notes**:
+
 - Use existing `useAvailableWeeks` hook for available weeks
 - Use `nuqs` or manual URL sync with Next.js `useSearchParams`
 - Store format: `{ periodType: 'week' | 'month', week: string, month: string }`
 
 **File Structure**:
+
 ```
 src/
 ├── contexts/
@@ -138,6 +142,7 @@ src/
 ---
 
 ### Story 60.2-FE: DashboardPeriodSelector Component
+
 **Estimate**: 3 SP
 
 **Title**: Создать компонент выбора периода
@@ -146,6 +151,7 @@ src/
 Build the unified `DashboardPeriodSelector` component with week/month toggle and refresh functionality.
 
 **Acceptance Criteria**:
+
 - [ ] Period type toggle (Неделя/Месяц) using shadcn/ui Tabs
 - [ ] Week dropdown with available weeks (YYYY-Www format, Russian labels)
 - [ ] Month dropdown derived from available weeks (Январь 2026, Декабрь 2025, etc.)
@@ -155,6 +161,7 @@ Build the unified `DashboardPeriodSelector` component with week/month toggle and
 - [ ] Disable future weeks/months
 
 **Design Specs**:
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │ [Неделя][Месяц]  [Неделя 5, 2026 (27 янв — 02 фев) ▾]  [⟳] 5м  │
@@ -171,6 +178,7 @@ Build the unified `DashboardPeriodSelector` component with week/month toggle and
 ---
 
 ### Story 60.3-FE: Enhanced MetricCard with Comparison
+
 **Estimate**: 3 SP
 
 **Title**: Добавить индикаторы сравнения в MetricCard
@@ -179,6 +187,7 @@ Build the unified `DashboardPeriodSelector` component with week/month toggle and
 Enhance `MetricCard` component to display comparison with previous period.
 
 **Acceptance Criteria**:
+
 - [ ] Accept `previousValue` prop for comparison
 - [ ] Calculate percentage change: `((current - previous) / previous) * 100`
 - [ ] Display trend arrow: ↑ (green #22C55E), ↓ (red #EF4444), — (gray #757575)
@@ -189,6 +198,7 @@ Enhance `MetricCard` component to display comparison with previous period.
 - [ ] Maintain existing loading/error states
 
 **Design Specs**:
+
 ```
 ┌──────────────────────────────────────┐
 │ 💰 К перечислению                    │
@@ -204,6 +214,7 @@ Enhance `MetricCard` component to display comparison with previous period.
 - Previous value: `text-muted-foreground text-sm`
 
 **Files**:
+
 - `src/components/custom/MetricCardEnhanced.tsx` (new)
 - `src/components/custom/TrendIndicator.tsx` (new helper)
 - `src/components/custom/ComparisonBadge.tsx` (new helper)
@@ -211,6 +222,7 @@ Enhance `MetricCard` component to display comparison with previous period.
 ---
 
 ### Story 60.4-FE: Connect Dashboard to Period State
+
 **Estimate**: 2 SP
 
 **Title**: Подключить дашборд к состоянию периода
@@ -219,6 +231,7 @@ Enhance `MetricCard` component to display comparison with previous period.
 Wire dashboard page and data-fetching hooks to use the global period selector.
 
 **Acceptance Criteria**:
+
 - [ ] Wrap dashboard page with `DashboardPeriodProvider`
 - [ ] Modify `useDashboardMetrics` to accept optional `week` param
 - [ ] Modify `useExpenses` hook (if separate) to accept `week` param
@@ -228,17 +241,20 @@ Wire dashboard page and data-fetching hooks to use the global period selector.
 - [ ] Invalidate queries on period change
 
 **Technical Notes**:
+
 - Update query keys to include week: `['dashboard', 'metrics', week]`
 - Use `useQueries` for parallel fetching of current + previous periods
 - Caching: 60s staleTime (matches existing)
 
 **Files**:
+
 - `src/app/(dashboard)/dashboard/page.tsx`
 - `src/hooks/useDashboardMetrics.ts` (modify)
 
 ---
 
 ### Story 60.5-FE: Remove Data Duplication
+
 **Estimate**: 2 SP
 
 **Title**: Устранить дублирование данных
@@ -247,6 +263,7 @@ Wire dashboard page and data-fetching hooks to use the global period selector.
 Refactor dashboard to eliminate duplicate metric displays and improve CTA logic.
 
 **Acceptance Criteria**:
+
 - [ ] Remove financial metrics from `InitialDataSummary` component
 - [ ] Move product count to main metric card grid (6th card)
 - [ ] Convert "Следующий шаг" CTA to conditional recommendation card
@@ -255,12 +272,14 @@ Refactor dashboard to eliminate duplicate metric displays and improve CTA logic.
 - [ ] Add COGS coverage metric card
 
 **Before/After**:
+
 ```
 BEFORE: Metrics shown twice (MetricCards + InitialDataSummary bottom)
 AFTER: Single source of truth in main grid, conditional CTA
 ```
 
 **New Metric Grid (6 cards)**:
+
 1. К перечислению (with comparison)
 2. Реализовано (with comparison)
 3. Маржа % (with comparison)
@@ -269,12 +288,14 @@ AFTER: Single source of truth in main grid, conditional CTA
 6. Реклама ROAS (from AdvertisingWidget)
 
 **Files**:
+
 - `src/components/custom/InitialDataSummary.tsx` (refactor)
 - `src/app/(dashboard)/dashboard/page.tsx`
 
 ---
 
 ### Story 60.6-FE: Sync Advertising Widget Period
+
 **Estimate**: 2 SP
 
 **Title**: Синхронизировать виджет рекламы с глобальным периодом
@@ -283,6 +304,7 @@ AFTER: Single source of truth in main grid, conditional CTA
 Remove local period selector from AdvertisingWidget, integrate with global period state.
 
 **Acceptance Criteria**:
+
 - [ ] Remove local period state (`selectedDays`) from widget
 - [ ] Accept `dateRange` prop from dashboard context
 - [ ] Map week to date range for API call (week start → week end)
@@ -291,6 +313,7 @@ Remove local period selector from AdvertisingWidget, integrate with global perio
 - [ ] Keep widget usable on other pages without provider
 
 **Technical Notes**:
+
 - Week to date conversion: Use `date-fns` `startOfISOWeek` / `endOfISOWeek`
 - Backward compatible: Check for context, fallback to local state
 
@@ -299,11 +322,13 @@ Widget loses independent period selector on dashboard.
 Consider if this is acceptable for product requirements.
 
 **Files**:
+
 - `src/components/custom/AdvertisingDashboardWidget.tsx`
 
 ---
 
 ### Story 60.7-FE: Period Context Label
+
 **Estimate**: 1 SP
 
 **Title**: Добавить метку контекста периода
@@ -312,6 +337,7 @@ Consider if this is acceptable for product requirements.
 Display current period and last refresh time in dashboard header.
 
 **Acceptance Criteria**:
+
 - [ ] Week format: "Обзор за: Неделя 5, 2026 (27 янв — 02 фев)"
 - [ ] Month format: "Обзор за: Январь 2026"
 - [ ] Last refresh: "Обновлено: 5 мин назад" (using `date-fns` `formatDistanceToNow`)
@@ -319,6 +345,7 @@ Display current period and last refresh time in dashboard header.
 - [ ] Update refresh time every minute
 
 **Design**:
+
 ```
 Главная страница
 Обзор за: Неделя 5, 2026 (27 янв — 02 фев) • Обновлено: 5 мин назад
@@ -329,6 +356,7 @@ Display current period and last refresh time in dashboard header.
 ---
 
 ### Story 60.8-FE: Improve Empty & Loading States
+
 **Estimate**: 2 SP
 
 **Title**: Улучшить состояния загрузки и пустые состояния
@@ -337,6 +365,7 @@ Display current period and last refresh time in dashboard header.
 Add skeleton loading for period switch and improve empty states.
 
 **Acceptance Criteria**:
+
 - [ ] Add skeleton loaders for metric cards during period switch
 - [ ] Animate metric value transitions (fade or count-up)
 - [ ] Improve TrendGraph empty state (illustration instead of alert)
@@ -344,6 +373,7 @@ Add skeleton loading for period switch and improve empty states.
 - [ ] Show "Нет данных за этот период" for weeks with no data
 
 **Files**:
+
 - `src/components/custom/MetricCardEnhanced.tsx`
 - `src/components/custom/TrendGraph.tsx`
 - `src/components/custom/ExpenseChart.tsx`
@@ -351,6 +381,7 @@ Add skeleton loading for period switch and improve empty states.
 ---
 
 ### Story 60.9-FE: E2E Tests for Period Switching
+
 **Estimate**: 3 SP
 
 **Title**: E2E тесты переключения периода
@@ -359,6 +390,7 @@ Add skeleton loading for period switch and improve empty states.
 Create Playwright E2E tests for new period functionality.
 
 **Acceptance Criteria**:
+
 - [ ] Test: Switch from week to month view
 - [ ] Test: Select previous week, verify metrics update
 - [ ] Test: URL updates with period params
@@ -490,34 +522,34 @@ src/
 
 ## Success Metrics
 
-| Metric | Current | Target | Measurement |
-|--------|---------|--------|-------------|
-| Time to understand period | Unknown (no context) | < 2 sec | User testing |
-| Clicks to switch period | N/A | 1 click | Analytics |
-| Screen utilization | ~60% duplicate | 100% unique | Code audit |
-| User confusion reports | Baseline TBD | -50% | Support tickets |
-| Page load time | ~1.5s | < 2s (with comparison) | Performance monitoring |
+| Metric                    | Current              | Target                 | Measurement            |
+| ------------------------- | -------------------- | ---------------------- | ---------------------- |
+| Time to understand period | Unknown (no context) | < 2 sec                | User testing           |
+| Clicks to switch period   | N/A                  | 1 click                | Analytics              |
+| Screen utilization        | ~60% duplicate       | 100% unique            | Code audit             |
+| User confusion reports    | Baseline TBD         | -50%                   | Support tickets        |
+| Page load time            | ~1.5s                | < 2s (with comparison) | Performance monitoring |
 
 ---
 
 ## Risks & Mitigations
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Backend expenses API doesn't support week param | Low | Medium | Verify early, request backend change if needed |
-| Performance regression (2x API calls for comparison) | Medium | Medium | Aggressive caching, parallel fetching |
-| User confusion during transition | Medium | Low | "Что нового" tooltip on first visit |
-| Breaking advertising widget on other pages | Low | Medium | Backward-compatible context check |
+| Risk                                                 | Probability | Impact | Mitigation                                     |
+| ---------------------------------------------------- | ----------- | ------ | ---------------------------------------------- |
+| Backend expenses API doesn't support week param      | Low         | Medium | Verify early, request backend change if needed |
+| Performance regression (2x API calls for comparison) | Medium      | Medium | Aggressive caching, parallel fetching          |
+| User confusion during transition                     | Medium      | Low    | "Что нового" tooltip on first visit            |
+| Breaking advertising widget on other pages           | Low         | Medium | Backward-compatible context check              |
 
 ---
 
 ## Sprint Allocation (Suggested)
 
-| Sprint | Stories | SP | Focus |
-|--------|---------|---:|-------|
-| Sprint 1 | 60.1, 60.2, 60.3 | 9 | State management + core components |
-| Sprint 2 | 60.4, 60.5, 60.6 | 6 | Integration + cleanup |
-| Sprint 3 | 60.7, 60.8, 60.9 | 6 | Polish + testing |
+| Sprint   | Stories          |  SP | Focus                              |
+| -------- | ---------------- | --: | ---------------------------------- |
+| Sprint 1 | 60.1, 60.2, 60.3 |   9 | State management + core components |
+| Sprint 2 | 60.4, 60.5, 60.6 |   6 | Integration + cleanup              |
+| Sprint 3 | 60.7, 60.8, 60.9 |   6 | Polish + testing                   |
 
 ---
 

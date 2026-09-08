@@ -2,19 +2,20 @@
 
 ## Overview
 
-| Attribute | Value |
-|-----------|-------|
-| **Story** | 44.25-FE |
-| **Title** | Loading States & Micro-interactions |
-| **Type** | Visual Enhancement |
-| **Priority** | P1 - HIGH |
-| **Effort** | 3 SP |
-| **QA Owner** | TBD |
-| **Created** | 2026-01-20 |
+| Attribute    | Value                               |
+| ------------ | ----------------------------------- |
+| **Story**    | 44.25-FE                            |
+| **Title**    | Loading States & Micro-interactions |
+| **Type**     | Visual Enhancement                  |
+| **Priority** | P1 - HIGH                           |
+| **Effort**   | 3 SP                                |
+| **QA Owner** | TBD                                 |
+| **Created**  | 2026-01-20                          |
 
 ## Test Scope
 
 This test plan covers loading states and micro-interactions:
+
 - Skeleton loader for results (with progress indicator)
 - Value transition animations (count up/down)
 - Copy button success animation (scale + checkmark)
@@ -28,49 +29,49 @@ This test plan covers loading states and micro-interactions:
 
 ### 1. Visual Regression Tests
 
-| ID | Test Case | Expected Result | Tool |
-|----|-----------|-----------------|------|
-| VR-001 | Capture skeleton loader state | Skeleton matches result layout | Percy/Chromatic |
+| ID     | Test Case                         | Expected Result                    | Tool            |
+| ------ | --------------------------------- | ---------------------------------- | --------------- |
+| VR-001 | Capture skeleton loader state     | Skeleton matches result layout     | Percy/Chromatic |
 | VR-002 | Capture copy button success state | Checkmark icon, green color, scale | Percy/Chromatic |
-| VR-003 | Capture card hover state | Slight scale lift visible | Percy/Chromatic |
+| VR-003 | Capture card hover state          | Slight scale lift visible          | Percy/Chromatic |
 
 ### 2. Accessibility Tests (WCAG 2.1 AA)
 
-| ID | Test Case | Expected Result | Priority |
-|----|-----------|-----------------|----------|
-| A11Y-001 | `prefers-reduced-motion` support | Animations disabled/reduced when enabled | High |
-| A11Y-002 | Loading state announced | `aria-live="polite"` present | High |
-| A11Y-003 | Copy success announced | `aria-live="assertive"` announcement | High |
-| A11Y-004 | No flashing animations | Animations don't cause seizure risk | High |
-| A11Y-005 | Focus states remain clear | Focus visible with transitions | High |
-| A11Y-006 | Screen reader compatible | Loading and success states read correctly | Medium |
+| ID       | Test Case                        | Expected Result                           | Priority |
+| -------- | -------------------------------- | ----------------------------------------- | -------- |
+| A11Y-001 | `prefers-reduced-motion` support | Animations disabled/reduced when enabled  | High     |
+| A11Y-002 | Loading state announced          | `aria-live="polite"` present              | High     |
+| A11Y-003 | Copy success announced           | `aria-live="assertive"` announcement      | High     |
+| A11Y-004 | No flashing animations           | Animations don't cause seizure risk       | High     |
+| A11Y-005 | Focus states remain clear        | Focus visible with transitions            | High     |
+| A11Y-006 | Screen reader compatible         | Loading and success states read correctly | Medium   |
 
 ### 3. Responsive Tests
 
-| ID | Breakpoint | Test Case | Expected Result |
-|----|------------|-----------|-----------------|
-| R-001 | 375px (Mobile) | Skeleton loader display | Skeleton scales to mobile layout |
-| R-002 | 375px (Mobile) | Animations work | Animations smooth on mobile |
-| R-003 | 1024px (Desktop) | Full animation experience | All micro-interactions active |
-| R-004 | All breakpoints | Progress indicator visible | Progress shows during loading |
+| ID    | Breakpoint       | Test Case                  | Expected Result                  |
+| ----- | ---------------- | -------------------------- | -------------------------------- |
+| R-001 | 375px (Mobile)   | Skeleton loader display    | Skeleton scales to mobile layout |
+| R-002 | 375px (Mobile)   | Animations work            | Animations smooth on mobile      |
+| R-003 | 1024px (Desktop) | Full animation experience  | All micro-interactions active    |
+| R-004 | All breakpoints  | Progress indicator visible | Progress shows during loading    |
 
 ### 4. Cross-Browser Tests
 
-| ID | Browser | Test Case | Expected Result |
-|----|---------|-----------|-----------------|
-| CB-001 | Chrome | Animation rendering | All animations smooth |
+| ID     | Browser | Test Case           | Expected Result       |
+| ------ | ------- | ------------------- | --------------------- |
+| CB-001 | Chrome  | Animation rendering | All animations smooth |
 | CB-002 | Firefox | Animation rendering | All animations smooth |
-| CB-003 | Safari | Animation rendering | CSS transitions work |
-| CB-004 | Edge | Animation rendering | All animations smooth |
+| CB-003 | Safari  | Animation rendering | CSS transitions work  |
+| CB-004 | Edge    | Animation rendering | All animations smooth |
 
 ### 5. Performance Tests
 
-| ID | Test Case | Expected Result | Threshold |
-|----|-----------|-----------------|-----------|
-| P-001 | Animation smoothness | No jank during animations | 60fps |
-| P-002 | No layout shift on loading | CLS < 0.1 | WCAG |
-| P-003 | RequestAnimationFrame used | JS animations use RAF | Check code |
-| P-004 | GPU-accelerated transforms | Uses transform, not width/height | Check CSS |
+| ID    | Test Case                  | Expected Result                  | Threshold  |
+| ----- | -------------------------- | -------------------------------- | ---------- |
+| P-001 | Animation smoothness       | No jank during animations        | 60fps      |
+| P-002 | No layout shift on loading | CLS < 0.1                        | WCAG       |
+| P-003 | RequestAnimationFrame used | JS animations use RAF            | Check code |
+| P-004 | GPU-accelerated transforms | Uses transform, not width/height | Check CSS  |
 
 ---
 
@@ -78,86 +79,86 @@ This test plan covers loading states and micro-interactions:
 
 ### AC1: Enhanced Loading State
 
-| TC ID | Test Case | Steps | Expected Result | Priority |
-|-------|-----------|-------|-----------------|----------|
-| TC-001 | Skeleton appears on submit | Click calculate button | Skeleton loader visible | High |
-| TC-002 | Skeleton matches result layout | Compare to results | Layout similar (3 price sections) | High |
-| TC-003 | Pulse animation on skeleton | Observe skeleton | `animate-pulse` visible | High |
-| TC-004 | Progress indicator present | View during loading | Progress bar or percentage visible | High |
-| TC-005 | Progress increases | Wait during loading | Progress value increases over time | Medium |
-| TC-006 | Background gradient animation | Observe loading state | Subtle gradient animation | Low |
-| TC-007 | Skeleton hero section styled | Inspect hero skeleton | Primary border/background hint | Medium |
+| TC ID  | Test Case                      | Steps                  | Expected Result                    | Priority |
+| ------ | ------------------------------ | ---------------------- | ---------------------------------- | -------- |
+| TC-001 | Skeleton appears on submit     | Click calculate button | Skeleton loader visible            | High     |
+| TC-002 | Skeleton matches result layout | Compare to results     | Layout similar (3 price sections)  | High     |
+| TC-003 | Pulse animation on skeleton    | Observe skeleton       | `animate-pulse` visible            | High     |
+| TC-004 | Progress indicator present     | View during loading    | Progress bar or percentage visible | High     |
+| TC-005 | Progress increases             | Wait during loading    | Progress value increases over time | Medium   |
+| TC-006 | Background gradient animation  | Observe loading state  | Subtle gradient animation          | Low      |
+| TC-007 | Skeleton hero section styled   | Inspect hero skeleton  | Primary border/background hint     | Medium   |
 
 ### AC2: Value Transition Animations
 
-| TC ID | Test Case | Steps | Expected Result | Priority |
-|-------|-----------|-------|-----------------|----------|
-| TC-008 | Price animates on change | Change inputs, recalculate | Value counts up/down | High |
-| TC-009 | Animation duration | Observe animation | ~300ms duration | Medium |
-| TC-010 | Value slides in direction | Increase value | New value slides from below | Medium |
-| TC-011 | Currency symbol static | Observe during animation | "₽" doesn't animate | Medium |
-| TC-012 | Smooth easing | Observe animation curve | Ease-out cubic or similar | Low |
-| TC-013 | No flicker on rapid changes | Rapidly recalculate | No visual glitches | High |
+| TC ID  | Test Case                   | Steps                      | Expected Result             | Priority |
+| ------ | --------------------------- | -------------------------- | --------------------------- | -------- |
+| TC-008 | Price animates on change    | Change inputs, recalculate | Value counts up/down        | High     |
+| TC-009 | Animation duration          | Observe animation          | ~300ms duration             | Medium   |
+| TC-010 | Value slides in direction   | Increase value             | New value slides from below | Medium   |
+| TC-011 | Currency symbol static      | Observe during animation   | "₽" doesn't animate         | Medium   |
+| TC-012 | Smooth easing               | Observe animation curve    | Ease-out cubic or similar   | Low      |
+| TC-013 | No flicker on rapid changes | Rapidly recalculate        | No visual glitches          | High     |
 
 ### AC3: Copy Button Success Animation
 
-| TC ID | Test Case | Steps | Expected Result | Priority |
-|-------|-----------|-------|-----------------|----------|
-| TC-014 | Button scales on copy | Click copy button | Button scales to ~110% | High |
-| TC-015 | Checkmark icon appears | Click copy button | CheckCircle2 icon replaces Copy icon | High |
-| TC-016 | Checkmark animation | Observe icon | Icon enters with zoom-in animation | Medium |
-| TC-017 | Green color on success | Click copy button | Button/icon turns green | High |
-| TC-018 | Tooltip shows "Скопировано!" | Click copy button | Tooltip visible for ~2s | Medium |
-| TC-019 | Button returns to normal | Wait 2s after copy | Button returns to default state | High |
-| TC-020 | Smooth icon transition | Observe transition | `transition-transform` smooth | Medium |
-| TC-021 | Multiple copies work | Click copy twice | Animation repeats correctly | Medium |
+| TC ID  | Test Case                    | Steps              | Expected Result                      | Priority |
+| ------ | ---------------------------- | ------------------ | ------------------------------------ | -------- |
+| TC-014 | Button scales on copy        | Click copy button  | Button scales to ~110%               | High     |
+| TC-015 | Checkmark icon appears       | Click copy button  | CheckCircle2 icon replaces Copy icon | High     |
+| TC-016 | Checkmark animation          | Observe icon       | Icon enters with zoom-in animation   | Medium   |
+| TC-017 | Green color on success       | Click copy button  | Button/icon turns green              | High     |
+| TC-018 | Tooltip shows "Скопировано!" | Click copy button  | Tooltip visible for ~2s              | Medium   |
+| TC-019 | Button returns to normal     | Wait 2s after copy | Button returns to default state      | High     |
+| TC-020 | Smooth icon transition       | Observe transition | `transition-transform` smooth        | Medium   |
+| TC-021 | Multiple copies work         | Click copy twice   | Animation repeats correctly          | Medium   |
 
 ### AC4: Form Submit Feedback
 
-| TC ID | Test Case | Steps | Expected Result | Priority |
-|-------|-----------|-------|-----------------|----------|
-| TC-022 | Submit button shows spinner | Click calculate | Loader2 spinner visible inside button | High |
-| TC-023 | Button width constant | Observe during loading | Width doesn't change | High |
-| TC-024 | Pulse effect on button | Observe during loading | Subtle pulse animation | Medium |
-| TC-025 | Success flash on results | After calculation completes | Brief green flash on results card | Medium |
-| TC-026 | Button text changes | During loading | Shows "Расчёт..." | High |
-| TC-027 | Button disabled during loading | Click during loading | Cannot submit again | High |
+| TC ID  | Test Case                      | Steps                       | Expected Result                       | Priority |
+| ------ | ------------------------------ | --------------------------- | ------------------------------------- | -------- |
+| TC-022 | Submit button shows spinner    | Click calculate             | Loader2 spinner visible inside button | High     |
+| TC-023 | Button width constant          | Observe during loading      | Width doesn't change                  | High     |
+| TC-024 | Pulse effect on button         | Observe during loading      | Subtle pulse animation                | Medium   |
+| TC-025 | Success flash on results       | After calculation completes | Brief green flash on results card     | Medium   |
+| TC-026 | Button text changes            | During loading              | Shows "Расчёт..."                     | High     |
+| TC-027 | Button disabled during loading | Click during loading        | Cannot submit again                   | High     |
 
 ### AC5: Hover & Focus Micro-interactions
 
-| TC ID | Test Case | Steps | Expected Result | Priority |
-|-------|-----------|-------|-----------------|----------|
-| TC-028 | Input lift on focus | Focus on input field | Shadow transitions `shadow-sm` to `shadow-md` | High |
-| TC-029 | Card scale on hover | Hover over card | `scale-[1.01]` applied | Medium |
-| TC-030 | Collapsible height animation | Expand/collapse section | Smooth height transition | Medium |
-| TC-031 | Button press effect | Click and hold button | `scale-95` on active | Medium |
-| TC-032 | Transition timing | Observe all transitions | Smooth, ~200ms duration | Medium |
-| TC-033 | Focus states visible | Tab through form | Focus rings visible | High |
+| TC ID  | Test Case                    | Steps                   | Expected Result                               | Priority |
+| ------ | ---------------------------- | ----------------------- | --------------------------------------------- | -------- |
+| TC-028 | Input lift on focus          | Focus on input field    | Shadow transitions `shadow-sm` to `shadow-md` | High     |
+| TC-029 | Card scale on hover          | Hover over card         | `scale-[1.01]` applied                        | Medium   |
+| TC-030 | Collapsible height animation | Expand/collapse section | Smooth height transition                      | Medium   |
+| TC-031 | Button press effect          | Click and hold button   | `scale-95` on active                          | Medium   |
+| TC-032 | Transition timing            | Observe all transitions | Smooth, ~200ms duration                       | Medium   |
+| TC-033 | Focus states visible         | Tab through form        | Focus rings visible                           | High     |
 
 ---
 
 ## Reduced Motion Tests
 
-| TC ID | Test Case | Steps | Expected Result | Priority |
-|-------|-----------|-------|-----------------|----------|
-| TC-034 | Enable reduced motion | Set `prefers-reduced-motion: reduce` | Animations disabled/reduced | High |
-| TC-035 | Skeleton still visible | Enable reduced motion, load | Skeleton visible without pulse | High |
-| TC-036 | Values update without animation | Enable reduced motion | Values change instantly | High |
-| TC-037 | Copy feedback still works | Enable reduced motion | Checkmark appears, no animation | High |
-| TC-038 | Transitions shortened | Enable reduced motion | Transitions instant or very fast | Medium |
+| TC ID  | Test Case                       | Steps                                | Expected Result                  | Priority |
+| ------ | ------------------------------- | ------------------------------------ | -------------------------------- | -------- |
+| TC-034 | Enable reduced motion           | Set `prefers-reduced-motion: reduce` | Animations disabled/reduced      | High     |
+| TC-035 | Skeleton still visible          | Enable reduced motion, load          | Skeleton visible without pulse   | High     |
+| TC-036 | Values update without animation | Enable reduced motion                | Values change instantly          | High     |
+| TC-037 | Copy feedback still works       | Enable reduced motion                | Checkmark appears, no animation  | High     |
+| TC-038 | Transitions shortened           | Enable reduced motion                | Transitions instant or very fast | Medium   |
 
 ---
 
 ## Animation Timing Tests
 
-| TC ID | Animation | Expected Duration | Easing |
-|-------|-----------|-------------------|--------|
-| TC-039 | Value transition | 300ms | ease-out |
-| TC-040 | Copy button scale | 200ms | ease-out |
-| TC-041 | Card hover scale | 200ms | ease |
-| TC-042 | Button press | 150ms | ease |
-| TC-043 | Focus shadow transition | 200ms | ease |
-| TC-044 | Icon zoom-in | 200ms | ease-out |
+| TC ID  | Animation               | Expected Duration | Easing   |
+| ------ | ----------------------- | ----------------- | -------- |
+| TC-039 | Value transition        | 300ms             | ease-out |
+| TC-040 | Copy button scale       | 200ms             | ease-out |
+| TC-041 | Card hover scale        | 200ms             | ease     |
+| TC-042 | Button press            | 150ms             | ease     |
+| TC-043 | Focus shadow transition | 200ms             | ease     |
+| TC-044 | Icon zoom-in            | 200ms             | ease-out |
 
 ---
 
@@ -170,11 +171,11 @@ This test plan covers loading states and micro-interactions:
 
 ## Test Data Requirements
 
-| Data | Description | Purpose |
-|------|-------------|---------|
-| Valid form inputs | Complete cost/margin data | Trigger calculation |
-| Different margin values | Various calculation scenarios | Test value animations |
-| Slow network | Throttled connection | Test loading state duration |
+| Data                    | Description                   | Purpose                     |
+| ----------------------- | ----------------------------- | --------------------------- |
+| Valid form inputs       | Complete cost/margin data     | Trigger calculation         |
+| Different margin values | Various calculation scenarios | Test value animations       |
+| Slow network            | Throttled connection          | Test loading state duration |
 
 ---
 
@@ -297,24 +298,24 @@ test.describe('Loading States & Micro-interactions', () => {
 
 ### Visual Regression Priority
 
-| Test | Tool | Automation Priority |
-|------|------|---------------------|
-| Skeleton loader state | Percy/Chromatic | High |
-| Copy button success state | Playwright + screenshot | High |
-| Card hover state | Playwright | Medium |
-| Button loading state | Playwright | High |
+| Test                      | Tool                    | Automation Priority |
+| ------------------------- | ----------------------- | ------------------- |
+| Skeleton loader state     | Percy/Chromatic         | High                |
+| Copy button success state | Playwright + screenshot | High                |
+| Card hover state          | Playwright              | Medium              |
+| Button loading state      | Playwright              | High                |
 
 ---
 
 ## Risk Assessment
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Animations cause jank | High | Use GPU-accelerated transforms only |
-| Reduced motion not respected | High | Test with media query emulation |
-| Loading state too brief to see | Medium | Test with network throttling |
-| Animation conflicts with functionality | High | Test all interactions during animations |
-| Value animation causes flickering | Medium | Debounce rapid value changes |
+| Risk                                   | Impact | Mitigation                              |
+| -------------------------------------- | ------ | --------------------------------------- |
+| Animations cause jank                  | High   | Use GPU-accelerated transforms only     |
+| Reduced motion not respected           | High   | Test with media query emulation         |
+| Loading state too brief to see         | Medium | Test with network throttling            |
+| Animation conflicts with functionality | High   | Test all interactions during animations |
+| Value animation causes flickering      | Medium | Debounce rapid value changes            |
 
 ---
 
@@ -337,11 +338,11 @@ test.describe('Loading States & Micro-interactions', () => {
 
 ## Sign-off
 
-| Role | Name | Date | Status |
-|------|------|------|--------|
-| QA Engineer | | | Pending |
-| Developer | | | Pending |
-| Product Owner | | | Pending |
+| Role          | Name | Date | Status  |
+| ------------- | ---- | ---- | ------- |
+| QA Engineer   |      |      | Pending |
+| Developer     |      |      | Pending |
+| Product Owner |      |      | Pending |
 
 ---
 

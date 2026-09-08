@@ -20,11 +20,13 @@ Frontend team received `#169 Backend Update Report` covering Epics 101-106 (18 e
 **Background**: Frontend Epic 90-FE (Acquiring Cost Reports UI) shipped 2026-04-19 with full integration of acquiring endpoints under path **`/v1/acquiring/*`** (3 endpoints). Stories 90.1-90.5 closed. Backend's #166 ticket was marked closed.
 
 Backend's #169 § 1.1 now lists **3 endpoints under different path** `/v1/analytics/acquiring/reports*`:
+
 - `GET /v1/analytics/acquiring/reports?from=&to=`
 - `GET /v1/analytics/acquiring/reports/:id/detail`
 - `GET /v1/analytics/acquiring/detail?from=&to=`
 
 **Question**: Are these:
+
 - **(a) Renamed/migrated** versions of the Epic 90 endpoints (`/v1/acquiring/*` → `/v1/analytics/acquiring/*`)? If yes, when does the old path deprecate? Migration plan?
 - **(b) New endpoints** existing alongside the Epic 90 ones (different feature)? If yes, what differentiates them -- different data source, different aggregation, different consumer use case?
 
@@ -47,6 +49,7 @@ Backend's #169 § 1.1 now lists **3 endpoints under different path** `/v1/analyt
 Both surfaces describe the same underlying domain (acquiring cost) at different granularities — weekly summary vs per-report detail.
 
 **Question**: For a given date range `[from, to]`:
+
 - Should `summary.acquiring_total` (from finance-summary endpoint) **equal** the sum of `report.cost` over `/v1/analytics/acquiring/reports?from=X&to=Y`?
 - If consistency is guaranteed: backend confirms this in tests / DTOs?
 - If discrepancies are possible: what are the acceptable thresholds + reasons (e.g., timing of WB API ingestion, separate source tables)?
@@ -60,6 +63,7 @@ Both surfaces describe the same underlying domain (acquiring cost) at different 
 **Background**: #169 § 2.2 says the new field enables the funnel: `retail_price_total → sales_gross → wb_sales_gross → net_payout`.
 
 **Question**:
+
 - **Q3.1**: What's the formula relating `retail_price_total` and `sales_gross`? Is it: `sales_gross = retail_price_total - WB_discount_total`?
 - **Q3.2**: If yes — does backend return `WB_discount_total` (or equivalent) **as a separate field** so FE can render the funnel transition step explicitly? Or must FE compute it as a delta (`retail_price_total - sales_gross`)?
 - **Q3.3**: For `summary_eaeu` does `retail_price_total` exist (or only RUS)? `summary_total.retail_price_total_combined` is mentioned, but `summary_rus` is the only sub-section shown. Confirm `summary_eaeu.retail_price_total` schema.
@@ -75,6 +79,7 @@ Both surfaces describe the same underlying domain (acquiring cost) at different 
 Frontend has historical period coverage from W01-W17 (Jan-Apr 2026) where the old `corrections` field carried this data.
 
 **Question**:
+
 - **Q4.1**: For pre-Epic-104 historical periods (e.g., W01-W17), does `commission_other` populate retroactively, or is it **null** for old periods?
 - **Q4.2**: If null for historical: does `corrections` field still retain the legacy data, or has it been **moved** (zeroed out)?
 - **Q4.3**: What's the recommended FE strategy for historical periods?
@@ -91,6 +96,7 @@ Frontend has historical period coverage from W01-W17 (Jan-Apr 2026) where the ol
 **Background**: #169 § 2.4 adds `latest_fcu` and `latest_dcu` to `unit-economics` response. "Latest" needs precise definition.
 
 **Question**:
+
 - **Q5.1**: "Latest" selector for shipments — is it:
   - **Option A**: `MAX(shipment.confirmed_at)` (latest by confirmed timestamp)
   - **Option B**: `MAX(shipment.id)` (latest by primary key — typically same but not guaranteed)
@@ -111,6 +117,7 @@ Frontend has historical period coverage from W01-W17 (Jan-Apr 2026) where the ol
 Backend's #169 § 1.2 now lists 7 NEW endpoints under `/v1/analytics/fbs/stock/*` + `/v1/analytics/fbs/enhanced`. This conflicts with the #112 framing.
 
 **Question**:
+
 - **Q6.1**: Are these 7 endpoints genuinely NEW (not present in any form before Epic 105), or are they renamed/refactored versions of pre-existing endpoints that frontend already consumes?
 - **Q6.2**: If existing FE hooks are consuming OTHER endpoints currently — are those endpoints deprecated? When?
 - **Q6.3**: Quick reference: what is the mapping (if any) between FE hook → old endpoint → new endpoint?
@@ -126,6 +133,7 @@ Backend's #169 § 1.2 now lists 7 NEW endpoints under `/v1/analytics/fbs/stock/*
 Frontend wants to wire these into E2E test fixtures (Story 96.15). Before that, security review is needed.
 
 **Question**:
+
 - **Q7.1**: How is the `NODE_ENV=development` check enforced?
   - **Option A**: Hardcoded conditional registration in module imports (endpoints don't exist at all in production builds)
   - **Option B**: Runtime env-check on each request (endpoints exist but return 403/404 in non-dev)
@@ -140,6 +148,7 @@ Frontend wants to wire these into E2E test fixtures (Story 96.15). Before that, 
 ## Q8 — Open Items Priority + ETA
 
 **Background**: #169 § 5 lists 5 open requests not yet implemented:
+
 - `#148` Fulfillment returns count = 0 (MEDIUM)
 - `#157` Daily finance breakdown endpoint (HIGH)
 - `#159` Preliminary tax (LOW)
@@ -147,6 +156,7 @@ Frontend wants to wire these into E2E test fixtures (Story 96.15). Before that, 
 - `#150` Monitoring false alarms (LOW)
 
 **Question**:
+
 - **Q8.1**: For `#157` (HIGH priority) — is there an ETA? Frontend has a known gap: `useDailyMetrics` currently returns hardcoded `[]` for daily finance because no backend daily-finance endpoint exists (Story 87.2-FE workaround). Knowing ETA helps decide whether to wait or build interim solution.
 - **Q8.2**: For `#148` — does backend have a root cause hypothesis for "fulfillment returns count always 0", or does this need fresh investigation?
 - **Q8.3**: For `#150` (monitoring false alarms) — which 3/4 pipelines are showing false `critical`/`no_data`? Is this related to the 2 NEW pipelines from § 4 (`fbo_return_classification_sync` + `buyout_reconciliation_sync`), or separate from the new pipelines?
@@ -158,10 +168,12 @@ Frontend wants to wire these into E2E test fixtures (Story 96.15). Before that, 
 ## Recommended Response Format
 
 Backend can reply by either:
+
 - **Option A**: Replying inline in this file under each question (preferred — keeps everything in one artifact for grep-ability).
 - **Option B**: Creating `docs/request-backend/170-RESPONSE-EPICS-101-106-CLARIFICATIONS.md` mirroring the Q1 → Q8 structure with answers.
 
 **Priority for answers** (sequenced by FE blocking impact):
+
 1. **CRITICAL (block Epic 96-FE planning)**: Q1 (acquiring path migration), Q3 (retail_price_total funnel formula), Q6 (FBS endpoints relationship)
 2. **HIGH (block specific stories)**: Q4 (commission_other backfill), Q7 (test-seed security)
 3. **MEDIUM (design refinement)**: Q2 (acquiring consistency), Q5 (latest_fcu/dcu selector)

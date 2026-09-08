@@ -16,6 +16,7 @@
 **So that** I can easily understand what data to enter and navigate the form efficiently.
 
 **Non-goals**:
+
 - Form validation logic changes
 - New input fields
 - Form submission behavior changes
@@ -25,12 +26,14 @@
 ## Background: Current State
 
 The current `PriceCalculatorForm.tsx` uses a flat Card with:
+
 - Basic `CardHeader` and `CardContent` without visual distinction
 - Sections separated only by `space-y-6` margin
 - No visual grouping of related fields
 - Button section (`FormActionsSection`) feels cramped with `gap-3` only
 
 ### UX Audit Findings
+
 - **#3**: "Плоская карточка без визуального акцента" - Form card looks plain
 - **#7**: "Cramped buttons, недостаточно spacing" - Action buttons need more room
 
@@ -39,12 +42,14 @@ The current `PriceCalculatorForm.tsx` uses a flat Card with:
 ## Acceptance Criteria
 
 ### AC1: Enhanced Card Header
+
 - [ ] Add gradient accent to header: `border-b-4 border-b-primary`
 - [ ] Increase header padding: `py-5`
 - [ ] Add subtle background: `bg-muted/30`
 - [ ] Title with icon: Add Calculator icon before title
 
 ### AC2: Section Grouping with Visual Dividers
+
 - [ ] Group related fields with subtle backgrounds:
   - Target Margin: `bg-primary/5 rounded-lg p-4`
   - Fixed Costs: `bg-blue-50 rounded-lg p-4`
@@ -54,11 +59,13 @@ The current `PriceCalculatorForm.tsx` uses a flat Card with:
 - [ ] Section headers with left border accent
 
 ### AC3: Input Field Enhancements
+
 - [ ] Add focus ring animation: `focus-within:ring-2 focus-within:ring-primary/20`
 - [ ] Group labels with subtle background on focus
 - [ ] Consistent spacing between label and input: `gap-2`
 
 ### AC4: Action Section Upgrade
+
 - [ ] Increase spacing: `gap-4` instead of `gap-3`
 - [ ] Add top border separator: `border-t pt-6`
 - [ ] Primary button with gradient: `bg-gradient-to-r from-primary to-primary/80`
@@ -66,6 +73,7 @@ The current `PriceCalculatorForm.tsx` uses a flat Card with:
 - [ ] Hover state enhancement: `hover:shadow-md transition-shadow`
 
 ### AC5: Mobile Optimization
+
 - [ ] Stack buttons vertically on mobile: `flex-col md:flex-row`
 - [ ] Section backgrounds become borders on mobile (performance)
 - [ ] Reduce section padding on mobile: `p-3 md:p-4`
@@ -76,14 +84,14 @@ The current `PriceCalculatorForm.tsx` uses a flat Card with:
 
 ### Files to Modify
 
-| File | Change | Lines Est. |
-|------|--------|------------|
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | Header/Card styling | ~15 |
-| `src/components/custom/price-calculator/TargetMarginSection.tsx` | Section styling | ~10 |
-| `src/components/custom/price-calculator/FixedCostsSection.tsx` | Section styling | ~10 |
-| `src/components/custom/price-calculator/PercentageCostsFormSection.tsx` | Section styling | ~10 |
-| `src/components/custom/price-calculator/TaxConfigurationSection.tsx` | Section styling | ~10 |
-| `src/components/custom/price-calculator/FormActionsSection.tsx` | Button upgrade | ~15 |
+| File                                                                    | Change              | Lines Est. |
+| ----------------------------------------------------------------------- | ------------------- | ---------- |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`        | Header/Card styling | ~15        |
+| `src/components/custom/price-calculator/TargetMarginSection.tsx`        | Section styling     | ~10        |
+| `src/components/custom/price-calculator/FixedCostsSection.tsx`          | Section styling     | ~10        |
+| `src/components/custom/price-calculator/PercentageCostsFormSection.tsx` | Section styling     | ~10        |
+| `src/components/custom/price-calculator/TaxConfigurationSection.tsx`    | Section styling     | ~10        |
+| `src/components/custom/price-calculator/FormActionsSection.tsx`         | Button upgrade      | ~15        |
 
 ### Tailwind Classes to Use
 
@@ -120,19 +128,20 @@ const primaryButtonClasses = cn(
 
 ### Design Tokens
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `primary` | `#E53935` | Main accent, header border |
-| `blue-50` | `#eff6ff` | Fixed costs section |
-| `purple-50` | `#faf5ff` | Percentage costs section |
-| `amber-50` | `#fffbeb` | Tax section |
-| `primary/5` | `rgba(229,57,53,0.05)` | Target margin section |
+| Token       | Value                  | Usage                      |
+| ----------- | ---------------------- | -------------------------- |
+| `primary`   | `#E53935`              | Main accent, header border |
+| `blue-50`   | `#eff6ff`              | Fixed costs section        |
+| `purple-50` | `#faf5ff`              | Percentage costs section   |
+| `amber-50`  | `#fffbeb`              | Tax section                |
+| `primary/5` | `rgba(229,57,53,0.05)` | Target margin section      |
 
 ---
 
 ## Design Specifications
 
 ### Before (Current Card Header)
+
 ```html
 <CardHeader>
   <CardTitle>Калькулятор цены</CardTitle>
@@ -143,6 +152,7 @@ const primaryButtonClasses = cn(
 ```
 
 ### After (Enhanced Card Header)
+
 ```html
 <CardHeader className="border-b-4 border-b-primary bg-muted/30 py-5">
   <div className="flex items-center gap-3">
@@ -160,6 +170,7 @@ const primaryButtonClasses = cn(
 ```
 
 ### Section Wrapper Example
+
 ```html
 <div className="bg-primary/5 rounded-lg p-4 border-l-4 border-l-primary">
   <div className="flex items-center gap-2 mb-4">
@@ -171,6 +182,7 @@ const primaryButtonClasses = cn(
 ```
 
 ### Visual Layout
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ ┌─────────────────────────────────────────────────────────┐ │
@@ -221,16 +233,16 @@ const primaryButtonClasses = cn(
 
 ### Test Cases
 
-| # | Test | Expected Result |
-|---|------|-----------------|
-| 1 | View form header | Has Calculator icon, primary border bottom |
-| 2 | View Target Margin section | Has primary background, border-left accent |
-| 3 | View Fixed Costs section | Has blue background |
-| 4 | View Percentage Costs section | Has purple background |
-| 5 | View Tax section | Has amber background |
-| 6 | View action buttons | Has gradient submit, gap-4 spacing |
-| 7 | View on mobile | Buttons stacked, reduced padding |
-| 8 | Tab through form | Focus states clearly visible |
+| #   | Test                          | Expected Result                            |
+| --- | ----------------------------- | ------------------------------------------ |
+| 1   | View form header              | Has Calculator icon, primary border bottom |
+| 2   | View Target Margin section    | Has primary background, border-left accent |
+| 3   | View Fixed Costs section      | Has blue background                        |
+| 4   | View Percentage Costs section | Has purple background                      |
+| 5   | View Tax section              | Has amber background                       |
+| 6   | View action buttons           | Has gradient submit, gap-4 spacing         |
+| 7   | View on mobile                | Buttons stacked, reduced padding           |
+| 8   | Tab through form              | Focus states clearly visible               |
 
 ---
 
@@ -316,16 +328,18 @@ export function FormActionsSection({ ... }) {
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | ~15 | Enhanced header styling |
-| `src/components/custom/price-calculator/TargetMarginSection.tsx` | UPDATE | ~10 | Section wrapper styling |
-| `src/components/custom/price-calculator/FixedCostsSection.tsx` | UPDATE | ~10 | Section wrapper styling |
-| `src/components/custom/price-calculator/PercentageCostsFormSection.tsx` | UPDATE | ~10 | Section wrapper styling |
-| `src/components/custom/price-calculator/TaxConfigurationSection.tsx` | UPDATE | ~10 | Section wrapper styling |
-| `src/components/custom/price-calculator/FormActionsSection.tsx` | UPDATE | ~15 | Button gradient + icons |
+
+| File                                                                    | Change Type | Lines (Est.) | Description             |
+| ----------------------------------------------------------------------- | ----------- | ------------ | ----------------------- |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`        | UPDATE      | ~15          | Enhanced header styling |
+| `src/components/custom/price-calculator/TargetMarginSection.tsx`        | UPDATE      | ~10          | Section wrapper styling |
+| `src/components/custom/price-calculator/FixedCostsSection.tsx`          | UPDATE      | ~10          | Section wrapper styling |
+| `src/components/custom/price-calculator/PercentageCostsFormSection.tsx` | UPDATE      | ~10          | Section wrapper styling |
+| `src/components/custom/price-calculator/TaxConfigurationSection.tsx`    | UPDATE      | ~10          | Section wrapper styling |
+| `src/components/custom/price-calculator/FormActionsSection.tsx`         | UPDATE      | ~15          | Button gradient + icons |
 
 ### Change Log
+
 _(To be filled by Dev Agent during implementation)_
 
 ---
@@ -337,13 +351,14 @@ _(To be filled by Dev Agent during implementation)_
 **Gate Decision**: ✅ PASSED
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Enhanced card header | ✅ PASSED | PriceCalculatorForm.tsx:109-121 - `border-b-4 border-b-primary bg-muted/30 py-5`, Calculator icon with rounded-lg bg-primary/10 container |
+
+| AC  | Requirement                    | Status    | Evidence                                                                                                                                                                                                                                                                                                                                                           |
+| --- | ------------------------------ | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| AC1 | Enhanced card header           | ✅ PASSED | PriceCalculatorForm.tsx:109-121 - `border-b-4 border-b-primary bg-muted/30 py-5`, Calculator icon with rounded-lg bg-primary/10 container                                                                                                                                                                                                                          |
 | AC2 | Section grouping with dividers | ✅ PASSED | TargetMarginSection.tsx:36 `bg-primary/5 rounded-lg p-4 border-l-4 border-l-primary`; FixedCostsSection.tsx:45 `bg-blue-50 rounded-lg p-4 border-l-4 border-l-blue-400`; PercentageCostsFormSection.tsx:55 `bg-purple-50 rounded-lg p-4 border-l-4 border-l-purple-400`; TaxConfigurationSection.tsx:77 `bg-amber-50 rounded-lg p-4 border-l-4 border-l-amber-400` |
-| AC3 | Input field enhancements | ✅ PASSED | Consistent gap-2 spacing between labels and inputs across all sections |
-| AC4 | Action section upgrade | ✅ PASSED | FormActionsSection.tsx:48 `border-t border-muted pt-6`, line 56 `flex gap-4 flex-col md:flex-row`, Submit button lines 71-76 `bg-gradient-to-r from-primary to-primary/80 hover:shadow-md transition-all duration-200`, Calculator and RotateCcw icons |
-| AC5 | Mobile optimization | ✅ PASSED | FormActionsSection.tsx:56 `flex-col md:flex-row` for button stacking on mobile |
+| AC3 | Input field enhancements       | ✅ PASSED | Consistent gap-2 spacing between labels and inputs across all sections                                                                                                                                                                                                                                                                                             |
+| AC4 | Action section upgrade         | ✅ PASSED | FormActionsSection.tsx:48 `border-t border-muted pt-6`, line 56 `flex gap-4 flex-col md:flex-row`, Submit button lines 71-76 `bg-gradient-to-r from-primary to-primary/80 hover:shadow-md transition-all duration-200`, Calculator and RotateCcw icons                                                                                                             |
+| AC5 | Mobile optimization            | ✅ PASSED | FormActionsSection.tsx:56 `flex-col md:flex-row` for button stacking on mobile                                                                                                                                                                                                                                                                                     |
 
 ---
 

@@ -46,6 +46,7 @@ curl -s -X POST http://localhost:3000/v1/auth/refresh \
 **Контракт**: `POST /v1/auth/refresh` · `Authorization: Bearer <valid-access-jwt>` · тело `{}` → **200 `{ "token": "<new>" }`** (user опционален и не возвращается). Sliding access-JWT rotation: требуется ещё валидный JWT; юзер перепроверяется в БД; claims из актуального состояния; новый jti; TTL-класс сохраняется (24ч / remember-me 30д); абсолютный кап сессии 30 дней; **исходный JWT атомарно ревокается** (replay → 401 TOKEN_REVOKED); Redis fail-closed; троттл 10/min/IP; inactive → 401 INVALID_SESSION.
 
 **⚠️ Оговорки для D-2**:
+
 1. **Истёкший access-JWT обновить НЕЛЬЗЯ** — reactive-восстановление после реального expiration НЕ разблокировано (нужен dedicated refresh-token или grace — следующий этап BE). Разблокировано: proactive-refresh до истечения.
 2. Маршрут опубликован и поднят локально. Route-resolution и health проверены; полный happy-path 200 + single-use replay FE проверяет валидным тестовым JWT в рамках D-2 e2e.
 

@@ -16,6 +16,7 @@ Frontend team is implementing polling mechanism for margin calculation status up
 2. **Infinite re-render loop** in `usePendingMarginProducts` hook - `useEffect` dependency issue
 
 We need backend team guidance on:
+
 - **Best polling strategy** given your architecture (BullMQ queue, task processing times)
 - **API endpoints** for checking margin calculation status
 - **Expected timing** for different scenarios (single product, historical, bulk)
@@ -31,6 +32,7 @@ We need backend team guidance on:
 **Usage**: `src/hooks/useSingleCogsAssignmentWithPolling.ts`
 
 **Flow:**
+
 1. User assigns COGS → `POST /v1/products/:nmId/cogs`
 2. Backend returns `201 Created` with `current_margin_pct: null`, `missing_data_reason: null`
 3. Frontend sets `pollingNmId` and `pollingConfig` state
@@ -40,6 +42,7 @@ We need backend team guidance on:
 ### Observed Behavior
 
 **Console Logs:**
+
 ```
 ✅ [Polling Hook] Polling state set, useMarginPolling should restart
 🔍 [Polling Store] Adding product 173588306 to polling
@@ -49,6 +52,7 @@ nmId:  (empty)
 ```
 
 **What's happening:**
+
 - `useMarginPolling` is created **BEFORE** `setPollingNmId` and `setPollingConfig` are called
 - When state is set, `useEffect` in `useMarginPolling` doesn't restart
 - `enabled` and `nmId` remain `false` and empty string
@@ -92,11 +96,13 @@ setPollingConfig(strategy)
 **Q1.2**: Should we poll `GET /v1/products/:nmId?include_cogs=true` or is there a dedicated status endpoint?
 
 **Q1.3**: What's the recommended polling interval based on your task processing times?
+
 - Single product: 5-10 seconds (from Request #14)
 - Historical (7 weeks): 20-30 seconds
 - Bulk (500 products): 45-60 seconds
 
 **Q1.4**: Is there a way to check if a margin calculation task is actually queued/processing for a specific product?
+
 - Endpoint like `GET /v1/tasks/status?nm_id=173588306`?
 - Or should we rely on polling product data?
 
@@ -110,9 +116,10 @@ setPollingConfig(strategy)
 **Usage**: Detects products with `current_margin_pct: null` + `missing_data_reason: null` + `has_cogs: true` (Request #18 Scenario 1)
 
 **Error:**
+
 ```
-Maximum update depth exceeded. This can happen when a component calls setState 
-inside useEffect, but useEffect either doesn't have a dependency array, or one 
+Maximum update depth exceeded. This can happen when a component calls setState
+inside useEffect, but useEffect either doesn't have a dependency array, or one
 of the dependencies changes on every render.
 ```
 
@@ -125,13 +132,13 @@ useEffect(() => {
   if (!enabled) return
 
   const newPending = new Map<string, PendingProduct>()
-  
+
   products.forEach((product) => {
-    const isPending = 
+    const isPending =
       product.current_margin_pct === null &&
       product.missing_data_reason === null &&
       product.has_cogs === true
-    
+
     if (isPending) {
       // Add to newPending map
     }
@@ -150,11 +157,13 @@ The `products` array is recreated on every render (even if contents are the same
 **Q2.1**: Should we track pending products on frontend, or is there a backend endpoint that returns products with pending margin calculation?
 
 **Q2.2**: What's the recommended approach for detecting "calculation in progress" state?
+
 - Option A: Frontend polling individual products (current approach)
 - Option B: Backend endpoint `GET /v1/products/pending-margin?cabinet_id=xxx`
 - Option C: WebSocket notifications when calculation completes (future)
 
 **Q2.3**: Based on Request #18 backend response, should we:
+
 - Poll every 5-10 seconds for first 30 seconds
 - Then every 30 seconds
 - Stop after 5 minutes (assume task failed)
@@ -172,6 +181,7 @@ Is this strategy aligned with your task processing architecture?
 **Processing**: Background worker processes tasks asynchronously
 
 **Task Payload:**
+
 ```typescript
 {
   cabinetId: string,
@@ -182,6 +192,7 @@ Is this strategy aligned with your task processing architecture?
 ```
 
 **Processing Times:**
+
 - Single product (1 week): 5-10 seconds
 - Historical (7 weeks): 20-30 seconds
 - Bulk (500 products, 7 weeks): 45-60 seconds
@@ -209,6 +220,7 @@ Is this strategy aligned with your task processing architecture?
 ### Solution 2: Fix usePendingMarginProducts Hook
 
 **Approach A**: Deep comparison of `products` array before calling `setPendingProducts`
+
 ```typescript
 const prevProductsRef = useRef(products)
 if (deepEqual(prevProductsRef.current, products)) {
@@ -219,6 +231,7 @@ setPendingProducts(newPending)
 ```
 
 **Approach B**: Use `useMemo` to create stable `products` reference
+
 ```typescript
 const stableProducts = useMemo(() => products, [
   products.map(p => p.nm_id).join(','),
@@ -227,6 +240,7 @@ const stableProducts = useMemo(() => products, [
 ```
 
 **Approach C**: Backend provides endpoint for pending products
+
 ```typescript
 // Instead of frontend detecting, backend tells us
 const { pendingProducts } = await apiClient.get('/v1/products/pending-margin')
@@ -248,16 +262,19 @@ const { pendingProducts } = await apiClient.get('/v1/products/pending-margin')
 ### 1. Polling Strategy
 
 **Q1**: What's the recommended polling approach given your BullMQ architecture?
+
 - Poll individual products: `GET /v1/products/:nmId?include_cogs=true`
 - Poll product list: `GET /v1/products?include_cogs=true&limit=25`
 - Dedicated status endpoint: `GET /v1/tasks/margin-status?nm_id=xxx` (if exists)
 
 **Q2**: What polling intervals do you recommend?
+
 - Single product: 3 seconds? 5 seconds?
 - Historical (7 weeks): 5 seconds? 10 seconds?
 - Bulk (500 products): 10 seconds? 30 seconds?
 
 **Q3**: How long should frontend poll before assuming task failed?
+
 - Single product: 30 seconds? 60 seconds?
 - Historical: 60 seconds? 120 seconds?
 - Bulk: 120 seconds? 180 seconds?
@@ -265,32 +282,38 @@ const { pendingProducts } = await apiClient.get('/v1/products/pending-margin')
 ### 2. Task Status Detection
 
 **Q4**: Is there a way to check if a margin calculation task is queued/processing for a specific product?
+
 - Endpoint: `GET /v1/tasks/status?nm_id=173588306&task_type=recalculate_weekly_margin`?
 - Or should we rely on polling product data?
 
 **Q5**: When a task fails, how should frontend detect this?
+
 - Does `missing_data_reason` change to an error value?
 - Or does it remain `null` indefinitely?
 
 ### 3. Pending Products Detection
 
 **Q6**: Should frontend detect pending products (Request #18 Scenario 1), or is there a backend endpoint?
+
 - Option A: Frontend detects from product list (current approach)
 - Option B: Backend endpoint `GET /v1/products/pending-margin?cabinet_id=xxx`
 - Option C: Backend always sets `missing_data_reason` (even if calculation in progress)
 
 **Q7**: For Request #18 Scenario 1 (calculation in progress), what's the expected resolution time?
+
 - Should we poll for 5 minutes as suggested in Request #18 backend response?
 - Or is there a faster way to detect completion?
 
 ### 4. Error Handling
 
 **Q8**: How should frontend handle failed margin calculations?
+
 - Show error message after timeout?
 - Provide manual retry button calling `POST /v1/tasks/enqueue`?
 - Both?
 
 **Q9**: Is there a way to distinguish between:
+
 - Task queued but not started (should poll)
 - Task processing (should poll)
 - Task failed (should show error)
@@ -299,10 +322,12 @@ const { pendingProducts } = await apiClient.get('/v1/products/pending-margin')
 ### 5. Performance Considerations
 
 **Q10**: If we poll `GET /v1/products?include_cogs=true` every 3-5 seconds for multiple products, is this acceptable?
+
 - Will this cause performance issues on backend?
 - Should we limit concurrent polling requests?
 
 **Q11**: For bulk operations (500 products), should we:
+
 - Poll all 500 products individually (500 requests)?
 - Poll product list and check sample (1 request)?
 - Use a different strategy?
@@ -315,7 +340,8 @@ const { pendingProducts } = await apiClient.get('/v1/products/pending-margin')
 
 **Purpose**: Poll a single product for margin calculation completion  
 **Trigger**: After COGS assignment  
-**Strategy**: 
+**Strategy**:
+
 - Interval: 3 seconds
 - Max attempts: 10 (30 seconds total)
 - Stops when `current_margin_pct !== null`
@@ -327,6 +353,7 @@ const { pendingProducts } = await apiClient.get('/v1/products/pending-margin')
 **Purpose**: Detect products with pending margin calculation from product list  
 **Trigger**: When product list is fetched with `include_cogs=true`  
 **Strategy**:
+
 - Detects products where `current_margin_pct === null` + `missing_data_reason === null` + `has_cogs === true`
 - Polls these products every 5-10 seconds for first 30 seconds, then every 30 seconds
 - Stops after 5 minutes
@@ -391,4 +418,3 @@ const { pendingProducts } = await apiClient.get('/v1/products/pending-margin')
 - **Resolution date**: 2025-01-27
 - **Summary**: Polling guidance provided via Request #21 (margin-calculation-status-endpoint-backend). Recommended strategy: poll `GET /v1/products?include_cogs=true` every 3-5 seconds for single products (max 30s), use product list polling for bulk operations. Background tasks complete within 10s (single) to 60s (bulk). Failed tasks trigger `missing_data_reason` update. See `21-margin-calculation-status-endpoint-backend.md` for complete guidance.
 - **Remaining frontend action**: Fix `useMarginPolling` hook restart issue and `usePendingMarginProducts` infinite loop per the documented polling strategy.
-

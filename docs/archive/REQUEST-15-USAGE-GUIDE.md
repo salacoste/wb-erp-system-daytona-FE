@@ -22,6 +22,7 @@ import { ProductList } from '@/components/custom/ProductList'
 ```
 
 **Result**:
+
 - Products with sales: `35.5%` (green for positive, red for negative)
 - Products without sales: `— (нет продаж)`
 - Products without COGS: `— (нет COGS)`
@@ -53,6 +54,7 @@ export default function CogsPage() {
 ```
 
 **User Experience**:
+
 - ✅ See margin without clicking each product
 - ✅ Identify products with missing COGS quickly
 - ✅ Response time: ~300ms (acceptable for management UI)
@@ -77,6 +79,7 @@ export default function ProductsPage() {
 ```
 
 **User Experience**:
+
 - ✅ Fast loading (~150ms)
 - ❌ Margin shown as "— (в карточке)" hint
 - ℹ️ Users can click product to see margin in detail view
@@ -141,6 +144,7 @@ interface ProductListProps {
 ```
 
 **New Prop: `enableMarginDisplay`**
+
 - **Type**: `boolean`
 - **Default**: `false` (backward compatible)
 - **Purpose**: Request margin data from backend and display in list
@@ -168,6 +172,7 @@ const { data, isLoading } = useProducts({
 ```
 
 **New Filter: `include_margin`**
+
 - **Type**: `boolean`
 - **Default**: `false`
 - **Backend Parameter**: Sends `include_cogs=true` to API
@@ -218,30 +223,36 @@ const { data, isLoading } = useProducts({
 ### Missing Margin Scenarios
 
 **No sales**:
+
 ```json
 {
   "current_margin_pct": null,
   "missing_data_reason": "NO_SALES_DATA"
 }
 ```
+
 **Display**: `— (нет продаж)`
 
 **No COGS**:
+
 ```json
 {
   "current_margin_pct": null,
   "missing_data_reason": "COGS_NOT_ASSIGNED"
 }
 ```
+
 **Display**: `— (нет COGS)`
 
 **Backend unavailable**:
+
 ```json
 {
   "current_margin_pct": null,
   "missing_data_reason": "ANALYTICS_UNAVAILABLE"
 }
 ```
+
 **Display**: `— (недоступно)`
 
 ---
@@ -250,12 +261,12 @@ const { data, isLoading } = useProducts({
 
 ### Response Time Comparison
 
-| Scenario | Products | `enableMarginDisplay` | Response Time |
-|----------|----------|----------------------|---------------|
-| Fast browsing | 25 | `false` | ~150ms |
-| With margin | 25 | `true` | ~300ms |
-| Fast browsing | 50 | `false` | ~200ms |
-| With margin | 50 | `true` | ~500ms |
+| Scenario      | Products | `enableMarginDisplay` | Response Time |
+| ------------- | -------- | --------------------- | ------------- |
+| Fast browsing | 25       | `false`               | ~150ms        |
+| With margin   | 25       | `true`                | ~300ms        |
+| Fast browsing | 50       | `false`               | ~200ms        |
+| With margin   | 50       | `true`                | ~500ms        |
 
 ### Recommendations
 
@@ -285,11 +296,13 @@ const { data, isLoading } = useProducts({
 **Symptoms**: All products show `— (нет продаж)` despite having sales
 
 **Possible Causes**:
+
 1. Backend Request #15 not deployed
 2. Epic 17 analytics service unavailable
 3. Products have no sales in last completed week
 
 **Solution**:
+
 ```bash
 # Check backend deployed
 curl "http://localhost:3000/v1/products?limit=1&include_cogs=true" \
@@ -304,11 +317,13 @@ curl "http://localhost:3000/v1/products?limit=1&include_cogs=true" \
 **Symptoms**: Product list loads slowly when margin enabled
 
 **Possible Causes**:
+
 1. Too many products requested (>50)
 2. Epic 17 analytics slow
 3. Network latency
 
 **Solution**:
+
 - Reduce pagination limit to 25 products
 - Check Epic 17 analytics performance
 - Add loading indicator to improve perceived performance
@@ -320,6 +335,7 @@ curl "http://localhost:3000/v1/products?limit=1&include_cogs=true" \
 **Cause**: Type mismatch - expecting `ProductListItem` but receiving `ProductWithCogs`
 
 **Solution**:
+
 ```typescript
 // Use type guard
 if ('current_margin_pct' in product) {

@@ -16,17 +16,20 @@
 ## Acceptance Criteria
 
 ### AC1: Import Button
+
 - [ ] Button in page header: "Импорт данных"
 - [ ] Opens modal dialog
 - [ ] Visible only for Manager/Owner roles
 
 ### AC2: Import Dialog
+
 - [ ] Date range picker (from/to)
 - [ ] Max 8 days range validation (WB API limit)
 - [ ] Default: last 7 days
 - [ ] Submit button: "Начать импорт"
 
 ### AC3: Progress Indication (UX Decision Q13)
+
 - [ ] Show **indeterminate** progress bar (not real progress)
 - [ ] Show status text messages ("Обработка данных...", etc.)
 - [ ] Poll status until complete
@@ -34,22 +37,26 @@
 - [ ] Error: show error message
 
 ### AC4: Cancel Behavior (UX Decision Q14)
+
 - [ ] **Allow** close during import
 - [ ] Show confirmation dialog: "Импорт продолжится в фоновом режиме"
 - [ ] Backend continues processing after dialog closed
 
 ### AC5: Scheduler Info (UX Decision Q15)
+
 - [ ] Show **minimal** info: "Автоматический импорт: вторник, 08:00 МСК"
 - [ ] Full scheduler details deferred to post-MVP
 
 ## Tasks / Subtasks
 
 ### Phase 1: Component Setup
+
 - [ ] Create `src/app/(dashboard)/analytics/storage/components/PaidStorageImportDialog.tsx`
 - [ ] Define component props interface
 - [ ] Set up mutation with `usePaidStorageImport` hook
 
 ### Phase 2: Dialog Structure
+
 - [ ] Create dialog container with AlertDialog (for close confirmation)
 - [ ] Implement initial state UI (date pickers + submit)
 - [ ] Implement processing state UI (progress bar + status)
@@ -57,6 +64,7 @@
 - [ ] Implement error state UI (error message + retry)
 
 ### Phase 3: Date Range Picker
+
 - [ ] Implement dual date picker (from/to)
 - [ ] Add 8-day max validation
 - [ ] Add future date validation
@@ -64,6 +72,7 @@
 - [ ] Set default: last 7 days
 
 ### Phase 4: Import Flow
+
 - [ ] Trigger import API call
 - [ ] Start polling for status
 - [ ] Update UI based on status
@@ -71,16 +80,19 @@
 - [ ] Invalidate queries on success
 
 ### Phase 5: Close Confirmation
+
 - [ ] Implement AlertDialog for close during processing
 - [ ] Show warning message
 - [ ] Allow cancel or confirm close
 
 ### Phase 6: Import Button Integration
+
 - [ ] Add button to StoragePageHeader
 - [ ] Implement role check (Manager/Owner only)
 - [ ] Wire up dialog open state
 
 ### Phase 7: Testing
+
 - [ ] Test dialog opens on button click
 - [ ] Test date validation
 - [ ] Test import flow (mock API)
@@ -90,6 +102,7 @@
 ## Design
 
 ### Initial State
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ <Upload/> Импорт данных о хранении                    [X]   │
@@ -109,6 +122,7 @@
 ```
 
 ### Processing State (with indeterminate progress)
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ <Upload/> Импорт данных о хранении                    [X]   │
@@ -125,6 +139,7 @@
 ```
 
 ### Close Confirmation (AlertDialog)
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Прервать импорт?                                           │
@@ -139,6 +154,7 @@
 ```
 
 ### Success State
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ <Upload/> Импорт данных о хранении                    [X]   │
@@ -388,15 +404,16 @@ src/
 
 ### UX Decisions Applied
 
-| Question | Decision | Rationale |
-|----------|----------|-----------|
-| Q13: Progress bar | Indeterminate (animated) | Backend doesn't provide percentage |
-| Q14: Cancel during import | Allow with confirmation | User control, import continues |
-| Q15: Scheduler info | Minimal (static text) | Full details deferred |
+| Question                  | Decision                 | Rationale                          |
+| ------------------------- | ------------------------ | ---------------------------------- |
+| Q13: Progress bar         | Indeterminate (animated) | Backend doesn't provide percentage |
+| Q14: Cancel during import | Allow with confirmation  | User control, import continues     |
+| Q15: Scheduler info       | Minimal (static text)    | Full details deferred              |
 
 ### Date Format for API
 
 The API expects dates in `YYYY-MM-DD` format:
+
 ```typescript
 const formattedDate = format(date, 'yyyy-MM-dd');
 // e.g., "2025-11-18"
@@ -415,6 +432,7 @@ const POLLING_CONFIG = {
 ## Testing
 
 ### Framework & Location
+
 - **Framework**: Vitest + React Testing Library
 - **Test Location**: `src/app/(dashboard)/analytics/storage/components/__tests__/PaidStorageImportDialog.test.tsx`
 
@@ -437,6 +455,7 @@ const POLLING_CONFIG = {
 - [ ] Queries invalidated on success
 
 ### Coverage Target
+
 - Component: >80%
 - Helper functions: >90%
 
@@ -474,11 +493,11 @@ const POLLING_CONFIG = {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-11-29 | PO (Sarah) | Initial draft |
+| Date       | Author            | Change                                                                        |
+| ---------- | ----------------- | ----------------------------------------------------------------------------- |
+| 2025-11-29 | PO (Sarah)        | Initial draft                                                                 |
 | 2025-11-29 | UX Expert (Sally) | Updated: indeterminate progress, allow cancel with confirm, minimal scheduler |
-| 2025-11-29 | UX Expert (Sally) | Added Tasks, Dev Notes, Testing sections with code examples |
+| 2025-11-29 | UX Expert (Sally) | Added Tasks, Dev Notes, Testing sections with code examples                   |
 
 ---
 
@@ -509,11 +528,13 @@ Notes:
 ## QA Results
 
 ### Review Date: 2025-11-29
+
 ### Reviewed By: Quinn (Test Architect)
 
 **Gate: PASS** | **Score: 88/100** → `docs/qa/gates/24.6-fe-manual-import.yml`
 
 **Strengths:**
+
 - Complete import state machine (idle → processing → success/error)
 - Date validation: 8-day max, no future dates, from < to
 - Indeterminate progress bar during processing (UX Decision Q13)
@@ -522,10 +543,11 @@ Notes:
 - Status polling with useImportStatus hook
 
 **Issues:**
-| ID | Severity | Finding |
-|----|----------|---------|
-| SIZE-001 | Low | 305 lines (acceptable for complex dialog) |
-| ROLE-001 | Low | Verify role check at page level |
+
+| ID       | Severity | Finding                                   |
+| -------- | -------- | ----------------------------------------- |
+| SIZE-001 | Low      | 305 lines (acceptable for complex dialog) |
+| ROLE-001 | Low      | Verify role check at page level           |
 
 **Files:** PaidStorageImportDialog.tsx (305), StoragePageHeader.tsx (66)
 

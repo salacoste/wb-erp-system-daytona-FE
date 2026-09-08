@@ -22,7 +22,7 @@ chars: 5834
 
 В этой статье:
 
-- 
+-
 - <a href="#podklyuchenie-resheniya" rel="nofollow">Подключение решения</a>
 - <a href="#nastrojka-integratsii" rel="nofollow">Настройка интеграции</a>
 - <a href="#import-tovarov" rel="nofollow">Импорт товаров</a>

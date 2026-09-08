@@ -6,11 +6,13 @@
 **Effort**: 5 SP
 **Parent Story**: 44.26-FE (split for independent delivery)
 **Depends On**:
+
 - Story 44.7 ✅ (Dimension Volume Calculation)
 - Story 44.12 ✅ (Warehouse Selection)
 - Story 44.13 ✅ (Auto-fill Coefficients)
 
 **Related Stories**:
+
 - **Story 44.40-FE** (Two Tariff Systems Integration) - MUST READ FIRST
 
 ---
@@ -23,10 +25,10 @@
 When a **FUTURE delivery date** is selected, ALL tariffs must come from the **SUPPLY system**,
 not the static INVENTORY system. See Story 44.40-FE for complete implementation requirements.
 
-| Delivery Date | Tariff System | API Endpoint |
-|---------------|---------------|--------------|
-| TODAY or NULL | INVENTORY | `/v1/tariffs/warehouses-with-tariffs` |
-| TOMORROW+ | **SUPPLY** | `/v1/tariffs/acceptance/coefficients/all` |
+| Delivery Date | Tariff System | API Endpoint                              |
+| ------------- | ------------- | ----------------------------------------- |
+| TODAY or NULL | INVENTORY     | `/v1/tariffs/warehouses-with-tariffs`     |
+| TOMORROW+     | **SUPPLY**    | `/v1/tariffs/acceptance/coefficients/all` |
 
 ---
 
@@ -41,6 +43,7 @@ not the static INVENTORY system. See Story 44.40-FE for complete implementation 
 ## Scope Clarification
 
 **This story covers:**
+
 - ProductSearchSelect component (searchable dropdown)
 - DeliveryDatePicker component (date selection with coefficient)
 - CoefficientCalendar enhancement (click-to-select dates)
@@ -48,6 +51,7 @@ not the static INVENTORY system. See Story 44.40-FE for complete implementation 
 - Integration with existing PriceCalculatorForm
 
 **This story does NOT cover:**
+
 - Auto-fill dimensions from product (see Story 44.26b-FE)
 - Auto-fill category from product (see Story 44.26b-FE)
 - AutoFillBadge + Restore functionality (see Story 44.26b-FE)
@@ -57,6 +61,7 @@ not the static INVENTORY system. See Story 44.40-FE for complete implementation 
 ## Acceptance Criteria
 
 ### AC1: Product Search Select Component
+
 - [ ] Create ProductSearchSelect component with searchable dropdown
 - [ ] Implement search by SKU, vendor code (артикул), and product title
 - [ ] Debounce search input (300ms) to prevent API spam
@@ -68,6 +73,7 @@ not the static INVENTORY system. See Story 44.40-FE for complete implementation 
 - [ ] Support keyboard navigation in dropdown
 
 ### AC2: Product Selection State
+
 - [ ] Add `selected_product_nm_id: string | null` to form state (STRING from backend!)
 - [ ] Add `selected_product_name: string` to form state for display (from `sa_name`)
 - [ ] On product select: store product info in state (nmId as string, sa_name, brand)
@@ -76,6 +82,7 @@ not the static INVENTORY system. See Story 44.40-FE for complete implementation 
 - [ ] Persist selection through form re-renders
 
 ### AC3: Delivery Date Picker Component
+
 - [ ] Create DeliveryDatePicker component with date input and coefficient display
 - [ ] Default to tomorrow's date (or first available date)
 - [ ] Show current coefficient next to date: "Коэффициент: ×1.25"
@@ -88,6 +95,7 @@ not the static INVENTORY system. See Story 44.40-FE for complete implementation 
 - [ ] **NEW (Story 44.40)**: Show tariff system indicator: "📅 Тарифы на дату" vs "📊 Текущие"
 
 ### AC3a: SUPPLY System Tariff Integration (CRITICAL - Story 44.40)
+
 - [ ] When delivery date is TOMORROW or later: Fetch from SUPPLY system (`/acceptance/coefficients/all`)
 - [ ] Extract FULL tariff data for selected date:
   - `delivery.baseLiterRub` - base logistics cost
@@ -101,6 +109,7 @@ not the static INVENTORY system. See Story 44.40-FE for complete implementation 
 - [ ] Show tariff system badge next to date picker
 
 ### AC4: Coefficient Calendar Enhancement
+
 - [ ] Update existing CoefficientCalendar to support click-to-select
 - [ ] Add `onDateSelect(date: string, coefficient: number, tariffs: SupplyDateTariffs)` callback
 - [ ] Highlight currently selected date with distinct styling
@@ -120,6 +129,7 @@ not the static INVENTORY system. See Story 44.40-FE for complete implementation 
 - [ ] Prevent selection of unavailable dates (gray)
 
 ### AC5: Form Integration
+
 - [ ] Add ProductSearchSelect to form before dimensions section
 - [ ] Add DeliveryDatePicker to WarehouseSection (after warehouse select)
 - [ ] Connect delivery date to coefficient calculation
@@ -128,6 +138,7 @@ not the static INVENTORY system. See Story 44.40-FE for complete implementation 
 - [ ] Ensure form remains functional without product selection (manual mode)
 
 ### AC6: Loading & Error States
+
 - [ ] Show skeleton while loading product search results
 - [ ] Show spinner while loading coefficients
 - [ ] Show error message if product search fails (with retry)
@@ -144,6 +155,7 @@ not the static INVENTORY system. See Story 44.40-FE for complete implementation 
 **Backend Epic**: Epic 45 - Products Dimensions & Category API
 
 **Key Implementation Details**:
+
 - `nm_id` is returned as **STRING** (not number)
 - Product name field is `sa_name` (not `title`)
 - Category field is `category_hierarchy` (not `category`)
@@ -304,6 +316,7 @@ export function useSupplyTariffsByDate(warehouseId: number | null, date: string 
 ## UI/UX Requirements
 
 ### Product Search Section (Empty State)
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Товар (опционально)                                      [?] │
@@ -316,6 +329,7 @@ export function useSupplyTariffsByDate(warehouseId: number | null, date: string 
 ```
 
 ### Product Search Dropdown (Active Search)
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ 🔍 плат                                                     │
@@ -331,6 +345,7 @@ export function useSupplyTariffsByDate(warehouseId: number | null, date: string 
 **Note**: Product name comes from `sa_name` field (not `title`).
 
 ### Product Selected State
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Товар                                              [× Очистить] │
@@ -343,6 +358,7 @@ export function useSupplyTariffsByDate(warehouseId: number | null, date: string 
 **Note**: `nm_id` is a STRING from backend API.
 
 ### Delivery Date Picker (inside Warehouse Section)
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Дата сдачи товара                                          [?] │
@@ -439,22 +455,22 @@ src/
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| Search less than 2 chars | Don't trigger API call |
-| No search results | Show "Товары не найдены" message |
-| Product search API error | Show error with retry, form remains usable |
-| All dates unavailable | Show error, suggest changing warehouse |
-| Warehouse changed | Reset date to first available |
-| Form reset | Clear product selection and date |
-| Product has no photo | Show placeholder icon |
-| Very long product name | Truncate with ellipsis |
-| Date in past | Should not appear in calendar |
-| **NEW: Date = TODAY** | Use INVENTORY tariffs (tariffSystem='inventory') |
-| **NEW: Date = TOMORROW+** | Fetch SUPPLY tariffs (tariffSystem='supply') |
-| **NEW: Date > 14 days** | Show warning, use INVENTORY tariffs (no SUPPLY data) |
-| **NEW: SUPPLY API rate limit** | Show cooldown, use cached data |
-| **NEW: SUPPLY tariffs unavailable** | Show "Нет данных", block calculation |
+| Scenario                            | Expected Behavior                                    |
+| ----------------------------------- | ---------------------------------------------------- |
+| Search less than 2 chars            | Don't trigger API call                               |
+| No search results                   | Show "Товары не найдены" message                     |
+| Product search API error            | Show error with retry, form remains usable           |
+| All dates unavailable               | Show error, suggest changing warehouse               |
+| Warehouse changed                   | Reset date to first available                        |
+| Form reset                          | Clear product selection and date                     |
+| Product has no photo                | Show placeholder icon                                |
+| Very long product name              | Truncate with ellipsis                               |
+| Date in past                        | Should not appear in calendar                        |
+| **NEW: Date = TODAY**               | Use INVENTORY tariffs (tariffSystem='inventory')     |
+| **NEW: Date = TOMORROW+**           | Fetch SUPPLY tariffs (tariffSystem='supply')         |
+| **NEW: Date > 14 days**             | Show warning, use INVENTORY tariffs (no SUPPLY data) |
+| **NEW: SUPPLY API rate limit**      | Show cooldown, use cached data                       |
+| **NEW: SUPPLY tariffs unavailable** | Show "Нет данных", block calculation                 |
 
 ---
 
@@ -498,26 +514,28 @@ src/
 ## QA Checklist
 
 ### Functional Verification
-| Test Case | Expected Result | Status |
-|-----------|-----------------|--------|
-| Search product by SKU | Shows matching products | [ ] |
-| Search product by name | Shows matching products | [ ] |
-| Select product from dropdown | Shows selected product card | [ ] |
-| Click "Очистить" | Clears product selection | [ ] |
-| Select delivery date | Shows coefficient | [ ] |
-| Click calendar date | Selects that date, updates picker | [ ] |
-| Unavailable date | Cannot be selected (gray, no click) | [ ] |
-| Change warehouse | Resets date, reloads coefficients | [ ] |
-| Form reset | Clears product and date | [ ] |
-| Empty search results | Shows "Товары не найдены" | [ ] |
+
+| Test Case                    | Expected Result                     | Status |
+| ---------------------------- | ----------------------------------- | ------ |
+| Search product by SKU        | Shows matching products             | [ ]    |
+| Search product by name       | Shows matching products             | [ ]    |
+| Select product from dropdown | Shows selected product card         | [ ]    |
+| Click "Очистить"             | Clears product selection            | [ ]    |
+| Select delivery date         | Shows coefficient                   | [ ]    |
+| Click calendar date          | Selects that date, updates picker   | [ ]    |
+| Unavailable date             | Cannot be selected (gray, no click) | [ ]    |
+| Change warehouse             | Resets date, reloads coefficients   | [ ]    |
+| Form reset                   | Clears product and date             | [ ]    |
+| Empty search results         | Shows "Товары не найдены"           | [ ]    |
 
 ### Accessibility Verification
-| Check | Status |
-|-------|--------|
-| Keyboard navigation (dropdown) | [ ] |
-| Keyboard navigation (calendar) | [ ] |
-| Screen reader labels | [ ] |
-| Focus management | [ ] |
+
+| Check                          | Status |
+| ------------------------------ | ------ |
+| Keyboard navigation (dropdown) | [ ]    |
+| Keyboard navigation (calendar) | [ ]    |
+| Screen reader labels           | [ ]    |
+| Focus management               | [ ]    |
 
 ---
 

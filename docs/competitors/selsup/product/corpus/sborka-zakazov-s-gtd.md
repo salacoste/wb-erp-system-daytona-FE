@@ -11,7 +11,7 @@ chars: 2796
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-peredat-dt-gtd" rel="nofollow">Как передать ДТ (ГТД)</a>
 - <a href="#kak-massovo-ukazat-nomer-dt-gtd-cherez-excel" rel="nofollow">Как массово указать номер ДТ (ГТД) через Excel</a>
 

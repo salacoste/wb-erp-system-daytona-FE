@@ -4,10 +4,10 @@
 
 This document summarizes the TDD (Test-Driven Development) tests written for the Epic 44 bugfix stories before implementation.
 
-| Story | Bug Description | Test File | Tests | Status |
-|-------|----------------|-----------|-------|--------|
-| 44.35-FE | FBO/FBS Toggle Crashes Application | `PriceCalculatorForm.fbs-toggle.test.tsx` | 15 | RED (14 failing) |
-| 44.36-FE | API Field Mismatch (box_type, turnover_days) | `priceCalculatorUtils.api-fields.test.ts` | 42 | RED (10 failing) |
+| Story    | Bug Description                              | Test File                                 | Tests | Status           |
+| -------- | -------------------------------------------- | ----------------------------------------- | ----- | ---------------- |
+| 44.35-FE | FBO/FBS Toggle Crashes Application           | `PriceCalculatorForm.fbs-toggle.test.tsx` | 15    | RED (14 failing) |
+| 44.36-FE | API Field Mismatch (box_type, turnover_days) | `priceCalculatorUtils.api-fields.test.ts` | 42    | RED (10 failing) |
 
 **TDD Phase**: RED (tests written before implementation, expected to fail)
 
@@ -16,9 +16,11 @@ This document summarizes the TDD (Test-Driven Development) tests written for the
 ## Story 44.35-FE: FBO/FBS Toggle Crash
 
 ### Bug Summary
+
 The Price Calculator crashes when users click the FBS toggle button due to React hooks being called conditionally inside JSX, violating React's Rules of Hooks.
 
 ### Root Cause
+
 ```tsx
 // PriceCalculatorForm.tsx lines 185-199
 {fulfillmentType === 'FBO' && (
@@ -36,18 +38,19 @@ The Price Calculator crashes when users click the FBS toggle button due to React
 ```
 
 ### Test File Location
+
 `src/components/custom/price-calculator/__tests__/PriceCalculatorForm.fbs-toggle.test.tsx`
 
 ### Test Coverage by Acceptance Criteria
 
-| AC | Description | Tests | Status |
-|----|-------------|-------|--------|
-| AC1 | FBO to FBS Transition | 3 tests | FAILING |
-| AC2 | FBS to FBO Transition | 2 tests | FAILING |
-| AC3 | Rapid Toggling | 2 tests | FAILING |
-| AC4 | Form Submission After Toggle | 2 tests | FAILING |
-| AC5 | Field Values Preserved | 2 tests | FAILING |
-| AC6 | No Regression | 2 tests | FAILING |
+| AC         | Description                      | Tests   | Status               |
+| ---------- | -------------------------------- | ------- | -------------------- |
+| AC1        | FBO to FBS Transition            | 3 tests | FAILING              |
+| AC2        | FBS to FBO Transition            | 2 tests | FAILING              |
+| AC3        | Rapid Toggling                   | 2 tests | FAILING              |
+| AC4        | Form Submission After Toggle     | 2 tests | FAILING              |
+| AC5        | Field Values Preserved           | 2 tests | FAILING              |
+| AC6        | No Regression                    | 2 tests | FAILING              |
 | Edge Cases | Component remount, disabled prop | 2 tests | 1 PASSING, 1 FAILING |
 
 ### Key Test Cases
@@ -71,7 +74,9 @@ The Price Calculator crashes when users click the FBS toggle button due to React
    - Remain visible and functional across toggles
 
 ### Expected Fix
+
 Move all `useWatch` hooks to the top level of the component:
+
 ```tsx
 // At top level
 const boxType = useWatch({ control, name: 'box_type' })
@@ -88,9 +93,11 @@ const turnoverDays = useWatch({ control, name: 'turnover_days' })
 ## Story 44.36-FE: API Field Mismatch
 
 ### Bug Summary
+
 All Price Calculator API calls fail with 400 Bad Request because the frontend sends `box_type` and `turnover_days` fields that the backend API doesn't accept.
 
 ### Root Cause
+
 ```typescript
 // priceCalculatorUtils.ts lines 77-82
 if (data.fulfillment_type === 'FBO') {
@@ -100,6 +107,7 @@ if (data.fulfillment_type === 'FBO') {
 ```
 
 ### Backend Error Response
+
 ```json
 {
   "error": {
@@ -112,24 +120,26 @@ if (data.fulfillment_type === 'FBO') {
 ```
 
 ### Test File Location
+
 `src/components/custom/price-calculator/__tests__/priceCalculatorUtils.api-fields.test.ts`
 
 ### Test Coverage by Acceptance Criteria
 
-| AC | Description | Tests | Status |
-|----|-------------|-------|--------|
-| AC1 | box_type field exclusion | 4 tests | FAILING |
-| AC2 | turnover_days field exclusion | 4 tests | FAILING |
-| AC3 | Valid API Request Structure | 2 tests | FAILING |
-| AC4 | Required Fields Preserved | 9 tests | PASSING |
-| AC5 | Frontend-Only Fields Still Work | 3 tests | 2 PASSING, 1 FAILING |
-| AC6 | Other Optional Fields Still Sent | 14 tests | PASSING |
-| Non-Regression | isFormEmpty, toTwoLevelFormData | 4 tests | PASSING |
-| Snapshot | Complete request structure | 1 test | FAILING |
+| AC             | Description                      | Tests    | Status               |
+| -------------- | -------------------------------- | -------- | -------------------- |
+| AC1            | box_type field exclusion         | 4 tests  | FAILING              |
+| AC2            | turnover_days field exclusion    | 4 tests  | FAILING              |
+| AC3            | Valid API Request Structure      | 2 tests  | FAILING              |
+| AC4            | Required Fields Preserved        | 9 tests  | PASSING              |
+| AC5            | Frontend-Only Fields Still Work  | 3 tests  | 2 PASSING, 1 FAILING |
+| AC6            | Other Optional Fields Still Sent | 14 tests | PASSING              |
+| Non-Regression | isFormEmpty, toTwoLevelFormData  | 4 tests  | PASSING              |
+| Snapshot       | Complete request structure       | 1 test   | FAILING              |
 
 ### Key Test Cases
 
 1. **AC1: should NOT include box_type in API request for FBO**
+
    ```typescript
    const formData = createFboFormData({ box_type: 'pallet' })
    const request = toApiRequest(formData)
@@ -137,6 +147,7 @@ if (data.fulfillment_type === 'FBO') {
    ```
 
 2. **AC2: should NOT include turnover_days in API request for FBO**
+
    ```typescript
    const formData = createFboFormData({ turnover_days: 45 })
    const request = toApiRequest(formData)
@@ -150,7 +161,9 @@ if (data.fulfillment_type === 'FBO') {
    - warehouse_id, logistics_coefficient, storage_coefficient, delivery_date, weight_exceeds_25kg, localization_index
 
 ### Expected Fix
+
 Remove `box_type` and `turnover_days` from `toApiRequest()`:
+
 ```typescript
 // Story 44.36: REMOVED box_type and turnover_days from API request
 // These fields are not supported by backend API (Epic 43)
@@ -166,21 +179,25 @@ Remove `box_type` and `turnover_days` from `toApiRequest()`:
 ## Test Execution Commands
 
 ### Run All Bugfix Tests
+
 ```bash
 npm test -- --run src/components/custom/price-calculator/__tests__/PriceCalculatorForm.fbs-toggle.test.tsx src/components/custom/price-calculator/__tests__/priceCalculatorUtils.api-fields.test.ts
 ```
 
 ### Run Story 44.35-FE Tests Only
+
 ```bash
 npm test -- --run src/components/custom/price-calculator/__tests__/PriceCalculatorForm.fbs-toggle.test.tsx
 ```
 
 ### Run Story 44.36-FE Tests Only
+
 ```bash
 npm test -- --run src/components/custom/price-calculator/__tests__/priceCalculatorUtils.api-fields.test.ts
 ```
 
 ### Run with Coverage
+
 ```bash
 npm test -- --coverage --run src/components/custom/price-calculator/__tests__/PriceCalculatorForm.fbs-toggle.test.tsx src/components/custom/price-calculator/__tests__/priceCalculatorUtils.api-fields.test.ts
 ```
@@ -190,16 +207,19 @@ npm test -- --coverage --run src/components/custom/price-calculator/__tests__/Pr
 ## TDD Workflow
 
 ### Current Phase: RED
+
 - Tests are written and failing
 - Bugs are confirmed by test failures
 - Ready for implementation (GREEN phase)
 
 ### Next Phase: GREEN
+
 1. Fix Story 44.35-FE: Move useWatch hooks to top level
 2. Fix Story 44.36-FE: Remove box_type/turnover_days from toApiRequest
 3. Run tests - all should pass
 
 ### Final Phase: REFACTOR
+
 1. Review code for any cleanup opportunities
 2. Ensure no regressions in existing tests
 3. Update documentation
@@ -208,11 +228,11 @@ npm test -- --coverage --run src/components/custom/price-calculator/__tests__/Pr
 
 ## Files Created
 
-| File | Purpose | Lines |
-|------|---------|-------|
-| `PriceCalculatorForm.fbs-toggle.test.tsx` | FBO/FBS toggle crash tests | ~490 |
-| `priceCalculatorUtils.api-fields.test.ts` | API field mismatch tests | ~500 |
-| `test-plan-44.35-44.36-tdd.md` | This documentation | ~200 |
+| File                                      | Purpose                    | Lines |
+| ----------------------------------------- | -------------------------- | ----- |
+| `PriceCalculatorForm.fbs-toggle.test.tsx` | FBO/FBS toggle crash tests | ~490  |
+| `priceCalculatorUtils.api-fields.test.ts` | API field mismatch tests   | ~500  |
+| `test-plan-44.35-44.36-tdd.md`            | This documentation         | ~200  |
 
 ---
 

@@ -15,7 +15,7 @@ chars: 10319
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-takoe-lenta-zakazov" rel="nofollow">Что такое Лента заказов</a>
 - <a href="#chto-takoe-umnaya-lenta" rel="nofollow">Что такое Умная лента</a>
 - <a href="#gde-nahodyatsya-nastrojki-lenty-zakazov" rel="nofollow">Где находятся настройки Ленты заказов</a>

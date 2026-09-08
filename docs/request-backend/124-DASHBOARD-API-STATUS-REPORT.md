@@ -8,12 +8,12 @@
 
 ## Резюме
 
-| Карточка Dashboard | Статус API | Рекомендуемый эндпоинт |
-|-------------------|------------|------------------------|
-| **Выкупы (Sales)** | ✅ EXISTS | `/v1/analytics/weekly/finance-summary` |
-| **COGS выкупов (Sales COGS)** | ✅ EXISTS | `/v1/analytics/cabinet-summary` |
-| **Логистика** | ✅ EXISTS | `/v1/analytics/weekly/finance-summary` |
-| **Хранение** | ✅ EXISTS | `/v1/analytics/storage/by-sku` |
+| Карточка Dashboard            | Статус API | Рекомендуемый эндпоинт                 |
+| ----------------------------- | ---------- | -------------------------------------- |
+| **Выкупы (Sales)**            | ✅ EXISTS  | `/v1/analytics/weekly/finance-summary` |
+| **COGS выкупов (Sales COGS)** | ✅ EXISTS  | `/v1/analytics/cabinet-summary`        |
+| **Логистика**                 | ✅ EXISTS  | `/v1/analytics/weekly/finance-summary` |
+| **Хранение**                  | ✅ EXISTS  | `/v1/analytics/storage/by-sku`         |
 
 ---
 
@@ -35,12 +35,12 @@ X-Cabinet-Id: <cabinet-uuid>
 
 ### Поля для карточки "Выкупы"
 
-| Метрика на UI | Поле в ответе | Пояснение |
-|---------------|---------------|-----------|
-| Выкупы (сумма) | `summary_rus.wb_sales_gross` | Сумма продаж как на WB Dashboard "Продажа" |
-| Возвраты | `summary_rus.wb_returns_gross` | Сумма возвратов как на WB Dashboard "Возврат" |
-| Нетто | `summary_rus.sale_gross` | Продажи минус возвраты |
-| Количество | Нужна логика* | см. ниже |
+| Метрика на UI  | Поле в ответе                  | Пояснение                                     |
+| -------------- | ------------------------------ | --------------------------------------------- |
+| Выкупы (сумма) | `summary_rus.wb_sales_gross`   | Сумма продаж как на WB Dashboard "Продажа"    |
+| Возвраты       | `summary_rus.wb_returns_gross` | Сумма возвратов как на WB Dashboard "Возврат" |
+| Нетто          | `summary_rus.sale_gross`       | Продажи минус возвраты                        |
+| Количество     | Нужна логика*                  | см. ниже                                      |
 
 ### Пример ответа
 
@@ -63,10 +63,10 @@ X-Cabinet-Id: <cabinet-uuid>
 
 ### Важные различия
 
-| Поле | Значение | Что это |
-|------|----------|---------|
-| `sales_gross` | Цена для покупателя | retail_price_with_discount |
-| `wb_sales_gross` | Выручка продавца | После вычета комиссии WB |
+| Поле             | Значение            | Что это                    |
+| ---------------- | ------------------- | -------------------------- |
+| `sales_gross`    | Цена для покупателя | retail_price_with_discount |
+| `wb_sales_gross` | Выручка продавца    | После вычета комиссии WB   |
 
 **Для соответствия WB Dashboard используйте `wb_sales_gross`!**
 
@@ -96,12 +96,12 @@ X-Cabinet-Id: <cabinet-uuid>
 
 ### Поля для карточки "COGS выкупов"
 
-| Метрика на UI | Поле в ответе | Пояснение |
-|---------------|---------------|-----------|
-| COGS Total | `summary.totals.cogs_total` | Общая себестоимость |
-| Coverage % | `summary.products.coverage_pct` | % товаров с заполненным COGS |
-| Gross Profit | `summary.totals.profit` | Валовая прибыль (revenue - cogs) |
-| Margin % | `summary.totals.margin_pct` | Маржинальность |
+| Метрика на UI | Поле в ответе                   | Пояснение                        |
+| ------------- | ------------------------------- | -------------------------------- |
+| COGS Total    | `summary.totals.cogs_total`     | Общая себестоимость              |
+| Coverage %    | `summary.products.coverage_pct` | % товаров с заполненным COGS     |
+| Gross Profit  | `summary.totals.profit`         | Валовая прибыль (revenue - cogs) |
+| Margin %      | `summary.totals.margin_pct`     | Маржинальность                   |
 
 ### Пример ответа
 
@@ -158,10 +158,10 @@ X-Cabinet-Id: <cabinet-uuid>
 
 ### Поля для карточки "Логистика"
 
-| Метрика на UI | Поле в ответе |
-|---------------|---------------|
-| Стоимость логистики | `summary_rus.logistics_cost` |
-| Логистика всего | `summary_total.logistics_cost_total` |
+| Метрика на UI       | Поле в ответе                        |
+| ------------------- | ------------------------------------ |
+| Стоимость логистики | `summary_rus.logistics_cost`         |
+| Логистика всего     | `summary_total.logistics_cost_total` |
 
 ### Для графика трендов
 
@@ -270,6 +270,7 @@ GET /v1/analytics/storage/trends?weekStart=2026-W01&weekEnd=2026-W05
 **Remaining frontend action**: Use the recommended endpoints listed in this report instead of searching for non-existent paths.
 
 1. **Headers**: Каждый запрос должен содержать:
+
    ```http
    Authorization: Bearer <JWT_TOKEN>
    X-Cabinet-Id: <CABINET_UUID>
@@ -281,35 +282,35 @@ GET /v1/analytics/storage/trends?weekStart=2026-W01&weekEnd=2026-W05
 
 ### Проверьте в коде
 
-| Проверка | Что смотреть |
-|----------|--------------|
-| Header X-Cabinet-Id | Передаётся ли UUID кабинета? |
-| Authorization | Валидный ли токен? |
-| Формат недели | Используется `2026-W05`, а не `2026-05`? |
-| Обработка ошибок | Есть ли fallback при 401/403/500? |
-| Loading state | Корректно ли отображается loading? |
+| Проверка            | Что смотреть                             |
+| ------------------- | ---------------------------------------- |
+| Header X-Cabinet-Id | Передаётся ли UUID кабинета?             |
+| Authorization       | Валидный ли токен?                       |
+| Формат недели       | Используется `2026-W05`, а не `2026-05`? |
+| Обработка ошибок    | Есть ли fallback при 401/403/500?        |
+| Loading state       | Корректно ли отображается loading?       |
 
 ---
 
 ## Полная таблица соответствий
 
-| UI Карточка | Эндпоинт | Поля |
-|-------------|----------|------|
-| Выкупы | `/finance-summary` | `wb_sales_gross`, `wb_returns_gross` |
+| UI Карточка  | Эндпоинт           | Поля                                   |
+| ------------ | ------------------ | -------------------------------------- |
+| Выкупы       | `/finance-summary` | `wb_sales_gross`, `wb_returns_gross`   |
 | COGS выкупов | `/cabinet-summary` | `cogs_total`, `coverage_pct`, `profit` |
-| Логистика | `/finance-summary` | `logistics_cost` |
-| Хранение | `/storage/by-sku` | `storage_cost_total` |
-| Тренды | `/trends` | `logistics_cost`, `storage_cost`, etc. |
+| Логистика    | `/finance-summary` | `logistics_cost`                       |
+| Хранение     | `/storage/by-sku`  | `storage_cost_total`                   |
+| Тренды       | `/trends`          | `logistics_cost`, `storage_cost`, etc. |
 
 ---
 
 ## Полная документация
 
-| Документ | Содержание |
-|----------|------------|
-| [122-DASHBOARD-MAIN-PAGE-SALES-API.md](./122-DASHBOARD-MAIN-PAGE-SALES-API.md) | Полная документация Sales API |
+| Документ                                                                             | Содержание                       |
+| ------------------------------------------------------------------------------------ | -------------------------------- |
+| [122-DASHBOARD-MAIN-PAGE-SALES-API.md](./122-DASHBOARD-MAIN-PAGE-SALES-API.md)       | Полная документация Sales API    |
 | [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) | Полная документация Expenses API |
-| [../../API-PATHS-REFERENCE.md](../../docs/API-PATHS-REFERENCE.md) | Справочник всех эндпоинтов |
+| [../../API-PATHS-REFERENCE.md](../../docs/API-PATHS-REFERENCE.md)                    | Справочник всех эндпоинтов       |
 
 ---
 
@@ -318,6 +319,7 @@ GET /v1/analytics/storage/trends?weekStart=2026-W01&weekEnd=2026-W05
 **НЕ НУЖНО создавать новые эндпоинты на бэкенде!**
 
 Все необходимые данные доступны через существующие API:
+
 - `/v1/analytics/weekly/finance-summary` - основные KPI
 - `/v1/analytics/cabinet-summary` - COGS и агрегаты
 - `/v1/analytics/storage/by-sku` - детализация хранения

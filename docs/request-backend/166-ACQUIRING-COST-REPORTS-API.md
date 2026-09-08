@@ -20,11 +20,11 @@ Wildberries released 3 new Finance API endpoints for **acquiring cost reports** 
 
 Per the WB announcement (2026-04-15):
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/finance/v1/acquiring/list` | List of acquiring cost reports |
-| POST | `/api/finance/v1/acquiring/detailed/{reportId}` | Detail rows for a specific report ID |
-| POST | `/api/finance/v1/acquiring/detailed` | Detail rows for a period (cross-report) |
+| Method | Endpoint                                        | Purpose                                 |
+| ------ | ----------------------------------------------- | --------------------------------------- |
+| POST   | `/api/finance/v1/acquiring/list`                | List of acquiring cost reports          |
+| POST   | `/api/finance/v1/acquiring/detailed/{reportId}` | Detail rows for a specific report ID    |
+| POST   | `/api/finance/v1/acquiring/detailed`            | Detail rows for a period (cross-report) |
 
 Full docs: https://dev.wildberries.ru/docs/openapi/financial-reports-and-accounting#tag/Finansovye-otchyoty
 
@@ -52,11 +52,11 @@ Full docs: https://dev.wildberries.ru/docs/openapi/financial-reports-and-account
 
 Expose 3 endpoints with **frontend-canonical** snake_case + null-preserving shapes (per the Boundary Normalizer Pattern in `frontend/CLAUDE.md` — new section from Story 88.4-FE):
 
-| Frontend endpoint | Maps to WB endpoint | Auth |
-|---|---|---|
-| `GET /v1/analytics/acquiring/reports` | `POST /api/finance/v1/acquiring/list` | X-Cabinet-Id header |
-| `GET /v1/analytics/acquiring/reports/:id/detail` | `POST /api/finance/v1/acquiring/detailed/{reportId}` | X-Cabinet-Id header |
-| `GET /v1/analytics/acquiring/detail?from=...&to=...` | `POST /api/finance/v1/acquiring/detailed` | X-Cabinet-Id header |
+| Frontend endpoint                                    | Maps to WB endpoint                                  | Auth                |
+| ---------------------------------------------------- | ---------------------------------------------------- | ------------------- |
+| `GET /v1/analytics/acquiring/reports`                | `POST /api/finance/v1/acquiring/list`                | X-Cabinet-Id header |
+| `GET /v1/analytics/acquiring/reports/:id/detail`     | `POST /api/finance/v1/acquiring/detailed/{reportId}` | X-Cabinet-Id header |
+| `GET /v1/analytics/acquiring/detail?from=...&to=...` | `POST /api/finance/v1/acquiring/detailed`            | X-Cabinet-Id header |
 
 **Why GET on the frontend side**: frontend conventions favor GET for read operations; the backend converts to WB's POST internally. Matches the existing pattern for `/v1/analytics/buyout/*`, `/v1/analytics/returns/*`, etc.
 
@@ -80,6 +80,7 @@ Expose 3 endpoints with **frontend-canonical** snake_case + null-preserving shap
 ### 6. test-api/ examples
 
 Add runnable HTTP examples to `test-api/34-acquiring-analytics.http` (next available number; verify collision with existing test-api files) covering:
+
 - Happy path: fetch report list, then detail by ID, then detail by period.
 - Error path: invalid `reportId`, invalid date range.
 - Rate-limit simulation.

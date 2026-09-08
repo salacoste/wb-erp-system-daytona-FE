@@ -20,7 +20,7 @@ Ozon — это огромные возможности, но и большие 
 
 В этой статье:
 
-- 
+-
 - <a href="#bystryj-start-integratsiya-za-5-minut" rel="nofollow">Быстрый старт: интеграция за 5 минут</a>
 - <a href="#upravlenie-tovarami-prosto-i-effektivno" rel="nofollow">Управление товарами: просто и эффективно</a>
 - <a href="#avtomatizatsiya-fbo-i-fbs" rel="nofollow">Автоматизация FBO и FBS</a>

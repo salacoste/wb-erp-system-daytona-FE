@@ -6,6 +6,7 @@
 **Effort**: 2 SP
 **Created**: 2026-01-26
 **Depends On**:
+
 - Story 44.12 ✅ (Warehouse Selection)
 - Story 44.26a 📋 (Delivery Date Selection)
 - Story 44.40 📋 (Two Tariff Systems Integration)
@@ -18,16 +19,17 @@ The SUPPLY API returns an **acceptance coefficient** that indicates delivery ava
 
 ### Coefficient Values & Meanings
 
-| Value | Meaning | UI Recommendation |
-|-------|---------|-------------------|
-| `-1` | Приёмка недоступна | Show "Недоступно" destructive badge, block calculation |
-| `0` | Приёмка бесплатная | Show "Бесплатно" success badge |
-| `1` | Стандартная стоимость | Show "Стандартно" default badge |
-| `>1` (e.g., 1.65) | Повышенная стоимость | Show "×1.65" warning badge |
+| Value             | Meaning               | UI Recommendation                                      |
+| ----------------- | --------------------- | ------------------------------------------------------ |
+| `-1`              | Приёмка недоступна    | Show "Недоступно" destructive badge, block calculation |
+| `0`               | Приёмка бесплатная    | Show "Бесплатно" success badge                         |
+| `1`               | Стандартная стоимость | Show "Стандартно" default badge                        |
+| `>1` (e.g., 1.65) | Повышенная стоимость  | Show "×1.65" warning badge                             |
 
 ### Current Gap
 
 Users cannot see:
+
 - Whether a delivery date is available
 - If acceptance is free (coefficient = 0)
 - How much the acceptance cost is elevated (coefficient > 1)
@@ -41,6 +43,7 @@ Users cannot see:
 **So that** I can quickly understand delivery availability and cost implications.
 
 **Non-goals**:
+
 - Acceptance cost calculation (handled separately)
 - Historical coefficient trends
 - Coefficient prediction
@@ -54,13 +57,13 @@ Users cannot see:
 - [ ] Create reusable `AcceptanceStatusBadge` component
 - [ ] Badge variants based on coefficient value:
 
-| Coefficient | Badge | Color | Icon |
-|-------------|-------|-------|------|
-| `-1` | "Недоступно" | Red (destructive) | ⛔ |
-| `0` | "Бесплатно" | Green (success) | ✅ |
-| `1` | "Стандартно" | Gray (default) | - |
-| `1.01-1.50` | "×{value}" | Yellow (warning) | ⚠️ |
-| `>1.50` | "×{value}" | Orange (high) | 🔴 |
+| Coefficient | Badge        | Color             | Icon |
+| ----------- | ------------ | ----------------- | ---- |
+| `-1`        | "Недоступно" | Red (destructive) | ⛔   |
+| `0`         | "Бесплатно"  | Green (success)   | ✅   |
+| `1`         | "Стандартно" | Gray (default)    | -    |
+| `1.01-1.50` | "×{value}"   | Yellow (warning)  | ⚠️   |
+| `>1.50`     | "×{value}"   | Orange (high)     | 🔴   |
 
 - [ ] Format coefficient as "×1.65" (not "165%")
 
@@ -95,7 +98,7 @@ Users cannot see:
   - Color based on severity:
     - 1.01-1.25: Yellow (mild increase)
     - 1.26-1.50: Orange (moderate increase)
-    - >1.50: Red (high increase)
+    - > 1.50: Red (high increase)
   - Tooltip: "Повышенная стоимость приёмки (+{pct}%)"
   - Calculate percentage: `(coefficient - 1) * 100`
 
@@ -138,6 +141,7 @@ Users cannot see:
 ```
 
 **Business Logic**:
+
 - `coefficient >= 0 && allowUnload = true` → Available
 - `coefficient = -1 || allowUnload = false` → Unavailable
 - `coefficient = 0` → Free acceptance
@@ -383,16 +387,16 @@ export function AcceptanceStatusBadge({
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| coefficient = -1 | Show "Недоступно", disable calculation |
-| coefficient = 0 | Show "Бесплатно" with green highlight |
-| coefficient = 1 | Show "Стандартно" (neutral) |
-| coefficient = 1.25 | Show "×1.25" warning badge |
-| coefficient = 1.65 | Show "×1.65" high badge |
-| coefficient = 2.5 | Show "×2.50" high badge (extreme) |
-| coefficient undefined | Treat as unavailable (-1) |
-| allowUnload = false | Treat as unavailable regardless of coefficient |
+| Scenario              | Expected Behavior                              |
+| --------------------- | ---------------------------------------------- |
+| coefficient = -1      | Show "Недоступно", disable calculation         |
+| coefficient = 0       | Show "Бесплатно" with green highlight          |
+| coefficient = 1       | Show "Стандартно" (neutral)                    |
+| coefficient = 1.25    | Show "×1.25" warning badge                     |
+| coefficient = 1.65    | Show "×1.65" high badge                        |
+| coefficient = 2.5     | Show "×2.50" high badge (extreme)              |
+| coefficient undefined | Treat as unavailable (-1)                      |
+| allowUnload = false   | Treat as unavailable regardless of coefficient |
 
 ---
 
@@ -400,36 +404,36 @@ export function AcceptanceStatusBadge({
 
 ### Unit Tests
 
-| Test | Input | Expected |
-|------|-------|----------|
-| Status - unavailable | coefficient=-1 | status='unavailable' |
-| Status - free | coefficient=0 | status='free' |
-| Status - standard | coefficient=1 | status='standard' |
-| Status - elevated | coefficient=1.25 | status='elevated' |
-| Status - high | coefficient=1.65 | status='high' |
+| Test                  | Input            | Expected              |
+| --------------------- | ---------------- | --------------------- |
+| Status - unavailable  | coefficient=-1   | status='unavailable'  |
+| Status - free         | coefficient=0    | status='free'         |
+| Status - standard     | coefficient=1    | status='standard'     |
+| Status - elevated     | coefficient=1.25 | status='elevated'     |
+| Status - high         | coefficient=1.65 | status='high'         |
 | Percentage - elevated | coefficient=1.25 | percentageIncrease=25 |
-| Percentage - high | coefficient=1.65 | percentageIncrease=65 |
-| Format - free | coefficient=0 | "Бесплатно" |
-| Format - standard | coefficient=1 | "×1.00" |
-| Format - elevated | coefficient=1.65 | "×1.65" |
+| Percentage - high     | coefficient=1.65 | percentageIncrease=65 |
+| Format - free         | coefficient=0    | "Бесплатно"           |
+| Format - standard     | coefficient=1    | "×1.00"               |
+| Format - elevated     | coefficient=1.65 | "×1.65"               |
 
 ### Component Tests
 
-| Test | Scenario | Expected |
-|------|----------|----------|
-| Badge render - unavailable | coefficient=-1 | Red badge "Недоступно" |
-| Badge render - free | coefficient=0 | Green badge "Бесплатно" |
-| Badge render - elevated | coefficient=1.65 | Yellow badge "×1.65" |
-| Tooltip content | Hover on badge | Shows description |
-| Calendar integration | Render calendar | Shows status colors per date |
+| Test                       | Scenario         | Expected                     |
+| -------------------------- | ---------------- | ---------------------------- |
+| Badge render - unavailable | coefficient=-1   | Red badge "Недоступно"       |
+| Badge render - free        | coefficient=0    | Green badge "Бесплатно"      |
+| Badge render - elevated    | coefficient=1.65 | Yellow badge "×1.65"         |
+| Tooltip content            | Hover on badge   | Shows description            |
+| Calendar integration       | Render calendar  | Shows status colors per date |
 
 ### E2E Tests
 
-| Test | Flow | Verification |
-|------|------|--------------|
-| Select free date | Pick date with coefficient=0 | Green badge, info message |
-| Select unavailable | Pick gray date | Red badge, calculate disabled |
-| Select elevated | Pick date with coefficient=1.65 | Warning badge, tooltip |
+| Test               | Flow                            | Verification                  |
+| ------------------ | ------------------------------- | ----------------------------- |
+| Select free date   | Pick date with coefficient=0    | Green badge, info message     |
+| Select unavailable | Pick gray date                  | Red badge, calculate disabled |
+| Select elevated    | Pick date with coefficient=1.65 | Warning badge, tooltip        |
 
 ---
 

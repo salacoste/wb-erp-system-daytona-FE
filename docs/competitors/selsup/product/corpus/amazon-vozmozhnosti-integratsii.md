@@ -15,7 +15,7 @@ chars: 2974
 
 В этой статье:
 
-- 
+-
 - <a href="#vozmozhnosti-integratsii-amazon" rel="nofollow">Возможности интеграции Amazon</a>
 - <a href="#podklyuchenie-integratsii-amazon" rel="nofollow">Подключение интеграции Amazon</a>
 - <a href="#esli-ne-poluchaetsya-podklyuchit-integratsiyu-amazon" rel="nofollow">Если не получается подключить интеграцию Amazon</a>

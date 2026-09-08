@@ -19,6 +19,7 @@ const results = await Promise.all(weeks.map(week =>
 ```
 
 ### Issues:
+
 1. **Multiple HTTP requests** - N requests for N weeks
 2. **Increased latency** - Sequential or parallel, still slower than single request
 3. **Higher server load** - Multiple DB queries instead of one optimized query
@@ -75,6 +76,7 @@ GET /v1/analytics/trends?from=2025-W44&to=2025-W47&metrics=payout_total,sale_gro
 ```
 
 ### Benefits:
+
 1. **Single request** - 1 request instead of N
 2. **Lower latency** - ~50-70% faster response time
 3. **Optimized query** - Single DB query with date range filter
@@ -82,17 +84,18 @@ GET /v1/analytics/trends?from=2025-W44&to=2025-W47&metrics=payout_total,sale_gro
 
 ## Query Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `from` | string | Yes | Start week (ISO format: YYYY-Www) |
-| `to` | string | Yes | End week (ISO format: YYYY-Www) |
-| `metrics` | string | No | Comma-separated list of metrics (default: all) |
-| `report_type` | string | No | Filter by report type (rus/eaeu/total) |
-| `include_summary` | boolean | No | Include trend summary (default: true) |
+| Parameter         | Type    | Required | Description                                    |
+| ----------------- | ------- | -------- | ---------------------------------------------- |
+| `from`            | string  | Yes      | Start week (ISO format: YYYY-Www)              |
+| `to`              | string  | Yes      | End week (ISO format: YYYY-Www)                |
+| `metrics`         | string  | No       | Comma-separated list of metrics (default: all) |
+| `report_type`     | string  | No       | Filter by report type (rus/eaeu/total)         |
+| `include_summary` | boolean | No       | Include trend summary (default: true)          |
 
 ## Available Metrics
 
 From `weekly_payout_summary` table:
+
 - `payout_total` - Итого к оплате
 - `sale_gross` - Продажи (gross)
 - `to_pay_goods` - К перечислению за товар
@@ -183,6 +186,7 @@ export function useMarginTrends(from: string, to: string, metrics?: string[]) {
 **Implemented in Story 6.6** (2025-11-27)
 
 ### Backend Implementation:
+
 - Endpoint: `GET /v1/analytics/weekly/trends`
 - Story: `docs/stories/epic-6/story-6.6-dedicated-trends-endpoint.md`
 - DTOs: `src/analytics/dto/query/trends-query.dto.ts`, `src/analytics/dto/response/trends-response.dto.ts`
@@ -190,12 +194,14 @@ export function useMarginTrends(from: string, to: string, metrics?: string[]) {
 - Controller: `src/analytics/weekly-analytics.controller.ts`
 
 ### Features:
+
 - Single request for N weeks of trend data
 - Dynamic metric selection via `metrics` parameter
 - Summary statistics (min, max, avg, trend %)
 - ~50-70% faster response time vs N separate requests
 
 ### Frontend Integration:
+
 Update `useMarginTrends.ts` to use new endpoint for optimal performance.
 
 ## Backend Team Response

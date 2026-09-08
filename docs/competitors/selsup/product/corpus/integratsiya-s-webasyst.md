@@ -15,7 +15,7 @@ chars: 3186
 
 В этой статье:
 
-- 
+-
 - <a href="#osobennosti-integratsii" rel="nofollow">Особенности интеграции</a>
 - <a href="#nastrojka-integratsii" rel="nofollow">Настройка интеграции</a>
 - <a href="#udalenie-integratsii" rel="nofollow">Удаление интеграции</a>

@@ -21,6 +21,7 @@ So the FE cannot display an order's current operational status, nor drive the **
 ## Ask
 
 Add `operationalStatus` (`OrderOperationalStatus` enum: `NEW|ASSEMBLED|PACKED|SHIPPED|DELIVERED|CANCELLED|RETURNED`, null/`NEW` default) + `operationalStatusUpdatedAt` to **both**:
+
 1. `GET /v1/orders` list item shape, and
 2. `GET /v1/orders/:orderId` details.
 

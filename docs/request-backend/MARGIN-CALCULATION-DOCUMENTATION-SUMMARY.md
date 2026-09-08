@@ -15,16 +15,19 @@ The FrontEnd team asked about Margin % not calculating in the Finance Summary AP
 ## Issue Summary
 
 ### Observation
+
 - **Endpoint**: `GET /v1/analytics/weekly/finance-summary?week=YYYY-Www`
 - **Response**: `{ "sale_gross_total": 305778.32, "cogs_total": null, "gross_profit": null, "margin_pct": null }`
 - **Question**: Why are margin fields returning `null`?
 
 ### Root Cause
+
 - The `weekly_margin_fact` table is **EMPTY**
 - Data aggregation pipeline (`cogs` → `weekly_margin_fact`) has **NOT been implemented**
 - Epic 56 (Historical Inventory Import) completed COGS import but does NOT populate `weekly_margin_fact`
 
 ### Finding
+
 **NOT A BUG** - This is expected behavior when `weekly_margin_fact` is empty.
 
 ---
@@ -34,11 +37,13 @@ The FrontEnd team asked about Margin % not calculating in the Finance Summary AP
 ### 1. New Documentation Files Created
 
 #### File #113: Margin Calculation Empty State Behavior
+
 **Path**: `/frontend/docs/request-backend/113-margin-calculation-empty-state-behavior.md`
 **Size**: 416 lines
 **Purpose**: Complete explanation of why margin fields return `null` and how to handle it
 
 **Contents**:
+
 - Problem description with API response examples
 - Root cause analysis (empty `weekly_margin_fact` table)
 - Backend logic explanation
@@ -48,6 +53,7 @@ The FrontEnd team asked about Margin % not calculating in the Finance Summary AP
 - Q&A section
 
 **Key Sections**:
+
 - "Root Cause Analysis" - Database status and pipeline issue
 - "FrontEnd Handling" - Three display strategies with component examples
 - "Solution Roadmap" - Short-term (FrontEnd) and long-term (Backend) solutions
@@ -55,16 +61,19 @@ The FrontEnd team asked about Margin % not calculating in the Finance Summary AP
 ---
 
 ## Backend Team Response
+
 **Status**: REFERENCE DOCUMENT — this is a living integration guide, not a request. Kept up-to-date with each relevant epic.
 
 ---
 
 #### File #114: Margin Calculation FrontEnd Quick Reference Guide
+
 **Path**: `/frontend/docs/request-backend/114-margin-calculation-frontend-guide.md`
 **Size**: 517 lines
 **Purpose**: Quick troubleshooting guide for FrontEnd developers
 
 **Contents**:
+
 - Quick troubleshooting card
 - API response examples for all scenarios
 - Empty state handling patterns
@@ -75,6 +84,7 @@ The FrontEnd team asked about Margin % not calculating in the Finance Summary AP
 - FAQ section
 
 **Key Sections**:
+
 - "Quick Troubleshooting" - Fast diagnosis and solution
 - "Common Scenarios" - New cabinet, partial coverage, calculation in progress
 - "Component Props Reference" - Props for `CogsMissingState`, `MissingCogsAlert`, `MetricCardEnhanced`
@@ -84,10 +94,12 @@ The FrontEnd team asked about Margin % not calculating in the Finance Summary AP
 ### 2. Existing Documentation Files Updated
 
 #### File #06: Missing Expense Fields in Finance Summary
+
 **Path**: `/frontend/docs/request-backend/06-missing-expense-fields-in-finance-summary.md`
 **Update**: Added "Margin Fields Returning Null - Current Behavior" section
 
 **Added Content**:
+
 - Observed response example
 - Explanation of why `cogs_total` and `gross_profit` return `null`
 - FrontEnd handling guidance
@@ -97,10 +109,12 @@ The FrontEnd team asked about Margin % not calculating in the Finance Summary AP
 ---
 
 #### File #21: Margin Calculation Status Endpoint
+
 **Path**: `/frontend/docs/request-backend/21-margin-calculation-status-endpoint-backend.md`
 **Update**: Added "Current Status (2026-01-30)" section
 
 **Added Content**:
+
 - Implementation status table
 - Explanation of why endpoint returns `null`
 - Expected behavior when data is available
@@ -110,10 +124,12 @@ The FrontEnd team asked about Margin % not calculating in the Finance Summary AP
 ---
 
 #### File #46: Product COGS Coverage Counting Bug
+
 **Path**: `/frontend/docs/request-backend/46-product-cogs-coverage-counting-bug.md`
 **Update**: Added "Resolution Update (2026-01-30)" section
 
 **Added Content**:
+
 - Root cause clarification (data availability issue, not a bug)
 - Current status (table empty, COGS records exist)
 - FrontEnd action required
@@ -177,11 +193,13 @@ frontend/docs/request-backend/
 ## Related Documentation
 
 ### Backend Documentation
+
 - `docs/epics/epic-56-historical-inventory-import.md` - COGS import implementation
 - `docs/epics/epic-20-auto-margin-recalculation.md` - COGS → Margin trigger
 - `docs/BUSINESS-LOGIC-REFERENCE.md` - Margin calculation formulas
 
 ### FrontEnd Documentation
+
 - `frontend/docs/api-integration-guide.md` - API endpoint catalog
 - `frontend/docs/front-end-spec.md` - UI/UX specification
 - `frontend/CLAUDE.md` - FrontEnd development guidelines
@@ -191,17 +209,20 @@ frontend/docs/request-backend/
 ## Action Items
 
 ### Immediate (FrontEnd)
+
 - ✅ Documentation created
 - ⏳ Implement empty state handling in finance summary components
 - ⏳ Update hooks to handle `null` margin values
 - ⏳ Add unit tests for empty state scenarios
 
 ### Short-term (FrontEnd)
+
 - ⏳ Create E2E tests for margin calculation flow
 - ⏳ Update user documentation with margin calculation explanation
 - ⏳ Add error boundary for margin calculation failures
 
 ### Long-term (Backend)
+
 - ⏳ Plan new Epic for margin data aggregation pipeline
 - ⏳ Define aggregation logic: `cogs` → `weekly_margin_fact`
 - ⏳ Implement trigger points for automatic aggregation
@@ -212,17 +233,20 @@ frontend/docs/request-backend/
 ## Testing Checklist
 
 ### Unit Tests
+
 - [ ] Test empty state component renders when `cogs_total === null`
 - [ ] Test warning banner displays when coverage < 100%
 - [ ] Test metrics display when margin data is available
 - [ ] Test formatCurrency/formatPercentage with null values
 
 ### Integration Tests
+
 - [ ] Test API response parsing with null values
 - [ ] Test component state transitions (empty → loading → data)
 - [ ] Test error handling when API call fails
 
 ### E2E Tests
+
 - [ ] Test complete flow: No COGS → Assign COGS → View margin data
 - [ ] Test polling after COGS assignment
 - [ ] Test margin status endpoint integration
@@ -232,15 +256,19 @@ frontend/docs/request-backend/
 ## Questions & Answers
 
 ### Q: Is this a bug?
+
 **A**: No, this is expected behavior when `weekly_margin_fact` is empty.
 
 ### Q: When will this be fixed?
+
 **A**: This requires a new Epic for the margin data aggregation pipeline. No timeline currently set.
 
 ### Q: What should FrontEnd display in the meantime?
+
 **A**: Display an empty state component with call-to-action to assign COGS.
 
 ### Q: Can we manually populate `weekly_margin_fact`?
+
 **A**: Yes, as a temporary workaround. Write aggregation script to populate from `cogs` table.
 
 ---
@@ -255,6 +283,7 @@ frontend/docs/request-backend/
 ✅ **Roadmap for future backend work outlined**
 
 **Next Steps**:
+
 1. FrontEnd team should review new documentation files (#113, #114)
 2. Implement empty state handling in finance summary components
 3. Backend team should plan margin aggregation Epic

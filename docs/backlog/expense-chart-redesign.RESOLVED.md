@@ -10,6 +10,7 @@ Current vertical bar chart is unreadable: rotated labels, no values on bars, no 
 ## Design Decision
 
 **Horizontal bar chart** with summary header:
+
 - Header: Total expenses + % of revenue + W-o-W change badge
 - Horizontal bars: category label (left) → bar → amount + % (right)
 - Merge <1% categories into "Прочее"
@@ -23,14 +24,14 @@ Current vertical bar chart is unreadable: rotated labels, no values on bars, no 
 
 ## Color Scheme
 
-| Category | Color | Hex |
-|----------|-------|-----|
-| Комиссия WB | Red | #E53935 |
-| Логистика | Blue | #3B82F6 |
+| Category    | Color  | Hex     |
+| ----------- | ------ | ------- |
+| Комиссия WB | Red    | #E53935 |
+| Логистика   | Blue   | #3B82F6 |
 | Продвижение | Purple | #7C4DFF |
-| Эквайринг | Amber | #F59E0B |
-| Хранение | Teal | #14B8A6 |
-| Прочее | Gray | #9CA3AF |
+| Эквайринг   | Amber  | #F59E0B |
+| Хранение    | Teal   | #14B8A6 |
+| Прочее      | Gray   | #9CA3AF |
 
 ## AC (triaged 2026-05-13, updated after Epic 102)
 

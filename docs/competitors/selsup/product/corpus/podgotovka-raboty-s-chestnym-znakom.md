@@ -11,7 +11,7 @@ chars: 3199
 
 В этой статье:
 
-- 
+-
 - <a href="#poluchite-etsp-elektronnuyu-tsifrovuyu-podpis-esli-ona-eshhe-ne-poluch" rel="nofollow">Получите ЭЦП — электронную цифровую подпись, если она еще не получена</a>
 - <a href="#zaregistrirujtes-v-chestnom-znake" rel="nofollow">Зарегистрируйтесь в Честном знаке</a>
 - <a href="#podajte-zayavku-na-chlenstvo-v-gs1rus" rel="nofollow">Подайте заявку на членство в ГС1РУС</a>

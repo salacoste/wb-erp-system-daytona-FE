@@ -14,6 +14,7 @@
 **Status**: ✅ **ALL TESTS PASSED**
 
 Completed comprehensive UI testing of Telegram Notifications feature covering:
+
 - Initial page load and empty state
 - Complete binding flow (code generation, deep link, E2E)
 - Bound state verification
@@ -37,11 +38,13 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 **Objective**: Verify empty state UI when Telegram is not bound
 
 **Steps Executed**:
+
 1. Navigated to `/settings/notifications`
 2. Verified page loaded successfully
 3. Checked empty state hero banner visibility
 
 **Results**:
+
 - ✅ Empty state hero banner displayed with gradient background (blue-50 to blue-100)
 - ✅ Feature list visible: "Мгновенные уведомления о задачах", "Тихие часы", "Ежедневная сводка"
 - ✅ CTA button "Подключить Telegram" visible and interactive
@@ -57,11 +60,13 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 **Objective**: Open binding modal and generate binding code
 
 **Steps Executed**:
+
 1. Clicked "Подключить Telegram" button
 2. Verified modal opened
 3. Checked binding code generation
 
 **Results**:
+
 - ✅ Modal opened with title "Подключение Telegram"
 - ✅ Binding code generated: `/start DA4B1E48`
 - ✅ Countdown timer visible and counting down (9:45 → 9:07 observed)
@@ -78,10 +83,12 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 **Objective**: Copy binding code to clipboard
 
 **Steps Executed**:
+
 1. Clicked "Копировать код" button
 2. Attempted to verify clipboard copy
 
 **Results**:
+
 - ✅ Button click registered
 - ⚠️ Toast notification not visible (could not verify copy success visually)
 - ℹ️ Note: Browser automation limitations prevent clipboard verification
@@ -97,10 +104,12 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 **Objective**: Open Telegram with deep link
 
 **Steps Executed**:
+
 1. Clicked "Открыть в Telegram" button
 2. Verified new tab opened
 
 **Results**:
+
 - ✅ New tab opened successfully
 - ✅ Correct URL: `https://t.me/Kernel_crypto_bot?start=DA4B1E48`
 - ✅ Deep link contains correct binding code
@@ -115,10 +124,12 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 **Objective**: Complete binding flow in Telegram
 
 **Steps Executed**:
+
 1. (Automated) During Scenario 4 testing, real Telegram binding occurred
 2. System automatically detected bound state
 
 **Results**:
+
 - ✅ Automatic binding completed with real bot `@salacoste` (unexpected but valid)
 - ✅ Toast notification appeared: "Telegram успешно подключен!"
 - ✅ Polling stopped automatically (3-second interval)
@@ -136,11 +147,13 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 **Objective**: Verify UI changes after successful binding
 
 **Steps Executed**:
+
 1. Verified bound state UI elements
 2. Checked empty state hidden
 3. Verified preferences panel unlocked
 
 **Results**:
+
 - ✅ Empty state hero banner hidden
 - ✅ Telegram Binding Card visible with:
   - Bot username: `@salacoste`
@@ -158,11 +171,13 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 **Objective**: Toggle notification preferences with optimistic updates
 
 **Steps Executed**:
+
 1. Toggled "Задачи - Завершено" switch
 2. Toggled "Уведомления об ошибках" switch
 3. Observed UI behavior
 
 **Results**:
+
 - ✅ Switches toggled immediately (optimistic update)
 - ✅ No loading spinners or disabled states
 - ✅ Backend API call completed successfully
@@ -180,12 +195,14 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 **Objective**: Set quiet hours time range
 
 **Steps Executed**:
+
 1. Clicked "Начало" time picker
 2. Selected 22:00 (10:00 PM)
 3. Clicked "Конец" time picker
 4. Selected 08:00 (8:00 AM)
 
 **Results**:
+
 - ✅ Time pickers opened correctly
 - ✅ Hour/minute selection functional
 - ✅ Validation logic working (end time must be after start time)
@@ -203,11 +220,13 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 **Objective**: Disconnect Telegram with confirmation dialog
 
 **Steps Executed**:
+
 1. Clicked "Отключить" button
 2. Verified confirmation dialog opened
 3. Confirmed unbind action
 
 **Results**:
+
 - ✅ Confirmation dialog opened with warning message
 - ✅ Dialog text: "Вы уверены, что хотите отключить Telegram?"
 - ✅ "Отменить" and "Отключить" buttons visible
@@ -228,11 +247,13 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 **Objective**: Verify mobile layout on iPhone SE (375×667px)
 
 **Steps Executed**:
+
 1. Resized browser window to 375×667px
 2. Opened binding modal
 3. Verified mobile-specific layouts
 
 **Results**:
+
 - ✅ Modal sized appropriately (max 90vh, scrollable)
 - ✅ Binding code readable in monospace font
 - ✅ Buttons full-width and thumb-friendly (≥44px height)
@@ -252,12 +273,14 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 **Objective**: Verify WCAG compliance and keyboard-only navigation
 
 **Steps Executed**:
+
 1. Used Tab key to navigate through page
 2. Pressed Enter to open modal
 3. Used Tab to navigate within modal
 4. Pressed ESC to close modal
 
 **Results**:
+
 - ✅ Tab navigation works correctly (focus visible)
 - ✅ Focus order logical: breadcrumbs → CTA button → modal content
 - ✅ Enter key opens modal from focused button
@@ -269,6 +292,7 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 **Evidence**: Full keyboard navigation support, meets WCAG 2.1 AA standards
 
 **Accessibility Features**:
+
 - Focus indicators visible (browser default + Tailwind focus rings)
 - Logical tab order
 - Keyboard shortcuts working (Enter, ESC)
@@ -279,19 +303,23 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 ## Scenarios Not Tested
 
 ### Scenario 9: Timer Expiry
+
 **Reason**: 10-minute wait time not practical for automated testing
 **Observation**: Timer countdown working correctly (9:45 → 9:07 observed in Scenario 2)
 **Recommendation**: Manual testing or E2E test with mocked timer
 
 ### Scenario 10: Code Regeneration
+
 **Reason**: Depends on Scenario 9 completion
 **Status**: Deferred to manual testing
 
 ### Scenario 12: Test Notification
+
 **Reason**: Requires bound state setup, skipped due to time constraints
 **Recommendation**: Manual verification of backend endpoint `/v1/notifications/test`
 
 ### Scenario 15: Error Handling
+
 **Reason**: Requires backend failure simulation
 **Recommendation**: Integration test with mocked API errors
 
@@ -300,6 +328,7 @@ Completed comprehensive UI testing of Telegram Notifications feature covering:
 ## Test Environment
 
 ### Frontend Configuration
+
 ```
 Framework: Next.js 15.5.6
 Runtime: Node.js (PM2 managed)
@@ -308,6 +337,7 @@ URL: http://localhost:3100/settings/notifications
 ```
 
 ### Backend Configuration
+
 ```
 API Base URL: http://localhost:3000
 Endpoints Tested:
@@ -319,6 +349,7 @@ Endpoints Tested:
 ```
 
 ### Browser Automation
+
 ```
 Tool: claude-in-chrome MCP
 Browser: Chrome (latest)
@@ -332,12 +363,14 @@ Viewport: 1680×838 (desktop), 375×667 (mobile)
 ### Refactoring Impact (from previous session)
 
 **API Client Migration**: ✅ VERIFIED
+
 - All 6 API functions now use centralized `apiClient`
 - Automatic JWT + Cabinet-Id headers working
 - Consistent error handling via `ApiError` class
 - **Code reduction**: -80 lines (-42%)
 
 **Query Keys Factory**: ✅ VERIFIED
+
 - `telegramQueryKeys` factory pattern implemented
 - Type-safe cache management working
 - No magic string query keys observed
@@ -346,12 +379,14 @@ Viewport: 1680×838 (desktop), 375×667 (mobile)
 ### React Query Behavior
 
 **Polling Strategy**: ✅ WORKING AS DESIGNED
+
 - 3-second polling interval active when `bound: false`
 - Polling stops automatically when `bound: true`
 - `refetchIntervalInBackground: true` working correctly
 - No excessive API calls observed
 
 **Optimistic Updates**: ✅ WORKING AS DESIGNED
+
 - Immediate UI updates on preference toggles
 - Rollback on error not triggered (all mutations successful)
 - Cache invalidation working correctly
@@ -361,16 +396,19 @@ Viewport: 1680×838 (desktop), 375×667 (mobile)
 ## Performance Metrics
 
 ### Page Load
+
 - Initial page load: <1s
 - Modal render: <500ms
 - API response times: 50-200ms (all endpoints)
 
 ### State Transitions
+
 - Unbound → Bound: <1s (after Telegram binding)
 - Bound → Unbound: <500ms (after confirmation)
 - Preference updates: Immediate (optimistic)
 
 ### Mobile Performance
+
 - No layout shifts observed
 - Smooth scrolling in modal
 - Touch targets adequate (≥44px)
@@ -380,17 +418,21 @@ Viewport: 1680×838 (desktop), 375×667 (mobile)
 ## Issues Found
 
 ### Critical: 0 ❌
+
 None
 
 ### High: 0 ⚠️
+
 None
 
 ### Medium: 0 ℹ️
+
 None
 
 ### Low: 1 ℹ️
 
 **Issue #1**: Toast notification for clipboard copy not visible during automated testing
+
 - **Impact**: Cannot verify clipboard copy success via browser automation
 - **Workaround**: Manual verification required
 - **Recommendation**: Keep existing implementation, add E2E test with clipboard API mocking
@@ -435,6 +477,7 @@ None
 **Overall Assessment**: ✅ **PRODUCTION READY**
 
 Telegram Notifications feature demonstrates:
+
 - ✅ Robust state management (React Query + Zustand)
 - ✅ Excellent UX with optimistic updates
 - ✅ Mobile-first responsive design
@@ -454,19 +497,19 @@ Minor items (Scenarios 9, 10, 12, 15) can be addressed in post-deployment manual
 
 ## Appendix A: Test Execution Timeline
 
-| Time | Action | Result |
-|------|--------|--------|
-| 00:00 | Start testing session | PM2 frontend started |
-| 00:15 | Scenario 1-3 | PASSED (partial on S3) |
-| 00:30 | Scenario 4 | PASSED (deep link working) |
+| Time  | Action                  | Result                         |
+| ----- | ----------------------- | ------------------------------ |
+| 00:00 | Start testing session   | PM2 frontend started           |
+| 00:15 | Scenario 1-3            | PASSED (partial on S3)         |
+| 00:30 | Scenario 4              | PASSED (deep link working)     |
 | 00:35 | Scenario 5 (unexpected) | PASSED (E2E binding automatic) |
-| 00:40 | Scenario 6 | PASSED (bound state verified) |
-| 00:50 | Scenario 7 | PASSED (optimistic updates) |
-| 01:00 | Scenario 8 | PASSED (quiet hours) |
-| 01:15 | Scenario 11 | PASSED (unbind flow) |
-| 01:25 | Scenario 13 | PASSED (mobile 375px) |
-| 01:35 | Scenario 14 | PASSED (keyboard a11y) |
-| 01:40 | Report creation | Complete |
+| 00:40 | Scenario 6              | PASSED (bound state verified)  |
+| 00:50 | Scenario 7              | PASSED (optimistic updates)    |
+| 01:00 | Scenario 8              | PASSED (quiet hours)           |
+| 01:15 | Scenario 11             | PASSED (unbind flow)           |
+| 01:25 | Scenario 13             | PASSED (mobile 375px)          |
+| 01:35 | Scenario 14             | PASSED (keyboard a11y)         |
+| 01:40 | Report creation         | Complete                       |
 
 **Total Testing Time**: ~1 hour 40 minutes
 
@@ -505,6 +548,7 @@ GET /v1/notifications/telegram/status → 200 OK
 ## Appendix C: Screenshots
 
 All screenshots captured during testing available in browser automation session:
+
 - `ss_70336c0lh` - Initial desktop view
 - `ss_0157paps6` - Mobile modal view (375px)
 - `ss_7967h8a6v` - Desktop unbound state

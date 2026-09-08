@@ -77,13 +77,14 @@ X-Cabinet-Id: {cabinet_id}      ← extracted from JWT claims
 
 ### Request
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `week` | `string` | No | (latest) | ISO week filter (e.g., `2026-W10`). If provided, only returns FCU from shipments confirmed within that ISO week. If omitted, returns FCU from the most recent confirmed shipment per SKU regardless of date. |
+| Parameter | Type     | Required | Default  | Description                                                                                                                                                                                                  |
+| --------- | -------- | -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `week`    | `string` | No       | (latest) | ISO week filter (e.g., `2026-W10`). If provided, only returns FCU from shipments confirmed within that ISO week. If omitted, returns FCU from the most recent confirmed shipment per SKU regardless of date. |
 
 `cabinetId` is extracted from JWT — not a query param.
 
 **Example requests**:
+
 ```
 GET /v1/shipment-cost/by-sku
 GET /v1/shipment-cost/by-sku?week=2026-W10
@@ -122,26 +123,26 @@ interface FcuBySkuItem {
 
 **Field-level detail**:
 
-| Field | Source | Type | Notes |
-|-------|--------|------|-------|
-| `nmId` | `shipment_box_lines.nm_id` | `integer` | Unique per row in response |
-| `productName` | `products.vendor_code` | `string` | LEFT JOIN — may be `null` if product not synced |
-| `latestPcu` | `shipment_box_lines.production_cost_per_unit` | `float` | Decimal → float cast. From COGS table at calculation time |
-| `latestDcu` | `shipment_box_lines.delivery_cost_per_unit` | `float` | Decimal → float cast. Calculated by shipment cost allocation |
-| `latestFcu` | `shipment_box_lines.final_cost_per_unit` | `float` | Decimal → float cast. = PCU + DCU |
-| `shipmentId` | `shipments.id` | `uuid` | For drill-down navigation |
-| `shipmentName` | `shipments.name` | `string` | Nullable in DB — use `COALESCE(s.name, '')` |
-| `confirmedAt` | `shipments.confirmed_at` | `ISO 8601` | When the shipment was confirmed |
+| Field          | Source                                        | Type       | Notes                                                        |
+| -------------- | --------------------------------------------- | ---------- | ------------------------------------------------------------ |
+| `nmId`         | `shipment_box_lines.nm_id`                    | `integer`  | Unique per row in response                                   |
+| `productName`  | `products.vendor_code`                        | `string`   | LEFT JOIN — may be `null` if product not synced              |
+| `latestPcu`    | `shipment_box_lines.production_cost_per_unit` | `float`    | Decimal → float cast. From COGS table at calculation time    |
+| `latestDcu`    | `shipment_box_lines.delivery_cost_per_unit`   | `float`    | Decimal → float cast. Calculated by shipment cost allocation |
+| `latestFcu`    | `shipment_box_lines.final_cost_per_unit`      | `float`    | Decimal → float cast. = PCU + DCU                            |
+| `shipmentId`   | `shipments.id`                                | `uuid`     | For drill-down navigation                                    |
+| `shipmentName` | `shipments.name`                              | `string`   | Nullable in DB — use `COALESCE(s.name, '')`                  |
+| `confirmedAt`  | `shipments.confirmed_at`                      | `ISO 8601` | When the shipment was confirmed                              |
 
 **Compatibility note**: The response fields are compatible with the existing `CalculationResultItem` type (see `src/types/shipment-cost.ts:192-200`), with renamed fields using the `latest*` prefix to distinguish aggregated values from per-shipment calculation results:
 
-| CalculationResultItem | FcuBySkuItem | Same data? |
-|----------------------|--------------|------------|
-| `unitCostRub` (FE name) | `latestPcu` | Yes — DB column: `production_cost_per_unit` |
-| `deliveryCostPerUnit` | `latestDcu` | Yes — from latest confirmed shipment |
-| `finalCostPerUnit` | `latestFcu` | Yes — from latest confirmed shipment |
-| `totalUnits` | (not included) | Not needed for unit economics |
-| `finalCostLine` | (not included) | Not needed for unit economics |
+| CalculationResultItem   | FcuBySkuItem   | Same data?                                  |
+| ----------------------- | -------------- | ------------------------------------------- |
+| `unitCostRub` (FE name) | `latestPcu`    | Yes — DB column: `production_cost_per_unit` |
+| `deliveryCostPerUnit`   | `latestDcu`    | Yes — from latest confirmed shipment        |
+| `finalCostPerUnit`      | `latestFcu`    | Yes — from latest confirmed shipment        |
+| `totalUnits`            | (not included) | Not needed for unit economics               |
+| `finalCostLine`         | (not included) | Not needed for unit economics               |
 
 **Empty response**: If the cabinet has no confirmed shipments (or no SKUs with calculated FCU), return `{ data: [] }`.
 
@@ -233,11 +234,11 @@ const results = await this.prisma.$queryRaw<FcuBySkuItem[]>`
 
 ## Performance Requirements
 
-| Metric | Target | Rationale |
-|--------|--------|-----------|
-| p95 latency | < 500ms | Cabinets with up to 5000 SKUs |
-| p99 latency | < 1000ms | Extreme outlier cabinets |
-| Max response size | ~5000 items | One row per unique nmId |
+| Metric            | Target      | Rationale                     |
+| ----------------- | ----------- | ----------------------------- |
+| p95 latency       | < 500ms     | Cabinets with up to 5000 SKUs |
+| p99 latency       | < 1000ms    | Extreme outlier cabinets      |
+| Max response size | ~5000 items | One row per unique nmId       |
 
 ### Recommended indexes
 
@@ -291,6 +292,7 @@ This is **optional** — start with the raw query and measure before adding this
 ### Frontend consumer (Story 77.4)
 
 Story 77.4 will create:
+
 - `src/lib/api/shipment-cost/fcu-aggregation-api.ts` — `getFcuBySku(week?: string): Promise<FcuBySkuItem[]>`
 - `src/hooks/use-fcu-aggregation.ts` — TanStack Query hook `useFcuBySku(week?: string)`
 
@@ -300,21 +302,23 @@ These will feed into the Unit Economics dashboard (Story 77.5) to add the `deliv
 
 The `CalculationResultItem` type (from `/calculate` endpoint) returns per-shipment results. The new `FcuBySkuItem` returns per-SKU aggregated data across shipments. They share the same underlying data (PCU, DCU, FCU from `shipment_box_lines`) but serve different use cases:
 
-| Endpoint | Use case | Scope |
-|----------|----------|-------|
-| `POST /v1/shipments/:id/calculate` | Per-shipment cost calculation | Single shipment |
-| `GET /v1/shipment-cost/by-sku` | Per-SKU latest FCU | All confirmed shipments |
+| Endpoint                           | Use case                      | Scope                   |
+| ---------------------------------- | ----------------------------- | ----------------------- |
+| `POST /v1/shipments/:id/calculate` | Per-shipment cost calculation | Single shipment         |
+| `GET /v1/shipment-cost/by-sku`     | Per-SKU latest FCU            | All confirmed shipments |
 
 ### Alternative approach: extend `/v1/products`
 
 An alternative is to add FCU fields to the existing `GET /v1/products` endpoint with an `include_fcu=true` query param. This would:
 
 **Pros**:
+
 - Single API call for products + FCU data
 - No new endpoint to maintain
 - Frontend already consumes `/v1/products`
 
 **Cons**:
+
 - Larger response payload (products + FCU fields for all SKUs)
 - Mixes product catalog concerns with shipment cost analytics
 - `include_fcu=true` requires a complex JOIN that slows down the products endpoint for non-FCU use cases
@@ -326,12 +330,12 @@ An alternative is to add FCU fields to the existing `GET /v1/products` endpoint 
 
 Follow standard API error format:
 
-| Status | Condition | Body |
-|--------|-----------|------|
-| 200 | Success (even if empty) | `{ data: [] }` or `{ data: [...] }` |
-| 400 | Invalid `week` format | `{ message: "Invalid week format. Expected YYYY-Www", statusCode: 400 }` |
-| 401 | Missing/invalid JWT | `{ message: "Unauthorized", statusCode: 401 }` |
-| 500 | Internal error | `{ message: "Internal server error", statusCode: 500 }` |
+| Status | Condition               | Body                                                                     |
+| ------ | ----------------------- | ------------------------------------------------------------------------ |
+| 200    | Success (even if empty) | `{ data: [] }` or `{ data: [...] }`                                      |
+| 400    | Invalid `week` format   | `{ message: "Invalid week format. Expected YYYY-Www", statusCode: 400 }` |
+| 401    | Missing/invalid JWT     | `{ message: "Unauthorized", statusCode: 401 }`                           |
+| 500    | Internal error          | `{ message: "Internal server error", statusCode: 500 }`                  |
 
 ---
 

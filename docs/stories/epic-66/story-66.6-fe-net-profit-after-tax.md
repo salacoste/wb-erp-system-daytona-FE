@@ -17,6 +17,7 @@ Create new "Чистая прибыль" card showing net profit after ALL taxes
 ## Acceptance Criteria
 
 ### AC1: NetProfitCard Component
+
 - [ ] New `NetProfitCard.tsx` created
 - [ ] Primary metric: final net profit as currency (₽)
 - [ ] Uses `net_profit_after_all_tax` when НДС configured
@@ -24,17 +25,20 @@ Create new "Чистая прибыль" card showing net profit after ALL taxes
 - [ ] Fallback to `payout_total` when no tax configured, with "(до налога)" suffix
 
 ### AC2: After-Tax Margin
+
 - [ ] Calculate: `(net_profit / revenue) × 100`
 - [ ] Revenue = `revenue_excl_vat` when НДС configured, else `sale_gross_total`
 - [ ] Show as secondary metric with % sign
 - [ ] Color-coded: green (>10%), yellow (0-10%), red (<0%)
 
 ### AC3: Period Comparison
+
 - [ ] Compare net profit with previous period
 - [ ] Delta badge (inverted: lower profit = red)
 - [ ] Previous period = null → no badge
 
 ### AC4: P&L Waterfall (Profit Breakdown)
+
 - [ ] Update `ProfitBreakdownPopover` with full P&L chain:
   ```
   Выручка (brutto)        +1,450,000 ₽
@@ -52,6 +56,7 @@ Create new "Чистая прибыль" card showing net profit after ALL taxes
 - [ ] НДС rows only shown when `vat_payer === true`
 
 ### AC5: Card Integration
+
 - [ ] Added to `DashboardMetricsGrid`
 - [ ] Position: after TaxCard
 - [ ] Responsive grid layout (same pattern as existing cards)
@@ -61,9 +66,11 @@ Create new "Чистая прибыль" card showing net profit after ALL taxes
 ## Technical Implementation
 
 ### Files to Create
+
 - `src/components/custom/dashboard/NetProfitCard.tsx`
 
 ### Files to Modify
+
 - `src/components/custom/dashboard/DashboardMetricsGrid.tsx` — Add NetProfitCard
 - `src/components/custom/dashboard/ProfitBreakdownPopover.tsx` — Add tax + НДС rows
 
@@ -103,7 +110,7 @@ function getNetProfit(tax: TaxMetrics | null, payoutTotal: number): {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-02-22 | BMad Master | Initial story creation |
-| 2026-02-23 | Claude | Added VAT-aware profit selection, НДС rows in P&L waterfall, +2 SP (5→7) |
+| Date       | Author      | Change                                                                   |
+| ---------- | ----------- | ------------------------------------------------------------------------ |
+| 2026-02-22 | BMad Master | Initial story creation                                                   |
+| 2026-02-23 | Claude      | Added VAT-aware profit selection, НДС rows in P&L waterfall, +2 SP (5→7) |

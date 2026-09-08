@@ -11,6 +11,7 @@
 ## Backend API Status: READY (Request #98)
 
 Backend has implemented the acceptance coefficients API as documented in:
+
 - `docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md`
 - `docs/stories/epic-44/SDK-WAREHOUSES-TARIFFS-REFERENCE.md`
 
@@ -32,6 +33,7 @@ Backend has implemented the acceptance coefficients API as documented in:
 **So that** I can quickly get accurate logistics and storage costs without manually looking up WB tariffs.
 
 **Non-goals**:
+
 - Real-time coefficient updates during form filling (future enhancement)
 - Historical coefficient tracking (out of scope)
 - Manual coefficient entry validation against WB data (allow override)
@@ -42,6 +44,7 @@ Backend has implemented the acceptance coefficients API as documented in:
 ## Acceptance Criteria
 
 ### AC1: Fetch Tariffs on Warehouse Selection
+
 - [ ] When warehouse selected (from Story 44.12 dropdown), call API
 - [ ] API: `GET /v1/tariffs/box/{warehouse_name}`
 - [ ] Handle loading state (show skeleton/spinner on coefficient fields)
@@ -49,6 +52,7 @@ Backend has implemented the acceptance coefficients API as documented in:
 - [ ] Cache successful responses for session duration
 
 ### AC2: Auto-fill Logistics Coefficient
+
 - [ ] Auto-populate "Коэффициент логистики" field from `response.logistics.coefficient`
 - [ ] Display "Автозаполнено" badge next to field
 - [ ] Badge uses muted styling (gray background, small text)
@@ -56,18 +60,21 @@ Backend has implemented the acceptance coefficients API as documented in:
 - [ ] Field remains editable for manual override
 
 ### AC3: Auto-fill Storage Coefficient
+
 - [ ] Auto-populate storage coefficient from `response.storage.coefficient`
 - [ ] Display "Автозаполнено" badge when auto-filled
 - [ ] Value formatted to 2 decimal places
 - [ ] Field remains editable for manual override
 
 ### AC4: Auto-fill КТР (if applicable)
+
 - [ ] If API returns КТР data, auto-populate КТР field
 - [ ] Display "Автозаполнено" badge
 - [ ] If API does not return КТР, leave field unchanged
 - [ ] Show tooltip: "КТР не определён для склада {warehouse_name}"
 
 ### AC5: Recalculate Logistics Forward
+
 - [ ] When coefficients auto-filled, recalculate `logistics_forward_rub`
 - [ ] Formula: `logistics_forward = (base + (volume - 1) * per_liter) * coefficient`
 - [ ] Use volume from Story 44.7 dimension inputs
@@ -78,6 +85,7 @@ Backend has implemented the acceptance coefficients API as documented in:
 - [ ] Show calculation breakdown in tooltip
 
 ### AC6: Badge State Management
+
 - [ ] "Автозаполнено" badge shown when value from API
 - [ ] "Вручную" badge shown after manual edit
 - [ ] Badge style: `Автозаполнено` = green/success, `Вручную` = yellow/warning
@@ -85,6 +93,7 @@ Backend has implemented the acceptance coefficients API as documented in:
 - [ ] Track auto-fill vs manual state per field independently
 
 ### AC7: Manual Override Behavior
+
 - [ ] Allow user to edit any auto-filled field
 - [ ] On edit, change badge from "Автозаполнено" to "Вручную"
 - [ ] Show info tooltip: "Значение отличается от тарифов склада"
@@ -110,6 +119,7 @@ Backend has implemented the acceptance coefficients API as documented in:
 ## API Contract (Backend Request #98)
 
 ### Request
+
 ```http
 GET /v1/tariffs/acceptance/coefficients?warehouseId=507
 Authorization: Bearer {token}
@@ -117,6 +127,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 ### Response (Actual from Backend)
+
 ```json
 {
   "data": {
@@ -136,6 +147,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Coefficient Normalization**: Backend returns integers (100 = 1.0). Frontend normalizes:
+
 ```typescript
 const normalizedCoefficient = rawCoefficient / 100
 // 100 → 1.0, 125 → 1.25, 150 → 1.5
@@ -518,16 +530,16 @@ useEffect(() => {
 
 ### Invariants & Edge Cases
 
-| Case | Handling |
-|------|----------|
-| Warehouse not selected | Coefficients default to 1.0, source = 'manual' |
-| API returns error | Show error message, allow manual entry |
-| API returns null/undefined coefficient | Use default 1.0, source = 'manual' |
-| Volume = 0 | Logistics forward = 0, formula not applied |
-| User edits auto-filled value | Change badge to 'Вручную', track original |
-| User selects new warehouse | Reset all to auto-fill from new tariffs |
-| Network timeout | Show retry button, preserve last values |
-| Very large coefficient (>5.0) | Allow but show warning tooltip |
+| Case                                   | Handling                                       |
+| -------------------------------------- | ---------------------------------------------- |
+| Warehouse not selected                 | Coefficients default to 1.0, source = 'manual' |
+| API returns error                      | Show error message, allow manual entry         |
+| API returns null/undefined coefficient | Use default 1.0, source = 'manual'             |
+| Volume = 0                             | Logistics forward = 0, formula not applied     |
+| User edits auto-filled value           | Change badge to 'Вручную', track original      |
+| User selects new warehouse             | Reset all to auto-fill from new tariffs        |
+| Network timeout                        | Show retry button, preserve last values        |
+| Very large coefficient (>5.0)          | Allow but show warning tooltip                 |
 
 ---
 
@@ -566,73 +578,76 @@ useEffect(() => {
 
 ### Unit Tests (useWarehouseTariffs.ts)
 
-| Test | Scenario | Expected |
-|------|----------|----------|
-| Fetch success | Valid warehouse | Returns tariff data |
-| Fetch error | Network error | Returns error state |
-| Disabled | No warehouse selected | Query not executed |
-| Cache | Same warehouse twice | Returns cached data |
+| Test          | Scenario              | Expected            |
+| ------------- | --------------------- | ------------------- |
+| Fetch success | Valid warehouse       | Returns tariff data |
+| Fetch error   | Network error         | Returns error state |
+| Disabled      | No warehouse selected | Query not executed  |
+| Cache         | Same warehouse twice  | Returns cached data |
 
 ### Unit Tests (logistics-calculation-utils.ts)
 
-| Test | Input | Expected Output |
-|------|-------|-----------------|
-| Volume 1L | base=46, per=14, coef=1.0 | 46 |
-| Volume 3L | base=46, per=14, coef=1.0 | 74 (46 + 28) |
-| Volume 3L + coef | base=46, per=14, coef=1.5 | 111 (74 × 1.5) |
-| Volume 0 | any | 0 |
-| Volume 0.5L | base=46, per=14, coef=1.0 | 46 (no additional) |
+| Test             | Input                     | Expected Output    |
+| ---------------- | ------------------------- | ------------------ |
+| Volume 1L        | base=46, per=14, coef=1.0 | 46                 |
+| Volume 3L        | base=46, per=14, coef=1.0 | 74 (46 + 28)       |
+| Volume 3L + coef | base=46, per=14, coef=1.5 | 111 (74 × 1.5)     |
+| Volume 0         | any                       | 0                  |
+| Volume 0.5L      | base=46, per=14, coef=1.0 | 46 (no additional) |
 
 ### Component Tests (CoefficientField)
 
-| Test | Scenario | Expected |
-|------|----------|----------|
-| Auto badge | source='auto' | Shows "Автозаполнено" |
-| Manual badge | source='manual' | Shows "Вручную" |
-| Edit auto | User edits auto value | Badge changes to manual |
-| Restore | Click restore button | Value reverts, badge → auto |
-| Disabled | disabled=true | Input not editable |
+| Test         | Scenario              | Expected                    |
+| ------------ | --------------------- | --------------------------- |
+| Auto badge   | source='auto'         | Shows "Автозаполнено"       |
+| Manual badge | source='manual'       | Shows "Вручную"             |
+| Edit auto    | User edits auto value | Badge changes to manual     |
+| Restore      | Click restore button  | Value reverts, badge → auto |
+| Disabled     | disabled=true         | Input not editable          |
 
 ### Integration Tests
 
-| Test | Scenario | Expected |
-|------|----------|----------|
-| Warehouse select | Select "Коледино" | Coefficients auto-fill |
-| Change warehouse | Select different warehouse | All coefficients refresh |
-| Manual then warehouse | Edit then select new | Manual values overwritten |
-| Error recovery | API fails then retry | Shows error, allows manual |
+| Test                  | Scenario                   | Expected                   |
+| --------------------- | -------------------------- | -------------------------- |
+| Warehouse select      | Select "Коледино"          | Coefficients auto-fill     |
+| Change warehouse      | Select different warehouse | All coefficients refresh   |
+| Manual then warehouse | Edit then select new       | Manual values overwritten  |
+| Error recovery        | API fails then retry       | Shows error, allows manual |
 
 ### E2E Tests
 
-| Test | Scenario | Expected |
-|------|----------|----------|
-| Happy path | Select warehouse, verify auto-fill | All coefficients populated |
-| Override flow | Auto-fill, edit, verify badge | Badge shows "Вручную" |
-| Restore flow | Override, restore, verify | Badge shows "Автозаполнено" |
-| Calculation | Auto-fill, check logistics | Correct calculation displayed |
+| Test          | Scenario                           | Expected                      |
+| ------------- | ---------------------------------- | ----------------------------- |
+| Happy path    | Select warehouse, verify auto-fill | All coefficients populated    |
+| Override flow | Auto-fill, edit, verify badge      | Badge shows "Вручную"         |
+| Restore flow  | Override, restore, verify          | Badge shows "Автозаполнено"   |
+| Calculation   | Auto-fill, check logistics         | Correct calculation displayed |
 
 ---
 
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (est) | Description |
-|------|-------------|-------------|-------------|
-| `src/types/tariffs.ts` | CREATE | ~40 | Type definitions |
-| `src/lib/api/tariffs.ts` | CREATE | ~20 | API client |
-| `src/hooks/useWarehouseTariffs.ts` | CREATE | ~30 | Query hook |
-| `src/lib/logistics-calculation-utils.ts` | CREATE | ~60 | Calculation functions |
-| `src/components/custom/price-calculator/AutoFillBadge.tsx` | CREATE | ~30 | Badge component |
-| `src/components/custom/price-calculator/CoefficientField.tsx` | CREATE | ~80 | Field with badge |
-| `src/components/custom/price-calculator/LogisticsCoefficientsSection.tsx` | UPDATE | +50 | Integrate auto-fill |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +40 | Warehouse + state |
-| `src/lib/__tests__/logistics-calculation-utils.test.ts` | CREATE | ~60 | Unit tests |
-| `src/hooks/__tests__/useWarehouseTariffs.test.ts` | CREATE | ~40 | Hook tests |
+
+| File                                                                      | Change Type | Lines (est) | Description           |
+| ------------------------------------------------------------------------- | ----------- | ----------- | --------------------- |
+| `src/types/tariffs.ts`                                                    | CREATE      | ~40         | Type definitions      |
+| `src/lib/api/tariffs.ts`                                                  | CREATE      | ~20         | API client            |
+| `src/hooks/useWarehouseTariffs.ts`                                        | CREATE      | ~30         | Query hook            |
+| `src/lib/logistics-calculation-utils.ts`                                  | CREATE      | ~60         | Calculation functions |
+| `src/components/custom/price-calculator/AutoFillBadge.tsx`                | CREATE      | ~30         | Badge component       |
+| `src/components/custom/price-calculator/CoefficientField.tsx`             | CREATE      | ~80         | Field with badge      |
+| `src/components/custom/price-calculator/LogisticsCoefficientsSection.tsx` | UPDATE      | +50         | Integrate auto-fill   |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`          | UPDATE      | +40         | Warehouse + state     |
+| `src/lib/__tests__/logistics-calculation-utils.test.ts`                   | CREATE      | ~60         | Unit tests            |
+| `src/hooks/__tests__/useWarehouseTariffs.test.ts`                         | CREATE      | ~40         | Hook tests            |
 
 ### Change Log
+
 (To be filled during implementation)
 
 ### Review Follow-ups
+
 (To be filled after code review)
 
 ---
@@ -644,26 +659,28 @@ useEffect(() => {
 **Gate Decision**: (To be filled)
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Fetch tariffs on warehouse selection | ⏳ | |
-| AC2 | Auto-fill logistics coefficient | ⏳ | |
-| AC3 | Auto-fill storage coefficient | ⏳ | |
-| AC4 | Auto-fill КТР (if applicable) | ⏳ | |
-| AC5 | Recalculate logistics forward | ⏳ | |
-| AC6 | Badge state management | ⏳ | |
-| AC7 | Manual override behavior | ⏳ | |
+
+| AC  | Requirement                          | Status | Evidence |
+| --- | ------------------------------------ | ------ | -------- |
+| AC1 | Fetch tariffs on warehouse selection | ⏳     |          |
+| AC2 | Auto-fill logistics coefficient      | ⏳     |          |
+| AC3 | Auto-fill storage coefficient        | ⏳     |          |
+| AC4 | Auto-fill КТР (if applicable)        | ⏳     |          |
+| AC5 | Recalculate logistics forward        | ⏳     |          |
+| AC6 | Badge state management               | ⏳     |          |
+| AC7 | Manual override behavior             | ⏳     |          |
 
 ### Accessibility Check
-| Check | Status | Evidence |
-|-------|--------|----------|
-| Labels for all fields | ⏳ | |
-| Badge aria-live | ⏳ | |
-| Restore button label | ⏳ | |
-| Loading announcement | ⏳ | |
-| Error role=alert | ⏳ | |
-| Color contrast | ⏳ | |
-| Focus management | ⏳ | |
+
+| Check                 | Status | Evidence |
+| --------------------- | ------ | -------- |
+| Labels for all fields | ⏳     |          |
+| Badge aria-live       | ⏳     |          |
+| Restore button label  | ⏳     |          |
+| Loading announcement  | ⏳     |          |
+| Error role=alert      | ⏳     |          |
+| Color contrast        | ⏳     |          |
+| Focus management      | ⏳     |          |
 
 ---
 

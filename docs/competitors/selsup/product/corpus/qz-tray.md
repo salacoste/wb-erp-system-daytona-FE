@@ -12,7 +12,7 @@ chars: 5994
 
 В этой статье:
 
-- 
+-
 - <a href="#dlya-chego-nuzhen-qz-tray" rel="nofollow">Для чего нужен QZ-Tray</a>
 - <a href="#kakie-preimushhestva-nash-servis-poluchaet-s-qz--tray" rel="nofollow">Какие преимущества наш сервис получает с QZ- Tray?</a>
 - <a href="#ustanovite-prilozhenie-java" rel="nofollow">Установите приложение Java</a>

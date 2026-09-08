@@ -1,12 +1,12 @@
 # Story 70.6-FE: [Backend Request] Liquidity API Param Alignment
 
-| Field | Value |
-|-------|-------|
-| Epic | 70-FE Validation Fixes |
-| Priority | P1 |
-| SP | 2 |
-| Status | ✅ Done (Backend fixed) |
-| Group | C (D-14) |
+| Field           | Value                    |
+| --------------- | ------------------------ |
+| Epic            | 70-FE Validation Fixes   |
+| Priority        | P1                       |
+| SP              | 2                        |
+| Status          | ✅ Done (Backend fixed)  |
+| Group           | C (D-14)                 |
 | Backend Request | ✅ Resolved (2026-02-27) |
 
 ## Description
@@ -35,14 +35,14 @@ Frontend error handling работает корректно: "Не удалос�
 
 ### Parameter Name Mismatch
 
-| Parameter | Frontend Sends | Backend DTO Expects | Status |
-|-----------|---------------|-------------------|--------|
-| Filter | `category_filter` | `liquidity_filter` | ❌ MISMATCH |
-| Sort | `sort_by` | `sort_by` | ✅ OK |
-| Order | `sort_order` | `sort_order` | ✅ OK |
-| Limit | `limit` | `limit` | ✅ OK |
-| Turnover weeks | _(not sent)_ | `turnover_weeks` (default: 4) | ⚠️ Uses default |
-| View by | _(not sent)_ | `view_by` (default: 'sku') | ⚠️ Uses default |
+| Parameter      | Frontend Sends    | Backend DTO Expects           | Status          |
+| -------------- | ----------------- | ----------------------------- | --------------- |
+| Filter         | `category_filter` | `liquidity_filter`            | ❌ MISMATCH     |
+| Sort           | `sort_by`         | `sort_by`                     | ✅ OK           |
+| Order          | `sort_order`      | `sort_order`                  | ✅ OK           |
+| Limit          | `limit`           | `limit`                       | ✅ OK           |
+| Turnover weeks | _(not sent)_      | `turnover_weeks` (default: 4) | ⚠️ Uses default |
+| View by        | _(not sent)_      | `view_by` (default: 'sku')    | ⚠️ Uses default |
 
 ### Contradiction in Specs
 
@@ -110,10 +110,10 @@ liquidity_filter?: LiquidityFilterEnum
 **If Option A (backend aligns)**: No frontend changes.
 **If Option B (frontend adapts)**: Change `category_filter` → `liquidity_filter` in:
 
-| File | Change |
-|------|--------|
+| File                       | Change                             |
+| -------------------------- | ---------------------------------- |
 | `src/lib/api/liquidity.ts` | Rename param in searchParams.set() |
-| `src/types/liquidity.ts` | Rename type field (if needed) |
+| `src/types/liquidity.ts`   | Rename type field (if needed)      |
 
 ## References
 

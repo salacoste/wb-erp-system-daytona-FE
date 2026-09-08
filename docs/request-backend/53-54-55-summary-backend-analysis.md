@@ -8,23 +8,25 @@
 ## Executive Summary
 
 Frontend team запросила три новых API endpoints для расширенной аналитики:
+
 - **#53** Unit Economics - Структура затрат по SKU
 - **#54** Supply Planning - Планирование закупок
 - **#55** Liquidity Analysis - Анализ ликвидности запасов
 
 ### Результат анализа
 
-| Request | Epic | Priority | Effort | Can Start? |
-|---------|------|----------|--------|------------|
-| **#53 Unit Economics** | Epic 27 | 🔴 P0 | 13 SP | ✅ **YES** |
-| **#54 Supply Planning** | Epic 28 | 🟡 P1 | 25 SP | ⚠️ After WB Stocks API |
-| **#55 Liquidity Analysis** | Epic 29 | 🟠 P2 | 19 SP | ❌ After Epic 28 |
+| Request                    | Epic    | Priority | Effort | Can Start?             |
+| -------------------------- | ------- | -------- | ------ | ---------------------- |
+| **#53 Unit Economics**     | Epic 27 | 🔴 P0    | 13 SP  | ✅ **YES**             |
+| **#54 Supply Planning**    | Epic 28 | 🟡 P1    | 25 SP  | ⚠️ After WB Stocks API |
+| **#55 Liquidity Analysis** | Epic 29 | 🟠 P2    | 19 SP  | ❌ After Epic 28       |
 
 **Total Effort**: 57 Story Points
 
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: Backend analyzed three frontend analytics requests (Unit Economics #53, Supply Planning #54, Liquidity Analysis #55), assessed feasibility, created dependency graph, and assigned priorities with story point estimates. Unit Economics (P0) can start immediately; Supply Planning (P1) requires WB Stocks API first; Liquidity (P2) depends on Supply Planning.
 **Frontend Action**: No further action needed unless noted above.
@@ -76,6 +78,7 @@ Frontend team запросила три новых API endpoints для расш
 ## Implementation Roadmap
 
 ### Phase 1: Epic 27 - Unit Economics (NOW)
+
 **Duration**: ~2 weeks
 **No blockers** - can start immediately
 
@@ -88,6 +91,7 @@ Stories:
 ```
 
 ### Phase 2: Epic 28 - Supply Planning
+
 **Duration**: ~4 weeks
 **Blocker**: WB Stocks API integration
 
@@ -103,6 +107,7 @@ Stories:
 ```
 
 ### Phase 3: Epic 29 - Liquidity Analysis
+
 **Duration**: ~3 weeks
 **Blocker**: Epic 28 completion
 
@@ -121,12 +126,14 @@ Stories:
 ## New Infrastructure Required
 
 ### Epic 27 (Unit Economics)
+
 - **NEW**: `UnitEconomicsService`
 - **NEW**: `unit-economics.controller.ts`
 - **NEW**: Profitability classifier helper
 - **REUSE**: Existing `weekly_margin_fact` data
 
 ### Epic 28 (Supply Planning)
+
 - **NEW**: `inventory_snapshot` table
 - **NEW**: `in_transit_shipment` table
 - **NEW**: WB Stocks API integration
@@ -135,6 +142,7 @@ Stories:
 - **NEW**: `SupplyPlanningService`
 
 ### Epic 29 (Liquidity Analysis)
+
 - **NEW**: `LiquidityAnalysisService`
 - **NEW**: `LiquidationCalculator`
 - **NEW**: `/v1/analytics/liquidity/trends` endpoint
@@ -145,28 +153,31 @@ Stories:
 
 ## API Endpoints Summary
 
-| Endpoint | Epic | Status |
-|----------|------|--------|
-| `GET /v1/analytics/unit-economics` | 27 | 📋 Planned |
-| `GET /v1/analytics/supply-planning` | 28 | ⏳ Blocked |
-| `GET /v1/analytics/liquidity` | 29 | ⏳ Blocked |
-| `GET /v1/analytics/liquidity/trends` | 29 | ⏳ Blocked |
+| Endpoint                             | Epic | Status     |
+| ------------------------------------ | ---- | ---------- |
+| `GET /v1/analytics/unit-economics`   | 27   | 📋 Planned |
+| `GET /v1/analytics/supply-planning`  | 28   | ⏳ Blocked |
+| `GET /v1/analytics/liquidity`        | 29   | ⏳ Blocked |
+| `GET /v1/analytics/liquidity/trends` | 29   | ⏳ Blocked |
 
 ---
 
 ## Risk Assessment
 
 ### Epic 27 (Low Risk)
+
 - All data exists ✅
 - Simple calculations ✅
 - No external dependencies ✅
 
 ### Epic 28 (Medium-High Risk)
+
 - **WB API Rate Limits**: Need careful pagination
 - **Large Catalogs**: 10k+ SKUs performance concern
 - **Data Freshness**: Daily sync may not be enough for some use cases
 
 ### Epic 29 (Medium Risk)
+
 - **COGS Coverage**: Some products may lack COGS
 - **Price Elasticity Model**: Assumptions may not match reality
 - **Historical Data**: Limited without historical stock snapshots
@@ -176,15 +187,18 @@ Stories:
 ## Frontend Recommendations
 
 ### For Epic 27 (Unit Economics)
+
 - ✅ Start frontend development now
 - API will be available in ~2 weeks
 
 ### For Epic 28 (Supply Planning)
+
 - ⚠️ Use mock data for frontend development
 - API availability: ~4-6 weeks
 - Show `stocks_updated_at` in UI for data freshness
 
 ### For Epic 29 (Liquidity Analysis)
+
 - ⚠️ Use mock data for frontend development
 - API availability: ~7-9 weeks
 - Handle null `frozen_capital` for products without COGS
@@ -193,11 +207,11 @@ Stories:
 
 ## Documents Created
 
-| Document | Path |
-|----------|------|
-| Epic 27 | `docs/epics/epic-27-unit-economics-analytics.md` |
-| Epic 28 | `docs/epics/epic-28-supply-planning-analytics.md` |
-| Epic 29 | `docs/epics/epic-29-liquidity-analysis-api.md` |
+| Document     | Path                                                       |
+| ------------ | ---------------------------------------------------------- |
+| Epic 27      | `docs/epics/epic-27-unit-economics-analytics.md`           |
+| Epic 28      | `docs/epics/epic-28-supply-planning-analytics.md`          |
+| Epic 29      | `docs/epics/epic-29-liquidity-analysis-api.md`             |
 | Response #53 | `frontend/docs/request-backend/53-...-backend-response.md` |
 | Response #54 | `frontend/docs/request-backend/54-...-backend-response.md` |
 | Response #55 | `frontend/docs/request-backend/55-...-backend-response.md` |

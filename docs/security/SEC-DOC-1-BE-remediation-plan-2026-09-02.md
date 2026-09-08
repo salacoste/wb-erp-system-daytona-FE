@@ -7,13 +7,14 @@
 
 ## 0. Живой инвентарь (сверен 2026-09-02, `git grep`, BE main `e8cff608d` + working tree)
 
-| Литерал | Файлов | Вхождений | Зона |
-|---|---|---|---|
-| L-A (stale) | 53 | 99 | **все BE-native** (mirror = 0) |
-| L-B (dead post-rotation) | 10 | 11 | **все BE-native** (mirror = 0) |
-| Итого (уник-файлы ≈ 59-63) | — | **110** | docs/guides/handoffs/orchestrator-prompts/README/CLAUDE-API/backlog/daytona-project-docs/TECH-DEBT |
+| Литерал                    | Файлов | Вхождений | Зона                                                                                               |
+| -------------------------- | ------ | --------- | -------------------------------------------------------------------------------------------------- |
+| L-A (stale)                | 53     | 99        | **все BE-native** (mirror = 0)                                                                     |
+| L-B (dead post-rotation)   | 10     | 11        | **все BE-native** (mirror = 0)                                                                     |
+| Итого (уник-файлы ≈ 59-63) | —      | **110**   | docs/guides/handoffs/orchestrator-prompts/README/CLAUDE-API/backlog/daytona-project-docs/TECH-DEBT |
 
 Примечания:
+
 - Счётчик упал со 135 (мой ранний скан) до 110 — в BE working tree появились **1338 незакоммиченных изменений `frontend/*`** (незавершённый mirror-sync, см. Фазу 1). `frontend/`-mirror в working tree уже НЕ содержит литералов (редакции FE PR #383/#385 доехали зеркалом), но эти изменения НЕ закоммичены.
 - У BE уже есть собственный `CREDENTIAL-SECURITY-REMEDIATION.md` (закрывал критичные КОД-файлы: `frontend/e2e/fixtures/test-data.ts`, `scripts/backfill-commission.ts`, `scripts/create-sync-tasks.js`, `scripts/test_seed_crypto.ts`). Настоящий план закрывает оставшийся **doc-only residue** и не дублирует его.
 

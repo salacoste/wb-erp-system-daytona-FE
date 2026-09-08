@@ -11,7 +11,7 @@ chars: 4183
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojka-integratsii" rel="nofollow">Настройка интеграции</a>
 - <a href="#dobavlenie-skladov" rel="nofollow">Добавление складов</a>
 - <a href="#import-tovarov-i-sinhronizatsiya-ostatkov-iz-sbis-v-selsup" rel="nofollow">Импорт товаров и синхронизация остатков из СБИС в SelSup</a>
@@ -72,9 +72,9 @@ chars: 4183
 
 - Тег для артикула модели
 - Тег для артикула товара
-- 
+-
 
-1.  
+1.
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2025/06/screenshot_378.png.webp)
 

@@ -19,6 +19,7 @@
 ## 📋 Acceptance Criteria
 
 ### Component Structure
+
 - [ ] Create `<MergedGroupTable>` component in `frontend/src/app/(dashboard)/analytics/advertising/components/`
 - [ ] Implement rowspan for склейка indicator column
 - [ ] Render 3-tier structure: Tier 1 (rowspan), Tier 2 (aggregate), Tier 3 (details)
@@ -26,6 +27,7 @@
 - [ ] Responsive: horizontal scroll on mobile, full view on desktop
 
 ### Tier 1: Склейка Indicator (Rowspan Cell)
+
 - [ ] Cell spans all rows in group (header + detail rows)
 - [ ] Displays: `"${mainProduct.nmId} + ${productCount} товаров"`
 - [ ] Example: "ter-09 + 5 товаров" for 6-product group
@@ -34,6 +36,7 @@
 - [ ] Right border (2px solid #E5E7EB)
 
 ### Tier 2: Aggregate Row (Header)
+
 - [ ] First row displays "ГРУППА #imtId" in "Артикул" column
 - [ ] Shows aggregate metrics: totalSales, revenue, organicSales, spend, ROAS
 - [ ] Bold text (font-weight: 600)
@@ -41,6 +44,7 @@
 - [ ] Font size: 0.95rem
 
 ### Tier 3: Detail Rows (Individual Products)
+
 - [ ] One row per product in group
 - [ ] Main product marked with 👑 crown icon before nmId
 - [ ] Child products: no special icon
@@ -49,6 +53,7 @@
 - [ ] Font size: 0.875rem
 
 ### [PO TO FILL] Edge Cases
+
 - [ ] [PO TO SPECIFY] Single-product groups: Show rowspan cell or skip?
 - [ ] [PO TO SPECIFY] Group with >10 products: Collapse by default?
 - [ ] [PO TO SPECIFY] Missing main product: How to identify group?
@@ -59,6 +64,7 @@
 ## 🎨 Component API (Draft)
 
 ### Props Interface
+
 ```typescript
 interface MergedGroupTableProps {
   /** Array of merged groups with aggregate + individual metrics */
@@ -128,6 +134,7 @@ type SortField =
 ## 🔧 Implementation Guide
 
 ### Component Structure
+
 ```typescript
 // File: frontend/src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.tsx
 
@@ -240,6 +247,7 @@ function formatCurrency(value: number): string {
 ```
 
 ### Styling (Tailwind CSS)
+
 ```typescript
 // Rowspan Cell
 const rowspanCellClasses = [
@@ -269,42 +277,52 @@ const detailRowClasses = [
 ## 🧪 Test Scenarios
 
 ### Test 1: Rowspan Rendering
+
 **Given**: Group with 6 products (1 main + 5 children)
 **When**: Component renders
 **Then**:
+
 - [ ] Rowspan cell spans 7 rows (1 aggregate + 6 details)
 - [ ] Cell displays "ter-09" and "+ 5 товаров"
 - [ ] Cell vertically centered
 
 ### Test 2: Crown Icon Display
+
 **Given**: Group with 1 main product (spend > 0) and 5 children (spend = 0)
 **When**: Detail rows render
 **Then**:
+
 - [ ] Main product row shows 👑 crown icon
 - [ ] 5 child product rows have no crown icon
 - [ ] Crown icon positioned before nmId text
 
 ### Test 3: Aggregate Row Styling
+
 **Given**: Any group
 **When**: Aggregate row renders
 **Then**:
+
 - [ ] Background color is #F3F4F6 (gray-100)
 - [ ] Text is bold (font-weight: 600)
 - [ ] Font size is 0.95rem
 - [ ] Displays "ГРУППА #imtId" in Артикул column
 
 ### Test 4: Sorting Interaction
+
 **Given**: User clicks "Всего продаж" column header
 **When**: `onSort` callback fires
 **Then**:
+
 - [ ] Callback receives `field: 'totalSales'`
 - [ ] Groups re-render in sorted order
 - [ ] Sort direction indicator updates
 
 ### [PO TO FILL] Test 5: Progressive Disclosure
+
 **Given**: [PO TO SPECIFY] Group with >N products
 **When**: Component renders
 **Then**:
+
 - [ ] [PO TO SPECIFY] Detail rows collapsed by default?
 - [ ] [PO TO SPECIFY] "Show more" button displays?
 - [ ] [PO TO SPECIFY] Aggregate row always visible?
@@ -326,23 +344,29 @@ const detailRowClasses = [
 ## 🐛 Edge Cases
 
 ### Edge Case 1: Single-Product Group
+
 **Scenario**: Group with only 1 product (main product, no children)
 **Current Behavior**: Rowspan cell spans 2 rows (aggregate + 1 detail)
 **PO Decision**: [PO TO FILL]
+
 - Should single-product groups use rowspan, or display differently?
 - Should "Склейка" label be hidden for single products?
 
 ### Edge Case 2: Missing Main Product
+
 **Scenario**: All products in group have `spend = 0` (no main product)
 **Current Behavior**: Crown icon not displayed on any row
 **PO Decision**: [PO TO FILL]
+
 - How to identify "main" product without spend signal?
 - Use alphabetically first nmId? Or flag as anomaly?
 
 ### Edge Case 3: Very Large Group (>20 products)
+
 **Scenario**: Group with 25 products
 **Current Behavior**: Rowspan cell spans 26 rows (aggregate + 25 details)
 **PO Decision**: [PO TO FILL]
+
 - Collapse by default with "Show all" button?
 - Paginate within group?
 - Warn user about large group size?

@@ -17,11 +17,13 @@ Update finance-summary data pipeline to preserve and pass through backend tax me
 ## Acceptance Criteria
 
 ### AC1: Tax Data Pass-Through
+
 - [ ] `tax` field from `summary_total` is preserved in hook response
 - [ ] `summary_rus.tax` and `summary_eaeu.tax` are ALWAYS ignored (null)
 - [ ] Tax data accessible via `financeSummary.tax`
 
 ### AC2: Multi-Week Tax Aggregation
+
 - [ ] `aggregateTaxMetrics(weeks: TaxMetrics[])` function created
 - [ ] Income tax fields aggregated:
   - `tax_amount` — SUM across weeks
@@ -39,12 +41,14 @@ Update finance-summary data pipeline to preserve and pass through backend tax me
   - `vat_rate` — from first week
 
 ### AC3: Integration with Aggregation Pipeline
+
 - [ ] `aggregateFinanceSummaries()` in `hooks-v1/financial/aggregation.ts` updated
 - [ ] Tax aggregation called when multiple weeks have tax data
 - [ ] Weeks with `tax === null` excluded from tax aggregation
 - [ ] If ALL weeks have `tax === null` → aggregated tax is null
 
 ### AC4: Single Week Pass-Through
+
 - [ ] Single-week requests pass tax object as-is (no aggregation)
 
 ---
@@ -52,6 +56,7 @@ Update finance-summary data pipeline to preserve and pass through backend tax me
 ## Technical Implementation
 
 ### Files to Modify
+
 - `src/hooks-v1/financial/aggregation.ts` — Add tax aggregation logic
 
 ### Aggregation Rules
@@ -91,7 +96,7 @@ function aggregateTaxMetrics(taxMetrics: TaxMetrics[]): TaxMetrics {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author      | Change                                   |
+| ---------- | ----------- | ---------------------------------------- |
 | 2026-02-22 | BMad Master | Initial story creation (income tax only) |
-| 2026-02-23 | Claude | Added VAT field aggregation, +1 SP (3→4) |
+| 2026-02-23 | Claude      | Added VAT field aggregation, +1 SP (3→4) |

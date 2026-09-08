@@ -17,9 +17,9 @@
 
 The trends API request uses incorrect field `sale_gross` instead of `wb_sales_gross`:
 
-| Field | Value | What It Means |
-|-------|-------|---------------|
-| `sale_gross` | ~197,000₽ | Retail price (цена для покупателя) |
+| Field            | Value     | What It Means                                         |
+| ---------------- | --------- | ----------------------------------------------------- |
+| `sale_gross`     | ~197,000₽ | Retail price (цена для покупателя)                    |
 | `wb_sales_gross` | ~131,000₽ | Seller revenue after WB commission (выручка продавца) |
 
 **Impact**: Dashboard shows **~50% higher revenue** than actual seller earnings.
@@ -95,11 +95,11 @@ data.map(d => ({ revenue: d.wb_sales_gross, ... }))
 
 ## Files to Modify
 
-| File | Change |
-|------|--------|
-| `src/hooks/useTrends.ts` | Change `metrics=sale_gross` → `metrics=wb_sales_gross` |
-| `src/types/api.ts` | Update `TrendsDataPoint` interface (if field name differs) |
-| `src/components/custom/TrendGraph.tsx` | Update data mapping (if needed) |
+| File                                   | Change                                                     |
+| -------------------------------------- | ---------------------------------------------------------- |
+| `src/hooks/useTrends.ts`               | Change `metrics=sale_gross` → `metrics=wb_sales_gross`     |
+| `src/types/api.ts`                     | Update `TrendsDataPoint` interface (if field name differs) |
+| `src/components/custom/TrendGraph.tsx` | Update data mapping (if needed)                            |
 
 ---
 

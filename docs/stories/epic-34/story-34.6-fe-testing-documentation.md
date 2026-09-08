@@ -26,6 +26,7 @@ Comprehensive testing suite, documentation updates, accessibility verification, 
 ## ✅ Acceptance Criteria
 
 ### 1. Unit Tests (>80% Coverage)
+
 - [ ] All API client functions tested with MSW
 - [ ] All React Query hooks tested
 - [ ] All UI components tested with React Testing Library
@@ -33,18 +34,21 @@ Comprehensive testing suite, documentation updates, accessibility verification, 
 - [ ] Coverage report generated: >80% lines, >70% branches
 
 ### 2. Integration Tests
+
 - [ ] Full binding flow tested
 - [ ] Preferences save flow tested
 - [ ] Quiet hours with timezone calculations tested
 - [ ] Error states and recovery tested
 
 ### 3. E2E Tests (Playwright)
+
 - [ ] Complete user journey: not bound → bind → configure → save
 - [ ] Unbind flow tested
 - [ ] Mobile responsive layouts tested
 - [ ] Cross-browser testing (Chrome, Firefox, Safari)
 
 ### 4. Accessibility Audit (WCAG 2.1 AA)
+
 - [ ] Automated testing (axe-core, Lighthouse)
 - [ ] Manual keyboard navigation testing
 - [ ] Screen reader testing (NVDA/JAWS/VoiceOver)
@@ -52,12 +56,14 @@ Comprehensive testing suite, documentation updates, accessibility verification, 
 - [ ] Focus management validation
 
 ### 5. Documentation Updates
+
 - [ ] README updated with Telegram notifications feature
 - [ ] CHANGELOG updated with Epic 34-FE entries
 - [ ] API integration guide created
 - [ ] Component Storybook stories created (optional)
 
 ### 6. Final QA
+
 - [ ] Code review completed
 - [ ] Performance testing (Lighthouse score >90)
 - [ ] Security review (no exposed tokens, XSS prevention)
@@ -371,6 +377,7 @@ export default defineConfig({
 ### Automated Testing
 
 **Lighthouse CI Configuration** (`.lighthouserc.json`):
+
 ```json
 {
   "ci": {
@@ -390,6 +397,7 @@ export default defineConfig({
 ```
 
 **axe-core Integration** (`src/__tests__/a11y/notifications.a11y.test.tsx`):
+
 ```typescript
 import { render } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';
@@ -418,6 +426,7 @@ describe('Accessibility Tests', () => {
 ### Manual Testing Checklist
 
 **Keyboard Navigation**:
+
 - [ ] All interactive elements reachable via Tab
 - [ ] Focus indicators visible on all elements
 - [ ] Logical tab order (top to bottom, left to right)
@@ -425,6 +434,7 @@ describe('Accessibility Tests', () => {
 - [ ] ESC key closes modals
 
 **Screen Reader Testing**:
+
 - [ ] NVDA (Windows): All content announced correctly
 - [ ] JAWS (Windows): Aria-labels read properly
 - [ ] VoiceOver (macOS/iOS): Landmarks and headings navigable
@@ -432,6 +442,7 @@ describe('Accessibility Tests', () => {
 - [ ] Form inputs have associated labels
 
 **Color Contrast**:
+
 - [ ] All text meets WCAG AA standards (4.5:1 for normal text)
 - [ ] Interactive elements meet 3:1 contrast ratio
 - [ ] Disabled states still readable
@@ -491,7 +502,7 @@ Receive instant push notifications about background tasks directly in Telegram.
 
 **File**: `docs/guides/telegram-notifications-api.md`
 
-```markdown
+````markdown
 # Telegram Notifications API Integration Guide
 
 ## Overview
@@ -512,9 +523,10 @@ Generates a binding code for Telegram verification.
 {
   "language": "ru"  // optional: "ru" | "en"
 }
-```
+````
 
 **Response**:
+
 ```json
 {
   "binding_code": "A1B2C3D4",
@@ -525,7 +537,8 @@ Generates a binding code for Telegram verification.
 ```
 
 [... continue with all endpoints ...]
-```
+
+````
 
 ### Component Storybook Stories (Optional)
 
@@ -556,13 +569,14 @@ export const Bound: Story = {
     username: 'testuser',
   },
 };
-```
+````
 
 ---
 
 ## 6️⃣ Final QA Checklist
 
 ### Code Review
+
 - [ ] All code follows project conventions
 - [ ] No console.log statements in production code
 - [ ] TypeScript strict mode compliance (zero errors)
@@ -571,6 +585,7 @@ export const Bound: Story = {
 - [ ] No hardcoded values (use constants/env vars)
 
 ### Performance Testing
+
 - [ ] Lighthouse Performance score >90
 - [ ] First Contentful Paint <1.8s
 - [ ] Largest Contentful Paint <2.5s
@@ -578,6 +593,7 @@ export const Bound: Story = {
 - [ ] Cumulative Layout Shift <0.1
 
 ### Security Review
+
 - [ ] No exposed API keys or tokens in frontend code
 - [ ] XSS prevention: All user inputs sanitized
 - [ ] CSRF protection via JWT tokens
@@ -585,6 +601,7 @@ export const Bound: Story = {
 - [ ] Deep links validated before opening
 
 ### Production Readiness
+
 - [ ] All environment variables documented
 - [ ] Error boundaries implemented
 - [ ] Loading states for all async operations
@@ -598,13 +615,13 @@ export const Bound: Story = {
 
 ### Expected Coverage Metrics
 
-| Category | Target | Measurement |
-|----------|--------|-------------|
-| Unit Tests | >80% | Lines covered / Total lines |
-| Integration Tests | >70% | Critical paths tested |
-| E2E Tests | 100% | User journeys covered |
-| Accessibility | WCAG 2.1 AA | axe-core violations = 0 |
-| Performance | >90 | Lighthouse score |
+| Category          | Target      | Measurement                 |
+| ----------------- | ----------- | --------------------------- |
+| Unit Tests        | >80%        | Lines covered / Total lines |
+| Integration Tests | >70%        | Critical paths tested       |
+| E2E Tests         | 100%        | User journeys covered       |
+| Accessibility     | WCAG 2.1 AA | axe-core violations = 0     |
+| Performance       | >90         | Lighthouse score            |
 
 ### Running Tests
 

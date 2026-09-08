@@ -26,6 +26,7 @@ Comprehensive API analysis (2026-01-31) identified **critical mismatches** betwe
 ### Business Requirements (from stakeholder diagram)
 
 **8 Required Metrics**:
+
 1. Заказы (Orders volume)
 2. COGS по заказам (COGS for orders)
 3. Выкупы (Actual sales/redemptions)
@@ -36,12 +37,14 @@ Comprehensive API analysis (2026-01-31) identified **critical mismatches** betwe
 8. **Теор. прибыль = Заказы - COGS - реклама - логистика - хранение**
 
 **Period Modes**:
+
 - По дням за последнюю (актуальную) неделю
 - По дням за последний (завершённый) месяц
 
 ### Solution
 
 Fix all API integration issues at the data layer:
+
 1. Correct API field mappings
 2. Add missing API integrations (Orders, Comparison)
 3. Implement proper period handling with ISO weeks
@@ -55,6 +58,7 @@ Fix all API integration issues at the data layer:
 ## Analysis Source
 
 Based on comprehensive subagent analysis of backend documentation:
+
 - `docs/request-backend/121-DASHBOARD-MAIN-PAGE-ORDERS-API.md`
 - `docs/request-backend/122-DASHBOARD-MAIN-PAGE-SALES-API.md`
 - `docs/request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md`
@@ -65,14 +69,14 @@ Based on comprehensive subagent analysis of backend documentation:
 
 ## Dependencies
 
-| Type | Dependency | Status |
-|------|------------|--------|
-| Backend | `/v1/analytics/orders/volume` | ✅ Available |
-| Backend | `/v1/analytics/weekly/finance-summary` | ✅ Available |
-| Backend | `/v1/analytics/weekly/comparison` | ✅ Available |
-| Backend | `/v1/analytics/weekly/trends` | ✅ Available |
-| Backend | `/v1/analytics/advertising` | ✅ Available |
-| Frontend | Epic 60-FE (Period Context) | ✅ Completed |
+| Type     | Dependency                             | Status       |
+| -------- | -------------------------------------- | ------------ |
+| Backend  | `/v1/analytics/orders/volume`          | ✅ Available |
+| Backend  | `/v1/analytics/weekly/finance-summary` | ✅ Available |
+| Backend  | `/v1/analytics/weekly/comparison`      | ✅ Available |
+| Backend  | `/v1/analytics/weekly/trends`          | ✅ Available |
+| Backend  | `/v1/analytics/advertising`            | ✅ Available |
+| Frontend | Epic 60-FE (Period Context)            | ✅ Completed |
 
 ---
 
@@ -80,20 +84,20 @@ Based on comprehensive subagent analysis of backend documentation:
 
 ### Currently Used (with issues)
 
-| Method | Endpoint | Issue |
-|--------|----------|-------|
-| GET | `/v1/analytics/weekly/finance-summary` | Using wrong field `sale_gross` |
-| GET | `/v1/analytics/weekly/trends` | Requesting `sale_gross` instead of `wb_sales_gross` |
-| GET | `/v1/analytics/advertising` | Only ROAS, missing total spend |
+| Method | Endpoint                               | Issue                                               |
+| ------ | -------------------------------------- | --------------------------------------------------- |
+| GET    | `/v1/analytics/weekly/finance-summary` | Using wrong field `sale_gross`                      |
+| GET    | `/v1/analytics/weekly/trends`          | Requesting `sale_gross` instead of `wb_sales_gross` |
+| GET    | `/v1/analytics/advertising`            | Only ROAS, missing total spend                      |
 
 ### Need to Add
 
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| GET | `/v1/analytics/orders/volume` | Orders volume for dashboard |
-| GET | `/v1/analytics/weekly/comparison` | Period comparison |
-| GET | `/v1/analytics/weekly/by-sku?includeCogs=true` | COGS per order |
-| GET | `/v1/analytics/unit-economics` | Unit economics breakdown |
+| Method | Endpoint                                       | Purpose                     |
+| ------ | ---------------------------------------------- | --------------------------- |
+| GET    | `/v1/analytics/orders/volume`                  | Orders volume for dashboard |
+| GET    | `/v1/analytics/weekly/comparison`              | Period comparison           |
+| GET    | `/v1/analytics/weekly/by-sku?includeCogs=true` | COGS per order              |
+| GET    | `/v1/analytics/unit-economics`                 | Unit economics breakdown    |
 
 ---
 
@@ -104,17 +108,20 @@ Based on comprehensive subagent analysis of backend documentation:
 ---
 
 ### Story 61.1-FE: Fix Revenue Field Mapping
+
 **Estimate**: 2 SP | **Priority**: P0
 
 **Title**: Исправить маппинг поля выручки (sale_gross → wb_sales_gross)
 
 **Problem**:
+
 - `useTrends.ts:80` requests `metrics=sale_gross` instead of `wb_sales_gross`
 - `sale_gross` = retail price (цена для покупателя)
 - `wb_sales_gross` = seller revenue (выручка продавца после комиссии WB)
 - Dashboard shows **incorrect revenue** approximately 33% higher than actual
 
 **Acceptance Criteria**:
+
 - [ ] Change `useTrends.ts` to request `metrics=wb_sales_gross,to_pay_goods`
 - [ ] Update `TrendsResponse` type to use `wb_sales_gross`
 - [ ] Verify TrendGraph displays correct values
@@ -122,10 +129,12 @@ Based on comprehensive subagent analysis of backend documentation:
 - [ ] Update any components consuming trends data
 
 **Files**:
+
 - `src/hooks/useTrends.ts` (line 80)
 - `src/types/api.ts` (TrendsDataPoint)
 
 **Verification**:
+
 ```typescript
 // Before: metrics=sale_gross (WRONG - retail price)
 // After: metrics=wb_sales_gross (CORRECT - seller revenue)
@@ -134,26 +143,31 @@ Based on comprehensive subagent analysis of backend documentation:
 ---
 
 ### Story 61.2-FE: Fix Gross Profit Formula
+
 **Estimate**: 2 SP | **Priority**: P0
 
 **Title**: Исправить формулу валовой прибыли
 
 **Problem**:
+
 - `useFinancialSummary.ts:345` calculates: `gross_profit = payout_total - cogs_total`
 - `payout_total` already has logistics/storage deducted (это маржинальный доход)
 - Correct formula: `gross_profit = sale_gross_total - cogs_total`
 
 **Acceptance Criteria**:
+
 - [ ] Fix formula in `aggregateFinanceSummaries()` function
 - [ ] Update `FinanceSummary` type documentation
 - [ ] Add unit tests for gross profit calculation
 - [ ] Verify dashboard margin % is correct
 
 **Files**:
+
 - `src/hooks/useFinancialSummary.ts` (line 344-346)
 - `src/types/finance-summary.ts`
 
 **Verification**:
+
 ```typescript
 // Before: gross_profit = payout_total - cogs_total (WRONG)
 // After: gross_profit = (sale_gross_total || wb_sales_gross) - cogs_total (CORRECT)
@@ -162,16 +176,19 @@ Based on comprehensive subagent analysis of backend documentation:
 ---
 
 ### Story 61.3-FE: Implement Orders Volume API Integration
+
 **Estimate**: 5 SP | **Priority**: P0
 
 **Title**: Интегрировать API объёма заказов
 
 **Problem**:
+
 - Business requires "Заказы" metric on dashboard
 - Endpoint exists: `GET /v1/analytics/orders/volume`
 - Currently **not used** on dashboard
 
 **Acceptance Criteria**:
+
 - [ ] Create `src/lib/api/orders-volume.ts` with API functions
 - [ ] Create TypeScript types for OrdersVolumeResponse
 - [ ] Create `useOrdersVolume` hook with proper caching
@@ -181,6 +198,7 @@ Based on comprehensive subagent analysis of backend documentation:
 - [ ] Export from hooks index
 
 **API Contract** (from backend docs):
+
 ```typescript
 interface OrdersVolumeParams {
   from: string;      // YYYY-MM-DD
@@ -203,6 +221,7 @@ interface OrdersVolumeResponse {
 ```
 
 **Files**:
+
 - `src/lib/api/orders-volume.ts` (NEW)
 - `src/types/orders-volume.ts` (NEW)
 - `src/hooks/useOrdersVolume.ts` (NEW)
@@ -210,16 +229,19 @@ interface OrdersVolumeResponse {
 ---
 
 ### Story 61.4-FE: Implement COGS for Orders
+
 **Estimate**: 3 SP | **Priority**: P0
 
 **Title**: Реализовать COGS по заказам
 
 **Problem**:
+
 - Business requires "COGS по заказам" metric
 - Need to calculate COGS based on orders (not just sales)
 - Endpoint: `GET /v1/analytics/weekly/by-sku?includeCogs=true`
 
 **Acceptance Criteria**:
+
 - [ ] Add `includeCogs` parameter to by-sku API call
 - [ ] Create helper function to calculate total COGS for orders
 - [ ] Handle missing COGS flag (`missing_cogs_flag`)
@@ -227,6 +249,7 @@ interface OrdersVolumeResponse {
 - [ ] Add to existing analytics hooks
 
 **Calculation Logic**:
+
 ```typescript
 // For each order item with nm_id:
 // 1. Get COGS from /v1/cogs?nm_id=X or from by-sku response
@@ -235,22 +258,26 @@ interface OrdersVolumeResponse {
 ```
 
 **Files**:
+
 - `src/hooks/useOrdersCogs.ts` (NEW)
 - `src/lib/api/analytics.ts` (modify)
 
 ---
 
 ### Story 61.5-FE: Implement Comparison Endpoint Integration
+
 **Estimate**: 5 SP | **Priority**: P0
 
 **Title**: Интегрировать эндпоинт сравнения периодов
 
 **Problem**:
+
 - Backend provides `GET /v1/analytics/weekly/comparison`
 - Frontend does **2 separate requests** instead of using comparison endpoint
 - Period presets use date ranges instead of ISO weeks
 
 **Acceptance Criteria**:
+
 - [ ] Create `src/lib/api/analytics-comparison.ts`
 - [ ] Create `useAnalyticsComparison` hook
 - [ ] Support ISO week format for periods: `period1=2026-W04&period2=2026-W03`
@@ -260,6 +287,7 @@ interface OrdersVolumeResponse {
 - [ ] Support optional `groupBy` (sku, brand, category)
 
 **API Contract**:
+
 ```typescript
 interface ComparisonParams {
   period1: string;  // "2026-W04" or "2026-W01:W04"
@@ -279,6 +307,7 @@ interface ComparisonResponse {
 ```
 
 **Files**:
+
 - `src/lib/api/analytics-comparison.ts` (NEW)
 - `src/types/analytics-comparison.ts` (NEW)
 - `src/hooks/useAnalyticsComparison.ts` (NEW)
@@ -286,16 +315,19 @@ interface ComparisonResponse {
 ---
 
 ### Story 61.6-FE: Fix Period Presets to Use ISO Weeks
+
 **Estimate**: 3 SP | **Priority**: P1
 
 **Title**: Исправить пресеты периодов на ISO-недели
 
 **Problem**:
+
 - `period-presets.ts` generates date ranges (YYYY-MM-DD)
 - Comparison endpoint requires ISO weeks (YYYY-Www)
 - MoM/QoQ/YoY presets incompatible with backend
 
 **Acceptance Criteria**:
+
 - [ ] Convert calendar months to ISO week ranges
 - [ ] MoM: `period1=2026-W01:W05` (Jan weeks) vs `period2=2025-W49:W52` (Dec weeks)
 - [ ] QoQ: Convert quarters to week ranges
@@ -304,10 +336,12 @@ interface ComparisonResponse {
 - [ ] Handle year boundaries correctly
 
 **Files**:
+
 - `src/components/custom/analytics/period-presets.ts`
 - `src/lib/period-helpers.ts` (add helper functions)
 
 **Example Conversion**:
+
 ```typescript
 // Before (WRONG):
 period1: { from: '2026-01-01', to: '2026-01-31' }
@@ -319,11 +353,13 @@ period1: '2026-W01:W05'  // January 2026 in ISO weeks
 ---
 
 ### Story 61.7-FE: Unify ISO Week Calculation Logic
+
 **Estimate**: 2 SP | **Priority**: P1
 
 **Title**: Унифицировать логику расчёта ISO-недель
 
 **Problem**:
+
 - ISO week calculation duplicated in 3+ files:
   - `useFinancialSummary.ts:148-164`
   - `useTrends.ts:52-63`
@@ -331,6 +367,7 @@ period1: '2026-W01:W05'  // January 2026 in ISO weeks
 - Risk of divergence if bug in one version
 
 **Acceptance Criteria**:
+
 - [ ] Consolidate all ISO week logic in `src/lib/period-helpers.ts`
 - [ ] Export single `getCurrentIsoWeek()` function
 - [ ] Export `getWeekRange(numWeeks)` helper
@@ -339,6 +376,7 @@ period1: '2026-W01:W05'  // January 2026 in ISO weeks
 - [ ] Add unit tests
 
 **Files**:
+
 - `src/lib/period-helpers.ts` (enhance)
 - `src/hooks/useFinancialSummary.ts` (refactor)
 - `src/hooks/useTrends.ts` (refactor)
@@ -351,38 +389,45 @@ period1: '2026-W01:W05'  // January 2026 in ISO weeks
 ---
 
 ### Story 61.8-FE: Add Advertising Total Spend
+
 **Estimate**: 2 SP | **Priority**: P1
 
 **Title**: Добавить общие рекламные затраты
 
 **Problem**:
+
 - Dashboard shows ROAS but not total advertising spend
 - Business requires "Рекламные затраты" as separate metric
 - Data available in advertising API response
 
 **Acceptance Criteria**:
+
 - [ ] Extract `total_spend` from advertising response
 - [ ] Add to dashboard metrics alongside ROAS
 - [ ] Include in theoretical profit calculation
 - [ ] Handle null/zero spend gracefully
 
 **Files**:
+
 - `src/hooks/useAdvertisingAnalytics.ts`
 - `src/lib/advertising-helpers.ts` (if needed)
 
 ---
 
 ### Story 61.9-FE: Implement Daily Breakdown Support
+
 **Estimate**: 5 SP | **Priority**: P1
 
 **Title**: Реализовать разбивку по дням
 
 **Problem**:
+
 - Business requires "По дням за неделю/месяц" view
 - APIs support daily aggregation but not used
 - No daily data structure in frontend
 
 **Acceptance Criteria**:
+
 - [ ] Add `aggregation=day` to trends API calls when needed
 - [ ] Add `aggregation=day` to orders volume API
 - [ ] Create `DailyMetrics` type for daily breakdown
@@ -391,6 +436,7 @@ period1: '2026-W01:W05'  // January 2026 in ISO weeks
 - [ ] Export daily data for chart consumption
 
 **Data Structure**:
+
 ```typescript
 interface DailyMetrics {
   date: string;        // YYYY-MM-DD
@@ -406,6 +452,7 @@ interface DailyMetrics {
 ```
 
 **Files**:
+
 - `src/types/daily-metrics.ts` (NEW)
 - `src/hooks/useDailyMetrics.ts` (NEW)
 - `src/lib/daily-helpers.ts` (NEW)
@@ -413,16 +460,19 @@ interface DailyMetrics {
 ---
 
 ### Story 61.10-FE: Implement Theoretical Profit Calculation
+
 **Estimate**: 3 SP | **Priority**: P0
 
 **Title**: Реализовать расчёт теоретической прибыли
 
 **Problem**:
+
 - Business formula: `Теор. прибыль = Заказы - COGS - реклама - логистика - хранение`
 - Current implementation uses different formula
 - Need dedicated calculation with all components
 
 **Acceptance Criteria**:
+
 - [ ] Create `calculateTheoreticalProfit()` function
 - [ ] Accept all required inputs (orders, cogs, advertising, logistics, storage)
 - [ ] Handle null/missing values gracefully
@@ -431,6 +481,7 @@ interface DailyMetrics {
 - [ ] Document formula in code comments
 
 **Implementation**:
+
 ```typescript
 interface TheoreticalProfitInput {
   ordersAmount: number;      // From orders volume API
@@ -456,47 +507,56 @@ function calculateTheoreticalProfit(input: TheoreticalProfitInput): TheoreticalP
 ```
 
 **Files**:
+
 - `src/lib/theoretical-profit.ts` (NEW)
 - `src/lib/__tests__/theoretical-profit.test.ts` (NEW)
 
 ---
 
 ### Story 61.11-FE: Fix 53-Week Year Handling
+
 **Estimate**: 1 SP | **Priority**: P2
 
 **Title**: Исправить обработку годов с 53 неделями
 
 **Problem**:
+
 - `useGeneratedWeeks.ts:37` hardcodes 52 weeks
 - Some years have 53 weeks (2020, 2026)
 - Causes incorrect week generation at year boundary
 
 **Acceptance Criteria**:
+
 - [ ] Use `date-fns` `getISOWeeksInYear()` instead of hardcoded 52
 - [ ] Test year boundary transitions
 - [ ] Verify week dropdown shows correct weeks
 
 **Files**:
+
 - `src/components/custom/period-selector/useGeneratedWeeks.ts`
 
 ---
 
 ### Story 61.12-FE: Increase Advertising Cache Time
+
 **Estimate**: 1 SP | **Priority**: P2
 
 **Title**: Увеличить время кэширования рекламы
 
 **Problem**:
+
 - Backend recommends 30 min cache for advertising
 - Frontend uses 30 seconds (staleTime: 30000)
 - Causes excessive API calls
 
 **Acceptance Criteria**:
+
 - [ ] Change `staleTime` from 30s to 30min (1800000ms)
 - [ ] Verify cache invalidation still works on manual refresh
 - [ ] Update comments with cache strategy
 
 **Files**:
+
 - `src/hooks/useAdvertisingAnalytics.ts` (line 135-136)
 
 ---
@@ -546,15 +606,15 @@ marginPct = (grossProfit / saleGrossTotal) * 100
 
 ### API Field Reference
 
-| Business Term | API Field | Endpoint |
-|---------------|-----------|----------|
-| Заказы | `total_amount` | `/analytics/orders/volume` |
-| COGS по заказам | calculated | `/analytics/weekly/by-sku?includeCogs=true` |
-| Выкупы | `wb_sales_gross` | `/analytics/weekly/finance-summary` |
-| COGS по выкупам | `cogs_total` | `/analytics/weekly/finance-summary` |
-| Рекламные затраты | `total_spend` | `/analytics/advertising` |
-| Логистика | `logistics_cost` | `/analytics/weekly/finance-summary` |
-| Хранение | `storage_cost` | `/analytics/weekly/finance-summary` |
+| Business Term     | API Field        | Endpoint                                    |
+| ----------------- | ---------------- | ------------------------------------------- |
+| Заказы            | `total_amount`   | `/analytics/orders/volume`                  |
+| COGS по заказам   | calculated       | `/analytics/weekly/by-sku?includeCogs=true` |
+| Выкупы            | `wb_sales_gross` | `/analytics/weekly/finance-summary`         |
+| COGS по выкупам   | `cogs_total`     | `/analytics/weekly/finance-summary`         |
+| Рекламные затраты | `total_spend`    | `/analytics/advertising`                    |
+| Логистика         | `logistics_cost` | `/analytics/weekly/finance-summary`         |
+| Хранение          | `storage_cost`   | `/analytics/weekly/finance-summary`         |
 
 ---
 
@@ -594,34 +654,34 @@ src/
 
 ## Sprint Allocation
 
-| Sprint | Stories | SP | Focus |
-|--------|---------|---:|-------|
-| Sprint 1 | 61.1, 61.2, 61.3, 61.10 | 12 | Critical fixes + Orders + Profit formula |
-| Sprint 2 | 61.4, 61.5, 61.6, 61.7 | 13 | COGS, Comparison, Period handling |
-| Sprint 3 | 61.8, 61.9, 61.11, 61.12 | 9 | Improvements + Daily breakdown |
+| Sprint   | Stories                  |  SP | Focus                                    |
+| -------- | ------------------------ | --: | ---------------------------------------- |
+| Sprint 1 | 61.1, 61.2, 61.3, 61.10  |  12 | Critical fixes + Orders + Profit formula |
+| Sprint 2 | 61.4, 61.5, 61.6, 61.7   |  13 | COGS, Comparison, Period handling        |
+| Sprint 3 | 61.8, 61.9, 61.11, 61.12 |   9 | Improvements + Daily breakdown           |
 
 ---
 
 ## Success Metrics
 
-| Metric | Current | Target |
-|--------|---------|--------|
-| Revenue accuracy | ~67% (sale_gross vs wb_sales_gross) | 100% |
-| Profit formula correctness | ❌ Wrong | ✅ Correct |
-| Business metrics coverage | 4/8 | 8/8 |
-| Daily breakdown support | None | Full |
-| API calls for comparison | 2 | 1 |
-| ISO week handling | Duplicated | Unified |
+| Metric                     | Current                             | Target     |
+| -------------------------- | ----------------------------------- | ---------- |
+| Revenue accuracy           | ~67% (sale_gross vs wb_sales_gross) | 100%       |
+| Profit formula correctness | ❌ Wrong                            | ✅ Correct |
+| Business metrics coverage  | 4/8                                 | 8/8        |
+| Daily breakdown support    | None                                | Full       |
+| API calls for comparison   | 2                                   | 1          |
+| ISO week handling          | Duplicated                          | Unified    |
 
 ---
 
 ## Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Breaking existing dashboard | High | Feature flag for gradual rollout |
-| Performance regression (more API calls) | Medium | Parallel fetching, caching |
-| Data inconsistency during migration | Medium | Side-by-side comparison period |
+| Risk                                    | Impact | Mitigation                       |
+| --------------------------------------- | ------ | -------------------------------- |
+| Breaking existing dashboard             | High   | Feature flag for gradual rollout |
+| Performance regression (more API calls) | Medium | Parallel fetching, caching       |
+| Data inconsistency during migration     | Medium | Side-by-side comparison period   |
 
 ---
 

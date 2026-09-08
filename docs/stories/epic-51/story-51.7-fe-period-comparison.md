@@ -22,6 +22,7 @@
 ## Background
 
 This story implements period comparison functionality for FBS Historical Analytics. The component enables sellers to compare metrics between two date ranges using the `/v1/analytics/orders/compare` endpoint, with:
+
 - Two independent period selectors
 - Side-by-side comparison table with all key metrics
 - Delta values showing both absolute and percentage changes
@@ -135,13 +136,13 @@ This story implements period comparison functionality for FBS Historical Analyti
 
 ## Components to Create
 
-| File | Lines (Est.) | Description |
-|------|--------------|-------------|
-| `PeriodComparisonPanel.tsx` | ~120 | Main container with state management |
-| `PeriodSelector.tsx` | ~60 | Date range picker with label |
-| `ComparisonPresets.tsx` | ~50 | MoM/QoQ/YoY preset buttons |
-| `ComparisonTable.tsx` | ~100 | Side-by-side metrics table |
-| `DeltaValue.tsx` | ~50 | Change indicator with color coding |
+| File                        | Lines (Est.) | Description                          |
+| --------------------------- | ------------ | ------------------------------------ |
+| `PeriodComparisonPanel.tsx` | ~120         | Main container with state management |
+| `PeriodSelector.tsx`        | ~60          | Date range picker with label         |
+| `ComparisonPresets.tsx`     | ~50          | MoM/QoQ/YoY preset buttons           |
+| `ComparisonTable.tsx`       | ~100         | Side-by-side metrics table           |
+| `DeltaValue.tsx`            | ~50          | Change indicator with color coding   |
 
 **Total**: ~380 lines across 5 files
 
@@ -735,16 +736,16 @@ describe('getPresetDates', () => {
 
 ### Required (Blocking)
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Story 51.1-FE | Ready | Types for `CompareResponse`, `PeriodMetrics` |
-| Story 51.2-FE | Ready | `useFbsCompare` hook |
-| `date-fns` | Installed | Date manipulation |
+| Dependency    | Status    | Notes                                        |
+| ------------- | --------- | -------------------------------------------- |
+| Story 51.1-FE | Ready     | Types for `CompareResponse`, `PeriodMetrics` |
+| Story 51.2-FE | Ready     | `useFbsCompare` hook                         |
+| `date-fns`    | Installed | Date manipulation                            |
 
 ### Non-Blocking
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
+| Dependency    | Status  | Notes                              |
+| ------------- | ------- | ---------------------------------- |
 | Story 51.8-FE | Pending | FBS Analytics Page (consumes this) |
 
 ---
@@ -770,12 +771,13 @@ describe('getPresetDates', () => {
 **Endpoint**: `GET /v1/analytics/orders/compare`
 
 **Query Parameters**:
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `period1_from` | string | Yes | Period 1 start (YYYY-MM-DD) |
-| `period1_to` | string | Yes | Period 1 end (YYYY-MM-DD) |
-| `period2_from` | string | Yes | Period 2 start (YYYY-MM-DD) |
-| `period2_to` | string | Yes | Period 2 end (YYYY-MM-DD) |
+
+| Parameter      | Type   | Required | Description                 |
+| -------------- | ------ | -------- | --------------------------- |
+| `period1_from` | string | Yes      | Period 1 start (YYYY-MM-DD) |
+| `period1_to`   | string | Yes      | Period 1 end (YYYY-MM-DD)   |
+| `period2_from` | string | Yes      | Period 2 start (YYYY-MM-DD) |
+| `period2_to`   | string | Yes      | Period 2 end (YYYY-MM-DD)   |
 
 **Response**: See `docs/request-backend/110-epic-51-fbs-historical-analytics-api.md`
 
@@ -783,8 +785,8 @@ describe('getPresetDates', () => {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author                 | Change                 |
+| ---------- | ---------------------- | ---------------------- |
 | 2026-01-29 | Claude Code (PM Agent) | Initial story creation |
 
 ---

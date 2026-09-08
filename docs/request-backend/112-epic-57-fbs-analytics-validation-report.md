@@ -12,10 +12,10 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 
 ### Key Findings
 
-| Status | Count | Details |
-|--------|-------|---------|
-| ✅ **Implemented** | 3 | All three Epic 57 services fully implemented |
-| ⚠️ **Missing API Layer** | 1 | No REST API controller exposing these services |
+| Status                      | Count    | Details                                                          |
+| --------------------------- | -------- | ---------------------------------------------------------------- |
+| ✅ **Implemented**          | 3        | All three Epic 57 services fully implemented                     |
+| ⚠️ **Missing API Layer**    | 1        | No REST API controller exposing these services                   |
 | 📝 **Documentation Status** | Outdated | Epic status marked as "TDD READY" but implementation is complete |
 
 ---
@@ -28,6 +28,7 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 **File**: `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/src/analytics/services/warehouse-remains.service.ts`
 
 **Implemented Methods**:
+
 - `createWarehouseRemainsTask()` - Creates async export task
 - `getTaskStatus()` - Polls task status
 - `downloadTaskResult()` - Downloads and parses CSV
@@ -35,6 +36,7 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 - `parseCSV()` - Parses semicolon-separated CSV (English + Russian columns)
 
 **Features**:
+
 - ✅ Rate limiting: 1 req/min (60 second interval)
 - ✅ Redis caching for task metadata (1-hour TTL)
 - ✅ Supports task options (groupByBrand, groupBySubject, groupByWarehouse, filters)
@@ -47,16 +49,19 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 **Resolution date**: 2026-01-30
 **Summary**: Epic 57 validation found all 3 services fully implemented (WarehouseRemainsService, FbsAnalyticsService, FbsComparisonService) but no REST API controller exposing them. Services exist but are only accessible through task queue, not direct HTTP endpoints.
 **Remaining frontend action**: Services accessible via task enqueue pattern. Direct REST endpoints not yet available.
+
 - ✅ Error handling for all WB API statuses (401, 404, 410, 429, 5xx)
 - ✅ Task lifecycle validation (new → processing → done/purged/canceled)
 - ✅ CSV parsing with bilingual column support
 
 **Rate Limiting**:
+
 - Scope: `wb_reports_warehouse`
 - Interval: 60000ms (60 seconds)
 - Checked via: `RateLimitService.checkLimit(cabinetId, scope)`
 
 **SDK Methods Used**:
+
 - `sdk.analytics.createWarehouseRemainsTask()`
 - `sdk.analytics.getWarehouseRemainsTaskStatus()`
 - `sdk.analytics.downloadWarehouseRemainsTask()`
@@ -71,6 +76,7 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 **File**: `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/src/analytics/services/regional-stock.service.ts`
 
 **Implemented Methods**:
+
 - `getStocksByOffice()` - Stock breakdown by offices/warehouses
 - `getStocksByRegion()` - Stock breakdown by regions (with fallback to office aggregation)
 - `normalizeWarehouseName()` - Warehouse name normalization
@@ -80,6 +86,7 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 - `createWarehouseMapping()` - Warehouse name mapping object
 
 **Features**:
+
 - ✅ Rate limiting via `WbAnalyticsService` (3 req/min = 20s interval)
 - ✅ Redis caching with 1-hour TTL
 - ✅ Federal district mapping (6 federal districts)
@@ -89,6 +96,7 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 - ✅ Error classification (transient vs terminal)
 
 **Federal Districts Mapped**:
+
 ```typescript
 'Центральный ФО': ['Москва', 'Подольск', 'Коледино', 'Электросталь', 'Тула', 'Белая Дача', 'Домодедово']
 'Северо-Западный ФО': ['Санкт-Петербург', 'СПб Шушары', 'Невский']
@@ -99,6 +107,7 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 ```
 
 **SDK Methods Used**:
+
 - `sdk.analytics.getStocksByOffice({ period, nmIds })`
 - `sdk.analytics.getStocksByRegion({ period })` (with fallback)
 
@@ -112,6 +121,7 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 **File**: `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/src/analytics/services/fbs-analytics-aggregation.service.ts`
 
 **Implemented Methods**:
+
 - `aggregateFbsAnalytics()` - Main aggregation method
 - `calculateTurnoverRate()` - Turnover rate calculation
 - `calculateStockCoverageDays()` - Stock coverage days
@@ -119,6 +129,7 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 - `invalidateCache()` - Cache invalidation
 
 **Data Sources Combined**:
+
 1. **Order Statistics**: `sdk.analytics.createGroupedHistory()`
    - ordersCount, ordersSumRub, cancelCount, buyoutCount, avgPriceRub
 2. **Stock Analytics**: `sdk.products.getProductsProduct()`
@@ -127,6 +138,7 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
    - warehouseId, warehouseName, quantity
 
 **Features**:
+
 - ✅ Parallel fetching from all sources (Promise.allSettled)
 - ✅ Redis caching with 15-minute TTL
 - ✅ Partial data handling (continues when some sources fail)
@@ -138,6 +150,7 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 **Cache Key**: `fbs:aggregation:{cabinetId}:{hash(period)}`
 
 **Response Structure**:
+
 ```typescript
 {
   cabinetId: string;
@@ -162,12 +175,14 @@ Validation of Epic 57 FBS Analytics documentation against actual implementation 
 All three Epic 57 services are **implemented and tested** but **NOT accessible via REST API**.
 
 **Evidence**:
+
 - ✅ Services registered in `AnalyticsModule` providers
 - ✅ Services exported from `AnalyticsModule`
 - ❌ No controller injects these services
 - ❌ No `@Controller` decorator with `@Get/@Post` endpoints for FBS analytics
 
 **Search Results**:
+
 ```bash
 # Searched for controllers using these services:
 $ grep -r "FbsAnalyticsAggregationService\|WarehouseRemainsService\|RegionalStockService" src/**/*.controller.ts
@@ -176,6 +191,7 @@ $ grep -r "FbsAnalyticsAggregationService\|WarehouseRemainsService\|RegionalStoc
 
 **Documentation Claims**:
 The epic documentation specifies these endpoints:
+
 ```
 GET  /v1/analytics/fbs/stock/groups            # Stock by product groups
 GET  /v1/analytics/fbs/stock/sizes             # Stock by sizes
@@ -187,6 +203,7 @@ GET  /v1/analytics/orders/enhanced             # Combined metrics view
 ```
 
 **Actual State**:
+
 - These endpoints **DO NOT EXIST** in the codebase
 - Services are usable internally but not exposed to frontend/clients
 
@@ -197,6 +214,7 @@ GET  /v1/analytics/orders/enhanced             # Combined metrics view
 ### AnalyticsModule (src/analytics/analytics.module.ts)
 
 **Lines 39-41**: Service Imports
+
 ```typescript
 import { RegionalStockService } from './services/regional-stock.service'; // Story 57.3
 import { WarehouseRemainsService } from './services/warehouse-remains.service'; // Story 57.2
@@ -204,6 +222,7 @@ import { FbsAnalyticsAggregationService } from './services/fbs-analytics-aggrega
 ```
 
 **Lines 94-96**: Providers Registration
+
 ```typescript
 RegionalStockService,          // Story 57.3
 WarehouseRemainsService,        // Story 57.2
@@ -211,6 +230,7 @@ FbsAnalyticsAggregationService, // Story 57.4
 ```
 
 **Lines 114-116**: Module Exports
+
 ```typescript
 RegionalStockService,          // Export for potential use in other modules
 WarehouseRemainsService,        // Export for potential use in other modules
@@ -218,6 +238,7 @@ FbsAnalyticsAggregationService, // Export for potential use in other modules
 ```
 
 **Lines 63-72**: Controllers (FBS Controllers ABSENT)
+
 ```typescript
 controllers: [
   WeeklyAnalyticsController,
@@ -242,16 +263,19 @@ controllers: [
 **File**: `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/docs/epics/epic-57-fbs-analytics-enhancement.md`
 
 **Current Status** (Line 4):
+
 ```markdown
 **Status**: 🧪 TDD READY - Tests Written, Implementation Pending
 ```
 
 **Required Update**:
+
 ```markdown
 **Status**: ⚠️ PARTIALLY COMPLETE - Services Implemented, API Layer Missing
 ```
 
 **Add New Section** (after "TDD Status"):
+
 ```markdown
 ## Implementation Status
 
@@ -269,16 +293,19 @@ controllers: [
 **File**: `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/docs/stories/epic-57/README.md`
 
 **Current Status** (Line 6):
+
 ```markdown
 **Status**: TDD Ready - Tests Written, Implementation Pending
 ```
 
 **Required Update**:
+
 ```markdown
 **Status**: ⚠️ Services Complete, API Controller Pending
 ```
 
 **Update TDD Status Table** (Lines 10-16):
+
 ```markdown
 | Test File | Component | Tests | Service Status | API Status |
 |-----------|-----------|-------|----------------|------------|
@@ -324,13 +351,15 @@ Frontend team CANNOT access:
 ## Required Endpoints (Per Epic 57 Spec)
 
 ```
-GET  /v1/analytics/fbs/stock/groups
-GET  /v1/analytics/fbs/stock/sizes
-GET  /v1/analytics/fbs/stock/regions
+
+GET /v1/analytics/fbs/stock/groups
+GET /v1/analytics/fbs/stock/sizes
+GET /v1/analytics/fbs/stock/regions
 POST /v1/analytics/fbs/stock/export
-GET  /v1/analytics/fbs/stock/export/:exportId
-GET  /v1/analytics/fbs/stock/export/:exportId/download
-GET  /v1/analytics/orders/enhanced
+GET /v1/analytics/fbs/stock/export/:exportId
+GET /v1/analytics/fbs/stock/export/:exportId/download
+GET /v1/analytics/orders/enhanced
+
 ```
 
 ## Action Required
@@ -343,8 +372,10 @@ Backend team must create `FbsAnalyticsController` to expose these services.
 ## Test Coverage Summary
 
 ### WarehouseRemainsService Tests
+
 **File**: `src/analytics/services/__tests__/warehouse-remains.service.spec.ts`
 **Tests**: 20+
+
 - Task creation with rate limiting
 - Task status polling
 - CSV download and parsing
@@ -352,8 +383,10 @@ Backend team must create `FbsAnalyticsController` to expose these services.
 - Status transitions validation
 
 ### RegionalStockService Tests
+
 **File**: `src/analytics/services/__tests__/regional-stock.service.spec.ts`
 **Tests**: 15+
+
 - Stock by office queries
 - Stock by region aggregation
 - Warehouse name normalization
@@ -361,8 +394,10 @@ Backend team must create `FbsAnalyticsController` to expose these services.
 - City extraction
 
 ### FbsAnalyticsAggregationService Tests
+
 **File**: `src/analytics/services/__tests__/fbs-analytics-aggregation.service.spec.ts`
 **Tests**: 25+
+
 - Parallel data fetching
 - Turnover rate calculation
 - Stock coverage days
@@ -375,15 +410,18 @@ Backend team must create `FbsAnalyticsController` to expose these services.
 ## Rate Limiting Implementation
 
 ### WarehouseRemainsService
+
 - **Scope**: `wb_reports_warehouse`
 - **Limit**: 1 request per 60 seconds
 - **Service**: `RateLimitService.checkLimit(cabinetId, scope)`
 
 ### RegionalStockService
+
 - **Scope**: Uses `WbAnalyticsService` rate limiting
 - **Limit**: 3 requests per minute (20-second interval)
 
 ### FbsAnalyticsAggregationService
+
 - **Indirect**: Uses rate limiting from individual services
 - **Cache**: 15-minute TTL to reduce API calls
 
@@ -408,11 +446,13 @@ Backend team must create `FbsAnalyticsController` to expose these services.
 ### Warehouse Remains Export
 
 **Documented Endpoint**:
+
 ```
 POST /v1/analytics/fbs/stock/export
 ```
 
 **Actual Implementation**:
+
 - Service method: `WarehouseRemainsService.createWarehouseRemainsTask(cabinetId, options?)`
 - Returns: `TaskCreationResult { taskId, status, createdAt }`
 - **NO HTTP endpoint exists**
@@ -420,11 +460,13 @@ POST /v1/analytics/fbs/stock/export
 ### Regional Stock Analytics
 
 **Documented Endpoint**:
+
 ```
 GET /v1/analytics/fbs/stock/regions
 ```
 
 **Actual Implementation**:
+
 - Service method: `RegionalStockService.getStocksByOffice(cabinetId, period, nmIds?)`
 - Service method: `RegionalStockService.getStocksByRegion(cabinetId, period)`
 - Returns: `StockAggregationResult { period, totalQuantity, totalOffices, totalRegions, data, aggregatedAt }`
@@ -433,11 +475,13 @@ GET /v1/analytics/fbs/stock/regions
 ### Enhanced Order Statistics
 
 **Documented Endpoint**:
+
 ```
 GET /v1/analytics/orders/enhanced
 ```
 
 **Actual Implementation**:
+
 - Service method: `FbsAnalyticsAggregationService.aggregateFbsAnalytics(cabinetId, period)`
 - Returns: `FbsAggregatedAnalytics { cabinetId, period, orderStats, stockAnalytics, regionalData, calculatedMetrics, sources, cachedAt }`
 - **NO HTTP endpoint exists**
@@ -482,6 +526,7 @@ GET /v1/analytics/orders/enhanced
 ## Validation Methodology
 
 **Files Analyzed**:
+
 - `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/docs/epics/epic-57-fbs-analytics-enhancement.md`
 - `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/docs/stories/epic-57-fbs-analytics-enhancement.md`
 - `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/docs/stories/epic-57/README.md`
@@ -491,6 +536,7 @@ GET /v1/analytics/orders/enhanced
 - `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/src/analytics/analytics.module.ts`
 
 **Validation Checks**:
+
 - ✅ Service implementation completeness
 - ✅ Method signatures vs. documentation
 - ✅ Test coverage verification
@@ -505,11 +551,13 @@ GET /v1/analytics/orders/enhanced
 ## Summary
 
 **Epic 57 Services**: ✅ **FULLY IMPLEMENTED**
+
 - All three services complete with comprehensive test coverage
 - Properly registered in AnalyticsModule
 - Exported for potential use in other modules
 
 **Epic 57 API Layer**: ❌ **COMPLETELY MISSING**
+
 - No REST API controller exists
 - No endpoints accessible to frontend
 - Documentation claims endpoints exist but they don't
@@ -517,6 +565,7 @@ GET /v1/analytics/orders/enhanced
 **Blocking Issue**: Frontend team cannot use Epic 57 features until API controller is created.
 
 **Next Steps**:
+
 1. Backend team: Create `FbsAnalyticsController` with all 7 endpoints
 2. Update Epic 57 documentation status to reflect partial completion
 3. Notify frontend team when endpoints are available

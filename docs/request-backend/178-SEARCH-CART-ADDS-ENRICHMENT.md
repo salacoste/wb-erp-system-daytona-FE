@@ -60,11 +60,11 @@ searchCartAdds: number | null
 
 Marketing Plan §3.4 row 2 says "Combines search + funnel data" but the JOIN semantics are structurally unclear. There are three plausible units of analysis; **please clarify which the backend will ship**:
 
-| Option | Field lives on | Denominator | Means |
-|---|---|---|---|
-| **A — per-query aggregate** | `SearchQueryItem` only | query's `totalImpressions` (sum across all products ranking for that query) | "Of all impressions on query Q, X% led to cart adds (regardless of which product)" |
-| **B — per-product aggregate** | `SearchProductItem` only | product's `totalImpressions` (sum across all queries driving traffic to product P) | "Of all search impressions on product P, X% led to cart adds (regardless of query)" |
-| **C — per-(query,product) pair** | Both, indexed by counterpart key | matched (query,product) impression count | "Of all impressions of product P shown for query Q, X% led to cart adds" |
+| Option                           | Field lives on                   | Denominator                                                                        | Means                                                                               |
+| -------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| **A — per-query aggregate**      | `SearchQueryItem` only           | query's `totalImpressions` (sum across all products ranking for that query)        | "Of all impressions on query Q, X% led to cart adds (regardless of which product)"  |
+| **B — per-product aggregate**    | `SearchProductItem` only         | product's `totalImpressions` (sum across all queries driving traffic to product P) | "Of all search impressions on product P, X% led to cart adds (regardless of query)" |
+| **C — per-(query,product) pair** | Both, indexed by counterpart key | matched (query,product) impression count                                           | "Of all impressions of product P shown for query Q, X% led to cart adds"            |
 
 Option C is the most analytically rich (lets sellers identify query-product mismatches), but requires joinable per-pair aggregation in WB's funnel data — which may not exist upstream.
 

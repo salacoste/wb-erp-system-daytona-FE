@@ -17,7 +17,7 @@ SelSup получает файл по указанной ссылке, обра�
 
 В этой статье:
 
-- 
+-
 - <a href="#hs37md" rel="nofollow">Как создать обмен через Excel</a>
 - <a href="#10zpand" rel="nofollow">Какие данные нужно указать</a>
 - <a href="#foehv8" rel="nofollow">Как работает обмен</a>

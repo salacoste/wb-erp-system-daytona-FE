@@ -6,6 +6,7 @@
 **Component**: Backend API - Analytics Module
 **Requester**: Frontend Team (Epic 4 - Story 4.7)
 **Related Stories**:
+
 - Frontend: `docs/stories/4.7.margin-analysis-by-time-period.md`
 - Backend Epic 17: COGS & Margin Feature Integration (already complete)
 
@@ -25,11 +26,11 @@
 
 Three bugs were discovered and fixed in `src/analytics/weekly-analytics.service.ts`:
 
-| # | Line | Error | Root Cause | Fix |
-|---|------|-------|------------|-----|
-| 1 | 1253 | `column "qty" does not exist` | SQL used wrong column name | `SUM(qty)` → `SUM(quantity_sold)` |
-| 2 | 1259 | `uuid = text` type mismatch | Missing PostgreSQL type cast | Added `::uuid` cast |
-| 3 | 1289 | `Cannot mix BigInt and other types` | JS BigInt incompatibility | Added `Number()` conversion |
+| #   | Line | Error                               | Root Cause                   | Fix                               |
+| --- | ---- | ----------------------------------- | ---------------------------- | --------------------------------- |
+| 1   | 1253 | `column "qty" does not exist`       | SQL used wrong column name   | `SUM(qty)` → `SUM(quantity_sold)` |
+| 2   | 1259 | `uuid = text` type mismatch         | Missing PostgreSQL type cast | Added `::uuid` cast               |
+| 3   | 1289 | `Cannot mix BigInt and other types` | JS BigInt incompatibility    | Added `Number()` conversion       |
 
 **Verification**: Endpoint returns 200 OK with 12 weeks of data (2025-W37 to 2025-W48).
 
@@ -40,6 +41,7 @@ Three bugs were discovered and fixed in `src/analytics/weekly-analytics.service.
 A new endpoint that returns margin analysis data aggregated across a **time range** (multiple weeks), allowing frontend to visualize margin trends with a line chart.
 
 **Key Use Cases**:
+
 1. Financial directors track margin trends over last 12 weeks
 2. Identify profitability patterns (seasonal, promotional impact)
 3. Compare margin performance across different time periods
@@ -81,6 +83,7 @@ interface MarginTrendsQueryParams {
 ```
 
 **Examples**:
+
 ```
 GET /v1/analytics/weekly/margin-trends?weekStart=2025-W40&weekEnd=2025-W47
 GET /v1/analytics/weekly/margin-trends?weeks=12&aggregation=week
@@ -123,6 +126,7 @@ interface MarginTrendPoint {
 ```
 
 **Example Response**:
+
 ```json
 {
   "data": [
@@ -182,6 +186,7 @@ interface GroupedMarginTrend {
 ```
 
 **Example Response** (groupBy=brand):
+
 ```json
 {
   "data": [
@@ -221,18 +226,21 @@ interface GroupedMarginTrend {
 ### Margin Calculation (Per Week)
 
 **Formula** (same as Epic 17):
+
 ```
 margin_pct = (profit / |revenue_net|) × 100
 profit = revenue_net - cogs
 ```
 
 **Aggregation Across SKUs**:
+
 - **Total Profit**: `SUM(profit)` across all SKUs for the week
 - **Total Revenue**: `SUM(revenue_net)` across all SKUs for the week
 - **Total COGS**: `SUM(cogs)` across all SKUs with COGS data
 - **Margin %**: `(total_profit / |total_revenue|) × 100`
 
 **Missing COGS Handling**:
+
 - SKUs without COGS are excluded from `total_profit` and `total_cogs` calculations
 - `missing_cogs_count` field shows how many SKUs were excluded
 - If ALL SKUs missing COGS → `margin_pct = null`, `cogs = null`, `profit = null`
@@ -240,11 +248,13 @@ profit = revenue_net - cogs
 ### Date Range Logic
 
 **Week Range**:
+
 - `weekStart` to `weekEnd` are inclusive (both weeks included in results)
 - Weeks must follow ISO 8601 week numbering (Monday start)
 - Maximum range: 52 weeks (1 year) for performance
 
 **Data Availability**:
+
 - Only return weeks that have actual sales data (skip weeks with zero revenue)
 - OR: Return all weeks in range with `revenue_net: 0` for weeks without sales (frontend preference: skip empty weeks)
 
@@ -253,17 +263,20 @@ profit = revenue_net - cogs
 ## Performance Considerations
 
 **Expected Load**:
+
 - Typical query: 12 weeks (~3 months)
 - Maximum query: 52 weeks (~1 year)
 - Response size: ~50 KB for 52 weeks (Option 1), ~500 KB for grouped (Option 2)
 
 **Optimization Suggestions**:
+
 1. Use existing `weekly_payout_summary` and `weekly_margin_fact` tables
 2. Add composite index: `(cabinet_id, week)` for fast range queries
 3. Cache frequently requested ranges (e.g., last 12 weeks) for 5 minutes
 4. Consider materialized view for common aggregations
 
 **Target Performance**:
+
 - Response time: <500ms for 12 weeks
 - Response time: <1000ms for 52 weeks
 
@@ -272,6 +285,7 @@ profit = revenue_net - cogs
 ## Error Scenarios
 
 ### 400 Bad Request
+
 ```json
 {
   "error": {
@@ -289,6 +303,7 @@ profit = revenue_net - cogs
 ```
 
 ### 400 Bad Request (Range Too Large)
+
 ```json
 {
   "error": {
@@ -306,6 +321,7 @@ profit = revenue_net - cogs
 ```
 
 ### 404 Not Found
+
 ```json
 {
   "error": {
@@ -331,15 +347,18 @@ profit = revenue_net - cogs
 **Chart Type**: Line chart (Recharts LineChart component)
 
 **X-Axis**:
+
 - Label: ISO week (e.g., "W40", "W41") for short labels
 - Tooltip: Full date range (e.g., "2025-W40 (06.10 - 12.10)")
 
 **Y-Axis**:
+
 - Label: "Маржа (%)"
 - Format: Percentage with 2 decimal places
 - Range: Auto-scale based on data
 
 **Tooltip**:
+
 ```
 Неделя: 2025-W40 (06.10 - 12.10)
 Маржа: 35,50%
@@ -349,12 +368,14 @@ profit = revenue_net - cogs
 ```
 
 ### Color Coding
+
 - Line color: Blue (#2563EB) for consistent brand color
 - Positive margin area: Light green background
 - Negative margin area: Light red background
 - Zero margin line: Gray dashed horizontal line
 
 ### Interactive Features
+
 - Hover tooltip showing detailed metrics
 - Click to drill down to week detail (navigate to `/analytics/sku?week=2025-W40`)
 - Zoom/pan for large date ranges (optional)
@@ -364,31 +385,40 @@ profit = revenue_net - cogs
 ## Alternative Implementation Options
 
 ### Option A: New Dedicated Endpoint (Recommended)
+
 **Pros**:
+
 - Optimized query for time-series data
 - Better performance for large ranges
 - Clear API semantics
 
 **Cons**:
+
 - New endpoint to implement and maintain
 
 ### Option B: Extend Existing `/by-sku` Endpoint
+
 Add multi-week support to existing endpoint:
+
 ```
 GET /v1/analytics/weekly/by-sku?weekStart=2025-W40&weekEnd=2025-W47&aggregate=week
 ```
 
 **Pros**:
+
 - Reuse existing logic
 - No new endpoint
 
 **Cons**:
+
 - Endpoint becomes more complex
 - May impact existing performance
 - Less semantic clarity
 
 ### Option C: Client-Side Aggregation (Current Workaround)
+
 Frontend fetches individual weeks and aggregates:
+
 ```typescript
 const weeks = generateWeekRange('2025-W40', '2025-W47'); // ['2025-W40', 'W41', ...]
 const promises = weeks.map(week =>
@@ -399,10 +429,12 @@ const trends = aggregateClientSide(results);
 ```
 
 **Pros**:
+
 - No backend changes needed
 - Works immediately
 
 **Cons**:
+
 - Multiple HTTP requests (8 requests for 8 weeks)
 - Higher latency (~800ms for 8 weeks vs ~200ms for single request)
 - More complex frontend logic
@@ -415,11 +447,13 @@ const trends = aggregateClientSide(results);
 ## Implementation Priority
 
 **Suggested Timeline**:
+
 - **Phase 1 (MVP)**: Implement Option 1 (Simplified Time Series) with `groupBy='total'` only
 - **Phase 2 (Enhancement)**: Add `groupBy='brand'` and `groupBy='category'` support
 - **Phase 3 (Future)**: Add month aggregation support
 
 **Frontend Impact**:
+
 - **Without this endpoint**: Story 4.7 cannot be completed optimally (using workaround with 12× API calls)
 - **With this endpoint**: Story 4.7 can be completed with excellent UX and performance
 
@@ -428,6 +462,7 @@ const trends = aggregateClientSide(results);
 ## Testing Requirements
 
 ### Backend Tests
+
 1. Unit tests for margin calculation across time range
 2. Integration tests for week range queries
 3. Edge cases:
@@ -438,6 +473,7 @@ const trends = aggregateClientSide(results);
 4. Performance tests for 52-week queries
 
 ### Frontend Integration Tests
+
 1. MSW mock for time-series endpoint
 2. Chart rendering with trend data
 3. Tooltip interactivity
@@ -448,15 +484,18 @@ const trends = aggregateClientSide(results);
 ## Related Documentation
 
 **Frontend**:
+
 - Story 4.7: `docs/stories/4.7.margin-analysis-by-time-period.md`
 - Epic 4 Overview: COGS Management & Margin Analysis
 
 **Backend**:
+
 - Epic 17: COGS & Margin Feature Integration
 - Request #07: `docs/request-backend/07-cogs-margin-analytics-includecogs-parameter.md`
 - Backend Response: `docs/request-backend/09-epic-18-cogs-management-api-backend.md`
 
 **API Documentation**:
+
 - Swagger: `/v1/analytics/weekly/*` endpoints
 - Test API: `test-api/06-analytics-advanced.http` (Margin Trends)
 
@@ -478,6 +517,7 @@ const trends = aggregateClientSide(results);
 **Current Status**: ✅ **IMPLEMENTED & WORKING** - Production-ready
 
 **Backend Implementation**:
+
 - ✅ Endpoint implemented: `GET /v1/analytics/weekly/margin-trends`
 - ✅ Query parameters: `weeks` (relative, e.g., `?weeks=12`) or `weekStart/weekEnd` (ISO weeks)
 - ✅ 3 critical bugfixes applied (2025-12-04) - see Bugfix History section above
@@ -485,12 +525,14 @@ const trends = aggregateClientSide(results);
 - ✅ Verified: 12 weeks of data returned successfully (2025-W37 to 2025-W48)
 
 **Frontend Team Actions**:
+
 - ✅ Created this request document
 - ✅ Completed Stories 4.1-4.6 (6/7 Epic 4 stories)
 - ✅ **Story 4.7 UNBLOCKED** - endpoint now available for integration
 - ⏳ Integrate with `useMarginTrends` hook
 
 **Files Changed (2025-12-04)**:
+
 - `src/analytics/weekly-analytics.service.ts` - 3 bugfixes in `getMarginTrends()` method
 - `test-api/06-analytics-advanced.http` - Margin Trends examples
 
@@ -498,10 +540,10 @@ const trends = aggregateClientSide(results);
 
 ## Changelog
 
-| Date | Version | Change | Author |
-|------|---------|--------|--------|
-| 2025-11-23 | 1.0 | Initial request created | Frontend Team (Claude Code) |
-| 2025-12-04 | 2.0 | **IMPLEMENTED** - 3 bugfixes applied, endpoint working | Backend Team (Claude Code) |
+| Date       | Version | Change                                                 | Author                      |
+| ---------- | ------- | ------------------------------------------------------ | --------------------------- |
+| 2025-11-23 | 1.0     | Initial request created                                | Frontend Team (Claude Code) |
+| 2025-12-04 | 2.0     | **IMPLEMENTED** - 3 bugfixes applied, endpoint working | Backend Team (Claude Code)  |
 
 ## Backend Team Response
 

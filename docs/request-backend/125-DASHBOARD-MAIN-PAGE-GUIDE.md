@@ -24,10 +24,10 @@
 
 Дашборд должен отображать следующие бизнес-сущности в двух временных разрезах:
 
-| # | Сущность | Описание | Тип |
-|---|----------|----------|-----|
-| 1 | **Заказы** | Заказы FBS с разбивкой по дням | Revenue potential |
-| 2 | **COGS по заказам** | Себестоимость товаров в заказах | Cost |
+| #   | Сущность            | Описание                        | Тип               |
+| --- | ------------------- | ------------------------------- | ----------------- |
+| 1   | **Заказы**          | Заказы FBS с разбивкой по дням  | Revenue potential |
+| 2   | **COGS по заказам** | Себестоимость товаров в заказах | Cost              |
 
 ---
 
@@ -45,10 +45,10 @@
 
 ### Временные разрезы
 
-| Режим | Описание | Переключение |
-|-------|----------|--------------|
-| **Неделя** | По дням за последнюю (актуальную) неделю | Dropdown с выбором предыдущих недель |
-| **Месяц** | По дням за последний (завершенный) месяц | Dropdown с выбором предыдущих месяцев |
+| Режим      | Описание                                 | Переключение                          |
+| ---------- | ---------------------------------------- | ------------------------------------- |
+| **Неделя** | По дням за последнюю (актуальную) неделю | Dropdown с выбором предыдущих недель  |
+| **Месяц**  | По дням за последний (завершенный) месяц | Dropdown с выбором предыдущих месяцев |
 
 ---
 
@@ -56,15 +56,15 @@
 
 ### Сводная таблица эндпоинтов
 
-| Сущность | Основной эндпоинт | Документация |
-|----------|-------------------|--------------|
-| **Заказы** | `GET /v1/orders`, `GET /v1/analytics/orders/volume` | [121-DASHBOARD-MAIN-PAGE-ORDERS-API.md](./121-DASHBOARD-MAIN-PAGE-ORDERS-API.md) |
-| **COGS** | `GET /v1/cogs`, `GET /v1/analytics/weekly/by-sku?includeCogs=true` | [121-DASHBOARD-MAIN-PAGE-ORDERS-API.md](./121-DASHBOARD-MAIN-PAGE-ORDERS-API.md) |
-| **Выкупы/Продажи** | `GET /v1/analytics/weekly/finance-summary`, `GET /v1/analytics/weekly/trends` | [122-DASHBOARD-MAIN-PAGE-SALES-API.md](./122-DASHBOARD-MAIN-PAGE-SALES-API.md) |
-| **Рекламные затраты** | `GET /v1/analytics/advertising` | [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) |
-| **Логистика** | `GET /v1/analytics/weekly/finance-summary` (поле `logistics_cost`) | [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) |
-| **Хранение** | `GET /v1/analytics/storage/by-sku`, `GET /v1/analytics/weekly/finance-summary` | [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) |
-| **Периоды** | `GET /v1/analytics/weekly/available-weeks` | [143-DASHBOARD-MAIN-PAGE-PERIODS-API.md](./143-DASHBOARD-MAIN-PAGE-PERIODS-API.md) |
+| Сущность              | Основной эндпоинт                                                              | Документация                                                                         |
+| --------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| **Заказы**            | `GET /v1/orders`, `GET /v1/analytics/orders/volume`                            | [121-DASHBOARD-MAIN-PAGE-ORDERS-API.md](./121-DASHBOARD-MAIN-PAGE-ORDERS-API.md)     |
+| **COGS**              | `GET /v1/cogs`, `GET /v1/analytics/weekly/by-sku?includeCogs=true`             | [121-DASHBOARD-MAIN-PAGE-ORDERS-API.md](./121-DASHBOARD-MAIN-PAGE-ORDERS-API.md)     |
+| **Выкупы/Продажи**    | `GET /v1/analytics/weekly/finance-summary`, `GET /v1/analytics/weekly/trends`  | [122-DASHBOARD-MAIN-PAGE-SALES-API.md](./122-DASHBOARD-MAIN-PAGE-SALES-API.md)       |
+| **Рекламные затраты** | `GET /v1/analytics/advertising`                                                | [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) |
+| **Логистика**         | `GET /v1/analytics/weekly/finance-summary` (поле `logistics_cost`)             | [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) |
+| **Хранение**          | `GET /v1/analytics/storage/by-sku`, `GET /v1/analytics/weekly/finance-summary` | [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) |
+| **Периоды**           | `GET /v1/analytics/weekly/available-weeks`                                     | [143-DASHBOARD-MAIN-PAGE-PERIODS-API.md](./143-DASHBOARD-MAIN-PAGE-PERIODS-API.md)   |
 
 ### Обязательные заголовки
 
@@ -116,6 +116,7 @@ GET /v1/analytics/cabinet-summary?weeks=1
 ```
 
 **Ответ содержит:**
+
 ```json
 {
   "summary": {
@@ -167,11 +168,11 @@ GET /v1/analytics/weekly/by-sku?weekStart=${weekStart}&weekEnd=${weekEnd}&includ
 
 ### 4.3 Формат дат
 
-| Контекст | Формат | Пример |
-|----------|--------|--------|
-| Недельная аналитика | `YYYY-Www` | `2026-W04` |
-| Рекламная аналитика | `YYYY-MM-DD` | `2026-01-31` |
-| Диапазон недель | `YYYY-Www:Www` | `2026-W01:W05` |
+| Контекст            | Формат         | Пример         |
+| ------------------- | -------------- | -------------- |
+| Недельная аналитика | `YYYY-Www`     | `2026-W04`     |
+| Рекламная аналитика | `YYYY-MM-DD`   | `2026-01-31`   |
+| Диапазон недель     | `YYYY-Www:Www` | `2026-W01:W05` |
 
 ---
 
@@ -233,25 +234,25 @@ const storage = await fetch(`/v1/analytics/storage/trends?weekStart=${weekStart}
 
 ### Связанные документы
 
-| Документ | Содержание |
-|----------|------------|
-| [121-DASHBOARD-MAIN-PAGE-ORDERS-API.md](./121-DASHBOARD-MAIN-PAGE-ORDERS-API.md) | Заказы FBS, COGS, аналитика заказов, примеры |
-| [122-DASHBOARD-MAIN-PAGE-SALES-API.md](./122-DASHBOARD-MAIN-PAGE-SALES-API.md) | Выкупы, продажи, finance-summary, формулы прибыли |
-| [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) | Реклама, логистика, хранение, unit-economics |
-| [143-DASHBOARD-MAIN-PAGE-PERIODS-API.md](./143-DASHBOARD-MAIN-PAGE-PERIODS-API.md) | Периоды, ISO-недели, сравнение, тренды |
-| [126-DASHBOARD-API-STATUS-REPORT.md](./126-DASHBOARD-API-STATUS-REPORT.md) | Статус-отчёт: все API реализованы |
-| [127-DASHBOARD-DEBUG-REPORT.md](./127-DASHBOARD-DEBUG-REPORT.md) | Отладка: данные в `summary_rus`, не в корне |
-| [128-DASHBOARD-QA-VERIFICATION-REPORT.md](./128-DASHBOARD-QA-VERIFICATION-REPORT.md) | QA верификация W04: backend корректен |
-| [129-FBS-DATA-ANALYSIS-REPORT.md](./129-FBS-DATA-ANALYSIS-REPORT.md) | **Анализ FBS данных: синхронизация и рекомендации** |
+| Документ                                                                             | Содержание                                          |
+| ------------------------------------------------------------------------------------ | --------------------------------------------------- |
+| [121-DASHBOARD-MAIN-PAGE-ORDERS-API.md](./121-DASHBOARD-MAIN-PAGE-ORDERS-API.md)     | Заказы FBS, COGS, аналитика заказов, примеры        |
+| [122-DASHBOARD-MAIN-PAGE-SALES-API.md](./122-DASHBOARD-MAIN-PAGE-SALES-API.md)       | Выкупы, продажи, finance-summary, формулы прибыли   |
+| [123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md](./123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md) | Реклама, логистика, хранение, unit-economics        |
+| [143-DASHBOARD-MAIN-PAGE-PERIODS-API.md](./143-DASHBOARD-MAIN-PAGE-PERIODS-API.md)   | Периоды, ISO-недели, сравнение, тренды              |
+| [126-DASHBOARD-API-STATUS-REPORT.md](./126-DASHBOARD-API-STATUS-REPORT.md)           | Статус-отчёт: все API реализованы                   |
+| [127-DASHBOARD-DEBUG-REPORT.md](./127-DASHBOARD-DEBUG-REPORT.md)                     | Отладка: данные в `summary_rus`, не в корне         |
+| [128-DASHBOARD-QA-VERIFICATION-REPORT.md](./128-DASHBOARD-QA-VERIFICATION-REPORT.md) | QA верификация W04: backend корректен               |
+| [129-FBS-DATA-ANALYSIS-REPORT.md](./129-FBS-DATA-ANALYSIS-REPORT.md)                 | **Анализ FBS данных: синхронизация и рекомендации** |
 
 ### Backend Reference
 
-| Ресурс | Путь |
-|--------|------|
-| API Paths Reference | `../docs/API-PATHS-REFERENCE.md` |
-| Business Logic | `../docs/BUSINESS-LOGIC-REFERENCE.md` |
-| Test API Files | `../test-api/*.http` |
-| Swagger UI | `http://localhost:3000/api` |
+| Ресурс              | Путь                                  |
+| ------------------- | ------------------------------------- |
+| API Paths Reference | `../docs/API-PATHS-REFERENCE.md`      |
+| Business Logic      | `../docs/BUSINESS-LOGIC-REFERENCE.md` |
+| Test API Files      | `../test-api/*.http`                  |
+| Swagger UI          | `http://localhost:3000/api`           |
 
 ---
 
@@ -302,41 +303,41 @@ export function useDashboardData(period: 'week' | 'month', selectedWeek: string)
 
 ### 7.3 Кэширование
 
-| Эндпоинт | TTL Frontend | TTL Backend |
-|----------|--------------|-------------|
-| `available-weeks` | 5 min | 5 min |
-| `finance-summary` | 5 min | 30 min |
-| `advertising` | 5 min | 30 min |
-| `orders/volume` | 2 min | 5 min |
-| `cabinet-summary` | 5 min | 30 min |
+| Эндпоинт          | TTL Frontend | TTL Backend |
+| ----------------- | ------------ | ----------- |
+| `available-weeks` | 5 min        | 5 min       |
+| `finance-summary` | 5 min        | 30 min      |
+| `advertising`     | 5 min        | 30 min      |
+| `orders/volume`   | 2 min        | 5 min       |
+| `cabinet-summary` | 5 min        | 30 min      |
 
 ### 7.4 Обработка ошибок
 
-| HTTP Code | Действие |
-|-----------|----------|
-| 400 | Показать сообщение об ошибке параметров |
-| 401 | Redirect на login |
-| 403 | Показать "Нет доступа к кабинету" |
-| 404 | Показать "Нет данных за период" |
-| 500 | Retry + показать техническую ошибку |
+| HTTP Code | Действие                                |
+| --------- | --------------------------------------- |
+| 400       | Показать сообщение об ошибке параметров |
+| 401       | Redirect на login                       |
+| 403       | Показать "Нет доступа к кабинету"       |
+| 404       | Показать "Нет данных за период"         |
+| 500       | Retry + показать техническую ошибку     |
 
 ### 7.5 Цветовая схема для метрик
 
-| Метрика | Положительное | Отрицательное |
-|---------|---------------|---------------|
+| Метрика | Положительное     | Отрицательное   |
+| ------- | ----------------- | --------------- |
 | Прибыль | `#22C55E` (green) | `#EF4444` (red) |
 | Маржа % | `#22C55E` (green) | `#EF4444` (red) |
-| ROAS | `#22C55E` (>3x) | `#EF4444` (<1x) |
-| Delta % | `#22C55E` (+) | `#EF4444` (-) |
+| ROAS    | `#22C55E` (>3x)   | `#EF4444` (<1x) |
+| Delta % | `#22C55E` (+)     | `#EF4444` (-)   |
 
 ---
 
 ## Changelog
 
-| Дата | Версия | Изменения |
-|------|--------|-----------|
-| 2026-01-31 | 1.1 | Добавлены ссылки на QA/Debug/FBS отчёты; обновлена формула прибыли (Sales вместо Orders) |
-| 2026-01-31 | 1.0 | Первоначальная версия документации |
+| Дата       | Версия | Изменения                                                                                |
+| ---------- | ------ | ---------------------------------------------------------------------------------------- |
+| 2026-01-31 | 1.1    | Добавлены ссылки на QA/Debug/FBS отчёты; обновлена формула прибыли (Sales вместо Orders) |
+| 2026-01-31 | 1.0    | Первоначальная версия документации                                                       |
 
 ---
 

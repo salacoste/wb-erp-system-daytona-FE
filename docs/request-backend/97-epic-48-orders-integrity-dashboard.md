@@ -23,11 +23,11 @@
 
 Главный индикатор состояния системы.
 
-| Статус | Цвет | Описание |
-|--------|------|----------|
-| `healthy` | Зеленый (`#22C55E`) | Все проверки пройдены |
-| `warning` | Желтый (`#F59E0B`) | Есть minor issues |
-| `unhealthy` | Красный (`#EF4444`) | Критические проблемы |
+| Статус      | Цвет                | Описание              |
+| ----------- | ------------------- | --------------------- |
+| `healthy`   | Зеленый (`#22C55E`) | Все проверки пройдены |
+| `warning`   | Желтый (`#F59E0B`)  | Есть minor issues     |
+| `unhealthy` | Красный (`#EF4444`) | Критические проблемы  |
 
 **Endpoint**: `GET /health/orders-integrity?cabinet_id={cabinetId}`
 **Polling interval**: 5 минут (300000ms)
@@ -37,20 +37,21 @@
 
 Таблица с результатами 6 проверок целостности.
 
-| Check Name | Описание | Healthy Count |
-|------------|----------|---------------|
-| `duplicates` | Дубликаты order_id в orders_fbs | 0 |
-| `orphans` | Записи без связанного cabinet | 0 |
-| `missing_history` | Заказы без истории статусов | 0 |
-| `duplicate_status_history` | Дубликаты в истории статусов | 0 |
-| `invalid_transitions` | Невалидные переходы (cancel → new) | 0 |
-| `sync_overlaps` | Перекрывающиеся sync операции | 0 |
+| Check Name                 | Описание                           | Healthy Count |
+| -------------------------- | ---------------------------------- | ------------- |
+| `duplicates`               | Дубликаты order_id в orders_fbs    | 0             |
+| `orphans`                  | Записи без связанного cabinet      | 0             |
+| `missing_history`          | Заказы без истории статусов        | 0             |
+| `duplicate_status_history` | Дубликаты в истории статусов       | 0             |
+| `invalid_transitions`      | Невалидные переходы (cancel → new) | 0             |
+| `sync_overlaps`            | Перекрывающиеся sync операции      | 0             |
 
 ### 3. Reconciliation Panel
 
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: Orders FBS Integrity Dashboard backend is ready with health status endpoint, 6 integrity checks (duplicates, orphans, missing history, duplicate status history, invalid transitions, sync overlaps), and reconciliation panel for comparing with WB Dashboard data.
 **Frontend Action**: No further action needed unless noted above.
@@ -58,6 +59,7 @@
 Сравнение локальных данных с WB Dashboard.
 
 **Компоненты**:
+
 - Date range picker (from/to)
 - Expected count input (опционально)
 - Variance indicator (< 1% = OK)
@@ -73,12 +75,14 @@
 Полная проверка целостности данных заказов FBS.
 
 **Request**:
+
 ```http
 GET /health/orders-integrity?cabinet_id=550e8400-e29b-41d4-a716-446655440000
 Authorization: Bearer {token}
 ```
 
 **Response (200 OK - Healthy)**:
+
 ```json
 {
   "status": "healthy",
@@ -114,6 +118,7 @@ Authorization: Bearer {token}
 ```
 
 **Response (200 OK - Warning)**:
+
 ```json
 {
   "status": "warning",
@@ -131,6 +136,7 @@ Authorization: Bearer {token}
 ```
 
 **Response (200 OK - Unhealthy)**:
+
 ```json
 {
   "status": "unhealthy",
@@ -170,6 +176,7 @@ Authorization: Bearer {token}
 Отчет для сверки с WB Seller Dashboard.
 
 **Request**:
+
 ```http
 GET /v1/orders/reconciliation?cabinet_id={cabinetId}&from=2026-01-01&to=2026-01-07&expected_count=150
 Authorization: Bearer {token}
@@ -177,14 +184,15 @@ Authorization: Bearer {token}
 
 **Query Parameters**:
 
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `cabinet_id` | UUID | Да | ID кабинета |
-| `from` | ISO date | Да | Начало периода (YYYY-MM-DD) |
-| `to` | ISO date | Да | Конец периода (YYYY-MM-DD) |
-| `expected_count` | number | Нет | Ожидаемое количество из WB Dashboard |
+| Параметр         | Тип      | Обязательный | Описание                             |
+| ---------------- | -------- | ------------ | ------------------------------------ |
+| `cabinet_id`     | UUID     | Да           | ID кабинета                          |
+| `from`           | ISO date | Да           | Начало периода (YYYY-MM-DD)          |
+| `to`             | ISO date | Да           | Конец периода (YYYY-MM-DD)           |
+| `expected_count` | number   | Нет          | Ожидаемое количество из WB Dashboard |
 
 **Response (200 OK - Without expected_count)**:
+
 ```json
 {
   "data": {
@@ -222,6 +230,7 @@ Authorization: Bearer {token}
 ```
 
 **Response (200 OK - Within threshold)**:
+
 ```json
 {
   "data": {
@@ -243,6 +252,7 @@ Authorization: Bearer {token}
 ```
 
 **Response (200 OK - Exceeds threshold)**:
+
 ```json
 {
   "data": {
@@ -595,17 +605,18 @@ export function formatVariancePercent(percent: number | null): string {
 
 ## Related Documentation
 
-| Документ | Описание |
-|----------|----------|
-| [Epic 48 Backend](../../../docs/epics/epic-48-orders-fbs-deduplication-validation.md) | Полное описание Epic |
-| [16-validation.http](../../../test-api/16-validation.http) | HTTP примеры запросов |
-| [93-epic-40-orders-fbs-frontend-guide.md](./93-epic-40-orders-fbs-frontend-guide.md) | Orders FBS основной UI |
-| [API-PATHS-REFERENCE.md](../../../docs/API-PATHS-REFERENCE.md) | Справочник API |
+| Документ                                                                              | Описание               |
+| ------------------------------------------------------------------------------------- | ---------------------- |
+| [Epic 48 Backend](../../../docs/epics/epic-48-orders-fbs-deduplication-validation.md) | Полное описание Epic   |
+| [16-validation.http](../../../test-api/16-validation.http)                            | HTTP примеры запросов  |
+| [93-epic-40-orders-fbs-frontend-guide.md](./93-epic-40-orders-fbs-frontend-guide.md)  | Orders FBS основной UI |
+| [API-PATHS-REFERENCE.md](../../../docs/API-PATHS-REFERENCE.md)                        | Справочник API         |
 
 ---
 
 ## Contact
 
 При вопросах по API:
+
 - Swagger UI: `http://localhost:3000/api`
 - Test API: `test-api/16-validation.http`

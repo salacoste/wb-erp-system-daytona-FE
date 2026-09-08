@@ -20,6 +20,7 @@
 ## Background
 
 Story 51.1 created TypeScript types and API client functions for FBS analytics. This story creates React Query hooks that:
+
 - Provide data fetching with smart caching (5 min for analytics, 10s for backfill polling)
 - Include smart aggregation helper for date ranges
 - Support role-based access (backfill hooks = Owner only)
@@ -32,12 +33,14 @@ Story 51.1 created TypeScript types and API client functions for FBS analytics. 
 ## Acceptance Criteria
 
 ### AC1: Query Keys Factory
+
 - [ ] `fbsAnalyticsQueryKeys` object created with factory functions
 - [ ] Keys follow TanStack Query v5 patterns with `as const`
 - [ ] Separate keys for: `trends`, `seasonal`, `compare`, `backfillStatus`
 - [ ] Keys include relevant params for cache differentiation
 
 ### AC2: Analytics Hooks (Public - All Roles)
+
 - [ ] `useFbsTrends(params, options?)` hook for historical trends
 - [ ] `useFbsSeasonal(params, options?)` hook for seasonal patterns
 - [ ] `useFbsCompare(params, options?)` hook for period comparison
@@ -45,6 +48,7 @@ Story 51.1 created TypeScript types and API client functions for FBS analytics. 
 - [ ] Proper error handling with type safety
 
 ### AC3: Backfill Admin Hooks (Owner Only)
+
 - [ ] `useBackfillStatus(cabinetId?, options?)` hook with polling support
 - [ ] `useStartBackfill()` mutation hook
 - [ ] `usePauseBackfill()` mutation hook
@@ -52,18 +56,21 @@ Story 51.1 created TypeScript types and API client functions for FBS analytics. 
 - [ ] Mutations invalidate status queries on success
 
 ### AC4: Cache Configuration
+
 - [ ] Analytics hooks: `staleTime: 5 * 60 * 1000` (5 minutes)
 - [ ] Analytics hooks: `gcTime: 30 * 60 * 1000` (30 minutes)
 - [ ] Backfill status: `staleTime: 10 * 1000` (10 seconds) for polling
 - [ ] Backfill status: `refetchInterval` configurable (default 10s when enabled)
 
 ### AC5: Smart Aggregation Helper
+
 - [ ] `getSmartAggregation(daysDiff)` function exported
 - [ ] Returns `'day'` for 0-90 days
 - [ ] Returns `'week'` for 91-180 days
 - [ ] Returns `'month'` for 181-365 days
 
 ### AC6: Role-Based Access
+
 - [ ] Backfill hooks check user role before execution
 - [ ] Non-Owner users get clear error message
 - [ ] Analytics hooks available to all authenticated roles
@@ -617,18 +624,21 @@ export function useCanAccessBackfill() {
 ## Tasks / Subtasks
 
 ### Phase 1: Create Query Keys and Cache Config (20 min)
+
 - [ ] Create `src/hooks/useFbsAnalytics.ts`
 - [ ] Define `FBS_ANALYTICS_CACHE` configuration object
 - [ ] Define `fbsAnalyticsQueryKeys` factory object
 - [ ] Export `getSmartAggregation` and `calculateDaysDiff` helpers
 
 ### Phase 2: Implement Analytics Hooks (45 min)
+
 - [ ] Implement `useFbsTrends` hook
 - [ ] Implement `useFbsSeasonal` hook
 - [ ] Implement `useFbsCompare` hook
 - [ ] Add JSDoc with usage examples
 
 ### Phase 3: Implement Backfill Hooks (60 min)
+
 - [ ] Implement `useBackfillStatus` hook with polling
 - [ ] Implement `useStartBackfill` mutation hook
 - [ ] Implement `usePauseBackfill` mutation hook
@@ -637,10 +647,12 @@ export function useCanAccessBackfill() {
 - [ ] Add toast notifications
 
 ### Phase 4: Helper Hooks (15 min)
+
 - [ ] Implement `useInvalidateFbsAnalyticsQueries`
 - [ ] Implement `useCanAccessBackfill`
 
 ### Phase 5: Verification (30 min)
+
 - [ ] Run `npm run type-check` - must pass
 - [ ] Run `npm run lint` - must pass
 - [ ] Verify hook exports in component
@@ -652,20 +664,20 @@ export function useCanAccessBackfill() {
 
 ### Analytics Endpoints (All Roles)
 
-| Endpoint | Hook | Cache |
-|----------|------|-------|
-| `GET /v1/analytics/orders/trends` | `useFbsTrends` | 5 min |
+| Endpoint                            | Hook             | Cache |
+| ----------------------------------- | ---------------- | ----- |
+| `GET /v1/analytics/orders/trends`   | `useFbsTrends`   | 5 min |
 | `GET /v1/analytics/orders/seasonal` | `useFbsSeasonal` | 5 min |
-| `GET /v1/analytics/orders/compare` | `useFbsCompare` | 5 min |
+| `GET /v1/analytics/orders/compare`  | `useFbsCompare`  | 5 min |
 
 ### Admin Endpoints (Owner Only)
 
-| Endpoint | Hook | Cache |
-|----------|------|-------|
-| `GET /v1/admin/backfill/status` | `useBackfillStatus` | 10s (polling) |
-| `POST /v1/admin/backfill/start` | `useStartBackfill` | - |
-| `POST /v1/admin/backfill/pause` | `usePauseBackfill` | - |
-| `POST /v1/admin/backfill/resume` | `useResumeBackfill` | - |
+| Endpoint                         | Hook                | Cache         |
+| -------------------------------- | ------------------- | ------------- |
+| `GET /v1/admin/backfill/status`  | `useBackfillStatus` | 10s (polling) |
+| `POST /v1/admin/backfill/start`  | `useStartBackfill`  | -             |
+| `POST /v1/admin/backfill/pause`  | `usePauseBackfill`  | -             |
+| `POST /v1/admin/backfill/resume` | `useResumeBackfill` | -             |
 
 ---
 
@@ -719,6 +731,7 @@ describe('useStartBackfill', () => {
 ### Manual Testing
 
 1. **Analytics Hooks**
+
    ```typescript
    // In browser console (after logging in)
    const { data } = await queryClient.fetchQuery({
@@ -730,6 +743,7 @@ describe('useStartBackfill', () => {
    ```
 
 2. **Backfill Hooks (Owner only)**
+
    ```typescript
    // Start backfill
    const startMutation = useStartBackfill();
@@ -792,6 +806,7 @@ describe('useStartBackfill', () => {
 ### Role-Based Access
 
 Only **Owner** role can access backfill admin endpoints. This is enforced:
+
 1. Frontend: Hooks throw error before API call
 2. Backend: 403 Forbidden if role check fails
 
@@ -800,6 +815,7 @@ Non-Owner users should see the analytics data but not the admin features.
 ### Smart Aggregation
 
 Helps prevent overwhelming charts with too many data points:
+
 - Daily data for short ranges (readable)
 - Weekly aggregation for medium ranges (quarterly view)
 - Monthly aggregation for yearly views
@@ -815,5 +831,5 @@ Helps prevent overwhelming charts with too many data points:
 
 ---
 
-*Created: 2026-01-29*
-*Sprint: 2 (Feb 17-28)*
+_Created: 2026-01-29_
+_Sprint: 2 (Feb 17-28)_

@@ -9,7 +9,7 @@ chars: 7974
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojka" rel="nofollow">Настройка</a>
 - <a href="#kak-sobirat-zakazy" rel="nofollow">Как собирать заказы</a>
 - <a href="#spetsifika-sborki-zakazov-wildberries" rel="nofollow">Специфика сборки заказов Wildberries</a>

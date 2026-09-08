@@ -17,6 +17,7 @@
 Frontend отображает `sales_gross` (197,083.82₽), но WB Dashboard показывает "Продажа" = 131,134.76₽.
 
 **Причина расхождения:**
+
 - `sales_gross` = retail_price_with_discount (цена для покупателя ДО комиссии WB)
 - WB "Продажа" = gross = retail_price - wb_commission (выручка продавца ПОСЛЕ комиссии WB)
 
@@ -25,6 +26,7 @@ Frontend отображает `sales_gross` (197,083.82₽), но WB Dashboard �
 ## Solution
 
 Добавлены новые поля:
+
 - `wb_sales_gross` = SUM(gross) WHERE doc_type='sale'
 - `wb_returns_gross` = SUM(gross) WHERE doc_type='return'
 
@@ -51,12 +53,12 @@ Frontend отображает `sales_gross` (197,083.82₽), но WB Dashboard �
 
 ### New Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `wb_sales_gross` | number | WB Dashboard "Продажа" exact match |
-| `wb_returns_gross` | number | WB Dashboard "Возврат" exact match |
-| `wb_sales_gross_total` | number | Consolidated (RUS + EAEU) |
-| `wb_returns_gross_total` | number | Consolidated (RUS + EAEU) |
+| Field                    | Type   | Description                        |
+| ------------------------ | ------ | ---------------------------------- |
+| `wb_sales_gross`         | number | WB Dashboard "Продажа" exact match |
+| `wb_returns_gross`       | number | WB Dashboard "Возврат" exact match |
+| `wb_sales_gross_total`   | number | Consolidated (RUS + EAEU)          |
+| `wb_returns_gross_total` | number | Consolidated (RUS + EAEU)          |
 
 ---
 
@@ -99,23 +101,24 @@ const sellerGross = data.summary_rus.wb_sales_gross;       // 131,134.76₽
 
 ### W49 (Dec 1-7, 2025) - Initial Implementation
 
-| Metric | API Value | WB Dashboard | Match |
-|--------|-----------|--------------|-------|
-| wb_sales_gross | 131,134.76₽ | "Продажа" | ✅ |
-| wb_returns_gross | 809.00₽ | "Возврат" | ✅ |
-| sales_gross | 197,083.82₽ | (not shown) | N/A |
+| Metric           | API Value   | WB Dashboard | Match |
+| ---------------- | ----------- | ------------ | ----- |
+| wb_sales_gross   | 131,134.76₽ | "Продажа"    | ✅    |
+| wb_returns_gross | 809.00₽     | "Возврат"    | ✅    |
+| sales_gross      | 197,083.82₽ | (not shown)  | N/A   |
 
 ### W48 (Nov 24-30, 2024) - Formula Fix Verification
 
-| Metric | API Value | WB Dashboard | Match |
-|--------|-----------|--------------|-------|
-| wb_sales_gross_total | 153,220.48₽ | - | - |
-| wb_returns_gross_total | 7,954.00₽ | - | - |
-| **NET (sales - returns)** | **145,266.48₽** | **145,266.48₽** | ✅ |
-| └ Основной | 137,945.00₽ | 137,945.00₽ | ✅ |
-| └ По выкупам | 7,321.48₽ | 7,321.48₽ | ✅ |
+| Metric                    | API Value       | WB Dashboard    | Match |
+| ------------------------- | --------------- | --------------- | ----- |
+| wb_sales_gross_total      | 153,220.48₽     | -               | -     |
+| wb_returns_gross_total    | 7,954.00₽       | -               | -     |
+| **NET (sales - returns)** | **145,266.48₽** | **145,266.48₽** | ✅    |
+| └ Основной                | 137,945.00₽     | 137,945.00₽     | ✅    |
+| └ По выкупам              | 7,321.48₽       | 7,321.48₽       | ✅    |
 
 **Frontend Fix (2025-12-14)**: FinancialSummaryTable.tsx теперь вычисляет NET:
+
 ```typescript
 const wbSalesNet = wbSales - wbReturns
 ```
@@ -125,6 +128,7 @@ const wbSalesNet = wbSales - wbReturns
 ## Database Changes
 
 ### weekly_payout_summary
+
 ```sql
 ALTER TABLE weekly_payout_summary
 ADD COLUMN wb_sales_gross DECIMAL(15,2) NOT NULL DEFAULT 0,
@@ -132,6 +136,7 @@ ADD COLUMN wb_returns_gross DECIMAL(15,2) NOT NULL DEFAULT 0;
 ```
 
 ### weekly_payout_total
+
 ```sql
 ALTER TABLE weekly_payout_total
 ADD COLUMN wb_sales_gross_total DECIMAL(15,2) NOT NULL DEFAULT 0,

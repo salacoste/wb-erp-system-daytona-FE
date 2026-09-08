@@ -151,12 +151,14 @@ export default function DashboardPage() {
 ## Visual Design
 
 ### Desktop Layout (>768px)
+
 ```
 Главная страница
 Обзор за: Неделя 5, 2026 (27 янв — 02 фев) • Обновлено: 5 мин назад
 ```
 
 ### Mobile Layout (<768px)
+
 ```
 Главная страница
 Обзор за: Неделя 5, 2026 (27 янв — 02 фев)
@@ -164,6 +166,7 @@ export default function DashboardPage() {
 ```
 
 ### Typography
+
 - "Обзор за:" - `text-sm text-muted-foreground`
 - Period value - `text-sm font-medium text-foreground`
 - "Обновлено:" - `text-sm text-muted-foreground`
@@ -240,12 +243,12 @@ export default function DashboardPage() {
 
 ## Dependencies
 
-| Dependency | Type | Status |
-|------------|------|--------|
-| `date-fns` | npm package | ✅ Installed |
-| `date-fns/locale/ru` | npm module | ✅ Available |
-| `useDashboardPeriod` hook | Story 60.1 | 📋 Ready |
-| `DashboardPeriodContext` | Story 60.1 | 📋 Ready |
+| Dependency                | Type        | Status       |
+| ------------------------- | ----------- | ------------ |
+| `date-fns`                | npm package | ✅ Installed |
+| `date-fns/locale/ru`      | npm module  | ✅ Available |
+| `useDashboardPeriod` hook | Story 60.1  | 📋 Ready     |
+| `DashboardPeriodContext`  | Story 60.1  | 📋 Ready     |
 
 ---
 

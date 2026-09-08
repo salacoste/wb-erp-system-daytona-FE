@@ -11,9 +11,11 @@
 Начинаешь работу над Epic 37? **Начни здесь!**
 
 ### 1. Прочитай Epic Document
+
 📄 **File**: `docs/epics/epic-37-merged-group-table-display.md`
 
 **Содержание**:
+
 - Бизнес-контекст и ценность
 - 3-tier rowspan table архитектура
 - Epic 35/36 интеграция
@@ -26,9 +28,11 @@
 ---
 
 ### 2. Прочитай Implementation Plan
+
 📄 **File**: `docs/implementation-plans/epic-37-frontend-implementation-plan.md`
 
 **Содержание**:
+
 - Development strategy (параллельно с backend)
 - Mock data approach (temporary)
 - 5-phase implementation plan
@@ -40,9 +44,11 @@
 ---
 
 ### 3. Прочитай Mock Data Management Plan
+
 📄 **File**: `docs/EPIC-37-MOCK-DATA-MANAGEMENT.md`
 
 **Содержание**:
+
 - ⚠️ **КРИТИЧНО**: Inventory всех mock файлов
 - Процесс замены mock → real API (5 фаз)
 - Cleanup checklist (что удалять, когда)
@@ -54,13 +60,13 @@
 
 ### 4. Выполни Stories по Порядку
 
-| Story | File | Effort | Status |
-|-------|------|--------|--------|
-| **37.1** | `docs/stories/epic-37/story-37.1-backend-api-validation.BMAD.md` | 1-2h | ⏳ BLOCKED (waiting backend) |
-| **37.2** | `docs/stories/epic-37/story-37.2-merged-group-table-component.BMAD.md` | 3-4h | ✅ CAN START NOW |
-| **37.3** | `docs/stories/epic-37/story-37.3-aggregate-metrics-display.BMAD.md` | 2-3h | After 37.2 |
-| **37.4** | `docs/stories/epic-37/story-37.4-visual-styling-hierarchy.BMAD.md` | 2-3h | After 37.3 |
-| **37.5** | `docs/stories/epic-37/story-37.5-testing-documentation.BMAD.md` | 1-2h | After 37.4 |
+| Story    | File                                                                   | Effort | Status                       |
+| -------- | ---------------------------------------------------------------------- | ------ | ---------------------------- |
+| **37.1** | `docs/stories/epic-37/story-37.1-backend-api-validation.BMAD.md`       | 1-2h   | ⏳ BLOCKED (waiting backend) |
+| **37.2** | `docs/stories/epic-37/story-37.2-merged-group-table-component.BMAD.md` | 3-4h   | ✅ CAN START NOW             |
+| **37.3** | `docs/stories/epic-37/story-37.3-aggregate-metrics-display.BMAD.md`    | 2-3h   | After 37.2                   |
+| **37.4** | `docs/stories/epic-37/story-37.4-visual-styling-hierarchy.BMAD.md`     | 2-3h   | After 37.3                   |
+| **37.5** | `docs/stories/epic-37/story-37.5-testing-documentation.BMAD.md`        | 1-2h   | After 37.4                   |
 
 **Порядок чтения**: 37.2 → 37.3 → 37.4 → 37.5 → 37.1 (validation в конце)
 
@@ -176,6 +182,7 @@ grep -r "MOCK DATA" src/ | grep -i epic-37
 **What**: Начать Stories 37.2-37.5 с mock данными (параллельно с backend)
 
 **How**:
+
 1. ✅ Phase 0 COMPLETE (mock data ready)
 2. 🚀 Start Story 37.2 (MergedGroupTable Component) - uses mock data
 3. Continue Story 37.3-37.5 - uses mock data
@@ -201,6 +208,7 @@ grep -r "MOCK DATA" src/ | grep -i epic-37
 ## 📊 Current Status
 
 ### ✅ COMPLETE
+
 - [x] Epic 37 document created and validated (9.8/10)
 - [x] 5 BMad stories created and validated (9.6/10 average)
 - [x] Implementation plan created
@@ -210,10 +218,12 @@ grep -r "MOCK DATA" src/ | grep -i epic-37
 - [x] Mock data management plan created
 
 ### ⏳ IN PROGRESS
+
 - [ ] Backend Story 37.0 (Request #88) - Backend team working
 - [ ] Story 37.2: MergedGroupTable Component - Ready to start
 
 ### 🚫 BLOCKED
+
 - [ ] Story 37.1: Backend API Validation - Waiting for Story 37.0
 
 ---
@@ -252,6 +262,7 @@ cat docs/stories/epic-37/story-37.2-merged-group-table-component.BMAD.md
 **Question**: "Story 37.0 (Request #88) status?"
 
 **Expected Responses**:
+
 - "In progress, 60% complete" → Continue frontend development with mock
 - "Complete, deployed to staging" → Execute Story 37.1 validation
 - "Blocked by X" → Continue mock development, coordinate on blocker
@@ -259,12 +270,14 @@ cat docs/stories/epic-37/story-37.2-merged-group-table-component.BMAD.md
 ### Integration Handoff (After Story 37.0)
 
 **Backend provides**:
+
 1. Notification: "Story 37.0 COMPLETE"
 2. Test endpoint URL (staging)
 3. Sample response JSON
 4. Auth credentials for testing
 
 **Frontend executes**:
+
 1. Story 37.1: API Validation (1-2h)
 2. Integration testing
 3. Switch feature flag to real API
@@ -276,15 +289,18 @@ cat docs/stories/epic-37/story-37.2-merged-group-table-component.BMAD.md
 ## 📚 Additional Resources
 
 ### Epic Dependencies
+
 - ✅ **Epic 36**: Product Card Linking (backend complete)
 - ✅ **Epic 35**: Total Sales & Organic Split (backend complete)
 
 ### Related Requests
+
 - **Request #83**: Epic 36 API Contract (current FLAT structure)
 - **Request #87**: imtId field in SKU mode (Epic 36)
 - **Request #88**: Epic 37 Individual Product Metrics (Story 37.0)
 
 ### Validation Reports
+
 - `docs/stories/epic-37/STORY-VALIDATION-REPORT-2025-12-29.md` - All 5 stories validated
 - `docs/stories/epic-37/PO-VALIDATION-REPORT-EPIC-37.md` - PO approval
 - `docs/stories/epic-37/api-validation-report-37.1.md` - API structure analysis
@@ -294,21 +310,27 @@ cat docs/stories/epic-37/story-37.2-merged-group-table-component.BMAD.md
 ## ❓ Common Questions
 
 ### Q: Когда можно начинать разработку?
+
 **A**: **СЕЙЧАС!** Stories 37.2-37.5 не блокированы, используют mock данные.
 
 ### Q: Нужно ли ждать backend?
+
 **A**: **НЕТ!** Разрабатывай параллельно с mock данными. Story 37.1 (validation) сделаешь когда backend готов.
 
 ### Q: Где хранятся mock данные?
+
 **A**: `src/mocks/data/epic-37-merged-groups.ts` - **единственный источник** mock данных.
 
 ### Q: Когда удалять mock данные?
+
 **A**: После успешной валидации Story 37.1 + интеграции с real API. См. `docs/EPIC-37-MOCK-DATA-MANAGEMENT.md`.
 
 ### Q: Как переключиться на real API?
+
 **A**: Установить `NEXT_PUBLIC_EPIC_37_USE_REAL_API=true` в `.env.local`.
 
 ### Q: Что делать если backend затягивается?
+
 **A**: Продолжать разработку с mock данными. Frontend работает независимо.
 
 ---
@@ -316,18 +338,21 @@ cat docs/stories/epic-37/story-37.2-merged-group-table-component.BMAD.md
 ## 📋 Development Checklist
 
 ### Before Starting
+
 - [ ] Read Epic 37 main document (15 min)
 - [ ] Read Implementation Plan (10 min)
 - [ ] Read Mock Data Management Plan (5 min)
 - [ ] Verify Phase 0 complete (mock data + feature flags ready)
 
 ### During Development
+
 - [ ] Follow BMad story order: 37.2 → 37.3 → 37.4 → 37.5
 - [ ] Use mock data from `src/mocks/data/epic-37-merged-groups.ts`
 - [ ] Document any mock data usage with `⚠️ TEMPORARY` comments
 - [ ] Include references to cleanup plan in all mock-related code
 
 ### After Backend Ready
+
 - [ ] Execute Story 37.1 (API Validation)
 - [ ] Switch to real API (`useRealApi=true`)
 - [ ] Delete all mock data files (see cleanup checklist)

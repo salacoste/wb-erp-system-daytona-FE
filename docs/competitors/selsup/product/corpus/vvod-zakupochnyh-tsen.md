@@ -13,7 +13,7 @@ chars: 6999
 
 В этой статье:
 
-- 
+-
 - <a href="#vvedite-zakupochnye-tseny-pri-pervoj-nastrojke-selsup" rel="nofollow">Введите закупочные цены при первой настройке SelSup</a>
 - <a href="#vvod-cherez-interfejs" rel="nofollow">Ввод через интерфейс</a>
 - <a href="#vvod-cherez-excel" rel="nofollow">Ввод через Excel</a>
@@ -57,7 +57,7 @@ chars: 6999
 Доп. расходы в рублях = 4483,20 × 25% = 1120,80 ₽\
 Себестоимость = 1000 + 1120,80 = 2120,80 ₽
 
-------------------------------------------------------------------------
+---
 
 **Для комплектов:** если вы работаете с комплектами, их закупочная цена и дополнительные расходы могут [пересчитываться автоматически по настройкам](../nastrojki-selsup/index.html) в разделе [**«Настройки → Цены»**](https://selsup.ru/application/settings/prices).
 
@@ -66,7 +66,7 @@ chars: 6999
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2025/09/chrome_txeoyuboqn.png.webp)
 
-------------------------------------------------------------------------
+---
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 

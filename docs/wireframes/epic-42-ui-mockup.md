@@ -12,6 +12,7 @@
 Epic 42-FE is primarily a **technical adaptation** epic with minimal UI changes. Only the optional Stories 42.2-FE and 42.3-FE require UI components.
 
 **Required UI Components:**
+
 1. `MissingCogsAlert` — Alert banner for products without COGS
 2. Sanity Check results display (optional, can be inline with existing alerts)
 
@@ -22,19 +23,22 @@ Epic 42-FE is primarily a **technical adaptation** epic with minimal UI changes.
 ## Design System Reference
 
 ### Colors
-| Element | Color | Hex | Usage |
-|---------|-------|-----|-------|
-| Primary Red | `#E53935` | Main brand color | CTAs, important actions |
-| Amber/Warning | `#F59E0B` | `border-amber-500` | Warning alerts (non-critical) |
-| Amber Background | `#FEF3C7` | `bg-amber-50` | Alert background |
-| Amber Text | `#92400E` | `text-amber-900` | Alert text |
+
+| Element          | Color     | Hex                | Usage                         |
+| ---------------- | --------- | ------------------ | ----------------------------- |
+| Primary Red      | `#E53935` | Main brand color   | CTAs, important actions       |
+| Amber/Warning    | `#F59E0B` | `border-amber-500` | Warning alerts (non-critical) |
+| Amber Background | `#FEF3C7` | `bg-amber-50`      | Alert background              |
+| Amber Text       | `#92400E` | `text-amber-900`   | Alert text                    |
 
 ### Icons (Lucide React)
+
 - `AlertTriangle` — Warning icon
 - `X` — Close/dismiss
 - `ArrowRight` — Action link indicator
 
 ### Components Base
+
 - shadcn/ui `Alert` component
 - shadcn/ui `Badge` component
 - shadcn/ui `Button` component
@@ -45,11 +49,13 @@ Epic 42-FE is primarily a **technical adaptation** epic with minimal UI changes.
 ## Wireframe 1: MissingCogsAlert Component
 
 ### Purpose
+
 Alert banner displayed when products are missing COGS assignment. Shows count, preview, and actionable link.
 
 ### Placement Options
 
 **Option A: Dashboard Page (Main Dashboard)**
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  [Logo] WB Repricer          [User Avatar]                       │
@@ -72,6 +78,7 @@ Alert banner displayed when products are missing COGS assignment. Shows count, p
 ```
 
 **Option B: COGS Management Page**
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  COGS Management                                 [Cabinet Select]│
@@ -113,11 +120,13 @@ Alert banner displayed when products are missing COGS assignment. Shows count, p
 ### Responsive Behavior
 
 **Desktop (≥768px):** Single row, button on right
+
 ```
 [Badge] Description text (flex-grow) [Action Button] [×]
 ```
 
 **Mobile (<768px):** Stacked vertically
+
 ```
 [Badge] [×]
 Description text
@@ -126,18 +135,19 @@ Description text
 
 ### States
 
-| State | Display | Notes |
-|-------|---------|-------|
-| **Visible** | Full alert shown | `missingCount > 0` |
-| **Dismissed** | Hidden for session | Click ×, session-only |
-| **Hidden** | No alert rendered | `missingCount = 0` |
-| **Loading** | Alert with spinner | Sanity check in progress |
+| State         | Display            | Notes                    |
+| ------------- | ------------------ | ------------------------ |
+| **Visible**   | Full alert shown   | `missingCount > 0`       |
+| **Dismissed** | Hidden for session | Click ×, session-only    |
+| **Hidden**    | No alert rendered  | `missingCount = 0`       |
+| **Loading**   | Alert with spinner | Sanity check in progress |
 
 ---
 
 ## Wireframe 2: Tooltip Product Preview
 
 ### Purpose
+
 Shows first 5 products without COGS when hovering over the badge.
 
 ### Layout
@@ -156,6 +166,7 @@ Shows first 5 products without COGS when hovering over the badge.
 ```
 
 ### Behavior
+
 - Trigger: Hover/click on badge
 - Position: Below badge, left-aligned
 - Max width: 200px
@@ -237,28 +248,31 @@ MissingCogsAlert (new component)
 
 ## Accessibility (WCAG 2.1 AA)
 
-| Requirement | Implementation |
-|-------------|----------------|
-| Color contrast | Amber text on amber background meets WCAG AA |
-| Keyboard navigation | Tab through alert, Enter on action button |
-| Screen reader | ARIA labels on icon buttons |
-| Touch targets | Min 44×44px for buttons |
-| Focus visible | Amber border on focus |
+| Requirement         | Implementation                               |
+| ------------------- | -------------------------------------------- |
+| Color contrast      | Amber text on amber background meets WCAG AA |
+| Keyboard navigation | Tab through alert, Enter on action button    |
+| Screen reader       | ARIA labels on icon buttons                  |
+| Touch targets       | Min 44×44px for buttons                      |
+| Focus visible       | Amber border on focus                        |
 
 ---
 
 ## Interaction Specifications
 
 ### Dismiss Behavior
+
 - Click × → alert hides for current session
 - Session storage key: `missing-cogs-alert-dismissed`
 - Re-show on: Page refresh (if not in session), manual check
 
 ### Action Link Behavior
+
 - Click "Назначить COGS" → Navigate to `/cogs?has_cogs=false`
 - Filter applied automatically on target page
 
 ### Auto-check Behavior
+
 - Dashboard: Trigger on mount, cache 5 min
 - COGS page: Trigger on mount, cache 5 min
 - Manual: Trigger on button click
@@ -281,25 +295,26 @@ MissingCogsAlert (new component)
 
 ### Existing Files to Update
 
-| File | Change | Type |
-|------|--------|------|
-| `src/app/(dashboard)/page.tsx` | Add `MissingCogsAlert` | Update |
+| File                                | Change                 | Type   |
+| ----------------------------------- | ---------------------- | ------ |
+| `src/app/(dashboard)/page.tsx`      | Add `MissingCogsAlert` | Update |
 | `src/app/(dashboard)/cogs/page.tsx` | Add `MissingCogsAlert` | Update |
-| `src/components/custom/Sidebar.tsx` | No change needed | — |
+| `src/components/custom/Sidebar.tsx` | No change needed       | —      |
 
 ### New Files to Create
 
-| File | Purpose |
-|------|---------|
-| `src/components/custom/MissingCogsAlert.tsx` | Alert component |
-| `src/hooks/useSanityCheck.ts` | Sanity check hook (42.2-FE) |
-| `src/types/tasks.ts` | Task-related types (42.1-FE) |
+| File                                         | Purpose                      |
+| -------------------------------------------- | ---------------------------- |
+| `src/components/custom/MissingCogsAlert.tsx` | Alert component              |
+| `src/hooks/useSanityCheck.ts`                | Sanity check hook (42.2-FE)  |
+| `src/types/tasks.ts`                         | Task-related types (42.1-FE) |
 
 ---
 
 ## Excalidraw-ready Descriptions
 
 ### Shape 1: Alert Banner (Desktop)
+
 - Rectangle: 100% width, ~80px height
 - Background: Amber-50 (#FEF3C7)
 - Border: 2px solid Amber-500 (#F59E0B)
@@ -307,12 +322,14 @@ MissingCogsAlert (new component)
 - Padding: 16px
 
 ### Shape 2: Badge
+
 - Pill shape: ~80px × 24px
 - Background: Transparent
 - Border: 1px solid Amber-600 (#D97706)
 - Text: "{count} товаров"
 
 ### Shape 3: Action Button
+
 - Rectangle: ~140px × 36px
 - Border: 1px solid Amber-600
 - Text: "Назначить COGS →"
@@ -339,5 +356,5 @@ MissingCogsAlert (new component)
 
 ---
 
-*Wireframes created for Epic 42-FE implementation*
-*Last Updated: 2026-01-17*
+_Wireframes created for Epic 42-FE implementation_
+_Last Updated: 2026-01-17_

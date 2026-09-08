@@ -19,7 +19,7 @@ SelSup получает данные через API Core, обрабатывае
 
 В этой статье:
 
-- 
+-
 - <a href="#tdzjq4" rel="nofollow">Как создать обмен через JSON API</a>
 - <a href="#10zpand" rel="nofollow">Какие данные нужно указать</a>
 - <a href="#foehv8" rel="nofollow">Как работает обмен</a>

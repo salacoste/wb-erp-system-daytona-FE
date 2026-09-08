@@ -13,7 +13,7 @@ chars: 2646
 
 В этой статье:
 
-- 
+-
 - <a href="#dlya-chego-nuzhna-stranitsa-pokupateli" rel="nofollow">Для чего нужна страница «Покупатели»</a>
 - <a href="#v-kakih-sluchayah-dannye-pokupatelej-popadayut-na-etu-stranitsu" rel="nofollow">В каких случаях данные покупателей попадают на эту страницу</a>
 - <a href="#kakie-dannye-o-pokupatelyah-hranyatsya-v-selsup" rel="nofollow">Какие данные о покупателях хранятся в SelSup</a>
@@ -25,7 +25,7 @@ chars: 2646
 
 Страница находится в разделе [«Заказы на отгрузку» — «Покупатели»](https://selsup.ru/application/customers/).\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/05/screenshot_33.png.webp)\
-***Обратите внимание, раздел будет скрыт, если в покупателях нет ни одного клиента.***
+_**Обратите внимание, раздел будет скрыт, если в покупателях нет ни одного клиента.**_
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 

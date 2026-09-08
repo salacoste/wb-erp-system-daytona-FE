@@ -15,11 +15,13 @@
 ### Бизнес-проблема
 
 Селлеры создают новые карточки товаров и не знают, какую цену установить:
-- *"Сколько поставить цену, чтобы получить маржу 20%?"*
-- *"Учту ли я все затраты WB?"*
-- *"Будет ли цена конкурентоспособной?"*
+
+- _"Сколько поставить цену, чтобы получить маржу 20%?"_
+- _"Учту ли я все затраты WB?"_
+- _"Будет ли цена конкурентоспособной?"_
 
 Текущий процесс:
+
 1. Продавец вводит цену "на глаз" в карточке товара
 2. Постфактум видит фактическую маржу в отчетах WB
 3. Корректирует цену итеративно, теряя время и продажи
@@ -27,6 +29,7 @@
 ### Решение
 
 UI страница в фронтенде, которая:
+
 - Принимает параметры затрат и целевую маржу
 - Отправляет запрос на backend API
 - Отображает рассчитанную цену и breakdown затрат
@@ -47,10 +50,12 @@ UI страница в фронтенде, которая:
 **Endpoint:** `POST /v1/products/price-calculator`
 
 **Authentication:**
+
 - `Authorization: Bearer <JWT_TOKEN>`
 - `X-Cabinet-Id: <CABINET_UUID>`
 
 **Request Body (Required):**
+
 ```json
 {
   "target_margin_pct": 20.0,
@@ -64,6 +69,7 @@ UI страница в фронтенде, которая:
 ```
 
 **Request Body (Optional):**
+
 ```json
 {
   "vat_pct": 20.0,
@@ -77,6 +83,7 @@ UI страница в фронтенде, которая:
 ```
 
 **Response:**
+
 ```json
 {
   "meta": { "cabinet_id": "uuid", "calculated_at": "2026-01-16T12:00:00Z" },
@@ -111,18 +118,21 @@ UI страница в фронтенде, которая:
 **Formula:** `storage_daily = (base_rate + (volume - 1) × liter_rate) × warehouse_coefficient`
 
 **Calculation:**
+
 - **Base Rate** (₽/day) - Fixed base cost per unit
 - **Volume** (liters/dm³) - Product dimensions (from product catalog)
 - **Liter Rate** (₽/day per liter) - Cost per unit volume above 1 liter
 - **Warehouse Coefficient** - Warehouse-specific multiplier (100 = 1.0, 125 = 1.25)
 
 **Application Rules:**
+
 - Storage is **60 days FREE** per Wildberries policy
 - Calculate effective storage: `storage_cost = daily_cost × max(0, effective_days - 60)`
 - **FBO Only** - Storage applies only to Fulfillment by Wildberries
 - **FBS has zero storage** - No storage costs for seller-fulfilled orders
 
 **Key Implementation Notes:**
+
 - Frontend receives pre-calculated `storage_rub` from user input or auto-calculation
 - Backend API endpoint validates storage values
 - Use warehouse selection to adjust coefficients automatically
@@ -130,18 +140,21 @@ UI страница в фронтенде, которая:
 ### Logistics Rules
 
 **Forward Logistics (WB → Customer):**
+
 - **Auto-fill enabled** when warehouse + volume + dimensions available
 - Uses formula: `forward = (base_rate + (vol - 1) × liter_rate) × warehouse_coef`
 - **FBO & FBS both use** forward logistics
 - Can be overridden by user if custom value needed
 
 **Reverse Logistics (Customer → Warehouse - Returns):**
+
 - **MANUAL ONLY** - Never auto-fill under any circumstances
 - Backend always requires explicit user input
 - User must provide reverse logistics cost based on return policy
 - No formula calculation for reverse logistics
 
 **Buyback Effect on Reverse Logistics:**
+
 - `reverse_effective = reverse_logistics_rub × (1 - buyback_pct / 100)`
 - Example: 150 ₽ reverse with 98% buyback → `150 × (1 - 0.98) = 3 ₽ effective cost`
 - Higher buyback% = lower effective reverse cost
@@ -149,13 +162,15 @@ UI страница в фронтенде, которая:
 ### Cargo Type Classification
 
 **Cargo type determined by maximum dimension:**
-| Type | Code | Max Dimension | Example |
-|------|------|---------------|---------|
-| MGT  | `MGT` | ≤60cm | Books, small items |
-| SGT  | `SGT` | ≤120cm | Clothing, medium boxes |
-| KGT  | `KGT` | >120cm | Large furniture, oversized goods |
+
+| Type | Code  | Max Dimension | Example                          |
+| ---- | ----- | ------------- | -------------------------------- |
+| MGT  | `MGT` | ≤60cm         | Books, small items               |
+| SGT  | `SGT` | ≤120cm        | Clothing, medium boxes           |
+| KGT  | `KGT` | >120cm        | Large furniture, oversized goods |
 
 **Validation Rules:**
+
 - If max dimension > 120cm AND no KGT warehouse available → **Error: Cannot calculate**
 - Warehouse must support the cargo type
 - Backend API validates cargo type compatibility
@@ -169,6 +184,7 @@ UI страница в фронтенде, которая:
 5. **Cargo Classification** - Validate before sending API request
 
 **Testing Focus:**
+
 - Reverse logistics field always empty on init (user must enter)
 - Forward logistics auto-populates on warehouse selection
 - Storage displays as zero or "Не применимо" for FBS cabinets
@@ -224,18 +240,18 @@ UI страница в фронтенде, которая:
 
 ### Input Fields
 
-| Field | Type | Required | Default | Validation |
-|-------|------|----------|---------|------------|
-| Target Margin % | number + slider | ✅ | 20 | 0-100 |
-| COGS (₽) | number | ✅ | - | ≥0 |
-| Logistics Forward (₽) | number | ✅ | - | ≥0 |
-| Logistics Reverse (₽) | number | ✅ | - | ≥0 |
-| Buyback (%) | number + slider | ✅ | 98 | 0-100 |
-| Advertising (%) | number + slider | ✅ | 5 | 0-100 |
-| Storage (₽) | number | ✅ | 0 | ≥0 |
-| VAT (%) | select | ❌ | 20 | 0, 10, 20 |
-| Acquiring (%) | number | ❌ | 1.8 | 0-100 |
-| Commission (%) | number | ❌ | 10 | 0-100 |
+| Field                 | Type            | Required | Default | Validation |
+| --------------------- | --------------- | -------- | ------- | ---------- |
+| Target Margin %       | number + slider | ✅       | 20      | 0-100      |
+| COGS (₽)              | number          | ✅       | -       | ≥0         |
+| Logistics Forward (₽) | number          | ✅       | -       | ≥0         |
+| Logistics Reverse (₽) | number          | ✅       | -       | ≥0         |
+| Buyback (%)           | number + slider | ✅       | 98      | 0-100      |
+| Advertising (%)       | number + slider | ✅       | 5       | 0-100      |
+| Storage (₽)           | number          | ✅       | 0       | ≥0         |
+| VAT (%)               | select          | ❌       | 20      | 0, 10, 20  |
+| Acquiring (%)         | number          | ❌       | 1.8     | 0-100      |
+| Commission (%)        | number          | ❌       | 10      | 0-100      |
 
 ### Real-time Calculation
 
@@ -256,20 +272,26 @@ UI страница в фронтенде, которая:
 ## Stories Breakdown
 
 ### Story 44.1: TypeScript Types & API Client
+
 **Priority:** P0 | **Points:** 2
+
 - Create TypeScript types for request/response DTOs
 - Create API client hook `usePriceCalculator()`
 - Error handling integration
 
 ### Story 44.2: Input Form Component
+
 **Priority:** P0 | **Points:** 3
+
 - Create `PriceCalculatorForm` component
 - All input fields with validation
 - Advanced options collapsible section
 - Commission override options
 
 ### Story 44.3: Results Display Component
+
 **Priority:** P0 | **Points:** 3
+
 - Create `PriceCalculatorResults` component
 - Recommended price display (large, prominent)
 - Margin display with color coding
@@ -277,14 +299,18 @@ UI страница в фронтенде, которая:
 - Visual breakdown chart
 
 ### Story 44.4: Page Layout & Integration
+
 **Priority:** P0 | **Points:** 2
+
 - Create `/tools/price-calculator` page
 - Integrate form and results components
 - Navbar navigation
 - Responsive layout
 
 ### Story 44.5: Real-time Calculation & UX
+
 **Priority:** P1 | **Points:** 2
+
 - Implement debounced calculation
 - Loading states
 - Error handling with user-friendly messages
@@ -292,7 +318,9 @@ UI страница в фронтенде, которая:
 - Reset button functionality
 
 ### Story 44.6: Testing & Documentation
+
 **Priority:** P1 | **Points:** 2
+
 - Unit tests for components
 - Integration test for API client
 - E2E test for full flow
@@ -310,46 +338,56 @@ UI страница в фронтенде, которая:
 
 ### Visual Enhancement Stories Table
 
-| Story ID | Title | Status | SP | Priority | Depends On |
-|----------|-------|--------|----|:--------:|------------|
-| 44.21-FE | Card Elevation System & Shadow Hierarchy | 📋 Ready for Dev | 2 | P0 | 44.20 |
-| 44.22-FE | Hero Price Display Enhancement | 📋 Ready for Dev | 2 | P0 | 44.20 |
-| 44.23-FE | Form Card Visual Upgrade | 📋 Ready for Dev | 3 | P0 | 44.20 |
-| 44.24-FE | Enhanced Slider with Visual Zones | 📋 Ready for Dev | 2 | P1 | 44.20 |
-| 44.25-FE | Loading States & Micro-interactions | 📋 Ready for Dev | 3 | P1 | 44.20 |
+| Story ID | Title                                    | Status           | SP  | Priority | Depends On |
+| -------- | ---------------------------------------- | ---------------- | --- | :------: | ---------- |
+| 44.21-FE | Card Elevation System & Shadow Hierarchy | 📋 Ready for Dev | 2   |    P0    | 44.20      |
+| 44.22-FE | Hero Price Display Enhancement           | 📋 Ready for Dev | 2   |    P0    | 44.20      |
+| 44.23-FE | Form Card Visual Upgrade                 | 📋 Ready for Dev | 3   |    P0    | 44.20      |
+| 44.24-FE | Enhanced Slider with Visual Zones        | 📋 Ready for Dev | 2   |    P1    | 44.20      |
+| 44.25-FE | Loading States & Micro-interactions      | 📋 Ready for Dev | 3   |    P1    | 44.20      |
 
 **Phase 2 Estimate:** 12 Story Points
 
 ### Story 44.21-FE: Card Elevation System & Shadow Hierarchy
+
 **Priority:** P0 | **Points:** 2
+
 - Define elevation levels (0-3) with shadow hierarchy
 - Apply shadows to form, results, and breakdown cards
 - Add hover transitions and mobile responsiveness
 - Ensure WCAG 2.1 AA compliance
 
 ### Story 44.22-FE: Hero Price Display Enhancement
+
 **Priority:** P0 | **Points:** 2
+
 - Enhanced gradient background and shadow for recommended price
 - Larger font size with drop-shadow
 - Price gap indicator with colored backgrounds and icons
 - Visual hierarchy reinforcement (min/recommended/customer)
 
 ### Story 44.23-FE: Form Card Visual Upgrade
+
 **Priority:** P0 | **Points:** 3
+
 - Enhanced card header with icon and primary border
 - Section grouping with colored backgrounds (target, fixed, percentage, tax)
 - Input field focus enhancements
 - Action buttons with gradient and icons
 
 ### Story 44.24-FE: Enhanced Slider with Visual Zones
+
 **Priority:** P1 | **Points:** 2
+
 - Visual zone overlay (low/medium/high margin zones)
 - Dynamic track color based on value
 - Zone labels and colored value badge
 - Keyboard accessible with zone announcements
 
 ### Story 44.25-FE: Loading States & Micro-interactions
+
 **Priority:** P1 | **Points:** 3
+
 - Skeleton loader with progress indicator
 - Value transition animations (count up/down)
 - Copy button success animation
@@ -377,22 +415,24 @@ UI страница в фронтенде, которая:
 
 ### Phase 3 Stories
 
-| Story ID | Title | Status | SP | Priority | Depends On |
-|----------|-------|--------|----|:--------:|------------|
-| 44.12-FE | Warehouse Selection Dropdown | ✅ Complete | 3 | P0 | Backend #98 |
-| 44.13-FE | Auto-fill Coefficients | ✅ Complete | 3 | P1 | 44.12 |
-| 44.9-FE | Logistics Coefficients UI | ✅ Complete | 2 | P1 | 44.12 |
-| 44.14-FE | Storage Cost Calculation | ✅ Complete | 2 | P1 | 44.12, 44.7 |
-| **44.27-FE** | **Warehouse & Coefficients Integration** | **📋 Ready for Dev** | **2** | **P0** | **44.12, 44.13** |
+| Story ID     | Title                                    | Status               | SP    | Priority | Depends On       |
+| ------------ | ---------------------------------------- | -------------------- | ----- | :------: | ---------------- |
+| 44.12-FE     | Warehouse Selection Dropdown             | ✅ Complete          | 3     |    P0    | Backend #98      |
+| 44.13-FE     | Auto-fill Coefficients                   | ✅ Complete          | 3     |    P1    | 44.12            |
+| 44.9-FE      | Logistics Coefficients UI                | ✅ Complete          | 2     |    P1    | 44.12            |
+| 44.14-FE     | Storage Cost Calculation                 | ✅ Complete          | 2     |    P1    | 44.12, 44.7      |
+| **44.27-FE** | **Warehouse & Coefficients Integration** | **📋 Ready for Dev** | **2** |  **P0**  | **44.12, 44.13** |
 
 **Phase 3 Total:** 12 Story Points
 
 ### Story 44.27-FE: Warehouse & Coefficients Integration (NEW - CRITICAL)
+
 **Priority:** P0 | **Points:** 2
 
 **Проблема:** Компоненты `WarehouseSection`, `WarehouseSelect`, `CoefficientField` созданы, но **НЕ ИНТЕГРИРОВАНЫ** в `PriceCalculatorForm.tsx`.
 
 **Задачи:**
+
 - Добавить `WarehouseSection` в форму калькулятора
 - Связать выбор склада с получением коэффициентов
 - Передать коэффициенты в API запрос
@@ -404,12 +444,14 @@ UI страница в фронтенде, которая:
 
 ## Phase 4: Bug Fixes & User Feedback
 
-| Story ID | Title | Status | SP | Priority | Depends On |
-|----------|-------|--------|----|:--------:|------------|
-| 44.28-FE | Logistics Field Naming Fix | 📋 Ready for Dev | 1 | P1 | None |
+| Story ID | Title                      | Status           | SP  | Priority | Depends On |
+| -------- | -------------------------- | ---------------- | --- | :------: | ---------- |
+| 44.28-FE | Logistics Field Naming Fix | 📋 Ready for Dev | 1   |    P1    | None       |
 
 ### Story 44.28-FE: Logistics Field Naming Fix
+
 **Priority:** P1 | **Points:** 1
+
 - Fix incorrect "Логистика до склада" label → "Логистика к клиенту"
 - Update tooltips to clarify WB → customer delivery direction
 - User feedback: labels should match WB terminology
@@ -452,15 +494,16 @@ UI страница в фронтенде, которая:
 
 ## Open Questions
 
-| Question | Status |
-|----------|--------|
-| Page location in navigation | TODO: Confirm with UX |
+| Question                            | Status                      |
+| ----------------------------------- | --------------------------- |
+| Page location in navigation         | TODO: Confirm with UX       |
 | Integration with existing COGS data | TODO: Phase 2 consideration |
-| Save calculation functionality | TODO: Confirm requirements |
+| Save calculation functionality      | TODO: Confirm requirements  |
 
 ---
 
 **Next Steps:**
+
 1. ✅ Backend API complete (Epic 43)
 2. ⏳ Create detailed Story files
 3. ⏳ UX Design review (if needed)

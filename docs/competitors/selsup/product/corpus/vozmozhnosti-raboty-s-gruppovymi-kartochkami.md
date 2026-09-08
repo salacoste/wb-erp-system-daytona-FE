@@ -11,7 +11,7 @@ chars: 4787
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-takoe-gruppovaya-kartochka" rel="nofollow">Что такое групповая карточка</a>
 - <a href="#kak-vklyuchit-rabotu-s-gruppovymi-kartochkami" rel="nofollow">Как включить работу с групповыми карточками</a>
 - <a href="#kak-rabotaet-obedinenie" rel="nofollow">Как работает объединение</a>

@@ -22,17 +22,18 @@ Sits in the Marketing Analytics cluster alongside Epic 68 (Funnel), Epic 70 (Ret
 
 Per `docs/EPICS-AND-STORIES-TRACKER.md` (lines 103-109), 7 stories delivered 28 SP, completed 2026-02-25.
 
-| # | Scope | Status |
-|---|---|---|
-| 69.1-FE | Types & API client foundation | ✅ |
-| 69.2-FE | Buyout route + page scaffold | ✅ |
-| 69.3-FE | Buyout summary widget (cabinet-level) | ✅ |
-| 69.4-FE | Per-SKU buyout table | ✅ |
-| 69.5-FE | Data source transparency badge (weekly report vs orders API) | ✅ |
-| 69.6-FE | Empty / loading / error states | ✅ |
-| 69.7-FE | Tests + polish | ✅ |
+| #       | Scope                                                        | Status |
+| ------- | ------------------------------------------------------------ | ------ |
+| 69.1-FE | Types & API client foundation                                | ✅     |
+| 69.2-FE | Buyout route + page scaffold                                 | ✅     |
+| 69.3-FE | Buyout summary widget (cabinet-level)                        | ✅     |
+| 69.4-FE | Per-SKU buyout table                                         | ✅     |
+| 69.5-FE | Data source transparency badge (weekly report vs orders API) | ✅     |
+| 69.6-FE | Empty / loading / error states                               | ✅     |
+| 69.7-FE | Tests + polish                                               | ✅     |
 
 Post-Epic-69 touches:
+
 - Story 72.4-FE (advertising profit multiplication warning) adjusted buyout-related profit calc
 - Story 72.5-FE / 72.6-FE (buyout table refactor + enrichment fix + hook migration)
 
@@ -43,9 +44,11 @@ Detailed per-story retrospectives exist at `_bmad-output/implementation-artifact
 ## File List
 
 **Route / page**:
+
 - `src/app/(dashboard)/analytics/buyout/page.tsx` — thin entry, mounts `BuyoutPageContent`
 
 **Components** (`src/app/(dashboard)/analytics/buyout/components/`):
+
 - `BuyoutPageContent.tsx` — orchestrator (state, data fetch, layout)
 - `BuyoutSummaryWidget.tsx` — cabinet-level summary card
 - `BuyoutTable.tsx` — per-SKU breakdown table
@@ -53,12 +56,14 @@ Detailed per-story retrospectives exist at `_bmad-output/implementation-artifact
 - `__tests__/` — unit coverage
 
 **State / data layer**:
+
 - `src/hooks/use-buyout-analytics.ts` — TanStack Query wrapper + refetch policy
 - `src/hooks/__tests__/use-buyout-analytics.test.ts` — hook tests
 - `src/lib/api/buyout-analytics.ts` — API client (passthrough; 2 endpoints)
 - `src/types/buyout-analytics.ts` — request/response types
 
 **Navigation / routing**:
+
 - `src/lib/routes.ts` — `/analytics/buyout` route
 - `src/components/custom/sidebar-navigation.ts` — sidebar entry
 
@@ -68,10 +73,10 @@ Detailed per-story retrospectives exist at `_bmad-output/implementation-artifact
 
 Per `docs/request-backend/151-EPICS-68-71-ANALYTICS-API.md`:
 
-| Method | Endpoint | Cache TTL | Purpose |
-|---|---|---|---|
-| GET | `/v1/analytics/buyout/by-sku` | 30 min | Per-SKU buyout rate |
-| GET | `/v1/analytics/buyout/summary` | 30 min | Cabinet-level summary |
+| Method | Endpoint                       | Cache TTL | Purpose               |
+| ------ | ------------------------------ | --------- | --------------------- |
+| GET    | `/v1/analytics/buyout/by-sku`  | 30 min    | Per-SKU buyout rate   |
+| GET    | `/v1/analytics/buyout/summary` | 30 min    | Cabinet-level summary |
 
 Open backend request: `docs/request-backend/154-*` — data source mismatch between weekly report buyout rate and orders API buyout rate (handled client-side with a transparency badge until backend resolves).
 

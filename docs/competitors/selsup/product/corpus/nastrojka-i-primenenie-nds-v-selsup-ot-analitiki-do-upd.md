@@ -9,7 +9,7 @@ chars: 3338
 
 В этой статье:
 
-- 
+-
 - <a href="#formirovanie-upd-s-nds" rel="nofollow">Формирование УПД с НДС</a>
 - <a href="#upd-s-nds-dlya-wildberries-nastrojka-i-poshagovaya-instruktsiya" rel="nofollow">УПД с НДС для Wildberries: настройка и пошаговая инструкция</a>
 

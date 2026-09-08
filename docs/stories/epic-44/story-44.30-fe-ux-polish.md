@@ -16,6 +16,7 @@
 **So that** I can efficiently calculate prices without friction or barriers.
 
 **Non-goals**:
+
 - Major redesign or layout changes
 - New features or functionality
 - Performance optimizations
@@ -79,15 +80,15 @@ A comprehensive UX audit of the Price Calculator identified 8 issues requiring a
 
 ### Files to Modify
 
-| File | Change | Lines Est. |
-|------|--------|------------|
-| `src/app/(dashboard)/cogs/price-calculator/page.tsx` | Retry callback, H1 size | ~15 |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | Escape key fix | ~10 |
-| `src/components/custom/price-calculator/PercentageCostsFormSection.tsx` | Color change, use BuybackSlider | ~15 |
-| `src/components/custom/price-calculator/WarehouseSection.tsx` | Header size | ~5 |
-| `src/components/custom/price-calculator/FixedCostsSection.tsx` | Header size, error ARIA | ~10 |
-| `src/components/custom/price-calculator/CoefficientCalendar.tsx` | Active state | ~5 |
-| **NEW**: `src/components/custom/price-calculator/BuybackSlider.tsx` | Slider without zones | ~60 |
+| File                                                                    | Change                          | Lines Est. |
+| ----------------------------------------------------------------------- | ------------------------------- | ---------- |
+| `src/app/(dashboard)/cogs/price-calculator/page.tsx`                    | Retry callback, H1 size         | ~15        |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`        | Escape key fix                  | ~10        |
+| `src/components/custom/price-calculator/PercentageCostsFormSection.tsx` | Color change, use BuybackSlider | ~15        |
+| `src/components/custom/price-calculator/WarehouseSection.tsx`           | Header size                     | ~5         |
+| `src/components/custom/price-calculator/FixedCostsSection.tsx`          | Header size, error ARIA         | ~10        |
+| `src/components/custom/price-calculator/CoefficientCalendar.tsx`        | Active state                    | ~5         |
+| **NEW**: `src/components/custom/price-calculator/BuybackSlider.tsx`     | Slider without zones            | ~60        |
 
 ### Total Estimated: ~120 lines changed/added
 
@@ -309,20 +310,20 @@ canClick && 'cursor-pointer hover:opacity-80 hover:scale-105 active:scale-95 tra
 
 ### Section Color Palette (After Fix)
 
-| Section | Background | Border | Icon/Text |
-|---------|------------|--------|-----------|
-| Warehouse & Storage | `bg-purple-50` | `border-l-purple-400` | `text-purple-600/900` |
-| Fixed Costs | `bg-blue-50` | `border-l-blue-400` | `text-blue-600/900` |
-| Percentage Costs | `bg-emerald-50` | `border-l-emerald-400` | `text-emerald-600/900` |
-| Target Margin | (uses MarginSlider zones) | - | - |
-| Tax Configuration | (neutral) | - | - |
+| Section             | Background                | Border                 | Icon/Text              |
+| ------------------- | ------------------------- | ---------------------- | ---------------------- |
+| Warehouse & Storage | `bg-purple-50`            | `border-l-purple-400`  | `text-purple-600/900`  |
+| Fixed Costs         | `bg-blue-50`              | `border-l-blue-400`    | `text-blue-600/900`    |
+| Percentage Costs    | `bg-emerald-50`           | `border-l-emerald-400` | `text-emerald-600/900` |
+| Target Margin       | (uses MarginSlider zones) | -                      | -                      |
+| Tax Configuration   | (neutral)                 | -                      | -                      |
 
 ### Typography Fixes
 
-| Element | Before | After |
-|---------|--------|-------|
-| Page H1 | `text-2xl` (24px) | `text-3xl md:text-4xl` (30-36px) |
-| Section H3 | `text-sm font-medium` | `text-base font-semibold` |
+| Element    | Before                | After                            |
+| ---------- | --------------------- | -------------------------------- |
+| Page H1    | `text-2xl` (24px)     | `text-3xl md:text-4xl` (30-36px) |
+| Section H3 | `text-sm font-medium` | `text-base font-semibold`        |
 
 ---
 
@@ -330,21 +331,21 @@ canClick && 'cursor-pointer hover:opacity-80 hover:scale-105 active:scale-95 tra
 
 ### Functional Tests
 
-| # | Test | Expected Result |
-|---|------|-----------------|
-| 1 | Submit invalid data, click "Повторить" | Last request is retried |
-| 2 | Open calendar popover, press Escape | Popover closes, form stays open |
-| 3 | No popover open, press Escape | Reset confirmation appears |
-| 4 | Adjust buyback slider | No zone labels or color changes |
-| 5 | View all sections | Each has distinct color |
+| #   | Test                                   | Expected Result                 |
+| --- | -------------------------------------- | ------------------------------- |
+| 1   | Submit invalid data, click "Повторить" | Last request is retried         |
+| 2   | Open calendar popover, press Escape    | Popover closes, form stays open |
+| 3   | No popover open, press Escape          | Reset confirmation appears      |
+| 4   | Adjust buyback slider                  | No zone labels or color changes |
+| 5   | View all sections                      | Each has distinct color         |
 
 ### Accessibility Tests
 
-| # | Test | Expected Result |
-|---|------|-----------------|
-| 6 | Screen reader on form error | Error announced immediately |
-| 7 | Tab through form with errors | Focus moves to invalid fields |
-| 8 | Calendar with keyboard | Active state visible on Enter press |
+| #   | Test                         | Expected Result                     |
+| --- | ---------------------------- | ----------------------------------- |
+| 6   | Screen reader on form error  | Error announced immediately         |
+| 7   | Tab through form with errors | Focus moves to invalid fields       |
+| 8   | Calendar with keyboard       | Active state visible on Enter press |
 
 ### Visual Regression Tests
 
@@ -388,17 +389,18 @@ canClick && 'cursor-pointer hover:opacity-80 hover:scale-105 active:scale-95 tra
 
 ### File List
 
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/app/(dashboard)/cogs/price-calculator/page.tsx` | UPDATE | ~15 | Retry callback, H1 size |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | ~10 | Escape key modal check |
-| `src/components/custom/price-calculator/PercentageCostsFormSection.tsx` | UPDATE | ~15 | Emerald colors, use BuybackSlider |
-| `src/components/custom/price-calculator/BuybackSlider.tsx` | CREATE | ~60 | Slider without zones |
-| `src/components/custom/price-calculator/WarehouseSection.tsx` | UPDATE | ~5 | Header size |
-| `src/components/custom/price-calculator/FixedCostsSection.tsx` | UPDATE | ~10 | Header size, error ARIA |
-| `src/components/custom/price-calculator/CoefficientCalendar.tsx` | UPDATE | ~5 | Active state |
+| File                                                                    | Change Type | Lines (Est.) | Description                       |
+| ----------------------------------------------------------------------- | ----------- | ------------ | --------------------------------- |
+| `src/app/(dashboard)/cogs/price-calculator/page.tsx`                    | UPDATE      | ~15          | Retry callback, H1 size           |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`        | UPDATE      | ~10          | Escape key modal check            |
+| `src/components/custom/price-calculator/PercentageCostsFormSection.tsx` | UPDATE      | ~15          | Emerald colors, use BuybackSlider |
+| `src/components/custom/price-calculator/BuybackSlider.tsx`              | CREATE      | ~60          | Slider without zones              |
+| `src/components/custom/price-calculator/WarehouseSection.tsx`           | UPDATE      | ~5           | Header size                       |
+| `src/components/custom/price-calculator/FixedCostsSection.tsx`          | UPDATE      | ~10          | Header size, error ARIA           |
+| `src/components/custom/price-calculator/CoefficientCalendar.tsx`        | UPDATE      | ~5           | Active state                      |
 
 ### Change Log
+
 _(To be filled by Dev Agent during implementation)_
 
 ---

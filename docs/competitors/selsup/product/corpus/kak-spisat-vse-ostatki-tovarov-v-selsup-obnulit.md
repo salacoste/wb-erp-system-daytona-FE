@@ -15,7 +15,7 @@ chars: 9967
 
 В этой статье:
 
-- 
+-
 - <a href="#cherez-interfejs-otklyuchit-ostatki-po-organizatsii-i-marketplejsu" rel="nofollow">Через интерфейс: отключить остатки по организации и маркетплейсу</a>
 - <a href="#cherez-kartochku-tovara-ubrat-s-ostatkov-fbs" rel="nofollow">Через карточку товара (убрать с остатков FBS)</a>
 - <a href="#massovo-ubrat-s-ostatkov-fbs" rel="nofollow">Массово убрать с остатков FBS</a>

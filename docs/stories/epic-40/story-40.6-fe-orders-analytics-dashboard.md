@@ -18,6 +18,7 @@
 **So that** I can proactively manage order fulfillment and avoid SLA breaches.
 
 **Non-goals**:
+
 - Volume trends chart (optional mini-chart, defer to polish)
 - Historical SLA comparison (future epic)
 - Export functionality (future story)
@@ -157,26 +158,26 @@
 
 ### Container Component
 
-| Component | Location | Lines | Description |
-|-----------|----------|-------|-------------|
-| `OrdersAnalyticsDashboard.tsx` | `src/app/(dashboard)/orders/components/` | ~150 | Main container with polling orchestration |
+| Component                      | Location                                 | Lines | Description                               |
+| ------------------------------ | ---------------------------------------- | ----- | ----------------------------------------- |
+| `OrdersAnalyticsDashboard.tsx` | `src/app/(dashboard)/orders/components/` | ~150  | Main container with polling orchestration |
 
 ### Widget Components
 
-| Component | Location | Lines | Description |
-|-----------|----------|-------|-------------|
-| `SlaComplianceWidget.tsx` | `src/app/(dashboard)/orders/components/` | ~120 | SLA % cards with color coding |
-| `VelocityMetricsWidget.tsx` | `src/app/(dashboard)/orders/components/` | ~100 | Avg times with percentiles |
-| `AtRiskOrdersCard.tsx` | `src/app/(dashboard)/orders/components/` | ~150 | Paginated at-risk orders list |
-| `OrderSyncStatus.tsx` | `src/app/(dashboard)/orders/components/` | ~100 | Sync indicator with refresh button |
+| Component                   | Location                                 | Lines | Description                        |
+| --------------------------- | ---------------------------------------- | ----- | ---------------------------------- |
+| `SlaComplianceWidget.tsx`   | `src/app/(dashboard)/orders/components/` | ~120  | SLA % cards with color coding      |
+| `VelocityMetricsWidget.tsx` | `src/app/(dashboard)/orders/components/` | ~100  | Avg times with percentiles         |
+| `AtRiskOrdersCard.tsx`      | `src/app/(dashboard)/orders/components/` | ~150  | Paginated at-risk orders list      |
+| `OrderSyncStatus.tsx`       | `src/app/(dashboard)/orders/components/` | ~100  | Sync indicator with refresh button |
 
 ### Supporting Components
 
-| Component | Location | Lines | Description |
-|-----------|----------|-------|-------------|
-| `SlaPercentageDisplay.tsx` | `src/app/(dashboard)/orders/components/` | ~50 | Reusable SLA % with color |
-| `DurationDisplay.tsx` | `src/app/(dashboard)/orders/components/` | ~40 | Human-readable duration formatter |
-| `AtRiskOrderRow.tsx` | `src/app/(dashboard)/orders/components/` | ~60 | Single at-risk order row |
+| Component                  | Location                                 | Lines | Description                       |
+| -------------------------- | ---------------------------------------- | ----- | --------------------------------- |
+| `SlaPercentageDisplay.tsx` | `src/app/(dashboard)/orders/components/` | ~50   | Reusable SLA % with color         |
+| `DurationDisplay.tsx`      | `src/app/(dashboard)/orders/components/` | ~40   | Human-readable duration formatter |
+| `AtRiskOrderRow.tsx`       | `src/app/(dashboard)/orders/components/` | ~60   | Single at-risk order row          |
 
 ---
 
@@ -196,6 +197,7 @@ Query:
 ```
 
 **Response**:
+
 ```typescript
 interface SlaMetricsResponse {
   confirmationSlaHours: number
@@ -230,6 +232,7 @@ Query:
 ```
 
 **Response**:
+
 ```typescript
 interface VelocityMetricsResponse {
   avgConfirmationTimeMinutes: number
@@ -256,6 +259,7 @@ X-Cabinet-Id: {cabinetId}
 ```
 
 **Response**:
+
 ```typescript
 interface TriggerSyncResponse {
   jobId: string
@@ -272,6 +276,7 @@ X-Cabinet-Id: {cabinetId}
 ```
 
 **Response**:
+
 ```typescript
 interface SyncStatusResponse {
   enabled: boolean
@@ -403,21 +408,21 @@ export function OrdersAnalyticsDashboard() {
 
 ### Unit Tests
 
-| Test | File | Description |
-|------|------|-------------|
-| SLA color thresholds | `SlaComplianceWidget.test.tsx` | Verify color at 95%, 85%, 50% |
+| Test                      | File                             | Description                       |
+| ------------------------- | -------------------------------- | --------------------------------- |
+| SLA color thresholds      | `SlaComplianceWidget.test.tsx`   | Verify color at 95%, 85%, 50%     |
 | Velocity color thresholds | `VelocityMetricsWidget.test.tsx` | Verify colors for different times |
-| Duration formatting | `DurationDisplay.test.tsx` | Test edge cases (0, 59, 60, 1440) |
-| At-risk pagination | `AtRiskOrdersCard.test.tsx` | Test page changes, empty state |
-| Sync trigger button | `OrderSyncStatus.test.tsx` | Test disabled state, spinner |
+| Duration formatting       | `DurationDisplay.test.tsx`       | Test edge cases (0, 59, 60, 1440) |
+| At-risk pagination        | `AtRiskOrdersCard.test.tsx`      | Test page changes, empty state    |
+| Sync trigger button       | `OrderSyncStatus.test.tsx`       | Test disabled state, spinner      |
 
 ### Integration Tests
 
-| Scenario | Description |
-|----------|-------------|
-| Dashboard loads | All widgets render with loading states |
-| SLA polling | Verify 60s interval, pause on tab hide |
-| Manual sync | Button triggers sync, shows toast |
+| Scenario         | Description                            |
+| ---------------- | -------------------------------------- |
+| Dashboard loads  | All widgets render with loading states |
+| SLA polling      | Verify 60s interval, pause on tab hide |
+| Manual sync      | Button triggers sync, shows toast      |
 | Modal navigation | Click at-risk order opens detail modal |
 
 ---

@@ -5,7 +5,8 @@
 | SEC-001  | XSS vulnerability       | High (3)    | High (3)   | 9     | Critical |
 | PERF-001 | Slow query on dashboard | Medium (2)  | Medium (2) | 4     | Medium   |
 | DATA-001 | Backup failure          | Low (1)     | High (3)   | 3     | Low      |
-```
+
+````
 
 ## 4. Risk Mitigation Strategies
 
@@ -27,4 +28,4 @@ mitigation:
   residual_risk: 'Low - Some zero-day vulnerabilities may remain'
   owner: 'dev'
   timeline: 'Before deployment'
-```
+````

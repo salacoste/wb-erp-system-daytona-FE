@@ -11,7 +11,7 @@ chars: 2614
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-perejti-v-razdel" rel="nofollow">Как перейти в раздел</a>
 - <a href="#chto-takoe-sku" rel="nofollow">Что такое SKU</a>
 - <a href="#142c5ll" rel="nofollow">Когда меняется SKU</a>

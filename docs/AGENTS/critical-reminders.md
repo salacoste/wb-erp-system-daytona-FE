@@ -12,7 +12,8 @@
 - Select options 2-9 from data/elicitation-methods only
 - Provide detailed rationale explaining decisions
 - End with "Select 1-9 or just type your question/feedback:"
-```
+
+````
 
 ## Task: create-deep-research-prompt
 Source: .bmad-core/tasks/create-deep-research-prompt.md
@@ -20,3 +21,4 @@ Source: .bmad-core/tasks/create-deep-research-prompt.md
 
 ```md
 <!-- Powered by BMAD™ Core -->
+````

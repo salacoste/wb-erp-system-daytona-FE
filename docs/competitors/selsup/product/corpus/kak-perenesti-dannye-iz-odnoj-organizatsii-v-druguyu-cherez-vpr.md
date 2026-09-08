@@ -25,7 +25,7 @@ chars: 7064
 
 В этой статье:
 
-- 
+-
 - <a href="#qwj94t" rel="nofollow">Когда удобно использовать перенос через Excel</a>
 - <a href="#i7vhip" rel="nofollow">Какие файлы понадобятся</a>
 - <a href="#e1tyf9" rel="nofollow">Как сопоставлять товары</a>

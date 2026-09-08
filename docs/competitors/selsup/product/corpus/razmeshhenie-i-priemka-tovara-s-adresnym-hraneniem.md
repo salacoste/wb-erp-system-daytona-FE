@@ -9,7 +9,7 @@ chars: 2388
 
 В этой статье:
 
-- 
+-
 - <a href="#yachejka-po-umolchaniyu-dlya-vnov-prinyatogo-tovara" rel="nofollow">Ячейка по умолчанию для вновь принятого товара</a>
 - <a href="#priemka-tovarov-na-sklad" rel="nofollow">Приемка товаров на склад</a>
 - <a href="#ukazanie-yachejki-v-ostatkah" rel="nofollow">Указание ячейки в остатках</a>
@@ -38,11 +38,7 @@ chars: 2388
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2025/08/screenshot_8.png.webp)
 
-> 
->
 > Если вы оприходовали товар, но забыли указать ячейки или указали неправильную ячейку, нажмите «Отменить оприходование», проставьте нужные ячейки и снова нажмите «Оприходовать»
->
-> 
 
 Подробней о разделе Приемки на склад описано в [статье ](../priemka-na-sklad/index.html)
 

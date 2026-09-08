@@ -20,25 +20,25 @@ Base path: `/v1/moysklad` (`src/moysklad/moysklad.controller.ts`). All `@UseGuar
 
 ### Live read-through to МойСклад (MS0a)
 
-| Method | Path | Handler | Request | Response shape | Notes |
-|---|---|---|---|---|---|
-| `GET` | `/health` | `getHealth()` | — | `{ status, readOnly, orgId, baseUrl, tokenConfigured }` | **No API call** — safe to hit anytime. `readOnly` = effective `MOYSKLAD_READ_ONLY`. |
-| `GET` | `/organizations` | `getOrganizations()` | — | `MoyskladListResponse<MoyskladOrganization>` = `{ rows: [{ id, name, legalTitle, inn }], meta }` | List юрлица for the token. |
-| `GET` | `/products` | `getProducts()` | `?limit=&offset=` (default 100/0) | `{ rows: MoyskladProduct[], meta }` | `meta.size` = total count. |
-| `GET` | `/variants` | `getVariants()` | `?limit=&offset=` | `{ rows: MoyskladVariant[], meta }` | Modifications. Variants have **no article** (see Matching). |
-| `GET` | `/stock` | `getStock()` | `?stockType=stock\|freeStock\|quantity\|reserve\|inTransit` | `{ count, rows: MoyskladStockRow[] }` | FLAT array (not `{meta,rows}`). Default `freeStock`. |
+| Method | Path             | Handler              | Request                                                     | Response shape                                                                                   | Notes                                                                               |
+| ------ | ---------------- | -------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| `GET`  | `/health`        | `getHealth()`        | —                                                           | `{ status, readOnly, orgId, baseUrl, tokenConfigured }`                                          | **No API call** — safe to hit anytime. `readOnly` = effective `MOYSKLAD_READ_ONLY`. |
+| `GET`  | `/organizations` | `getOrganizations()` | —                                                           | `MoyskladListResponse<MoyskladOrganization>` = `{ rows: [{ id, name, legalTitle, inn }], meta }` | List юрлица for the token.                                                          |
+| `GET`  | `/products`      | `getProducts()`      | `?limit=&offset=` (default 100/0)                           | `{ rows: MoyskladProduct[], meta }`                                                              | `meta.size` = total count.                                                          |
+| `GET`  | `/variants`      | `getVariants()`      | `?limit=&offset=`                                           | `{ rows: MoyskladVariant[], meta }`                                                              | Modifications. Variants have **no article** (see Matching).                         |
+| `GET`  | `/stock`         | `getStock()`         | `?stockType=stock\|freeStock\|quantity\|reserve\|inTransit` | `{ count, rows: MoyskladStockRow[] }`                                                            | FLAT array (not `{meta,rows}`). Default `freeStock`.                                |
 
 `MoyskladProduct` = `{ id, name, article?, code?, buyPrice?: { value, currency }, salePrices?: [{value,currency}], externalCode?, updated? }` (`src/moysklad/dto/moysklad.types.ts`).
 `MoyskladStockRow` = `{ assortmentId, [stockTypeKey]: number }` (`src/moysklad/dto/moysklad.types.ts`) — the numeric key is the requested stock type (e.g. `freeStock`).
 
 ### OUR-DB persistence (MS0b) — the cache FE will mostly consume
 
-| Method | Path | Handler | Request | Response shape | Notes |
-|---|---|---|---|---|---|
-| `POST` | `/sync` | `enqueueSync()` | — (cabinet from header) | `{ status: 'enqueued', taskUuid, queue: 'moysklad-sync' }` | Enqueues products+stock sync → OUR DB. Poll the task system with `taskUuid`. |
-| `GET` | `/mappings` | `getMappings()` | `?matched=true\|false&limit=&offset=` | `{ count, total, rows: MoyskladProductMapping[] }` | `matched=true` → only matched; `false` → pending (unmatched); omit → all. |
-| `GET` | `/stock-db` | `getStockDb()` | `?date=YYYY-MM-DD&limit=&offset=` | `{ count, total, date: 'YYYY-MM-DD'\|null, rows: MoyskladStockSnapshot[] }` | `date` omitted → latest snapshot date. Invalid date → 400. |
-| `POST` | `/mappings/:id/link` | `linkMapping()` | body `{ nmId: number }` (`LinkMappingDto`, `nmId ≥ 1`) | `{ id, nmId, matchedBy: 'MANUAL' }` | Manual link → `matchedBy=MANUAL`. Survives subsequent auto re-syncs. |
+| Method | Path                 | Handler         | Request                                                | Response shape                                                              | Notes                                                                        |
+| ------ | -------------------- | --------------- | ------------------------------------------------------ | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `POST` | `/sync`              | `enqueueSync()` | — (cabinet from header)                                | `{ status: 'enqueued', taskUuid, queue: 'moysklad-sync' }`                  | Enqueues products+stock sync → OUR DB. Poll the task system with `taskUuid`. |
+| `GET`  | `/mappings`          | `getMappings()` | `?matched=true\|false&limit=&offset=`                  | `{ count, total, rows: MoyskladProductMapping[] }`                          | `matched=true` → only matched; `false` → pending (unmatched); omit → all.    |
+| `GET`  | `/stock-db`          | `getStockDb()`  | `?date=YYYY-MM-DD&limit=&offset=`                      | `{ count, total, date: 'YYYY-MM-DD'\|null, rows: MoyskladStockSnapshot[] }` | `date` omitted → latest snapshot date. Invalid date → 400.                   |
+| `POST` | `/mappings/:id/link` | `linkMapping()` | body `{ nmId: number }` (`LinkMappingDto`, `nmId ≥ 1`) | `{ id, nmId, matchedBy: 'MANUAL' }`                                         | Manual link → `matchedBy=MANUAL`. Survives subsequent auto re-syncs.         |
 
 **⚠️ Pagination quirk:** `getMappings`/`getStockDb` use `Number(limit) || undefined` (`src/moysklad/moysklad.controller.ts`), so passing `0` for `limit`/`offset` is treated as **absent** (→ default), not literally `0`. Pass real positive ints.
 
@@ -47,32 +47,36 @@ Base path: `/v1/moysklad` (`src/moysklad/moysklad.controller.ts`). All `@UseGuar
 ## Models (Prisma — `prisma/schema.prisma`)
 
 ### `MoyskladProductMapping` (`prisma/schema.prisma`) — the mapping FE reads/links
-| Field | Type | Notes |
-|---|---|---|
-| `id` | UUID | Primary key (used by `POST /mappings/:id/link`). |
-| `cabinetId` | UUID | Tenant isolation. |
-| `moyskladAssortmentId` | String(100) | МС assortment id. |
-| `moyskladType` | `MoyskladAssortmentType` | `PRODUCT` \| `VARIANT` (enum `MoyskladAssortmentType` in `prisma/schema.prisma`). |
-| `moyskladName` | String?(500) | Display name. |
-| `moyskladArticle` | String?(255) | МС `article` ↔ our `vendorCode` (primary match key). For variants (S1c) this column holds the variant `code` (the variant analog of article); NULL when neither is present. |
-| `nmId` | Int? | WB nmId after matching. **NULL = pending manual link.** |
-| `matchedBy` | `MoyskladMatchStrategy?` | `VENDOR_CODE` \| `BARCODE` \| `MANUAL` (enum `MoyskladMatchStrategy` in `prisma/schema.prisma`). NULL = pending. |
-| `buyPriceKopeck` | BigInt? | Себестоимость (копейки) → feeds Cogs in MS1. |
-| `lastSyncedAt`, `createdAt`, `updatedAt` | timestamptz | Audit. |
-| **`@@unique`** | `[cabinetId, moyskladAssortmentId]` (`idx_moysklad_mapping_unique`) | Idempotency key. |
+
+| Field                                    | Type                                                                | Notes                                                                                                                                                                       |
+| ---------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                                     | UUID                                                                | Primary key (used by `POST /mappings/:id/link`).                                                                                                                            |
+| `cabinetId`                              | UUID                                                                | Tenant isolation.                                                                                                                                                           |
+| `moyskladAssortmentId`                   | String(100)                                                         | МС assortment id.                                                                                                                                                           |
+| `moyskladType`                           | `MoyskladAssortmentType`                                            | `PRODUCT` \| `VARIANT` (enum `MoyskladAssortmentType` in `prisma/schema.prisma`).                                                                                           |
+| `moyskladName`                           | String?(500)                                                        | Display name.                                                                                                                                                               |
+| `moyskladArticle`                        | String?(255)                                                        | МС `article` ↔ our `vendorCode` (primary match key). For variants (S1c) this column holds the variant `code` (the variant analog of article); NULL when neither is present. |
+| `nmId`                                   | Int?                                                                | WB nmId after matching. **NULL = pending manual link.**                                                                                                                     |
+| `matchedBy`                              | `MoyskladMatchStrategy?`                                            | `VENDOR_CODE` \| `BARCODE` \| `MANUAL` (enum `MoyskladMatchStrategy` in `prisma/schema.prisma`). NULL = pending.                                                            |
+| `buyPriceKopeck`                         | BigInt?                                                             | Себестоимость (копейки) → feeds Cogs in MS1.                                                                                                                                |
+| `lastSyncedAt`, `createdAt`, `updatedAt` | timestamptz                                                         | Audit.                                                                                                                                                                      |
+| **`@@unique`**                           | `[cabinetId, moyskladAssortmentId]` (`idx_moysklad_mapping_unique`) | Idempotency key.                                                                                                                                                            |
 
 ### `MoyskladStockSnapshot` (`prisma/schema.prisma`) — daily stock
-| Field | Type | Notes |
-|---|---|---|
-| `date` | Date (no TZ) | Snapshot date (MSK). |
-| `moyskladAssortmentId` | String(100) | |
-| `nmId` | Int? | Back-filled once the assortment is matched; NULL otherwise. |
-| `stockFree` | Decimal(15,3) | freeStock (may be fractional). |
-| `reserve` | Decimal?(15,3) | |
-| **`@@unique`** | `[cabinetId, date, moyskladAssortmentId]` (`idx_moysklad_stock_unique`) | One row per assortment per day. |
+
+| Field                  | Type                                                                    | Notes                                                       |
+| ---------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `date`                 | Date (no TZ)                                                            | Snapshot date (MSK).                                        |
+| `moyskladAssortmentId` | String(100)                                                             |                                                             |
+| `nmId`                 | Int?                                                                    | Back-filled once the assortment is matched; NULL otherwise. |
+| `stockFree`            | Decimal(15,3)                                                           | freeStock (may be fractional).                              |
+| `reserve`              | Decimal?(15,3)                                                          |                                                             |
+| **`@@unique`**         | `[cabinetId, date, moyskladAssortmentId]` (`idx_moysklad_stock_unique`) | One row per assortment per day.                             |
+
 > **KEPT SEPARATE from `inventory_snapshots`** (WB stocks on WB warehouses — D41). Do not merge.
 
 ### `MoyskladSyncState` (`prisma/schema.prisma`) — sync cursor
+
 `{ cabinetId, entity: 'PRODUCT'|'STOCK'|'VARIANT', lastSyncedAt, lastUpdatedFilter?, lastError? }`. `@@unique [cabinetId, entity]`. `lastUpdatedFilter` is the **live incremental cursor** (S1g, 2026-07-03): the ISO timestamp of the last successful product/variant sync's start; the next sync pulls only МС rows `updated >=` it. Null on STOCK (stock is a full current-snapshot) and on the first-ever product/variant sync.
 
 ---
@@ -135,11 +139,13 @@ Read methods are unaffected by the gate.
 ## What FE can build now vs. what to wait for
 
 **Build now (against the cache — `/mappings`, `/stock-db`, `/health`, `POST /sync`, `POST /mappings/:id/link`):**
+
 - A **«МойСклад статус» panel** reading `GET /health` (config check, no live call) — show `readOnly` / `tokenConfigured` / `orgId`.
 - A **manual-link queue UI**: `GET /mappings?matched=false` → list pending МС assortments → `POST /mappings/:id/link { nmId }` to resolve conflicts. Poll `POST /sync` `taskUuid` for progress.
 - A **stock view** off `GET /stock-db` (persisted daily snapshots — `date`, `moyskladAssortmentId`, `nmId`, `stockFree`, `reserve`). This is OUR-DB; no МС dependency at read time.
 
 **Verified live (no longer gated):**
+
 - A **live** МойСклад pull works end-to-end (organizations/products/variants/stock). The ESM runtime load is confirmed by a live SPIKE (2026-07-03: 394 products pulled via the SDK on the production token; read-only honored). The `updated>` incremental filter is confirmed live in the same SPIKE.
 - **Variants UI** — variants are persisted (`moyskladType=VARIANT`), **barcode auto-match is LIVE (S1f)**, and **incremental sync is LIVE (S1g)**. So a variants view, a barcode-match status column, and a last-sync / incremental-progress indicator (off `MoyskladSyncState.lastSyncedAt` + `lastUpdatedFilter`) CAN all be built now. Only the variant **parent-product linkage** remains a gap.
 - Still pending: **multi-cabinet** selection (gap #1 — per-`CabinetKey` token resolved in S1h, but FE multi-cabinet UX is not built).

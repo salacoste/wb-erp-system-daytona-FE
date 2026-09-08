@@ -16,12 +16,14 @@
 ## Acceptance Criteria
 
 ### AC1: Route & Navigation
+
 - [ ] New route: `/analytics/storage`
 - [ ] Add link in sidebar under "Аналитика" section
 - [ ] Page title: "Аналитика расходов на хранение"
 - [ ] Breadcrumbs: Главная > Аналитика > Хранение
 
 ### AC2: Page Header
+
 - [ ] Title with Lucide `Warehouse` icon (not emoji)
 - [ ] Week range picker (start/end)
 - [ ] Brand filter dropdown: **multi-select** (UX Decision Q4)
@@ -29,18 +31,21 @@
 - [ ] ~~Export CSV button~~ - **DEFERRED** (UX Decision Q5)
 
 ### AC3: Summary Cards
+
 - [ ] Total storage cost (₽) with formatting
 - [ ] Products count (SKU count)
 - [ ] Average cost per product
 - [ ] Period days count
 
 ### AC4: Layout Sections
+
 - [ ] Summary cards row (top)
 - [ ] Trends chart section
 - [ ] Top consumers table section
 - [ ] Full SKU list table section (with pagination)
 
 ### AC5: Loading & Error States
+
 - [ ] Skeleton loaders for all sections
 - [ ] Error boundary with retry button
 - [ ] Empty state: "Нет данных за выбранный период"
@@ -48,6 +53,7 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Route & Navigation Setup
+
 - [ ] Create `src/app/(dashboard)/analytics/storage/page.tsx`
 - [ ] Create `src/app/(dashboard)/analytics/storage/loading.tsx`
 - [ ] Update sidebar navigation (add "Хранение" link)
@@ -55,6 +61,7 @@
 - [ ] Test route accessibility
 
 ### Phase 2: Page Header Components
+
 - [ ] Create `src/app/(dashboard)/analytics/storage/components/StoragePageHeader.tsx`
 - [ ] Implement Breadcrumbs component
 - [ ] Implement WeekRangePicker (reuse or create)
@@ -63,6 +70,7 @@
 - [ ] Wire up filter state management
 
 ### Phase 3: Summary Cards Section
+
 - [ ] Create `StorageSummaryCards.tsx` component
 - [ ] Display total storage cost with currency formatting
 - [ ] Display products count
@@ -71,18 +79,21 @@
 - [ ] Add loading skeleton variant
 
 ### Phase 4: Layout Integration
+
 - [ ] Create main page layout structure
 - [ ] Add section containers with proper spacing
 - [ ] Add section headers with Lucide icons
 - [ ] Placeholder components for child stories (24.3-24.5)
 
 ### Phase 5: Loading & Error States
+
 - [ ] Implement loading.tsx with full-page skeleton
 - [ ] Implement error boundary component
 - [ ] Implement empty state component
 - [ ] Test all states visually
 
 ### Phase 6: Testing
+
 - [ ] Test route navigation
 - [ ] Test filter interactions
 - [ ] Test loading states
@@ -162,6 +173,7 @@ Update sidebar component to add new navigation item:
 Reuse existing `WeekPicker` component from analytics pages or create new one.
 
 Default values:
+
 - `weekStart`: 4 weeks ago
 - `weekEnd`: last completed week (use `getLastCompletedWeek()` from `margin-helpers.ts`)
 
@@ -204,6 +216,7 @@ src/
 ### Design System Adherence
 
 Per Design Kit (`ui/`) and README:
+
 - **Icons**: Use Lucide icons only (Warehouse, TrendingUp, Trophy, List)
 - **Colors**: Primary Red (#E53935) for accents
 - **Cards**: Use shadcn/ui Card component
@@ -211,11 +224,11 @@ Per Design Kit (`ui/`) and README:
 
 ### UX Decisions Applied
 
-| Question | Decision | Rationale |
-|----------|----------|-----------|
-| Q3: Breadcrumbs | ✅ Include | Navigation clarity for deep page |
-| Q4: Brand filter | Multi-select | Users compare multiple brands |
-| Q5: Export CSV | DEFERRED | Not in MVP scope |
+| Question         | Decision     | Rationale                        |
+| ---------------- | ------------ | -------------------------------- |
+| Q3: Breadcrumbs  | ✅ Include   | Navigation clarity for deep page |
+| Q4: Brand filter | Multi-select | Users compare multiple brands    |
+| Q5: Export CSV   | DEFERRED     | Not in MVP scope                 |
 
 ### Accessibility Requirements
 
@@ -227,6 +240,7 @@ Per Design Kit (`ui/`) and README:
 ## Testing
 
 ### Framework & Location
+
 - **Framework**: Vitest + React Testing Library
 - **Test Location**: `src/app/(dashboard)/analytics/storage/__tests__/page.test.tsx`
 
@@ -245,6 +259,7 @@ Per Design Kit (`ui/`) and README:
 - [ ] Responsive layout works on mobile (horizontal scroll for tables)
 
 ### Visual Testing
+
 - [ ] All Lucide icons render correctly
 - [ ] Cards align properly in grid
 - [ ] Filters are visually grouped
@@ -282,11 +297,11 @@ Per Design Kit (`ui/`) and README:
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-11-29 | PO (Sarah) | Initial draft |
+| Date       | Author            | Change                                                              |
+| ---------- | ----------------- | ------------------------------------------------------------------- |
+| 2025-11-29 | PO (Sarah)        | Initial draft                                                       |
 | 2025-11-29 | UX Expert (Sally) | Added UX decisions: breadcrumbs, multi-select filters, Lucide icons |
-| 2025-11-29 | UX Expert (Sally) | Added Tasks, Dev Notes, Testing sections |
+| 2025-11-29 | UX Expert (Sally) | Added Tasks, Dev Notes, Testing sections                            |
 
 ---
 
@@ -324,6 +339,7 @@ Notes:
 **Overall**: Solid page layout implementation with all major sections present. Clean component architecture with proper separation of concerns. Loading skeleton is comprehensive.
 
 **Strengths**:
+
 - Clean page structure with all required sections (summary, trends, top consumers, SKU table)
 - Comprehensive loading skeleton in loading.tsx
 - Proper breadcrumb navigation with Lucide icons
@@ -333,19 +349,21 @@ Notes:
 - Sidebar updated with Warehouse icon
 
 **Areas for Improvement**:
+
 - Multi-select filters are placeholder buttons, not functional dropdowns
 - Empty state for no data not explicitly implemented
 - Sidebar label is "Storage" instead of "Хранение"
 
 **Files Reviewed**:
-| File | Lines | Assessment |
-|------|-------|------------|
-| `page.tsx` | 182 | Good - clean layout with all sections |
-| `loading.tsx` | 92 | Excellent - comprehensive skeleton |
-| `StoragePageHeader.tsx` | 66 | Good - breadcrumbs + Lucide icons |
-| `StorageFilters.tsx` | 130 | Acceptable - week picker works |
-| `StorageSummaryCards.tsx` | 107 | Excellent - proper formatting |
-| `routes.ts` | 80 | Good - route added correctly |
+
+| File                      | Lines | Assessment                            |
+| ------------------------- | ----- | ------------------------------------- |
+| `page.tsx`                | 182   | Good - clean layout with all sections |
+| `loading.tsx`             | 92    | Excellent - comprehensive skeleton    |
+| `StoragePageHeader.tsx`   | 66    | Good - breadcrumbs + Lucide icons     |
+| `StorageFilters.tsx`      | 130   | Acceptable - week picker works        |
+| `StorageSummaryCards.tsx` | 107   | Excellent - proper formatting         |
+| `routes.ts`               | 80    | Good - route added correctly          |
 
 ### Refactoring Performed
 
@@ -379,6 +397,7 @@ No security concerns - UI layout components only.
 ### Performance Considerations
 
 **Positive**:
+
 - Loading skeleton prevents layout shift
 - Proper use of React Query with loading states
 - Efficient grid layout for summary cards
@@ -394,11 +413,12 @@ None - no refactoring was necessary.
 **Quality Score**: 80/100
 
 **Issue Summary**:
-| ID | Severity | Finding | Action |
-|----|----------|---------|--------|
-| UI-001 | Medium | Multi-select filters are placeholders | Future enhancement |
-| UI-002 | Low | Sidebar label "Storage" vs "Хранение" | Consider for i18n |
-| UI-003 | Low | Empty state not implemented | Add empty state component |
+
+| ID     | Severity | Finding                               | Action                    |
+| ------ | -------- | ------------------------------------- | ------------------------- |
+| UI-001 | Medium   | Multi-select filters are placeholders | Future enhancement        |
+| UI-002 | Low      | Sidebar label "Storage" vs "Хранение" | Consider for i18n         |
+| UI-003 | Low      | Empty state not implemented           | Add empty state component |
 
 ### Recommended Status
 

@@ -24,6 +24,7 @@ Until iter-140 the FE filled this gap by **fabricating** a price and presenting 
 ## Request (to restore the ₽ views honestly)
 
 Add a real per-SKU **selling/retail price** (and/or **expected revenue**) to the supply-planning item — ideally the actual average sale price from the weekly report (`sale_gross / qty`), not a markup assumption. With it, the FE can honestly show:
+
 - Потенциальные потери в ₽ = lost units × real avg price.
 - Ожид. выручка / прибыль in "Анализ затрат" (revenue − COGS).
 

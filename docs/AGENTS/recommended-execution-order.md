@@ -5,7 +5,8 @@
 3. P0 E2E tests
 4. P1 tests in order
 5. P2+ as time permits
-```
+
+````
 
 ## Output 2: Gate YAML Block
 
@@ -23,7 +24,7 @@ test_design:
     p1: B
     p2: C
   coverage_gaps: [] # List any ACs without tests
-```
+````
 
 ## Output 3: Trace References
 

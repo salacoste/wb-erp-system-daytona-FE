@@ -36,6 +36,7 @@ Make `POST /v1/products/cogs/bulk?format=v2` honor the `format=v2` param and ret
 The FE had a second bug: it read `response.data.succeeded` after `apiClient` already unwraps the `{ data }` envelope (double-unwrap, F-30 class) → `TypeError` on every upload. The FE is being hardened with a boundary normalizer that accepts BOTH the legacy shape (current backend reality) and the v2 shape (once this ticket lands), so bulk COGS works either way. `marginRecalculation` stays unavailable until v2 is honored.
 
 ## Evidence
+
 - FE: `frontend/src/hooks/useBulkCogsAssignment.ts:42-48` (calls `?format=v2`, reads `response.data.succeeded`).
 - Backend: `src/products/products.controller.ts:466`, `src/cogs/cogs.controller.ts:79-86` (v2 doc).
 - Live: POST `/v1/products/cogs/bulk?format=v2` → `{totalItems, createdItems, skippedItems, errors}`.
@@ -65,6 +66,7 @@ items also use `{ index, nmId, code, message }` whereas v2 `results[]` failures 
 
 **Decision: reuse `cogsService.transformToV2Format`, not a new adapter.** `bulkAssignCogs` was upgraded
 to return a full `BulkUploadResult` (return type now `Promise<BulkUploadResult>`):
+
 - `detailedResults` = successes from the inner `cogsService.bulkUpload(...)` result + one failure entry per
   merged error (WB-API validation errors + COGS-creation errors), mapped via a small module-level
   `mapErrorToItemResult()` helper (`nmId→nm_id`, `code→error_code`, `message→error_message`) so field
@@ -93,6 +95,7 @@ fire-and-forget; the FE polling UX should drive status from its existing margin-
 that is a separate follow-up — the current job-enqueue path does not compute them.)
 
 ### Files changed (backend only)
+
 - `src/products/products.controller.ts` — injected `CogsService`; added `@Query('format')` + `@ApiQuery`
   and a v2 `oneOf` `@ApiResponse`; `format === 'v2'` → `cogsService.transformToV2Format(result)`,
   else legacy.
@@ -104,6 +107,7 @@ that is a separate follow-up — the current job-enqueue path does not compute t
   split the bulk test into legacy (no `format`) and v2 (`format='v2'`) cases.
 
 ### Verification
+
 - `npm test -- products.controller cogs.service` → 71 passed, 0 failed.
 - `npx eslint` on the 4 changed files → 0 errors.
 - `npx tsc --noEmit` → 0 errors in the touched files (3 pre-existing errors in an unrelated,

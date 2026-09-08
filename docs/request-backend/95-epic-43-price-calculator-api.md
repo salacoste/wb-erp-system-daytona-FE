@@ -13,14 +13,14 @@
 
 **6 endpoints реализованы (см. `test-api/15-tariffs-endpoints.http`):**
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /v1/tariffs/commissions` | 7346 категорий |
-| `GET /v1/tariffs/warehouses` | Список складов (wrapped: `{data: ...}`) |
-| `GET /v1/tariffs/warehouses-with-tariffs` | Склады + тарифы |
-| `GET /v1/tariffs/acceptance/coefficients?warehouseId=X` | По складу |
-| `GET /v1/tariffs/acceptance/coefficients/all` | Все склады |
-| `GET /v1/tariffs/settings` | Глобальные настройки |
+| Endpoint                                                | Description                             |
+| ------------------------------------------------------- | --------------------------------------- |
+| `GET /v1/tariffs/commissions`                           | 7346 категорий                          |
+| `GET /v1/tariffs/warehouses`                            | Список складов (wrapped: `{data: ...}`) |
+| `GET /v1/tariffs/warehouses-with-tariffs`               | Склады + тарифы                         |
+| `GET /v1/tariffs/acceptance/coefficients?warehouseId=X` | По складу                               |
+| `GET /v1/tariffs/acceptance/coefficients/all`           | Все склады                              |
+| `GET /v1/tariffs/settings`                              | Глобальные настройки                    |
 
 ---
 
@@ -31,6 +31,7 @@
 **Ключевая особенность:** Вместо подбора цены итеративно, селлер вводит затраты и желаемую маржу → API возвращает оптимальную цену сразу.
 
 **🎉 NEW в Stories 43.6 & 43.7:**
+
 - **Автозаполнение** логистики и хранения по складу (warehouse_name)
 - **Расчёт объёма** из габаритов (dimensions: length_cm, width_cm, height_cm)
 - **Определение типа груза** (MGT ≤60cm, SGT ≤120cm, KGT >120cm)
@@ -56,13 +57,14 @@ POST /v1/products/price-calculator
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
-| Header | Required | Description |
-|--------|----------|-------------|
-| `Authorization: Bearer <token>` | ✅ | JWT токен авторизации |
-| `X-Cabinet-Id: <uuid>` | ✅ | ID кабинета селлера |
-| `Content-Type: application/json` | ✅ | Формат данных |
+| Header                           | Required | Description           |
+| -------------------------------- | -------- | --------------------- |
+| `Authorization: Bearer <token>`  | ✅       | JWT токен авторизации |
+| `X-Cabinet-Id: <uuid>`           | ✅       | ID кабинета селлера   |
+| `Content-Type: application/json` | ✅       | Формат данных         |
 
 ---
 
@@ -108,6 +110,7 @@ POST /v1/products/price-calculator
 ```
 
 **Поведение автозаполнения:**
+
 - При указании `warehouse_name` → автоматически ищет тарифы склада
 - `logistics_forward_rub` рассчитывается из тарифов склада + volume_liters
 - `storage_rub` рассчитывается из тарифов хранения × storage_days
@@ -127,6 +130,7 @@ POST /v1/products/price-calculator
 ```
 
 **Поведение расчёта из габаритов:**
+
 - Объём рассчитывается: `(length_cm × width_cm × height_cm) / 1000`
 - Тип груза определяется по максимальному габариту:
   - **MGT**: ≤60 см (мелкогабаритный)
@@ -145,6 +149,7 @@ recommended_price = fixed_total / (1 - total_percentage_rate / 100)
 ```
 
 Где:
+
 - `fixed_total = cogs_rub + logistics_effective + storage_rub`
 - `logistics_effective = logistics_forward + (logistics_reverse × (1 - buyback/100))`
 - `total_percentage_rate = commission + acquiring + advertising + vat + margin`
@@ -152,6 +157,7 @@ recommended_price = fixed_total / (1 - total_percentage_rate / 100)
 ### 🆕 Логика автозаполнения (Story 43.6)
 
 **При указании `warehouse_name`:**
+
 1. Поиск склада в базе тарифов по нормализованному названию
 2. Если найден → применение тарифов:
    - `logistics_forward = base_rate + (volume - 1) × liter_rate`
@@ -159,11 +165,13 @@ recommended_price = fixed_total / (1 - total_percentage_rate / 100)
 3. Если не найден → warning, используются ручные значения
 
 **Приоритет значений логистики:**
+
 1. Явно указанный `logistics_forward_rub` (высший приоритет)
 2. Авторассчитанный из `warehouse_name` + `volume_liters`
 3. Fallback значение
 
 **Приоритет значений хранения:**
+
 1. Явно указанный `storage_rub` (высший приоритет)
 2. Авторассчитанный из тарифов склада × `storage_days`
 3. 0 (без хранения)
@@ -183,6 +191,7 @@ else:
 ```
 
 **Приоритет объёма:**
+
 1. Явно указанный `volume_liters` (высший приоритет)
 2. Рассчитанный из `dimensions`
 3. Fallback значение
@@ -330,29 +339,29 @@ else:
 
 ### Описание полей ответа
 
-| Section | Field | Description |
-|---------|-------|-------------|
-| `result` | `recommended_price` | Рассчитанная цена продажи (₽) |
-| `result` | `target_margin_pct` | Запрошенная маржа % |
-| `result` | `actual_margin_rub` | Маржа в рублях |
-| `result` | `actual_margin_pct` | Фактическая маржа % |
-| `cost_breakdown.fixed_costs` | `cogs` | Себестоимость |
-| `cost_breakdown.fixed_costs` | `logistics_total` | Логистика итоговая |
-| `cost_breakdown.fixed_costs` | `storage` | Хранение |
-| `percentage_breakdown` | `commission_wb` | Комиссия WB |
-| `percentage_breakdown` | `acquiring` | Эквайринг |
-| `percentage_breakdown` | `advertising` | Реклама |
-| `percentage_breakdown` | `vat` | НДС |
-| `percentage_breakdown` | `margin` | Ваша прибыль |
-| `intermediate_values` | `return_rate_pct` | % возвратов |
-| 🆕 `auto_fill` | `warehouse_name` | Склад для автозаполнения |
-| 🆕 `auto_fill` | `logistics_source` | Источник логистики (auto/manual) |
-| 🆕 `auto_fill` | `storage_source` | Источник хранения (auto/manual) |
-| 🆕 `auto_fill` | `tariff_date` | Дата тарифов |
-| 🆕 `dimensions_calculation` | `calculated_volume_liters` | Объём из габаритов |
-| 🆕 `dimensions_calculation` | `detected_cargo_type` | Тип груза (MGT/SGT/KGT) |
-| 🆕 `dimensions_calculation` | `volume_source` | Источник объёма (dimensions/manual) |
-| 🆕 `dimensions_calculation` | `max_dimension_cm` | Максимальный габарит |
+| Section                      | Field                      | Description                         |
+| ---------------------------- | -------------------------- | ----------------------------------- |
+| `result`                     | `recommended_price`        | Рассчитанная цена продажи (₽)       |
+| `result`                     | `target_margin_pct`        | Запрошенная маржа %                 |
+| `result`                     | `actual_margin_rub`        | Маржа в рублях                      |
+| `result`                     | `actual_margin_pct`        | Фактическая маржа %                 |
+| `cost_breakdown.fixed_costs` | `cogs`                     | Себестоимость                       |
+| `cost_breakdown.fixed_costs` | `logistics_total`          | Логистика итоговая                  |
+| `cost_breakdown.fixed_costs` | `storage`                  | Хранение                            |
+| `percentage_breakdown`       | `commission_wb`            | Комиссия WB                         |
+| `percentage_breakdown`       | `acquiring`                | Эквайринг                           |
+| `percentage_breakdown`       | `advertising`              | Реклама                             |
+| `percentage_breakdown`       | `vat`                      | НДС                                 |
+| `percentage_breakdown`       | `margin`                   | Ваша прибыль                        |
+| `intermediate_values`        | `return_rate_pct`          | % возвратов                         |
+| 🆕 `auto_fill`               | `warehouse_name`           | Склад для автозаполнения            |
+| 🆕 `auto_fill`               | `logistics_source`         | Источник логистики (auto/manual)    |
+| 🆕 `auto_fill`               | `storage_source`           | Источник хранения (auto/manual)     |
+| 🆕 `auto_fill`               | `tariff_date`              | Дата тарифов                        |
+| 🆕 `dimensions_calculation`  | `calculated_volume_liters` | Объём из габаритов                  |
+| 🆕 `dimensions_calculation`  | `detected_cargo_type`      | Тип груза (MGT/SGT/KGT)             |
+| 🆕 `dimensions_calculation`  | `volume_source`            | Источник объёма (dimensions/manual) |
+| 🆕 `dimensions_calculation`  | `max_dimension_cm`         | Максимальный габарит                |
 
 ---
 
@@ -377,6 +386,7 @@ else:
 ```
 
 **Возможные причины:**
+
 - Отрицательные значения для затрат
 - Проценты вне диапазона 0-100
 - `total_percentage_rate ≥ 100%` (деление на ноль невозможно)
@@ -488,6 +498,7 @@ curl -X POST https://api.example.com/v1/products/price-calculator \
 ```
 
 **Результат:**
+
 - Логистика автоматически рассчитана из тарифов склада "Коледино"
 - Хранение: `6₽/день × 7 дней = 42₽`
 - В ответе: `auto_fill.logistics_source: "auto"`
@@ -515,6 +526,7 @@ curl -X POST https://api.example.com/v1/products/price-calculator \
 ```
 
 **Результат:**
+
 - Объём: `(30×20×15)/1000 = 9 литров`
 - Тип груза: `MGT` (max габарит 30см ≤ 60см)
 - В ответе: `dimensions_calculation.calculated_volume_liters: 9.0`
@@ -543,6 +555,7 @@ curl -X POST https://api.example.com/v1/products/price-calculator \
 ```
 
 **Результат:**
+
 - Объём из габаритов: `(45×35×25)/1000 = 39.375 литров`
 - Логистика из тарифов "Электросталь" для FBS
 - Хранение: тариф × 14 дней
@@ -625,6 +638,7 @@ curl -H "Authorization: Bearer $JWT_TOKEN" \
 ```
 
 **Response:**
+
 ```json
 {
   "commissions": [
@@ -662,6 +676,7 @@ curl -H "Authorization: Bearer $JWT_TOKEN" \
 ```
 
 **Response (ACTUAL FORMAT):**
+
 ```json
 {
   "data": {
@@ -694,6 +709,7 @@ curl -H "Authorization: Bearer $JWT_TOKEN" \
 ```
 
 **Response:**
+
 ```json
 {
   "coefficients": [
@@ -739,6 +755,7 @@ curl -H "Authorization: Bearer $JWT_TOKEN" \
 ```
 
 **Response:**
+
 ```json
 {
   "default_commission_fbo_pct": 10.0,
@@ -771,6 +788,7 @@ curl -H "Authorization: Bearer $JWT_TOKEN" \
 - **Behavior:** Returns 429 Too Many Requests при превышении
 
 **Дополнительные limits для бонусных endpoints:**
+
 - **Tariffs endpoints:** `tariffs` scope — 10 req/min
 - **Acceptance coefficients:** `orders_fbw` scope — 6 req/min
 
@@ -783,6 +801,7 @@ curl -H "Authorization: Bearer $JWT_TOKEN" \
 **Все новые поля опциональны!** Существующие запросы продолжают работать без изменений.
 
 **Приоритет значений:**
+
 ```
 Логистика: manual > auto-fill (warehouse) > default
 Хранение:  manual > auto-fill (warehouse) > 0
@@ -801,16 +820,19 @@ API использует следующий приоритет для опред
 ### 🆕 Рекомендации по использованию автозаполнения
 
 **Когда использовать warehouse_name:**
+
 - ✅ Товар хранится на конкретном складе WB
 - ✅ Известны габариты товара (для расчёта объёма)
 - ✅ Нужно быстро рассчитать логистику без поиска тарифов
 
 **Когда использовать dimensions:**
+
 - ✅ Известны габариты товара (L×W×H)
 - ✅ Объём неизвестен или нужно рассчитать
 - ✅ Тип груза неизвестен
 
 **Комбинированный подход (рекомендуется):**
+
 ```json
 {
   "warehouse_name": "Коледино",
@@ -819,6 +841,7 @@ API использует следующий приоритет для опред
   "storage_days": 7
 }
 ```
+
 → Максимальная автоматизация, минимум ручного ввода
 
 ### 🆕 Обработка ошибок KGT
@@ -837,15 +860,15 @@ API использует следующий приоритет для опред
 
 ### Созданные файлы
 
-| Файл | Описание | Lines |
-|------|----------|-------|
-| `src/tariffs/tariffs.service.ts` | Интеграция с WB Tariffs API (Story 43.1) | 150 |
-| `src/products/services/price-calculator.service.ts` | Основной сервис расчёта (Story 43.2) | +280 (43.6+43.7) |
-| `src/products/controllers/price-calculator.controller.ts` | HTTP endpoint (Story 43.3) | 80 |
-| `src/products/dto/request/price-calculator-request.dto.ts` | Request DTO с валидацией | +160 (43.6+43.7) |
-| `src/products/dto/response/price-calculator-response.dto.ts` | Response DTO | +80 (43.6+43.7) |
-| `src/tariffs/tariffs.controller.ts` | 4 bonus endpoints (Story 43.5) | +250 |
-| `src/tariffs/dto/tariffs-response.dto.ts` | DTOs для tariffs endpoints | 277 |
+| Файл                                                         | Описание                                 | Lines            |
+| ------------------------------------------------------------ | ---------------------------------------- | ---------------- |
+| `src/tariffs/tariffs.service.ts`                             | Интеграция с WB Tariffs API (Story 43.1) | 150              |
+| `src/products/services/price-calculator.service.ts`          | Основной сервис расчёта (Story 43.2)     | +280 (43.6+43.7) |
+| `src/products/controllers/price-calculator.controller.ts`    | HTTP endpoint (Story 43.3)               | 80               |
+| `src/products/dto/request/price-calculator-request.dto.ts`   | Request DTO с валидацией                 | +160 (43.6+43.7) |
+| `src/products/dto/response/price-calculator-response.dto.ts` | Response DTO                             | +80 (43.6+43.7)  |
+| `src/tariffs/tariffs.controller.ts`                          | 4 bonus endpoints (Story 43.5)           | +250             |
+| `src/tariffs/dto/tariffs-response.dto.ts`                    | DTOs для tariffs endpoints               | 277              |
 
 ### Тесты
 
@@ -855,6 +878,7 @@ API использует следующий приоритет для опред
 - **Total:** 72 tests passing (0 failures)
 
 **Quality Metrics:**
+
 - ✅ TypeScript: 0 errors
 - ✅ ESLint: 0 errors
 - ✅ Coverage: ≥90%
@@ -893,6 +917,7 @@ API использует следующий приоритет для опред
 ## Checklist для Frontend интеграции
 
 ### Базовая функциональность (Stories 43.1-43.4)
+
 - [x] Добавить UI форму для ввода параметров (target_margin, cogs, logistics, etc.)
 - [x] Отобразить breakdown затрат (fixed + percentage)
 - [x] Показать предупреждения (warnings) если есть
@@ -901,6 +926,7 @@ API использует следующий приоритет для опред
 - [x] Валидировать ввод на фронте (минимально, для UX)
 
 ### 🆕 Автозаполнение от склада (Story 43.6)
+
 - [ ] Добавить селектор склада (`GET /v1/tariffs/warehouses`)
 - [ ] Добавить поле для ввода `warehouse_name` с autocomplete
 - [ ] Добавить поле `volume_liters` (опционально)
@@ -911,6 +937,7 @@ API использует следующий приоритет для опред
 - [ ] Позволять ручной override логистики/хранения
 
 ### 🆕 Расчёт из габаритов (Story 43.7)
+
 - [ ] Добавить поля `dimensions` (length_cm, width_cm, height_cm)
 - [ ] Автоматически рассчитывать объём при вводе габаритов
 - [ ] Отображать calculated_volume_liters в UI
@@ -920,12 +947,14 @@ API использует следующий приоритет для опред
 - [ ] Позволять ручной override объёма (volume_liters)
 
 ### Бонусные endpoints (Story 43.5)
+
 - [ ] Использовать `GET /v1/tariffs/commissions` для селектора категории
 - [ ] Использовать `GET /v1/tariffs/warehouses` для селектора склада
 - [ ] Опционально: отображать коэффициенты приёмки (`/acceptance/coefficients`)
 - [ ] Опционально: отображать глобальные настройки (`/settings`)
 
 ### UI/UX Рекомендации
+
 - [ ] Показывать индикатор "auto" vs "manual" для логистики/хранения
 - [ ] Подсветка типа груза цветом (MGT=зелёный, SGT=жёлтый, KGT=красный)
 - [ ] Тултипы с подсказками по каждому полю

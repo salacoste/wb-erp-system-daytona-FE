@@ -6,6 +6,7 @@
 **Component**: Backend API — Analytics (by-SKU) + Stock/Inventory
 **Requester**: Frontend Team (competitor-parity program)
 **Related**:
+
 - Competitor parity spec: `docs/competitor-analysis/competitor-financial-report-parity.md` (FR-4, §3-H/L fields AU/BF/AR–AT)
 - FE stock surface: `/analytics/fbs-stock` (FBS only today)
 - FE by-SKU type: `src/types/cogs/products.ts` (`MarginAnalyticsSku`)
@@ -31,13 +32,13 @@
 
 ## Current state (what we have)
 
-| Concept | Granularity today | Source |
-|---|---|---|
-| FBS stock qty | **SKU** ⚠️ (FBS only) | `/analytics/fbs-stock` |
-| FBO stock qty | **Gap** ❌ | no source (warehouse API not wired) |
-| Total stock qty (FBS+FBO) | partial ⚠️ | derived from above |
-| Stock value at purchase price | **Gap** ❌ | no `stock × cogs_per_unit` field anywhere |
-| COGS per unit | **SKU** ✅ | COGS assignment |
+| Concept                       | Granularity today     | Source                                    |
+| ----------------------------- | --------------------- | ----------------------------------------- |
+| FBS stock qty                 | **SKU** ⚠️ (FBS only) | `/analytics/fbs-stock`                    |
+| FBO stock qty                 | **Gap** ❌            | no source (warehouse API not wired)       |
+| Total stock qty (FBS+FBO)     | partial ⚠️            | derived from above                        |
+| Stock value at purchase price | **Gap** ❌            | no `stock × cogs_per_unit` field anywhere |
+| COGS per unit                 | **SKU** ✅            | COGS assignment                           |
 
 So AU/BF are blocked on (a) a stock-×-COGS computation and (b) an FBO stock source.
 
@@ -73,6 +74,7 @@ interface MarginAnalyticsSkuStockFields {
 ## Acceptance (FE side)
 
 When per-SKU `stock_value_rub` + `stock_total` land:
+
 - FE adds "Остаток (₽)" + "Доля остатка %" columns to `SkuFinancialsTable` (+ by-brand/category), reusing the FR-1 `sharePercentage` helper for BF.
 - The liquidity page (`/analytics/liquidity`) can consume `stock_value_rub` for frozen-capital turnover (currently uses qty only).
 

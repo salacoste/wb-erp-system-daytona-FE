@@ -15,7 +15,7 @@ chars: 5520
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-takoe-sverka-ostatkov" rel="nofollow">Что такое сверка остатков</a>
 - <a href="#chto-neobhodimo-dlya-zapuska-sverki-ostatkov" rel="nofollow">Что необходимо для запуска сверки остатков</a>
 - <a href="#sverka-ostatkov-fbs" rel="nofollow">Сверка остатков FBS</a>
@@ -26,11 +26,12 @@ chars: 5520
 Сверка остатков предназначена для сравнения остатков на складах в SelSup и на складах маркетплейсов или сервиса МойСклад.
 
 Сверка остатков в SelSup есть двух видов:\
+
 1. Сверка остатков FBO;\
 2. Сверка остатков FBS.\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/05/screenshot_5.png.webp)
+   ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/05/screenshot_5.png.webp)
 
-***Обратите внимание, Сверка доступна только для следующих маркетплейсов, которые отдают остатки по FBS и FBO по API: Wildberries, Ozon, МойСклад.***
+_**Обратите внимание, Сверка доступна только для следующих маркетплейсов, которые отдают остатки по FBS и FBO по API: Wildberries, Ozon, МойСклад.**_
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 
@@ -69,7 +70,7 @@ chars: 5520
 - Склад сервиса - номера склада маркетплейса или сервиса МойСклад.
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/05/snimok-ekrana-2023-05-22-v-22.51.54-1024x343.png.webp)\
-*По FBS сверка остатков происходит между остатками на складе маркетплейса/сервиса и остатками на складе SelSup.*
+_По FBS сверка остатков происходит между остатками на складе маркетплейса/сервиса и остатками на складе SelSup._
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 
@@ -92,6 +93,6 @@ chars: 5520
 
 Почему при сверке остатков FBO могут возникнуть расхождения рассказали [тут](../voprosy-i-otvety-po-fbo-wildberries/index.html).
 
-------------------------------------------------------------------------
+---
 
 Подробнее про различия и особенности остатков в SelSup рассказали [в этой статье](../razlichiya-ostatkov/index.html).

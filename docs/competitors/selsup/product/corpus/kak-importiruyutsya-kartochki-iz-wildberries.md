@@ -11,7 +11,7 @@ chars: 2121
 
 В этой статье:
 
-- 
+-
 - <a href="#urovni-kartochek-v-selsup" rel="nofollow">Уровни карточек в SelSup</a>
 - <a href="#protsess-importa-kartochki" rel="nofollow">Процесс импорта карточки</a>
 

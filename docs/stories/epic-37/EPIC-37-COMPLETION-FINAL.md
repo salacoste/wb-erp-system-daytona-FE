@@ -11,6 +11,7 @@
 Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is production-ready, fully tested, and integrated with backend API.
 
 **Phase 2 QA validation** (Story 37.7) completed on 2025-01-17, achieving:
+
 - ✅ 7 E2E test scenarios passed
 - ✅ WCAG 2.1 AA accessibility compliant
 - ✅ Cross-browser testing complete
@@ -22,14 +23,14 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 
 ## Stories Status
 
-| Story | Status | Completion Date | Quality |
-|-------|--------|----------------|---------|
-| **37.1** Backend API Validation | ✅ DONE | 2025-12-29 08:15 | TypeScript 0 errors |
-| **37.2** MergedGroupTable Component | ✅ DONE | 2025-12-28 | PO: 9.8/10 |
-| **37.3** Aggregate Metrics Display | ✅ DONE |  | PO: 9.7/10 |
-| **37.4** Visual Styling & Hierarchy | ✅ DONE | 2025-12-28 | 26/26 AC met |
-| **37.5** Testing & Documentation (Phase 1) | ✅ DONE | 2025-12-29 | 77 tests, 100% pass |
-| **37.7** Phase 2 QA & Production Validation | ✅ COMPLETE | 2025-01-17 | QA: PASS |
+| Story                                       | Status      | Completion Date  | Quality             |
+| ------------------------------------------- | ----------- | ---------------- | ------------------- |
+| **37.1** Backend API Validation             | ✅ DONE     | 2025-12-29 08:15 | TypeScript 0 errors |
+| **37.2** MergedGroupTable Component         | ✅ DONE     | 2025-12-28       | PO: 9.8/10          |
+| **37.3** Aggregate Metrics Display          | ✅ DONE     |                  | PO: 9.7/10          |
+| **37.4** Visual Styling & Hierarchy         | ✅ DONE     | 2025-12-28       | 26/26 AC met        |
+| **37.5** Testing & Documentation (Phase 1)  | ✅ DONE     | 2025-12-29       | 77 tests, 100% pass |
+| **37.7** Phase 2 QA & Production Validation | ✅ COMPLETE | 2025-01-17       | QA: PASS            |
 
 **Development Progress**: **100%** ✅
 **Overall Progress**: **100%** ✅ - **PRODUCTION READY** 🚀
@@ -41,23 +42,28 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 ### Code Files (30 files changed, 7,066 insertions, 295 deletions)
 
 **Components**:
+
 - `src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.tsx`
 - `src/app/(dashboard)/analytics/advertising/components/GroupByToggle.tsx`
 
 **Utils & Transformers**:
+
 - `src/app/(dashboard)/analytics/advertising/utils/metrics-calculator.ts`
 - `src/app/(dashboard)/analytics/advertising/utils/formatters.ts`
 - `src/lib/transformers/advertising-transformers.ts`
 
 **Types**:
+
 - `src/types/advertising-analytics.ts` (updated with Epic 37 interfaces)
 
 **Tests**:
+
 - 77 unit tests (`utils/__tests__/*.test.ts`)
 - 7 E2E test scenarios (`e2e/merged-group-table-epic-37.spec.ts`)
 - 7 accessibility test scenarios (`e2e/accessibility-merged-groups-epic-37.spec.ts`)
 
 **API Integration**:
+
 - Backend API connected via Request #88
 - Transformation layer validates responses
 - Feature flags enabled (`useRealApi: true`)
@@ -67,15 +73,18 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 ## Documentation
 
 ### User-Facing:
+
 - `docs/stories/epic-37/USER-GUIDE.md` (comprehensive guide for end users)
 
 ### Technical:
+
 - `docs/stories/epic-37/STORY-37.1-INTEGRATION-PLAN.md` (2800+ lines)
 - `docs/stories/epic-37/STORY-37.1-COMPLETION-REPORT.md`
 - `docs/stories/epic-37/STORY-37.2-COMPLETION-REPORT.md`
 - `docs/stories/epic-37/story-37.5-testing-documentation.BMAD.md`
 
 ### QA Handoff:
+
 - `docs/stories/epic-37/QA-HANDOFF-PHASE-2.md` (detailed QA task instructions)
 - `docs/stories/epic-37/PHASE-2-QA-VALIDATION-REPORT.md` (9000+ words)
 - `docs/stories/epic-37/PO-APPROVAL-EPIC-37-FINAL-PUSH.md` (PO decision request)
@@ -84,16 +93,16 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 
 ## Quality Metrics
 
-| Metric | Result |
-|--------|--------|
-| **Quality Score** | **89.4/100** 🏆 |
-| **PO Rating** | 9.7-9.8/10 |
-| **Unit Tests** | 77 tests, 100% pass rate ✅ |
-| **TypeScript Errors** | 0 ✅ |
-| **Code Coverage** | 100% (metrics + formatters) |
-| **Backend Integration** | ✅ Real API (Request #88) |
-| **Accessibility** | WCAG 2.1 AA compliant (automated scan) |
-| **Performance** | <200ms target (similar components meet this) |
+| Metric                  | Result                                       |
+| ----------------------- | -------------------------------------------- |
+| **Quality Score**       | **89.4/100** 🏆                              |
+| **PO Rating**           | 9.7-9.8/10                                   |
+| **Unit Tests**          | 77 tests, 100% pass rate ✅                  |
+| **TypeScript Errors**   | 0 ✅                                         |
+| **Code Coverage**       | 100% (metrics + formatters)                  |
+| **Backend Integration** | ✅ Real API (Request #88)                    |
+| **Accessibility**       | WCAG 2.1 AA compliant (automated scan)       |
+| **Performance**         | <200ms target (similar components meet this) |
 
 ---
 
@@ -102,6 +111,7 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 **Status**: ✅ **READY FOR DEPLOYMENT**
 
 **What works**:
+
 - ✅ Toggle between "По артикулам" and "По склейкам" modes
 - ✅ 3-tier table structure (rowspan → aggregate → details)
 - ✅ Crown icon identifies main products
@@ -111,6 +121,7 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 - ✅ Backend API integration with transformation layer
 
 **Known limitations**:
+
 - ⚠️ Phase 2 QA tasks not executed yet (E2E, screen readers, performance profiling, UAT)
 - ⚠️ No production usage data (first deployment)
 
@@ -122,17 +133,18 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 
 **Tasks** (7.5-11.5 hours total):
 
-| Task | Owner | Time | Status |
-|------|-------|------|--------|
-| Execute E2E tests | QA Team | 1-2h | 🚧 Pending |
+| Task                        | Owner   | Time  | Status     |
+| --------------------------- | ------- | ----- | ---------- |
+| Execute E2E tests           | QA Team | 1-2h  | 🚧 Pending |
 | Execute accessibility tests | QA Team | 30min | 🚧 Pending |
-| Screen reader testing | QA Team | 2-3h | 🚧 Pending |
-| Performance testing | QA Team | 1-2h | 🚧 Pending |
-| UAT (3 users) | QA Team | 1-2h | 🚧 Pending |
-| Screenshot capture | QA Team | 30min | 🚧 Pending |
-| Mixpanel integration | DevOps | 1h | 🚧 Pending |
+| Screen reader testing       | QA Team | 2-3h  | 🚧 Pending |
+| Performance testing         | QA Team | 1-2h  | 🚧 Pending |
+| UAT (3 users)               | QA Team | 1-2h  | 🚧 Pending |
+| Screenshot capture          | QA Team | 30min | 🚧 Pending |
+| Mixpanel integration        | DevOps  | 1h    | 🚧 Pending |
 
 **QA Team has**:
+
 - ✅ All test code written and ready to execute
 - ✅ Detailed task instructions (QA-HANDOFF-PHASE-2.md)
 - ✅ Prerequisites checklist
@@ -148,6 +160,7 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 **QA Team Recommendation**: Deploy now (Option A)
 
 **Rationale**:
+
 - Code is production-ready (96% complete)
 - Phase 2 QA can work in parallel with production
 - Quality score 89.4/100 is excellent
@@ -168,16 +181,19 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 ## Team Performance
 
 **Frontend Development**: ⭐⭐⭐⭐⭐ Excellent
+
 - Clean code, well-tested
 - PO ratings: 9.7-9.8/10
 - Fast delivery (3 days for 4 stories)
 
 **Backend Integration**: ⭐⭐⭐⭐⭐ Excellent
+
 - Request #88 completed on time
 - API structure matches frontend needs exactly
 - 85.52% test coverage
 
 **Collaboration**: ⭐⭐⭐⭐⭐ Excellent
+
 - Frontend + Backend sync worked perfectly
 - BMad framework helped structure work
 - Clear handoff to QA team
@@ -187,16 +203,19 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 ## Next Steps
 
 ### For Dev Team: ✅ DONE - Move to next tasks
+
 - Epic 37 complete from development side
 - Can start Epic 34-FE or other backlog items
 - Available for hotfixes if QA finds critical bugs
 
 ### For QA Team: 🚧 Execute Phase 2
+
 - Follow QA-HANDOFF-PHASE-2.md instructions
 - Estimated 7.5-11.5 hours total
 - Report results in 6 deliverable documents
 
 ### For PO: 📋 Deployment Decision
+
 - Review PO-APPROVAL-EPIC-37-FINAL-PUSH.md
 - Choose Option A (deploy now) or Option B (wait for Phase 2)
 - QA team recommends Option A
@@ -206,12 +225,14 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 ## Lessons Learned
 
 **What went well**:
+
 - ✅ Parallel development (frontend Stories 37.2-37.5 while waiting for backend)
 - ✅ BMad framework structured work effectively
 - ✅ Type-first approach prevented integration issues
 - ✅ Comprehensive testing from day 1
 
 **What could improve**:
+
 - Story 37.1 ordering (should have been first, but backend wasn't ready)
 - Communication about backend readiness (frontend didn't know until explicit check)
 
@@ -224,12 +245,14 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 **All documentation**: `docs/stories/epic-37/`
 
 **Key files**:
+
 - User Guide: `USER-GUIDE.md`
 - Integration Plan: `STORY-37.1-INTEGRATION-PLAN.md`
 - QA Handoff: `QA-HANDOFF-PHASE-2.md`
 - Completion Reports: `STORY-37.X-COMPLETION-REPORT.md`
 
 **Backend docs**:
+
 - Epic 36: `../../../docs/epics/epic-36-product-card-linking.md`
 - Epic 35: `../../../docs/epics/epic-35-total-sales-organic-split.md`
 - Request #88: `frontend/docs/request-backend/88-FRONTEND-INTEGRATION-GUIDE.md`
@@ -243,6 +266,6 @@ Epic 37 (Merged Group Table Display) is **100% COMPLETE**. All frontend code is 
 
 ---
 
-*Epic completed: 2025-12-29*
-*Team: Frontend Dev + Backend Dev + QA Team + BMad Framework*
-*Total effort: ~12-15 hours development + 7.5-11.5 hours QA (pending)*
+_Epic completed: 2025-12-29_
+_Team: Frontend Dev + Backend Dev + QA Team + BMad Framework_
+_Total effort: ~12-15 hours development + 7.5-11.5 hours QA (pending)_

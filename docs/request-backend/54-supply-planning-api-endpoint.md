@@ -27,6 +27,7 @@
 ## Business Context
 
 **Problem**: Stockouts Kill Revenue
+
 ```
 Average seller: 10-20% revenue loss from stockouts annually
 Most don't even know which products will run out
@@ -34,6 +35,7 @@ Reactive problem (discover after it happens)
 ```
 
 **Solution**: Predictive analytics endpoint that:
+
 - Calculates order velocity (7-day rolling average)
 - Predicts days until stockout
 - Recommends reorder quantities
@@ -51,21 +53,21 @@ GET /v1/analytics/supply-planning
 
 ### Headers (Required)
 
-| Header | Description |
-|--------|-------------|
+| Header          | Description      |
+| --------------- | ---------------- |
 | `Authorization` | Bearer JWT token |
-| `X-Cabinet-Id` | Cabinet UUID |
+| `X-Cabinet-Id`  | Cabinet UUID     |
 
 ### Query Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `planning_horizon` | number | No | 30 | Days to plan for: 7, 14, 30, 60 |
-| `safety_buffer` | number | No | 25 | Safety buffer %: 15-50 |
-| `status_filter` | enum | No | "all" | Filter: "critical" \| "warning" \| "monitor" \| "safe" \| "all" |
-| `sort_by` | string | No | "days_until_stockout" | Sort field |
-| `sort_order` | enum | No | "asc" | Sort order: "asc" \| "desc" |
-| `limit` | number | No | 100 | Max results (max: 500) |
+| Parameter          | Type   | Required | Default               | Description                                                     |
+| ------------------ | ------ | -------- | --------------------- | --------------------------------------------------------------- |
+| `planning_horizon` | number | No       | 30                    | Days to plan for: 7, 14, 30, 60                                 |
+| `safety_buffer`    | number | No       | 25                    | Safety buffer %: 15-50                                          |
+| `status_filter`    | enum   | No       | "all"                 | Filter: "critical" \| "warning" \| "monitor" \| "safe" \| "all" |
+| `sort_by`          | string | No       | "days_until_stockout" | Sort field                                                      |
+| `sort_order`       | enum   | No       | "asc"                 | Sort order: "asc" \| "desc"                                     |
+| `limit`            | number | No       | 100                   | Max results (max: 500)                                          |
 
 ### Response Format
 
@@ -133,12 +135,12 @@ GET /v1/analytics/supply-planning
 
 ### Risk Status Classification
 
-| Status | Days Until Stockout | Severity |
-|--------|---------------------|----------|
-| `critical` | 1-3 days | Immediate action needed |
-| `warning` | 4-7 days | Order this week |
-| `monitor` | 8-14 days | Plan ahead |
-| `safe` | 15+ days | Stock sufficient |
+| Status     | Days Until Stockout | Severity                |
+| ---------- | ------------------- | ----------------------- |
+| `critical` | 1-3 days            | Immediate action needed |
+| `warning`  | 4-7 days            | Order this week         |
+| `monitor`  | 8-14 days           | Plan ahead              |
+| `safe`     | 15+ days            | Stock sufficient        |
 
 ```javascript
 function getStockoutStatus(days_until_stockout) {
@@ -281,6 +283,7 @@ function detectVelocityTrend(sku_id, cabinet_id) {
 ### Current Stock (Required)
 
 **Option A**: WB API Integration (Preferred)
+
 ```typescript
 // Call WB API for real-time stock
 const stocks = await wbApi.getStocks(cabinetId);
@@ -288,6 +291,7 @@ const stocks = await wbApi.getStocks(cabinetId);
 ```
 
 **Option B**: Daily Snapshot
+
 ```sql
 SELECT sku_id, stock_qty
 FROM inventory_snapshot
@@ -313,6 +317,7 @@ GROUP BY nm_id;
 ### In-Transit Shipments (Optional)
 
 **New Table Required**:
+
 ```sql
 CREATE TABLE in_transit_shipments (
   id SERIAL PRIMARY KEY,
@@ -336,6 +341,7 @@ CREATE INDEX idx_in_transit_arrival ON in_transit_shipments(expected_arrival_dat
 ```
 
 **Query**:
+
 ```sql
 SELECT sku_id, SUM(qty) as in_transit_qty
 FROM in_transit_shipments
@@ -348,24 +354,24 @@ GROUP BY sku_id;
 
 ## Error Responses
 
-| Status | Code | Message | When |
-|--------|------|---------|------|
-| 400 | `VALIDATION_ERROR` | "Invalid planning_horizon. Allowed: 7, 14, 30, 60" | Bad parameter |
-| 401 | `UNAUTHORIZED` | "Authentication required" | Missing/invalid JWT |
-| 403 | `FORBIDDEN` | "Access denied to cabinet" | Wrong cabinet |
-| 404 | `NOT_FOUND` | "No stock data available" | No inventory data |
-| 500 | `INTERNAL_ERROR` | "Internal server error" | Server error |
-| 503 | `SERVICE_UNAVAILABLE` | "Stock data temporarily unavailable" | WB API down |
+| Status | Code                  | Message                                            | When                |
+| ------ | --------------------- | -------------------------------------------------- | ------------------- |
+| 400    | `VALIDATION_ERROR`    | "Invalid planning_horizon. Allowed: 7, 14, 30, 60" | Bad parameter       |
+| 401    | `UNAUTHORIZED`        | "Authentication required"                          | Missing/invalid JWT |
+| 403    | `FORBIDDEN`           | "Access denied to cabinet"                         | Wrong cabinet       |
+| 404    | `NOT_FOUND`           | "No stock data available"                          | No inventory data   |
+| 500    | `INTERNAL_ERROR`      | "Internal server error"                            | Server error        |
+| 503    | `SERVICE_UNAVAILABLE` | "Stock data temporarily unavailable"               | WB API down         |
 
 ---
 
 ## Performance Requirements
 
-| Metric | Target | Notes |
-|--------|--------|-------|
-| Response time (100 SKUs) | <800ms | p95 |
-| Response time (500 SKUs) | <1500ms | p95 |
-| Caching | 15 min TTL | Redis key: `supply-plan:{cabinetId}:{horizon}:{buffer}` |
+| Metric                   | Target     | Notes                                                   |
+| ------------------------ | ---------- | ------------------------------------------------------- |
+| Response time (100 SKUs) | <800ms     | p95                                                     |
+| Response time (500 SKUs) | <1500ms    | p95                                                     |
+| Caching                  | 15 min TTL | Redis key: `supply-plan:{cabinetId}:{horizon}:{buffer}` |
 
 ---
 
@@ -424,6 +430,7 @@ export class SupplyPlanningService {
 ## Testing Checklist
 
 ### Unit Tests
+
 - [ ] Velocity calculation (normal, zero sales, high sales)
 - [ ] Days until stockout (positive, zero stock, no velocity)
 - [ ] Reorder quantity (with/without in-transit)
@@ -431,6 +438,7 @@ export class SupplyPlanningService {
 - [ ] Potential loss calculation
 
 ### Integration Tests
+
 - [ ] GET with valid parameters
 - [ ] GET with different planning_horizon values
 - [ ] GET with status_filter
@@ -438,6 +446,7 @@ export class SupplyPlanningService {
 - [ ] Sorting and pagination
 
 ### Edge Cases
+
 - [ ] SKU with zero sales (velocity = 0)
 - [ ] SKU with no stock but in-transit
 - [ ] SKU with negative stock (WB data issue)
@@ -491,9 +500,9 @@ export class SupplyPlanningService {
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-12-09 | 1.0 | Initial request | Sarah (PO) |
+| Date       | Version | Description     | Author     |
+| ---------- | ------- | --------------- | ---------- |
+| 2025-12-09 | 1.0     | Initial request | Sarah (PO) |
 
 ---
 

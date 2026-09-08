@@ -1,12 +1,15 @@
 # Request #60: Per-SKU Operational Costs in by-sku Endpoint
 
 ## Дата
+
 2025-12-14
 
 ## Статус
+
 ✅ **IMPLEMENTED** (Epic 30 - 2025-12-14)
 
 **Реализовано:**
+
 - `storage_cost` - теперь берётся из `paid_storage_daily` (Epic 24)
 - `storage_data_source` - индикатор источника данных (`"paid_storage_api"` или `"unavailable"`)
 - `advertising_cost` - placeholder (null)
@@ -14,10 +17,12 @@
 - `net_margin_pct` - чистая маржа = (net_profit / revenue_net) × 100%
 
 **Файлы изменены:**
+
 - `src/analytics/weekly-analytics.service.ts` - SQL JOIN с paid_storage_daily
 - `src/analytics/dto/response/sku-analytics.dto.ts` - новые поля DTO
 
 **Документация:**
+
 - `docs/epics/epic-30-per-sku-storage-costs-integration.md`
 - `docs/stories/epic-30/`
 
@@ -34,6 +39,7 @@ margin_pct = profit / revenue_net × 100
 ```
 
 Это приводит к **завышенной марже** (например, 68% вместо реальных ~7.6%), потому что не учитываются:
+
 - Логистика (доставка + возврат) per SKU
 - Хранение per SKU
 - Штрафы per SKU
@@ -42,6 +48,7 @@ margin_pct = profit / revenue_net × 100
 ## Текущее состояние
 
 Endpoint `GET /v1/analytics/weekly/by-sku` возвращает поля:
+
 ```json
 {
   "logistics_cost": 0,   // ← всегда 0
@@ -165,6 +172,7 @@ SUM(penalties) ≈ summary_total.penalties_total
 ## W49 Пример для валидации
 
 Ожидаемые агрегаты для W49:
+
 - `logistics_cost_total`: 26,571.98₽
 - `storage_cost_total`: 1,923.34₽
 - `penalties_total`: 0₽

@@ -33,13 +33,13 @@
 
 ### Available Methods (SDK v2.4.3+)
 
-| Method | Returns | Purpose | Rate Limit |
-|--------|---------|---------|------------|
-| `sdk.products.offices()` | `Office[]` | Все склады WB (FBO + FBS) | 60/min |
-| `sdk.tariffs.getTariffsBox({ date })` | `TariffsBoxResponse` | Тарифы для коробов (МГТ, СГТ) | 60/min |
-| `sdk.tariffs.getTariffsPallet({ date })` | `TariffsPalletResponse` | Тарифы для паллет (КГТ) | 60/min |
-| `sdk.tariffs.getTariffsReturn({ date })` | `TariffsReturnResponse` | Тарифы возврата | 60/min |
-| `sdk.tariffs.getTariffsCommission()` | `CommissionResponse` | Комиссии по категориям | 60/min |
+| Method                                   | Returns                 | Purpose                       | Rate Limit |
+| ---------------------------------------- | ----------------------- | ----------------------------- | ---------- |
+| `sdk.products.offices()`                 | `Office[]`              | Все склады WB (FBO + FBS)     | 60/min     |
+| `sdk.tariffs.getTariffsBox({ date })`    | `TariffsBoxResponse`    | Тарифы для коробов (МГТ, СГТ) | 60/min     |
+| `sdk.tariffs.getTariffsPallet({ date })` | `TariffsPalletResponse` | Тарифы для паллет (КГТ)       | 60/min     |
+| `sdk.tariffs.getTariffsReturn({ date })` | `TariffsReturnResponse` | Тарифы возврата               | 60/min     |
+| `sdk.tariffs.getTariffsCommission()`     | `CommissionResponse`    | Комиссии по категориям        | 60/min     |
 
 ### Method Selection Guide
 
@@ -120,21 +120,21 @@ export interface Office {
 
 ### Cargo Type Reference
 
-| Code | Name | Description | Max Dimensions | Tariff Method |
-|------|------|-------------|----------------|---------------|
-| 1 | **МГТ** | Малогабаритный товар | 60×60×60 см | `getTariffsBox()` |
-| 2 | **СГТ** | Сверхгабаритный товар | 120×80×80 см | `getTariffsBox()` |
-| 3 | **КГТ+** | Крупногабаритный товар | >120 см | `getTariffsPallet()` |
+| Code | Name     | Description            | Max Dimensions | Tariff Method        |
+| ---- | -------- | ---------------------- | -------------- | -------------------- |
+| 1    | **МГТ**  | Малогабаритный товар   | 60×60×60 см    | `getTariffsBox()`    |
+| 2    | **СГТ**  | Сверхгабаритный товар  | 120×80×80 см   | `getTariffsBox()`    |
+| 3    | **КГТ+** | Крупногабаритный товар | >120 см        | `getTariffsPallet()` |
 
 ### Delivery Type Reference
 
-| Code | Name | Description | For Calculator |
-|------|------|-------------|----------------|
-| 1 | **FBS** | Fulfillment by Seller | `boxDeliveryMarketplace*` |
-| 2 | **DBS** | Delivery by Seller | N/A (seller logistics) |
-| 3 | **DBW** | Delivery by WB | `boxDelivery*` |
-| 5 | **C&C** | Click & Collect | N/A |
-| 6 | **EDBS** | Express DBS | N/A |
+| Code | Name     | Description           | For Calculator            |
+| ---- | -------- | --------------------- | ------------------------- |
+| 1    | **FBS**  | Fulfillment by Seller | `boxDeliveryMarketplace*` |
+| 2    | **DBS**  | Delivery by Seller    | N/A (seller logistics)    |
+| 3    | **DBW**  | Delivery by WB        | `boxDelivery*`            |
+| 5    | **C&C**  | Click & Collect       | N/A                       |
+| 6    | **EDBS** | Express DBS           | N/A                       |
 
 ---
 
@@ -468,6 +468,7 @@ function transformBoxTariff(raw: ModelsWarehouseBoxRates): TransformedTariffs {
 ### Problem Statement
 
 SDK возвращает данные из разных источников:
+
 - `offices()` → `Office.name`
 - `getTariffsBox()` → `BoxRates.warehouseName`
 
@@ -527,13 +528,13 @@ function findMatchingTariff(
 
 ### Known Matching Issues
 
-| Office.name | BoxRates.warehouseName | Issue | Solution |
-|-------------|------------------------|-------|----------|
-| "Коледино" | "Коледино" | ✅ Exact | — |
-| "Коледино " | "Коледино" | Trailing space | `trim()` |
-| "коледино" | "Коледино" | Case | `toLowerCase()` |
-| "Коледино WB" | "Коледино" | Suffix | Contains match |
-| "Склад Коледино" | "Коледино" | Prefix | Contains match |
+| Office.name      | BoxRates.warehouseName | Issue          | Solution        |
+| ---------------- | ---------------------- | -------------- | --------------- |
+| "Коледино"       | "Коледино"             | ✅ Exact       | —               |
+| "Коледино "      | "Коледино"             | Trailing space | `trim()`        |
+| "коледино"       | "Коледино"             | Case           | `toLowerCase()` |
+| "Коледино WB"    | "Коледино"             | Suffix         | Contains match  |
+| "Склад Коледино" | "Коледино"             | Prefix         | Contains match  |
 
 ### Logging Unmatched
 
@@ -553,11 +554,13 @@ if (unmatchedWarehouses.length > 0) {
 ### 7.1 Logistics Cost (Прямая логистика)
 
 **WB Official Formula:**
+
 ```
 logistics_cost = (base_rate + (volume - 1) * per_liter_rate) * coefficient
 ```
 
 **Implementation:**
+
 ```typescript
 interface LogisticsInput {
   volumeLiters: number;      // Объём товара в литрах
@@ -601,12 +604,14 @@ calculateLogisticsCost({
 ### 7.2 Storage Cost (Хранение)
 
 **WB Official Formula:**
+
 ```
 storage_per_day = (base_rate + (volume - 1) * per_liter_rate) * coefficient
 total_storage = storage_per_day * days
 ```
 
 **Implementation:**
+
 ```typescript
 interface StorageInput {
   volumeLiters: number;
@@ -651,6 +656,7 @@ calculateStorageCost({
 ### 7.3 Return Logistics (Обратная логистика)
 
 **With Buyback Rate:**
+
 ```typescript
 interface ReturnLogisticsInput {
   logisticsForwardRub: number;  // Прямая логистика
@@ -679,6 +685,7 @@ calculateEffectiveReturnLogistics({
 ### 7.4 Volume Calculation
 
 **From Dimensions:**
+
 ```typescript
 interface Dimensions {
   lengthCm: number;
@@ -850,11 +857,11 @@ GET /v1/tariffs/warehouses-with-tariffs
 
 ### Query Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `date` | ISO date string | No | today | Дата для тарифов |
-| `cargo_type` | `MGT\|SGT\|KGT` | No | all | Фильтр по типу груза |
-| `refresh` | boolean | No | false | Принудительное обновление кэша |
+| Parameter    | Type            | Required | Default | Description                    |
+| ------------ | --------------- | -------- | ------- | ------------------------------ |
+| `date`       | ISO date string | No       | today   | Дата для тарифов               |
+| `cargo_type` | `MGT\|SGT\|KGT` | No       | all     | Фильтр по типу груза           |
+| `refresh`    | boolean         | No       | false   | Принудительное обновление кэша |
 
 ### Response Format
 
@@ -862,13 +869,13 @@ See [Section 8.1](#81-typescript-types-frontend) for full TypeScript types.
 
 ### Error Responses
 
-| Status | Code | Description |
-|--------|------|-------------|
-| 400 | `INVALID_DATE` | Неверный формат даты |
-| 401 | `UNAUTHORIZED` | Нет токена |
-| 403 | `FORBIDDEN` | Нет доступа к кабинету |
-| 429 | `RATE_LIMIT_EXCEEDED` | Превышен лимит запросов |
-| 502 | `WB_API_ERROR` | Ошибка WB API |
+| Status | Code                  | Description             |
+| ------ | --------------------- | ----------------------- |
+| 400    | `INVALID_DATE`        | Неверный формат даты    |
+| 401    | `UNAUTHORIZED`        | Нет токена              |
+| 403    | `FORBIDDEN`           | Нет доступа к кабинету  |
+| 429    | `RATE_LIMIT_EXCEEDED` | Превышен лимит запросов |
+| 502    | `WB_API_ERROR`        | Ошибка WB API           |
 
 ---
 
@@ -879,6 +886,7 @@ See [Section 8.1](#81-typescript-types-frontend) for full TypeScript types.
 **Issue:** Некоторые склады могут не иметь тарифов в ответе `getTariffsBox()`.
 
 **Handling:**
+
 ```typescript
 if (!warehouse.tariffs) {
   // Показать предупреждение и включить ручной ввод
@@ -891,6 +899,7 @@ if (!warehouse.tariffs) {
 **Issue:** SDK комментарий: "Коэффициент уже учтён в тарифах" — неоднозначно.
 
 **Recommendation:** Ожидаем уточнения от Backend. Текущая интерпретация:
+
 - Базовые ставки — чистые значения
 - Коэффициент — множитель региона
 
@@ -899,6 +908,7 @@ if (!warehouse.tariffs) {
 **Issue:** Тарифы имеют период действия (`dtNextBox`, `dtTillMax`).
 
 **Handling:**
+
 - Кэшировать с учётом `effective_until`
 - Автоматически инвалидировать кэш при смене периода
 
@@ -907,6 +917,7 @@ if (!warehouse.tariffs) {
 **Issue:** WB может добавить новые склады, для которых нет matching в тарифах.
 
 **Handling:**
+
 - Включить в meta поле `withoutTariffs`
 - Frontend показывает такие склады с пометкой "Тарифы уточняются"
 

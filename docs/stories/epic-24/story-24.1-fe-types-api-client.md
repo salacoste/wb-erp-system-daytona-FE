@@ -16,17 +16,20 @@
 ## Acceptance Criteria
 
 ### AC1: TypeScript Types
+
 - [ ] Create `types/storage-analytics.ts` with all response types
 - [ ] Types match backend API response structure (Request #36)
 - [ ] Proper nullability handling (`| null` where applicable)
 
 ### AC2: API Client Functions
+
 - [ ] `getStorageBySku(params)` - GET /v1/analytics/storage/by-sku
 - [ ] `getStorageTopConsumers(params)` - GET /v1/analytics/storage/top-consumers
 - [ ] `getStorageTrends(params)` - GET /v1/analytics/storage/trends
 - [ ] `triggerPaidStorageImport(params)` - POST /v1/imports/paid-storage
 
 ### AC3: React Query Hooks
+
 - [ ] `useStorageBySku(weekStart, weekEnd, options)`
 - [ ] `useStorageTopConsumers(weekStart, weekEnd, options)`
 - [ ] `useStorageTrends(weekStart, weekEnd, options)`
@@ -35,6 +38,7 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Types Definition
+
 - [ ] Create `src/types/storage-analytics.ts`
 - [ ] Define `StoragePeriod` interface
 - [ ] Define `StorageBySkuItem` interface
@@ -52,6 +56,7 @@
 - [ ] Define `StorageTrendsParams` interface
 
 ### Phase 2: API Client Functions
+
 - [ ] Create `src/lib/api/storage-analytics.ts`
 - [ ] Implement `getStorageBySku(params)`
 - [ ] Implement `getStorageTopConsumers(params)`
@@ -61,6 +66,7 @@
 - [ ] Add request/response logging (dev mode)
 
 ### Phase 3: React Query Hooks
+
 - [ ] Create `src/hooks/useStorageAnalytics.ts`
 - [ ] Implement `useStorageBySku` hook with pagination
 - [ ] Implement `useStorageTopConsumers` hook
@@ -69,6 +75,7 @@
 - [ ] Define query key factory
 
 ### Phase 4: Testing
+
 - [ ] Write unit tests for types (compile check)
 - [ ] Write unit tests for hooks (mock API)
 - [ ] Test error handling scenarios
@@ -248,6 +255,7 @@ src/
 ### API Authentication
 
 All endpoints require:
+
 - `Authorization: Bearer {JWT_TOKEN}`
 - `X-Cabinet-Id: {cabinet_id}`
 
@@ -256,6 +264,7 @@ Headers are automatically added by `src/lib/api.ts` client.
 ## Testing
 
 ### Framework & Location
+
 - **Framework**: Vitest + React Testing Library
 - **Test Location**: `src/hooks/__tests__/useStorageAnalytics.test.ts`
 - **Mock Pattern**: Use `vi.mock` for API calls or MSW
@@ -274,6 +283,7 @@ Headers are automatically added by `src/lib/api.ts` client.
 - [ ] Pagination cursor is passed correctly
 
 ### Coverage Target
+
 - Hooks: >80%
 - Types: Compile-time verification
 
@@ -302,9 +312,9 @@ Headers are automatically added by `src/lib/api.ts` client.
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-11-29 | PO (Sarah) | Initial draft |
+| Date       | Author            | Change                                   |
+| ---------- | ----------------- | ---------------------------------------- |
+| 2025-11-29 | PO (Sarah)        | Initial draft                            |
 | 2025-11-29 | UX Expert (Sally) | Added Tasks, Dev Notes, Testing sections |
 
 ---
@@ -340,6 +350,7 @@ Notes:
 **Overall**: Excellent foundation layer implementation. Types precisely match the backend API specification (Request #36), with comprehensive JSDoc documentation throughout. The API client and React Query hooks follow established project patterns.
 
 **Strengths**:
+
 - All 14 TypeScript interfaces correctly match backend API response structure
 - Proper nullability handling (`string | null`) where applicable
 - Query key factory follows TanStack Query v5 best practices
@@ -347,11 +358,12 @@ Notes:
 - Dev logging in API client aids debugging without impacting production
 
 **Files Reviewed**:
-| File | Lines | Assessment |
-|------|-------|------------|
-| `src/types/storage-analytics.ts` | 278 | Excellent - comprehensive types with JSDoc |
-| `src/lib/api/storage-analytics.ts` | 240 | Good - clean API client with dev logging |
-| `src/hooks/useStorageAnalytics.ts` | 321 | Good - follows TanStack Query v5 patterns |
+
+| File                               | Lines | Assessment                                 |
+| ---------------------------------- | ----- | ------------------------------------------ |
+| `src/types/storage-analytics.ts`   | 278   | Excellent - comprehensive types with JSDoc |
+| `src/lib/api/storage-analytics.ts` | 240   | Good - clean API client with dev logging   |
+| `src/hooks/useStorageAnalytics.ts` | 321   | Good - follows TanStack Query v5 patterns  |
 
 ### Refactoring Performed
 
@@ -380,6 +392,7 @@ No security concerns. This story implements only TypeScript types and React Quer
 ### Performance Considerations
 
 **Positive**:
+
 - Appropriate `staleTime` (30s) prevents excessive refetching
 - `gcTime` (5min) balances memory usage with cache effectiveness
 - `refetchOnWindowFocus: true` ensures fresh data on tab focus
@@ -396,9 +409,10 @@ None - no refactoring was necessary.
 **Quality Score**: 85/100
 
 **Issue Summary**:
-| ID | Severity | Finding | Action |
-|----|----------|---------|--------|
-| TEST-001 | Medium | No unit tests for hooks | Consider adding in future iteration |
+
+| ID       | Severity | Finding                 | Action                              |
+| -------- | -------- | ----------------------- | ----------------------------------- |
+| TEST-001 | Medium   | No unit tests for hooks | Consider adding in future iteration |
 
 ### Recommended Status
 

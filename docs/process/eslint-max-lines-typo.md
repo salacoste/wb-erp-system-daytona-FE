@@ -34,6 +34,7 @@ This keeps the rule active (catches new violations above 800 lines) without brea
 ## Why not fix to full 200-line cap here
 
 26 non-test source files exceed 200 lines (11 are type definition files). Immediately enforcing the documented 200-line cap would break CI. The interim 800-line ceiling was chosen as a safe floor that:
+
 - Catches egregious new violations
 - Doesn't break CI on existing code
 - Leaves the full 200-line tightening as a deliberate follow-up

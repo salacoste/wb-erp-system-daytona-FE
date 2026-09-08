@@ -8,18 +8,19 @@
 
 ## 0. Верифицированное состояние (2026-08-29, после Story 172.17 — ЭПИК 172 ЗАВЕРШЁН)
 
-| Метрика | Значение |
-|---|---|
-| `main` lifecycle anchor | Story 172.17 feature PR #325 merged as `caee8523` (Epic 172 finale). Точный HEAD сверять с `origin/main` по §1 |
-| Прогресс миграции 166-174 | **76/94** канонических стори |
-| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 ✅ (17/17 COMPLETE)** · 173/174 backlog |
-| Полный пол (vitest, **живой прогон при handoff**) | **19 467 passed / 0 failed / 1227 файлов / EXIT=0** (рост: … → 19 463 → **19 467** [+4 exact 172.17 guard]) |
-| Остальные гейты | lint 0/0 (zero-warning), tsc 0, max-lines OK, check:docs exit 0, locale-percent ratchet 4, lessons-length 0 |
-| PM2 | `wb-repricer-frontend-dev` online :3100; BE :3000 |
-| **NEXT** | **Эпик 173 (13 стори; owner: 173.1 settings / 173.8 shipments / 173.12 supplies)** — sprint-planning эпика как вход |
-| Сессионные ветки/worktrees 172.x | Story 172.17 feature + closeout **0/0/0**; ЭПИК 172 закрыт без остатков |
+| Метрика                                           | Значение                                                                                                                                             |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `main` lifecycle anchor                           | Story 172.17 feature PR #325 merged as `caee8523` (Epic 172 finale). Точный HEAD сверять с `origin/main` по §1                                       |
+| Прогресс миграции 166-174                         | **76/94** канонических стори                                                                                                                         |
+| Эпики                                             | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 ✅ (17/17 COMPLETE)** · 173/174 backlog |
+| Полный пол (vitest, **живой прогон при handoff**) | **19 467 passed / 0 failed / 1227 файлов / EXIT=0** (рост: … → 19 463 → **19 467** [+4 exact 172.17 guard])                                          |
+| Остальные гейты                                   | lint 0/0 (zero-warning), tsc 0, max-lines OK, check:docs exit 0, locale-percent ratchet 4, lessons-length 0                                          |
+| PM2                                               | `wb-repricer-frontend-dev` online :3100; BE :3000                                                                                                    |
+| **NEXT**                                          | **Эпик 173 (13 стори; owner: 173.1 settings / 173.8 shipments / 173.12 supplies)** — sprint-planning эпика как вход                                  |
+| Сессионные ветки/worktrees 172.x                  | Story 172.17 feature + closeout **0/0/0**; ЭПИК 172 закрыт без остатков                                                                              |
 
 **Сделано сессией 172.1-172.11** (эталонные артефакты — читай перед стартом):
+
 - **172.1** Business Dashboard — FULL 127 файлов, 4 executor-волны, 3-проходное ревью (PRs #278/#279) — эталон FULL-конвейера.
 - **172.2-172.4** Automation (gallery/list/editor) — MINOR-серии + **созданные e2e-пакеты** + первый live-прогон 163.3-спеки (PRs #280-#286) — эталон MINOR + e2e-создания.
 - **172.5** COGS single — FULL-lite, 3 прохода, **import-closure канон** (PRs #287/#288) — эталон closure-аудита.
@@ -68,16 +69,16 @@ node --version                     # v24.18.0
 
 ### 3.1 Делегационная матрица
 
-| Работа | Агент (`subagent_type`) | `model` | Контракт |
-|---|---|---|---|
-| Ad-hoc разведка | `explore` | `sonnet` | READ-ONLY; вопрос + пути; результат file:line списком |
-| **Волны миграции** (~30 файлов) | `executor` | `sonnet` | Правит ТОЛЬКО файлы из списка; канон-таблица в промпте; НЕ коммитит; отчёт = файлы + маппинг + отклонения |
-| Сложная правка | `executor` | `opus` | Тот же контракт, меньше файлов |
-| Отладка | `debugger` | `sonnet` | Диагноз + минимальный фикс |
-| **Ревью диффа** | `code-reviewer` | `opus` | СВЕЖИЙ контекст = отдельный вызов; вход: `/tmp/<story>-review-diff.txt` + claims; выход: вердикт + findings severity |
-| Верификация evidence | `verifier` | `sonnet` | Тест-выводы, инвентарь диффа, отсутствие forbidden |
-| Артефакт/closeout | `writer` | `sonnet` | Черновик по факсам; финал сверяешь ты |
-| BE/SDK-вопросы | `document-specialist` | `sonnet` | Repo-доки → Context7/web |
+| Работа                          | Агент (`subagent_type`) | `model`  | Контракт                                                                                                             |
+| ------------------------------- | ----------------------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
+| Ad-hoc разведка                 | `explore`               | `sonnet` | READ-ONLY; вопрос + пути; результат file:line списком                                                                |
+| **Волны миграции** (~30 файлов) | `executor`              | `sonnet` | Правит ТОЛЬКО файлы из списка; канон-таблица в промпте; НЕ коммитит; отчёт = файлы + маппинг + отклонения            |
+| Сложная правка                  | `executor`              | `opus`   | Тот же контракт, меньше файлов                                                                                       |
+| Отладка                         | `debugger`              | `sonnet` | Диагноз + минимальный фикс                                                                                           |
+| **Ревью диффа**                 | `code-reviewer`         | `opus`   | СВЕЖИЙ контекст = отдельный вызов; вход: `/tmp/<story>-review-diff.txt` + claims; выход: вердикт + findings severity |
+| Верификация evidence            | `verifier`              | `sonnet` | Тест-выводы, инвентарь диффа, отсутствие forbidden                                                                   |
+| Артефакт/closeout               | `writer`                | `sonnet` | Черновик по факсам; финал сверяешь ты                                                                                |
+| BE/SDK-вопросы                  | `document-specialist`   | `sonnet` | Repo-доки → Context7/web                                                                                             |
 
 **Жёсткие правила**: (1) ревьюер ≠ автор — никогда не видит твоих объяснений до вердикта; (2) **сабагенты НЕ коммитят/пушат/мержат** — git только твой; (3) один вызов = самодостаточная задача: абсолютные пути (worktree!), списки файлов, канон, запреты — сабагент НЕ видит твой контекст; (4) дифф-файл прикладывай к каждому ревью (`git diff > /tmp/<s>-review-diff.txt` + новые файлы конкатенацией); (5) **[1m]-окружение: КАЖДЫЙ вызов Agent ТРЕБУЕТ явный `model`-псевдоним** (opus/sonnet/haiku) — без него энфорсер отклонит; (6) изоляцию `worktree` для сабагентов НЕ использовать — все волны одной стори в ОДИН стори-worktree с непересекающимися списками.
 
@@ -98,17 +99,17 @@ node --version                     # v24.18.0
 
 ## 4. Гейты и baselines (каждый PR; exit-коды непайпованные, node 24)
 
-| Гейт | Команда (из worktree) | Baseline |
-|---|---|---|
-| Vitest полный | `npm test -- --run` | **≥ 19 423 passing / 0 failed / 0 skipped** across **≥ 1,221 files** (floor растёт точными +N) |
-| ESLint | `npm run lint` | 0 errors, **0 warnings** |
-| TypeScript | `npm run type-check` | 0; без `any`/`as` |
-| max-lines | `npm run check:max-lines` | source ≤200, test ≤800 |
-| Doc-citations | `bash scripts/check-doc-citations.sh` | exit 0 (напрямую, НЕ через npm-пайп) |
-| locale-percent | `bash scripts/check-locale-percent.sh` | ratchet 4 |
-| lessons-length | `bash scripts/check-lessons-length.sh` | 0 нарушений (≤120 симв) |
-| Build | `npx next build --webpack` (worktree) | exit 0 |
-| E2E | `npm run test:e2e -- <spec>` (npm-обёртка ОБЯЗАТЕЛЬНА; `--no-deps` обёртка ОТКАЗЫВАЕТ) | 0 failed; cold-flake → тёплый ретрай (§7.13) |
+| Гейт           | Команда (из worktree)                                                                  | Baseline                                                                                       |
+| -------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Vitest полный  | `npm test -- --run`                                                                    | **≥ 19 423 passing / 0 failed / 0 skipped** across **≥ 1,221 files** (floor растёт точными +N) |
+| ESLint         | `npm run lint`                                                                         | 0 errors, **0 warnings**                                                                       |
+| TypeScript     | `npm run type-check`                                                                   | 0; без `any`/`as`                                                                              |
+| max-lines      | `npm run check:max-lines`                                                              | source ≤200, test ≤800                                                                         |
+| Doc-citations  | `bash scripts/check-doc-citations.sh`                                                  | exit 0 (напрямую, НЕ через npm-пайп)                                                           |
+| locale-percent | `bash scripts/check-locale-percent.sh`                                                 | ratchet 4                                                                                      |
+| lessons-length | `bash scripts/check-lessons-length.sh`                                                 | 0 нарушений (≤120 симв)                                                                        |
+| Build          | `npx next build --webpack` (worktree)                                                  | exit 0                                                                                         |
+| E2E            | `npm run test:e2e -- <spec>` (npm-обёртка ОБЯЗАТЕЛЬНА; `--no-deps` обёртка ОТКАЗЫВАЕТ) | 0 failed; cold-flake → тёплый ретрай (§7.13)                                                   |
 
 Кодовые стандарты: path-алиасы `@/…`; Server Components по умолчанию; `src/components/ui/**` не редактировать; Boundary Normalizer; деньги/рейо `null`→`—` (AP#8); opaque ID `String(id)` (AP#10); `mockRejectedValueOnce`+реальный `ApiError` (AP#3); `TODO` запрещён (`PENDING BACKEND:`/`FUTURE:`); `formatPercentage(Int)`; 200/800 строк.
 
@@ -117,9 +118,11 @@ node --version                     # v24.18.0
 ## 5. Гард-канон (эталоны) и границы surfaces
 
 ### 5.1 Surfaces священны
+
 Allowed Change Surface = только файлы плана стори. Forbidden Shared Files (`package.json`, `src/components/ui/**`, `src/hooks/**`, `src/lib/**`, `src/types/**`, `src/stores/**`, AppShell, `analytics/shared/**`, route-ledger, BMAD-планы сиблингов) — правка нужна → СТОП → эскалация. Границы доменов 172.x закодированы в гардах-соседях (172.5 исключает editor/bulk/history; 172.6 исключает single/history; **172.7 исключает single/bulk** — НЕ дублируй чужие сканы, cross-story restraint, прецедент MarginCalculationStatus).
 
 ### 5.2 Гард-паттерн (копируй из эталонов)
+
 - Перечисление: `readdirSync(dir, {recursive: true}).map(f => f as string)` → фильтры на ОТНОСИТЕЛЬНЫХ сегментах ДО join (P9); эксклюзии разделитель-анкерные (`f !== 'editor' && !f.startsWith('editor/')`, nested: `!f.includes('/__tests__/')`).
 - Каталог: pinned count + **per-file identity** (endsWith на каждый); dead-code файлы пинить с честной пометкой dead.
 - Регексы: LEGACY_PALETTE (полный набор оттенков + префиксы from|to|via + shadow-семейство) и CONTEXTUAL_HEX (169.11, с self-test позитив+негатив).
@@ -168,14 +171,14 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 
 ## 8. Среда
 
-| Параметр | Значение |
-|---|---|
-| Node / npm | **24.18.0 / 11.11.0** (пинн; PATH-префикс `/opt/homebrew/opt/node@24/bin`) |
-| FE dev | `http://localhost:3100` (pm2 `wb-repricer-frontend-dev`; для e2e на ветке — worktree-dev `--webpack -p 3100`, pm2 stop → restart) |
-| BE API | `http://localhost:3000` (`/v1/health`; Swagger `/api`; логин `test@test.com`/`<E2E_TEST_PASSWORD>` — троттл 5/hr) |
-| FE remote | `github.com:salacoste/wb-erp-system-daytona-FE.git` |
-| Worktrees | `/private/tmp/<путь-из-плана>`; node_modules symlink; `.env.e2e`+`.env.local` копировать |
-| Тяжёлые чтения | сабагентам; результаты сразу в `/tmp/<story>-*.log` |
+| Параметр       | Значение                                                                                                                          |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Node / npm     | **24.18.0 / 11.11.0** (пинн; PATH-префикс `/opt/homebrew/opt/node@24/bin`)                                                        |
+| FE dev         | `http://localhost:3100` (pm2 `wb-repricer-frontend-dev`; для e2e на ветке — worktree-dev `--webpack -p 3100`, pm2 stop → restart) |
+| BE API         | `http://localhost:3000` (`/v1/health`; Swagger `/api`; логин `test@test.com`/`<E2E_TEST_PASSWORD>` — троттл 5/hr)                 |
+| FE remote      | `github.com:salacoste/wb-erp-system-daytona-FE.git`                                                                               |
+| Worktrees      | `/private/tmp/<путь-из-плана>`; node_modules symlink; `.env.e2e`+`.env.local` копировать                                          |
+| Тяжёлые чтения | сабагентам; результаты сразу в `/tmp/<story>-*.log`                                                                               |
 
 ---
 
@@ -187,19 +190,19 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 
 ## 10. Канонические документы
 
-| # | Документ | Роль |
-|---|---|---|
-| 1 | Этот handoff | ВХОД-ТОЧКА / состояние / уроки |
-| 1a | `docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md` | **Операционный промпт контролёра** исполнения этого handoff через OMC-сабагентов (петля стори-за-стори, mid-flight правила, критерии успеха) |
-| 2 | `docs/ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md` | Процесс-канон OMC-делегирования (§4 матрица, §5 роутинг, §6 конвейер, §7 гейты, §8 нормы, §9 ловушки) |
-| 3 | `.omx/plans/172.12-*.md` (затем 172.13+) | План стори — **authoritative** (branch/worktree/surface/валидация/cleanup) |
-| 4 | `CLAUDE.md` | Правила репо: baselines-таблица, двухпроходность, анти-паттерны, гейты |
-| 5 | `_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md` | Канонические ID/AC стори |
-| 6 | `_bmad-output/implementation-artifacts/sprint-status.yaml` | Живые статусы (flip — твой) |
-| 7 | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` | Реестр + SHIPPED-строки + NEXT + carry-ins (§5 owner-заметки) |
-| 8 | Артефакты `172-{1..11}-fe-*.md`, `171-{7,8,9}-fe-*.md` | Эталоны closeout-формата и конвейеров |
-| 9 | `docs/HANDOFF-2026-08-26-LATE-…md` | Прежний вход (§0 синхронизирован; §1-§5 исторические) |
-| 10 | Гарды-эталоны | 172.1 (обa dashboard-гарда), 172.5 (каталог-21 + closure), 172.7 (born-clean + caption + padding-скоупинг) |
+| #   | Документ                                                                       | Роль                                                                                                                                         |
+| --- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Этот handoff                                                                   | ВХОД-ТОЧКА / состояние / уроки                                                                                                               |
+| 1a  | `docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md`            | **Операционный промпт контролёра** исполнения этого handoff через OMC-сабагентов (петля стори-за-стори, mid-flight правила, критерии успеха) |
+| 2   | `docs/ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md`        | Процесс-канон OMC-делегирования (§4 матрица, §5 роутинг, §6 конвейер, §7 гейты, §8 нормы, §9 ловушки)                                        |
+| 3   | `.omx/plans/172.12-*.md` (затем 172.13+)                                       | План стори — **authoritative** (branch/worktree/surface/валидация/cleanup)                                                                   |
+| 4   | `CLAUDE.md`                                                                    | Правила репо: baselines-таблица, двухпроходность, анти-паттерны, гейты                                                                       |
+| 5   | `_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md`         | Канонические ID/AC стори                                                                                                                     |
+| 6   | `_bmad-output/implementation-artifacts/sprint-status.yaml`                     | Живые статусы (flip — твой)                                                                                                                  |
+| 7   | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` | Реестр + SHIPPED-строки + NEXT + carry-ins (§5 owner-заметки)                                                                                |
+| 8   | Артефакты `172-{1..11}-fe-*.md`, `171-{7,8,9}-fe-*.md`                         | Эталоны closeout-формата и конвейеров                                                                                                        |
+| 9   | `docs/HANDOFF-2026-08-26-LATE-…md`                                             | Прежний вход (§0 синхронизирован; §1-§5 исторические)                                                                                        |
+| 10  | Гарды-эталоны                                                                  | 172.1 (обa dashboard-гарда), 172.5 (каталог-21 + closure), 172.7 (born-clean + caption + padding-скоупинг)                                   |
 
 ---
 

@@ -15,7 +15,7 @@ chars: 7887
 
 В этой статье:
 
-- 
+-
 - <a href="#protsess-obedineniya-tovarov-pri-importe" rel="nofollow">Процесс объединения товаров при импорте</a>
 - <a href="#kak-obedinit-tovary" rel="nofollow">Как объединить товары</a>
 - <a href="#kak-razdelit-tovary" rel="nofollow">Как разделить товары</a>

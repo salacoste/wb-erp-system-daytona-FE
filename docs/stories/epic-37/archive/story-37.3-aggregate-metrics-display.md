@@ -19,6 +19,7 @@
 ## 📋 Acceptance Criteria
 
 ### Epic 35 Field Integration
+
 - [ ] Aggregate row displays `totalSales` (Epic 35 field) as "Всего продаж"
 - [ ] Aggregate row displays `revenue` (Epic 35 field) as "Из рекламы"
 - [ ] Aggregate row displays `organicSales` (Epic 35 field) as "Органика"
@@ -27,6 +28,7 @@
 - [ ] Aggregate row displays `roas` as "ROAS" (revenue / spend)
 
 ### Calculation Logic
+
 - [ ] Group `totalSales` = SUM(products[].totalSales)
 - [ ] Group `revenue` = SUM(products[].revenue)
 - [ ] Group `organicSales` = totalSales - revenue (or SUM if pre-calculated)
@@ -35,6 +37,7 @@
 - [ ] Group `roas` = revenue / spend (handle spend=0 case)
 
 ### Formatting Rules
+
 - [ ] Currency: Russian locale with ₽ symbol (e.g., "35,570₽")
 - [ ] Percentages: 1 decimal place (e.g., "71.2%") displayed inline after revenue
 - [ ] ROAS: 2 decimal places (e.g., "0.90")
@@ -42,6 +45,7 @@
 - [ ] Null values (spend=0): ROAS shows "N/A" or "—"
 
 ### Visual Layout
+
 - [ ] Aggregate row has bold text (font-weight: 600)
 - [ ] "ГРУППА #imtId" displayed in Артикул column
 - [ ] Percentage displayed inline: "10,234₽ (29%)" for revenue column
@@ -49,6 +53,7 @@
 - [ ] [PO TO FILL] Tooltip on hover showing calculation formula?
 
 ### [PO TO FILL] Additional Requirements
+
 - [ ] [PO TO SPECIFY] Rounding strategy (round, floor, ceil)?
 - [ ] [PO TO SPECIFY] Large numbers formatting (e.g., "1.2M₽" for millions)?
 - [ ] [PO TO SPECIFY] Color-coding for positive/negative metrics?
@@ -59,46 +64,58 @@
 ## 🧮 Calculation Formulas (Epic 35 Integration)
 
 ### Formula 1: Total Sales (Всего продаж)
+
 ```typescript
 const totalSales = products.reduce((sum, product) => sum + product.totalSales, 0);
 ```
+
 **Meaning**: Complete revenue from all sources (organic + advertising)
 **Example**: ter-09 (15,000₽) + ter-10 (1,489₽) + ... + ter-14 (2,105₽) = 35,570₽
 
 ### Formula 2: Ad Revenue (Из рекламы)
+
 ```typescript
 const revenue = products.reduce((sum, product) => sum + product.revenue, 0);
 ```
+
 **Meaning**: Revenue attributed to advertising campaigns only
 **Example**: ter-09 (4,000₽) + ter-10 (400₽) + ... + ter-14 (800₽) = 10,234₽
 
 ### Formula 3: Organic Sales (Органика)
+
 ```typescript
 const organicSales = totalSales - revenue;
 // OR if pre-calculated by backend:
 const organicSales = products.reduce((sum, product) => sum + product.organicSales, 0);
 ```
+
 **Meaning**: Revenue from non-ad sources (direct search, recommendations, etc.)
 **Example**: 35,570₽ - 10,234₽ = 25,336₽
 
 ### Formula 4: Organic Contribution (% Органики)
+
 ```typescript
 const organicContribution = (organicSales / totalSales) * 100;
 ```
+
 **Meaning**: Percentage of total sales from organic sources
 **Example**: (25,336₽ / 35,570₽) × 100 = 71.2%
 
 ### Formula 5: Total Spend (Расход)
+
 ```typescript
 const spend = products.reduce((sum, product) => sum + product.spend, 0);
 ```
+
 **Meaning**: Total advertising budget spent for this group
 **Example**: ter-09 (6,000₽) + 0₽ + ... + 0₽ = 11,337₽ (only main product has spend)
 
 ### Formula 6: ROAS (Return on Ad Spend)
+
 ```typescript
 const roas = spend > 0 ? revenue / spend : null;
 ```
+
 **Meaning**: Revenue generated per 1₽ of ad spend
 **Example**: 10,234₽ / 11,337₽ = 0.90 (90 копеек revenue per 1₽ spent)
 **Edge Case**: If spend = 0, return `null` (display as "N/A")
@@ -108,6 +125,7 @@ const roas = spend > 0 ? revenue / spend : null;
 ## 🎨 Formatting Implementation
 
 ### Currency Formatting
+
 ```typescript
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('ru-RU', {
@@ -124,6 +142,7 @@ formatCurrency(1489.67); // → "1 490 ₽" (rounded)
 ```
 
 ### Percentage Formatting
+
 ```typescript
 function formatPercentage(value: number, decimals: number = 1): string {
   return `${value.toFixed(decimals)}%`;
@@ -135,6 +154,7 @@ formatPercentage(29.0, 1); // → "29.0%"
 ```
 
 ### Inline Percentage Display
+
 ```typescript
 function formatRevenueWithPercent(revenue: number, percentage: number): string {
   return `${formatCurrency(revenue)} (${formatPercentage(percentage)})`;
@@ -145,6 +165,7 @@ formatRevenueWithPercent(10234, 29.0); // → "10 234 ₽ (29.0%)"
 ```
 
 ### ROAS Formatting
+
 ```typescript
 function formatROAS(roas: number | null): string {
   if (roas === null || roas === undefined) {
@@ -163,7 +184,9 @@ formatROAS(null); // → "—"
 ## 🧪 Test Scenarios
 
 ### Test 1: Normal Group Calculation
+
 **Given**: Group #328632 with 6 products
+
 ```typescript
 const products = [
   { totalSales: 15000, revenue: 4000, organicSales: 11000, spend: 6000 },
@@ -176,6 +199,7 @@ const products = [
 ```
 
 **Expected Aggregates**:
+
 - [ ] totalSales: 35,570₽
 - [ ] revenue: 10,234₽
 - [ ] organicSales: 25,336₽
@@ -184,22 +208,28 @@ const products = [
 - [ ] roas: 1.71 (10,234 / 6,000)
 
 ### Test 2: Zero Spend Edge Case
+
 **Given**: Group where all products have `spend = 0`
 **Expected**:
+
 - [ ] spend: 0₽
 - [ ] roas: "N/A" or "—" (not division by zero)
 - [ ] Other metrics calculate normally
 
 ### Test 3: Negative Revenue (Returns)
+
 **Given**: Group with high return rate, `revenue < 0`
 **Expected**:
+
 - [ ] [PO TO FILL] Display negative as "-5,000₽" or flag with color?
 - [ ] organicSales calculation still correct (totalSales - negative revenue)
 - [ ] ROAS: negative value or "N/A"?
 
 ### Test 4: Large Numbers
+
 **Given**: Group with `totalSales > 1,000,000₽`
 **Expected**:
+
 - [ ] [PO TO FILL] Display as "1,234,567₽" or "1.2M₽"?
 - [ ] Formatting consistent across all groups
 - [ ] No overflow in table cells
@@ -209,6 +239,7 @@ const products = [
 ## 📊 Visual Examples
 
 ### Example 1: High Organic Contribution
+
 ```
 Aggregate Row:
 ┌────────────┬──────────┬───────────┬──────────┬─────────┬────────┐
@@ -218,6 +249,7 @@ Aggregate Row:
 ```
 
 ### Example 2: Low Organic Contribution
+
 ```
 Aggregate Row:
 ┌────────────┬──────────┬───────────┬──────────┬─────────┬────────┐
@@ -227,6 +259,7 @@ Aggregate Row:
 ```
 
 ### Example 3: Zero Spend (No Ads)
+
 ```
 Aggregate Row:
 ┌────────────┬──────────┬───────────┬──────────┬─────────┬────────┐
@@ -240,28 +273,35 @@ Aggregate Row:
 ## 🐛 Edge Cases
 
 ### Edge Case 1: Division by Zero
+
 **Scenario**: totalSales = 0 (group with all returns, no sales)
 **Calculation**: organicContribution = (0 / 0) × 100 = NaN
 **PO Decision**: [PO TO FILL]
+
 - Display as "—" or "0%"?
 - Hide aggregate row entirely?
 
 ### Edge Case 2: Rounding Discrepancies
+
 **Scenario**: Individual products rounded, aggregate summed from rounded values
 **Example**:
+
 - Product A: 1,234.56₽ → 1,235₽
 - Product B: 5,678.91₽ → 5,679₽
 - Sum of rounded: 6,914₽
 - Rounded sum: 6,913₽ (1₽ difference)
 
 **PO Decision**: [PO TO FILL]
+
 - Sum rounded values, or round the sum?
 - Acceptable discrepancy threshold?
 
 ### Edge Case 3: Very Small ROAS (<0.01)
+
 **Scenario**: revenue = 50₽, spend = 10,000₽, roas = 0.005
 **Display**: "0.01" (rounded to 2 decimals) or "0.00"?
 **PO Decision**: [PO TO FILL]
+
 - Show more decimals for small values?
 - Flag as "<<0.01" or scientific notation?
 

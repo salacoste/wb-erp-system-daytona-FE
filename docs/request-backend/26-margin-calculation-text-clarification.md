@@ -48,10 +48,12 @@ for (const week of fallbackWeeks) {
 **Purpose**: This 4-week fallback is for **WB API data availability timing**, NOT for per-product sales lookup.
 
 **When Triggered**:
+
 - Monday/Tuesday when WB hasn't published data yet for the last completed week
 - WB typically publishes weekly data on Tuesday ~10:00 MSK
 
 **How It Works**:
+
 - Tries week W, then W-1, W-2, W-3 in sequence
 - **Once ANY week has data → uses that week for ALL products**
 - This is NOT "if product X has no sales, look back for product X"
@@ -60,12 +62,12 @@ for (const week of fallbackWeeks) {
 
 After week selection, each product is evaluated **within that single week**:
 
-| `missing_data_reason` | Meaning | When Set |
-|----------------------|---------|----------|
-| `null` | Margin available or being calculated | Product has sales + COGS |
-| `"NO_SALES_IN_PERIOD"` | No sales in selected week | Product in analytics but 0 units sold |
-| `"COGS_NOT_ASSIGNED"` | Sales exist but no COGS | Product has sales but `has_cogs=false` |
-| `"NO_SALES_DATA"` | Never had sales | Product not in analytics response |
+| `missing_data_reason`  | Meaning                              | When Set                               |
+| ---------------------- | ------------------------------------ | -------------------------------------- |
+| `null`                 | Margin available or being calculated | Product has sales + COGS               |
+| `"NO_SALES_IN_PERIOD"` | No sales in selected week            | Product in analytics but 0 units sold  |
+| `"COGS_NOT_ASSIGNED"`  | Sales exist but no COGS              | Product has sales but `has_cogs=false` |
+| `"NO_SALES_DATA"`      | Never had sales                      | Product not in analytics response      |
 
 #### 3. Historical Context (Story 23.9 - 12-Week Lookback)
 
@@ -73,12 +75,12 @@ After week selection, each product is evaluated **within that single week**:
 
 For products with `missing_data_reason === "NO_SALES_DATA"`, system provides **12-week** historical context:
 
-| Field | Description |
-|-------|-------------|
-| `last_sales_week` | Last ISO week when product had sales (up to 12 weeks back) |
-| `last_sales_margin_pct` | Margin % from that week |
-| `last_sales_qty` | Units sold in that week |
-| `weeks_since_last_sale` | Number of weeks elapsed |
+| Field                   | Description                                                |
+| ----------------------- | ---------------------------------------------------------- |
+| `last_sales_week`       | Last ISO week when product had sales (up to 12 weeks back) |
+| `last_sales_margin_pct` | Margin % from that week                                    |
+| `last_sales_qty`        | Units sold in that week                                    |
+| `weeks_since_last_sale` | Number of weeks elapsed                                    |
 
 **Note**: This is 12 weeks, not 4 weeks.
 
@@ -89,19 +91,23 @@ For products with `missing_data_reason === "NO_SALES_DATA"`, system provides **1
 ### Option 1: Simplified (Recommended)
 
 **Current**:
+
 > "После назначения себестоимости маржа будет рассчитана автоматически на основе данных продаж за последнюю неделю. Если продаж не было, будут проанализированы последние 4 недели."
 
 **Corrected**:
+
 > "После назначения себестоимости маржа будет рассчитана автоматически на основе данных продаж за последнюю завершённую неделю."
 
 ### Option 2: With Historical Context Detail
 
 **Corrected**:
+
 > "После назначения себестоимости маржа будет рассчитана автоматически на основе данных продаж за последнюю завершённую неделю. Для товаров без продаж в этот период будет показан исторический контекст за последние 12 недель."
 
 ### Option 3: Technical (For Advanced Users)
 
 **Corrected**:
+
 > "Маржа рассчитывается на основе продаж за последнюю ISO-неделю (Пн-Вс, Europe/Moscow). Для товаров без текущих продаж доступен исторический анализ до 12 недель назад."
 
 ---
@@ -136,6 +142,7 @@ Actual Behavior:
 **Frontend text updated** in two files:
 
 ### 1. `frontend/src/app/(dashboard)/cogs/page.tsx` (Alert Banner)
+
 ```tsx
 <AlertDescription>
   После назначения себестоимости маржа будет рассчитана автоматически на основе
@@ -145,6 +152,7 @@ Actual Behavior:
 ```
 
 ### 2. `frontend/src/components/custom/SingleCogsForm.tsx` (Tip Text)
+
 ```tsx
 'После назначения себестоимости маржа будет рассчитана автоматически на основе данных продаж за последнюю завершённую неделю.'
 ```

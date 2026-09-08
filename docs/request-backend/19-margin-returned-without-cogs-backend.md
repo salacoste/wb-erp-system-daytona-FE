@@ -23,6 +23,7 @@
 **Answer**: ❌ **NO** - This was a bug. `current_margin_pct` should **never** be non-null when `has_cogs: false`.
 
 **Expected Behavior**: If `has_cogs: false` or `cogs: null`, then:
+
 - `current_margin_pct` should be `null`
 - `missing_data_reason` should be `"COGS_NOT_ASSIGNED"`
 
@@ -43,14 +44,15 @@
    - Code only checked COGS when `margin_pct === null`, but not when `margin_pct` had a value
 
 **Database Evidence** (Product `412096139`):
+
 ```sql
 -- No COGS records
 SELECT * FROM cogs WHERE nm_id = '412096139';
 -- Result: 0 rows
 
 -- But margin records exist with cogs_rub = 0.0
-SELECT week, cogs_rub, margin_percent, missing_cogs_units 
-FROM weekly_margin_fact 
+SELECT week, cogs_rub, margin_percent, missing_cogs_units
+FROM weekly_margin_fact
 WHERE nm_id = '412096139';
 -- Result:
 -- week      | cogs_rub | margin_percent | missing_cogs_units
@@ -60,6 +62,7 @@ WHERE nm_id = '412096139';
 ```
 
 **Why Margin = 100% When COGS = 0**:
+
 - Formula: `margin_percent = (gross_profit / revenue) × 100%`
 - When `cogs_rub = 0.0`: `gross_profit = revenue - 0 = revenue`
 - Therefore: `margin_percent = (revenue / revenue) × 100% = 100%`
@@ -71,10 +74,12 @@ This is mathematically correct but **logically invalid** - margin cannot be calc
 ### Q3: How Should Frontend Handle This?
 
 **Answer**: Frontend should **NOT need defensive checks** after this fix. Backend now guarantees:
+
 - `current_margin_pct` is always `null` when `has_cogs: false`
 - `missing_data_reason` is always set when `current_margin_pct: null` and COGS is missing
 
 **Frontend Can Remove Defensive Check**:
+
 ```typescript
 // ❌ OLD (defensive check - no longer needed)
 {product.has_cogs && product.cogs && typeof product.current_margin_pct === 'number' ? (
@@ -98,12 +103,14 @@ This is mathematically correct but **logically invalid** - margin cannot be calc
 **Answer**: **NO** - Data cleanup is not required. The fix handles this at the API layer.
 
 **Why No Cleanup Needed**:
+
 - `weekly_margin_fact` records with `cogs_rub = 0.0` are **intentionally stored** for analytics purposes
 - They help track which products have sales but no COGS assigned
 - The fix validates COGS existence at the API layer before returning margin data
 - This is more efficient than cleaning up historical data
 
 **If Cleanup Is Desired** (optional, not required):
+
 ```sql
 -- Optional: Delete margin records where COGS no longer exists
 -- This is NOT required - API layer fix is sufficient
@@ -128,6 +135,7 @@ WHERE NOT EXISTS (
 **Lines**: 431-436 (before fix)
 
 **Problematic Code** (before fix):
+
 ```typescript
 // ❌ BUG: Returned margin_pct without validating COGS existence
 marginMap[item.nm_id] = {
@@ -145,6 +153,7 @@ marginMap[item.nm_id] = {
 **Lines**: 431-450 (after fix)
 
 **Fixed Code**:
+
 ```typescript
 // ✅ FIX: Validate COGS existence before returning margin
 const hasCogs = !!cogsMap[item.nm_id];
@@ -173,6 +182,7 @@ if (!hasCogs) {
 **Margin Calculation Service Logic** (`src/analytics/services/margin-calculation.service.ts`):
 
 1. **Calculates margin for all products with sales** (line 104-110):
+
    ```typescript
    const cogs = cogsBySku.get(nmId) || {
      nmId,
@@ -197,13 +207,13 @@ if (!hasCogs) {
 
 **Guaranteed Behavior**:
 
-| Condition | `current_margin_pct` | `missing_data_reason` |
-|-----------|---------------------|----------------------|
-| COGS exists + margin calculated | `number` (e.g., 35.5) | `null` |
-| COGS exists + margin pending | `null` | `null` (calculation in progress) |
-| COGS missing + sales exist | `null` | `"COGS_NOT_ASSIGNED"` |
-| COGS missing + no sales | `null` | `"NO_SALES_DATA"` |
-| No sales in period | `null` | `"NO_SALES_IN_PERIOD"` |
+| Condition                       | `current_margin_pct`  | `missing_data_reason`            |
+| ------------------------------- | --------------------- | -------------------------------- |
+| COGS exists + margin calculated | `number` (e.g., 35.5) | `null`                           |
+| COGS exists + margin pending    | `null`                | `null` (calculation in progress) |
+| COGS missing + sales exist      | `null`                | `"COGS_NOT_ASSIGNED"`            |
+| COGS missing + no sales         | `null`                | `"NO_SALES_DATA"`                |
+| No sales in period              | `null`                | `"NO_SALES_IN_PERIOD"`           |
 
 **Key Guarantee**: `current_margin_pct` is **never** non-null when `has_cogs: false`.
 
@@ -214,6 +224,7 @@ if (!hasCogs) {
 **Test Case**: Product `412096139` (Жидкая изолента герметик для проводов термостойкая)
 
 **Before Fix**:
+
 ```json
 {
   "nm_id": "412096139",
@@ -225,6 +236,7 @@ if (!hasCogs) {
 ```
 
 **After Fix**:
+
 ```json
 {
   "nm_id": "412096139",
@@ -242,6 +254,7 @@ if (!hasCogs) {
 **Why Margin Calculation Stores Records Without COGS**:
 
 This is **intentional design** for analytics purposes:
+
 - Tracks which products have sales but no COGS assigned
 - Helps identify products that need COGS assignment
 - `missing_cogs_units` field indicates how many units are missing COGS
@@ -249,6 +262,7 @@ This is **intentional design** for analytics purposes:
 **API Layer Validation**:
 
 The fix validates at the API layer (ProductsService) rather than changing margin calculation logic:
+
 - More maintainable (single validation point)
 - Doesn't break existing analytics queries
 - Ensures API contract consistency
@@ -272,5 +286,5 @@ The fix validates at the API layer (ProductsService) rather than changing margin
 **Status**: ✅ **RESOLVED** - Bug fixed, backend response provided, frontend can proceed with implementation.
 
 ## Backend Team Response
-**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.

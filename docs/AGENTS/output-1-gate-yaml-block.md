@@ -3,3 +3,5 @@
 Generate ONLY for NFRs actually assessed (no placeholders):
 
 ```yaml
+
+```

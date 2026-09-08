@@ -18,12 +18,14 @@
 **Epic 17** добавляет в систему функциональность расчёта **себестоимости (COGS)**, **валовой прибыли (Profit)** и **маржинальности (Margin %)** для товаров продавца.
 
 **Ключевые возможности:**
+
 - ✅ Автоматический расчёт маржи при импорте финансовых данных (Story 17.1)
 - ✅ Параметр `includeCogs=true` в API аналитики (Story 17.2)
 - ✅ Фоновая перерасчёт маржи для исторических данных (Story 17.3)
 - ✅ Полная документация кода и исправление комментариев (Story 17.4)
 
 **Метрики:**
+
 - ⚡ **Производительность:** +50-100ms при `includeCogs=true`
 - 🔄 **Обратная совместимость:** 100% (параметр опциональный)
 - 📊 **Prometheus метрики:** 3 новые метрики для мониторинга
@@ -35,11 +37,13 @@
 ### **1. Swagger / OpenAPI Documentation** 🔵
 
 **Где смотреть:**
+
 ```
 src/analytics/weekly-analytics.controller.ts
 ```
 
 **Что найдёте:**
+
 - **@ApiOperation** декораторы с полным описанием эндпоинтов
 - **@ApiQuery** декораторы для параметра `include_cogs` с формулами и примерами
 - **@ApiResponse** схемы с новыми полями Epic 17
@@ -47,15 +51,18 @@ src/analytics/weekly-analytics.controller.ts
 **Основные эндпоинты с поддержкой Epic 17:**
 
 #### **GET /v1/analytics/weekly/by-sku**
+
 **Файл:** `src/analytics/weekly-analytics.controller.ts:259-443`
 
 **Параметры:**
+
 - `week` (required) - ISO week format (YYYY-Www)
 - `include_cogs` (optional, default: false) - включить COGS аналитику
 - `report_type`, `is_b2b`, `paid_delivery_flag` - фильтры
 - `cursor`, `limit` - пагинация
 
 **Новые поля в ответе (когда `include_cogs=true`):**
+
 ```typescript
 {
   cogs: number;              // Себестоимость = unit_cost × qty
@@ -72,15 +79,18 @@ src/analytics/weekly-analytics.controller.ts
 ---
 
 #### **GET /v1/analytics/weekly/by-brand**
+
 **Файл:** `src/analytics/weekly-analytics.controller.ts:465-658`
 
 **Параметры:**
+
 - `week` (required) - ISO week format
 - `include_cogs` (optional, default: false) - включить COGS аналитику
 - `report_type` - фильтр по типу отчёта
 - `cursor`, `limit` - пагинация
 
 **Новые поля в ответе (когда `include_cogs=true`):**
+
 ```typescript
 {
   cogs: number;              // SUM(unit_cost × qty) для всех SKU в бренде
@@ -97,15 +107,18 @@ src/analytics/weekly-analytics.controller.ts
 ---
 
 #### **GET /v1/analytics/weekly/by-category**
+
 **Файл:** `src/analytics/weekly-analytics.controller.ts:660-829`
 
 **Параметры:**
+
 - `week` (required) - ISO week format
 - `include_cogs` (optional, default: false) - включить COGS аналитику
 - `report_type` - фильтр по типу отчёта
 - `cursor`, `limit` - пагинация
 
 **Новые поля в ответе (когда `include_cogs=true`):**
+
 ```typescript
 {
   cogs_rub: string;          // SUM(unit_cost × qty) для всех SKU в категории (string для точности)
@@ -122,6 +135,7 @@ src/analytics/weekly-analytics.controller.ts
 ---
 
 **Как использовать Swagger UI:**
+
 1. Запустите backend: `npm run start:dev`
 2. Откройте в браузере: `http://localhost:3000/api`
 3. Найдите секцию **Analytics**
@@ -129,6 +143,7 @@ src/analytics/weekly-analytics.controller.ts
 5. В параметрах увидите `include_cogs` с полным описанием
 
 **Интерактивное тестирование:**
+
 - Swagger UI позволяет выполнить запросы с `include_cogs=true` напрямую из браузера
 - Вы увидите реальные response schemas с Epic 17 полями
 
@@ -143,6 +158,7 @@ src/analytics/weekly-analytics.controller.ts
 > См. `test-api/SECTION-MAPPING.md` для маппинга старых секций на новые файлы.
 
 **Структура:**
+
 ```
 test-api/
 ├── 00-variables.http          # Переменные и Login (НАЧНИТЕ ЗДЕСЬ)
@@ -153,6 +169,7 @@ test-api/
 ```
 
 **Что найдёте:**
+
 - Готовые HTTP запросы для тестирования всех Epic 17 эндпоинтов
 - Примеры с `includeCogs=true` параметром
 - Комментарии с описанием новых полей
@@ -173,6 +190,7 @@ GET {{baseUrl}}/v1/analytics/weekly/by-sku?week=2025-W47&includeCogs=true&limit=
 ```
 
 **Примеры в файле:**
+
 - **By SKU with COGS** - аналитика по артикулам с маржой
 - **By Brand with COGS** - аналитика по брендам с маржой
 - **By Category with COGS** - аналитика по категориям с маржой
@@ -199,6 +217,7 @@ Content-Type: application/json
 ```
 
 #### **NOTES секция - Epic 17**
+
 ```
 ### Epic 17: COGS & Margin Feature Integration
 - Story 17.1: Import pipeline integration (automatic margin calculation)
@@ -210,6 +229,7 @@ Content-Type: application/json
 **Строки в файле:** ~строки 25-28 (NOTES)
 
 **Как использовать:**
+
 1. Установите VS Code расширение **REST Client**
 2. Откройте директорию `test-api/` и нужный файл:
    - `05-analytics-basic.http` - Analytics By SKU/Brand/Category с includeCogs
@@ -228,9 +248,11 @@ Content-Type: application/json
 **Где смотреть:**
 
 #### **SKU Analytics DTO**
+
 **Файл:** `src/analytics/dto/response/sku-analytics.dto.ts`
 
 **Новые поля Epic 17:**
+
 ```typescript
 /**
  * Cost of goods sold (optional, requires COGS data and include_cogs=true)
@@ -278,9 +300,11 @@ missing_cogs_flag: boolean;
 ---
 
 #### **Brand Analytics DTO**
+
 **Файл:** `src/analytics/dto/response/brand-analytics.dto.ts`
 
 **Новые поля Epic 17:**
+
 ```typescript
 /**
  * Aggregated Cost of Goods Sold (optional, requires COGS data and include_cogs=true)
@@ -325,9 +349,11 @@ missing_cogs_count?: number;
 ---
 
 #### **Category Analytics DTO**
+
 **Файл:** `src/analytics/dto/response/category-analytics.dto.ts`
 
 **Новые поля Epic 17:**
+
 ```typescript
 /**
  * Aggregated gross profit (optional, requires COGS data and include_cogs=true)
@@ -378,15 +404,18 @@ missing_cogs_count?: number;
 **Где смотреть:** `docs/stories/epic-17/`
 
 #### **Story 17.1: Import Pipeline Integration**
+
 **Файл:** `docs/stories/epic-17/story-17.1-import-pipeline-integration.md`
 
 **Что найдёте:**
+
 - Интеграция автоматического расчёта маржи в pipeline импорта
 - Prometheus метрики для мониторинга (3 новые метрики)
 - AC (Acceptance Criteria) с проверками
 - QA Fixes секция с исправлениями
 
 **Ключевые моменты:**
+
 - Автоматический запуск `MarginCalculationService` после импорта
 - Метрики: `margin_calculation_success_total`, `margin_calculation_failure_total`, `margin_calculation_duration_ms`
 - Поддержка test mode и production mode
@@ -394,9 +423,11 @@ missing_cogs_count?: number;
 ---
 
 #### **Story 17.2: API includeCogs Flag**
+
 **Файл:** `docs/stories/epic-17/story-17.2-api-includecogs-flag.md`
 
 **Что найдёте:**
+
 - Детальная спецификация параметра `include_cogs`
 - Все формулы расчёта (profit, margin_pct, markup_percent)
 - Temporal COGS versioning логика
@@ -404,6 +435,7 @@ missing_cogs_count?: number;
 - Performance targets и backward compatibility
 
 **Ключевые моменты:**
+
 - Параметр опциональный (default: false)
 - Temporal versioning: `valid_from <= sale_dt`
 - Performance target: ≤10% overhead (≤+300ms для 100k rows)
@@ -412,15 +444,18 @@ missing_cogs_count?: number;
 ---
 
 #### **Story 17.3: Background Job Recalculation**
+
 **Файл:** `docs/stories/epic-17/story-17.3-background-job-recalculation.md`
 
 **Что найдёте:**
+
 - Спецификация фоновой задачи `recalculate_weekly_margin`
 - Task processor implementation
 - Use cases для перерасчёта (массовое обновление COGS, исправление ошибок)
 - Performance targets
 
 **Ключевые моменты:**
+
 - Task type: `recalculate_weekly_margin`
 - Payload: `{ weeks: string[] }` - массив ISO weeks
 - Performance: ≤60s для 100k rows на неделю
@@ -429,14 +464,17 @@ missing_cogs_count?: number;
 ---
 
 #### **Story 17.4: Documentation & Code Comments**
+
 **Файл:** `docs/stories/epic-17/story-17.4-fix-dto-comments.md`
 
 **Что найдёте:**
+
 - Полный список обновлённых DTO файлов
 - Чеклист всех исправленных комментариев
 - Ссылки на формулы и документацию
 
 **Ключевые моменты:**
+
 - 100% покрытие DTOs комментариями
 - Все формулы документированы
 - Ссылки на backend-po документы
@@ -444,9 +482,11 @@ missing_cogs_count?: number;
 ---
 
 #### **Epic 17 Overview**
+
 **Файл:** `docs/stories/epic-17/EPIC-17-OVERVIEW.md`
 
 **Что найдёте:**
+
 - Общий обзор всех 4 историй
 - Архитектура решения
 - Completion summary
@@ -458,11 +498,13 @@ missing_cogs_count?: number;
 **Где смотреть:** `docs/qa/gates/`
 
 #### **Story 17.1 QA Gate**
+
 **Файл:** `docs/qa/gates/17.1-import-pipeline-integration.yml`
 
 **Статус:** ✅ PASSED (with fixes applied)
 
 **Ключевые проверки:**
+
 - ✅ Prometheus metrics implemented
 - ✅ Both production and test mode instrumented
 - ⚠️ Documentation inaccuracy fixed
@@ -471,11 +513,13 @@ missing_cogs_count?: number;
 ---
 
 #### **Story 17.2 QA Gate**
+
 **Файл:** `docs/qa/gates/17.2-api-includecogs-flag.yml`
 
 **Статус:** ✅ PASSED (no blocking issues)
 
 **Ключевые проверки:**
+
 - ✅ All 3 endpoints support include_cogs
 - ✅ All DTOs have Epic 17 fields
 - ✅ Backward compatibility 100%
@@ -485,11 +529,13 @@ missing_cogs_count?: number;
 ---
 
 #### **Story 17.3 QA Gate**
+
 **Файл:** `docs/qa/gates/17.3-background-job-recalculation.yml`
 
 **Статус:** ✅ PASSED (zero concerns)
 
 **Ключевые проверки:**
+
 - ✅ Task processor implemented
 - ✅ Idempotency verified
 - ✅ Error handling correct
@@ -498,11 +544,13 @@ missing_cogs_count?: number;
 ---
 
 #### **Story 17.4 QA Gate**
+
 **Файл:** `docs/qa/gates/17.4-fix-dto-comments.yml`
 
 **Статус:** ✅ PASSED (zero concerns)
 
 **Ключевые проверки:**
+
 - ✅ All DTOs updated
 - ✅ All formulas documented
 - ✅ References to documentation present
@@ -512,22 +560,26 @@ missing_cogs_count?: number;
 ### **6. User-Facing Documentation** 🔵
 
 #### **README.md**
+
 **Файл:** `README.md`
 
 **Секция:** Technology Stack → Features → COGS & Margin Analytics
 
 **Что найдёте:**
+
 - Краткое описание Epic 17 фичи
 - Список ключевых возможностей
 
 ---
 
 #### **CAPABILITIES.md**
+
 **Файл:** `docs/CAPABILITIES.md`
 
 **Секция:** 10. 💰 COGS и Маржинальная Аналитика (Epic 17)
 
 **Что найдёте:**
+
 - Детальное описание возможностей
 - Формулы расчёта
 - Prometheus метрики
@@ -538,11 +590,13 @@ missing_cogs_count?: number;
 ---
 
 #### **USER-GUIDE.md**
+
 **Файл:** `docs/USER-GUIDE.md`
 
 **Секция:** Workflow 5.5: Маржинальная аналитика (Epic 17 - NEW)
 
 **Что найдёте:**
+
 - Пошаговый workflow использования
 - Примеры запросов
 - Описание новых полей
@@ -557,6 +611,7 @@ missing_cogs_count?: number;
 **Файл:** `frontend/docs/request-backend/07-cogs-margin-analytics-includecogs-parameter.md`
 
 **Что найдёте:**
+
 - Полное руководство по интеграции для frontend
 - TypeScript интерфейсы для ответов API
 - React hooks примеры
@@ -564,6 +619,7 @@ missing_cogs_count?: number;
 - FAQ
 
 **Основные секции:**
+
 1. **API Changes Summary** - Обзор изменений
 2. **Response Schema** - Структуры ответов с новыми полями
 3. **TypeScript Integration** - Интерфейсы и примеры кода
@@ -576,79 +632,90 @@ missing_cogs_count?: number;
 ## 🔗 Быстрые ссылки
 
 ### **API Endpoints (Swagger)**
-| Endpoint | Controller File | Lines |
-|----------|----------------|-------|
-| GET /v1/analytics/weekly/by-sku | `src/analytics/weekly-analytics.controller.ts` | 259-443 |
-| GET /v1/analytics/weekly/by-brand | `src/analytics/weekly-analytics.controller.ts` | 465-658 |
+
+| Endpoint                             | Controller File                                | Lines   |
+| ------------------------------------ | ---------------------------------------------- | ------- |
+| GET /v1/analytics/weekly/by-sku      | `src/analytics/weekly-analytics.controller.ts` | 259-443 |
+| GET /v1/analytics/weekly/by-brand    | `src/analytics/weekly-analytics.controller.ts` | 465-658 |
 | GET /v1/analytics/weekly/by-category | `src/analytics/weekly-analytics.controller.ts` | 660-829 |
 
 ### **DTOs (Response Schemas)**
-| DTO | File | Lines |
-|-----|------|-------|
-| SkuAnalyticsDto | `src/analytics/dto/response/sku-analytics.dto.ts` | 1-100 |
-| BrandAnalyticsDto | `src/analytics/dto/response/brand-analytics.dto.ts` | 1-110 |
+
+| DTO                  | File                                                   | Lines |
+| -------------------- | ------------------------------------------------------ | ----- |
+| SkuAnalyticsDto      | `src/analytics/dto/response/sku-analytics.dto.ts`      | 1-100 |
+| BrandAnalyticsDto    | `src/analytics/dto/response/brand-analytics.dto.ts`    | 1-110 |
 | CategoryAnalyticsDto | `src/analytics/dto/response/category-analytics.dto.ts` | 1-105 |
 
 ### **HTTP Examples**
-| Section | File | Description |
-|---------|------|-------------|
-| Analytics | `test-api/05-analytics-basic.http` | Analytics with includeCogs examples |
-| Margin | `test-api/06-analytics-advanced.http` | Margin Trends |
-| Tasks | `test-api/09-tasks.http` | Background job for margin recalculation |
+
+| Section   | File                                  | Description                             |
+| --------- | ------------------------------------- | --------------------------------------- |
+| Analytics | `test-api/05-analytics-basic.http`    | Analytics with includeCogs examples     |
+| Margin    | `test-api/06-analytics-advanced.http` | Margin Trends                           |
+| Tasks     | `test-api/09-tasks.http`              | Background job for margin recalculation |
 
 > См. `test-api/SECTION-MAPPING.md` для полного маппинга старых секций → новые файлы
 
 ### **Backend Stories**
-| Story | File |
-|-------|------|
-| Story 17.1 | `docs/stories/epic-17/story-17.1-import-pipeline-integration.md` |
-| Story 17.2 | `docs/stories/epic-17/story-17.2-api-includecogs-flag.md` |
-| Story 17.3 | `docs/stories/epic-17/story-17.3-background-job-recalculation.md` |
-| Story 17.4 | `docs/stories/epic-17/story-17.4-fix-dto-comments.md` |
-| Epic Overview | `docs/stories/epic-17/EPIC-17-OVERVIEW.md` |
+
+| Story         | File                                                              |
+| ------------- | ----------------------------------------------------------------- |
+| Story 17.1    | `docs/stories/epic-17/story-17.1-import-pipeline-integration.md`  |
+| Story 17.2    | `docs/stories/epic-17/story-17.2-api-includecogs-flag.md`         |
+| Story 17.3    | `docs/stories/epic-17/story-17.3-background-job-recalculation.md` |
+| Story 17.4    | `docs/stories/epic-17/story-17.4-fix-dto-comments.md`             |
+| Epic Overview | `docs/stories/epic-17/EPIC-17-OVERVIEW.md`                        |
 
 ### **QA Gates**
-| Story | File | Status |
-|-------|------|--------|
-| Story 17.1 | `docs/qa/gates/17.1-import-pipeline-integration.yml` | ✅ PASSED |
-| Story 17.2 | `docs/qa/gates/17.2-api-includecogs-flag.yml` | ✅ PASSED |
+
+| Story      | File                                                  | Status    |
+| ---------- | ----------------------------------------------------- | --------- |
+| Story 17.1 | `docs/qa/gates/17.1-import-pipeline-integration.yml`  | ✅ PASSED |
+| Story 17.2 | `docs/qa/gates/17.2-api-includecogs-flag.yml`         | ✅ PASSED |
 | Story 17.3 | `docs/qa/gates/17.3-background-job-recalculation.yml` | ✅ PASSED |
-| Story 17.4 | `docs/qa/gates/17.4-fix-dto-comments.yml` | ✅ PASSED |
+| Story 17.4 | `docs/qa/gates/17.4-fix-dto-comments.yml`             | ✅ PASSED |
 
 ### **User Documentation**
-| Document | Section |
-|----------|---------|
-| README.md | Technology Stack → COGS & Margin Analytics |
+
+| Document        | Section                                      |
+| --------------- | -------------------------------------------- |
+| README.md       | Technology Stack → COGS & Margin Analytics   |
 | CAPABILITIES.md | Section 10: 💰 COGS и Маржинальная Аналитика |
-| USER-GUIDE.md | Workflow 5.5: Маржинальная аналитика |
+| USER-GUIDE.md   | Workflow 5.5: Маржинальная аналитика         |
 
 ---
 
 ## 📋 Чек-лист для Frontend интеграции
 
 ### **Фаза 1: Изучение документации**
+
 - [ ] Прочитать `frontend/docs/request-backend/07-cogs-margin-analytics-includecogs-parameter.md`
 - [ ] Изучить Swagger UI по адресу `http://localhost:3000/api` (секция Analytics)
 - [ ] Просмотреть примеры в `test-api/05-analytics-basic.http` (Analytics с includeCogs)
 
 ### **Фаза 2: TypeScript интеграция**
+
 - [ ] Скопировать TypeScript интерфейсы из `07-cogs-margin-analytics-includecogs-parameter.md`
 - [ ] Добавить новые поля в существующие типы (cogs, profit, margin_pct, markup_percent, missing_cogs_flag/count)
 - [ ] Обновить API клиент для поддержки параметра `includeCogs`
 
 ### **Фаза 3: UI компоненты**
+
 - [ ] Добавить чекбокс/toggle для включения COGS аналитики
 - [ ] Создать колонки для новых полей в таблицах
 - [ ] Добавить форматирование для процентных значений (margin_pct, markup_percent)
 - [ ] Реализовать индикатор `missing_cogs_flag` (например, warning icon)
 
 ### **Фаза 4: Тестирование**
+
 - [ ] Протестировать с `includeCogs=false` (backward compatibility)
 - [ ] Протестировать с `includeCogs=true` (новые поля присутствуют)
 - [ ] Протестировать graceful degradation (SKU без COGS)
 - [ ] Измерить производительность (+50-100ms приемлемо)
 
 ### **Фаза 5: Error handling**
+
 - [ ] Обработать случай когда backend не вернул COGS поля
 - [ ] Добавить fallback UI для `missing_cogs_flag=true`
 - [ ] Реализовать retry логику для 500 ошибок
@@ -658,36 +725,48 @@ missing_cogs_count?: number;
 ## ❓ FAQ для Frontend команды
 
 ### **Q1: Где найти актуальную спецификацию API?**
+
 **A:** Swagger UI на `http://localhost:3000/api` → секция **Analytics** → эндпоинты `by-sku`, `by-brand`, `by-category`
 
 ### **Q2: Где посмотреть примеры реальных запросов?**
+
 **A:** Директория `test-api/` в корне проекта:
+
 - `05-analytics-basic.http` - Analytics с includeCogs
 - `06-analytics-advanced.http` - Margin Trends
 - `09-tasks.http` - Background jobs
 
 ### **Q3: Где TypeScript типы для новых полей?**
+
 **A:**
+
 - DTOs в backend: `src/analytics/dto/response/sku-analytics.dto.ts` и аналогичные
 - Frontend guide: `frontend/docs/request-backend/07-cogs-margin-analytics-includecogs-parameter.md` (секция TypeScript Integration)
 
 ### **Q4: Какая производительность ожидается при includeCogs=true?**
+
 **A:** +50-100ms overhead, что приемлемо для аналитических запросов
 
 ### **Q5: Что если для SKU нет COGS?**
+
 **A:** Backend вернёт `missing_cogs_flag=true` и `profit=null`, `margin_pct=null`. Frontend должен показать индикатор (например, "COGS not assigned")
 
 ### **Q6: Обязательно ли использовать includeCogs?**
+
 **A:** Нет, параметр опциональный (default: false). 100% backward compatible.
 
 ### **Q7: Где найти формулы расчёта?**
+
 **A:**
+
 - Swagger комментарии в `src/analytics/weekly-analytics.controller.ts`
 - `frontend/docs/request-backend/07-cogs-margin-analytics-includecogs-parameter.md` (секция Formulas)
 - `docs/stories/epic-17/story-17.2-api-includecogs-flag.md`
 
 ### **Q8: Есть ли Prometheus метрики?**
+
 **A:** Да, 3 метрики:
+
 - `margin_calculation_success_total{cabinet_id}`
 - `margin_calculation_failure_total{cabinet_id}`
 - `margin_calculation_duration_ms{cabinet_id}`
@@ -699,15 +778,18 @@ missing_cogs_count?: number;
 ## 📞 Контакты и поддержка
 
 **Backend Team:**
+
 - QA документация: `docs/qa/gates/17.1-17.4-*.yml`
 - Story спецификации: `docs/stories/epic-17/`
 
 **Первоисточники:**
+
 - Swagger UI: `http://localhost:3000/api`
 - Code: `src/analytics/` (controller, DTOs, services)
 - Tests: `test-api/` (см. SECTION-MAPPING.md)
 
 **Обновления:**
+
 - Все изменения документированы в git commits
 - История Epic 17: `git log --grep="epic-17" --oneline`
 
@@ -718,6 +800,7 @@ missing_cogs_count?: number;
 Этот документ предоставляет **все ссылки и навигацию** для успешной интеграции Epic 17 на frontend.
 
 **Основные источники информации (в порядке приоритета):**
+
 1. **Swagger UI** (`http://localhost:3000/api`) - самая актуальная спецификация API
 2. **test-api/** - рабочие примеры запросов (см. `SECTION-MAPPING.md` для навигации)
 3. **frontend/docs/request-backend/07-cogs-margin-analytics-includecogs-parameter.md** - полное руководство по интеграции
@@ -725,6 +808,7 @@ missing_cogs_count?: number;
 5. **Backend Stories** (`docs/stories/epic-17/`) - детальные спецификации и AC
 
 **При возникновении вопросов:**
+
 1. Проверьте FAQ в этом документе
 2. Изучите Swagger UI (интерактивная документация)
 3. Посмотрите примеры в `test-api/` (начните с `00-variables.http`)

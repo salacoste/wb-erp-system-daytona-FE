@@ -15,7 +15,7 @@ chars: 5766
 
 В этой статье:
 
-- 
+-
 - <a href="#udalenie-kartochki-tovara-tselikom-v-selsup" rel="nofollow">Удаление карточки товара целиком в SelSup</a>
 - <a href="#pri-redaktirovanii-kartochki" rel="nofollow">При редактировании карточки</a>
 - <a href="#iz-tablitsy-s-tovarami" rel="nofollow">Из таблицы с товарами</a>

@@ -21,21 +21,25 @@ In Story 24.5-fe, the click-to-filter functionality was deferred as it adds comp
 ## Acceptance Criteria
 
 ### AC1: Chart Click Handler
+
 - [ ] Clicking on a data point in StorageTrendsChart selects that week
 - [ ] Visual feedback: clicked point highlighted (larger dot, different color)
 - [ ] Cursor changes to pointer on hover over data points
 
 ### AC2: Filter Propagation
+
 - [ ] Selected week filters StorageBySkuTable to show only that week's data
 - [ ] TopConsumersWidget updates to show that week's top consumers
 - [ ] Summary cards update to show that week's totals
 
 ### AC3: Visual State
+
 - [ ] Active week indicator in chart (highlighted data point)
 - [ ] Badge/chip showing active filter: "Фильтр: W47"
 - [ ] "Сбросить фильтр" button to clear week filter
 
 ### AC4: Deselection
+
 - [ ] Clicking same point again deselects (returns to full range)
 - [ ] Clear button removes week filter
 - [ ] Changing week range clears week filter
@@ -71,14 +75,14 @@ interface StorageTrendsChartProps {
 const [selectedWeek, setSelectedWeek] = useState<string | null>(null)
 
 // Pass to child components
-<StorageTrendsChart 
-  onWeekClick={setSelectedWeek} 
+<StorageTrendsChart
+  onWeekClick={setSelectedWeek}
   selectedWeek={selectedWeek}
 />
-<StorageBySkuTable 
+<StorageBySkuTable
   weekFilter={selectedWeek} // Additional filter
 />
-<TopConsumersWidget 
+<TopConsumersWidget
   weekFilter={selectedWeek}
 />
 ```
@@ -89,7 +93,7 @@ const [selectedWeek, setSelectedWeek] = useState<string | null>(null)
 // Custom active dot for selected week
 function SelectedDot({ cx, cy, payload, selectedWeek }: DotProps & { selectedWeek: string | null }) {
   const isSelected = payload.week === selectedWeek
-  
+
   return (
     <circle
       cx={cx}
@@ -143,27 +147,32 @@ function WeekFilterBadge({ week, onClear }: { week: string; onClear: () => void 
 ## Tasks / Subtasks
 
 ### Phase 1: Chart Click Handler
+
 - [ ] Add `onClick` to Recharts Area component
 - [ ] Add `onWeekClick` prop to StorageTrendsChart
 - [ ] Change cursor to pointer on data points
 
 ### Phase 2: Visual Feedback
+
 - [ ] Implement SelectedDot component
 - [ ] Highlight selected week with larger dot and accent color
 - [ ] Add WeekFilterBadge component
 
 ### Phase 3: Filter Propagation
+
 - [ ] Add `selectedWeek` state to page.tsx
 - [ ] Pass filter to StorageBySkuTable
 - [ ] Pass filter to TopConsumersWidget
 - [ ] Update summary cards (optional)
 
 ### Phase 4: Clear Behavior
+
 - [ ] Implement click-to-deselect
 - [ ] Add clear button in badge
 - [ ] Clear on week range change
 
 ### Phase 5: Testing
+
 - [ ] Test click selection
 - [ ] Test filter propagation
 - [ ] Test clear behavior
@@ -194,11 +203,11 @@ function WeekFilterBadge({ week, onClear }: { week: string; onClear: () => void 
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-12-04 | Quinn (QA) | Initial draft from deferred items |
-| 2025-12-04 | Sarah (PO) | Added DoD test requirement, status → Ready for Dev |
-| 2026-01-03 | Quinn (QA) | QA Review: CONCERNS (75/100) - missing WeekFilterBadge tests |
+| Date       | Author       | Change                                                                               |
+| ---------- | ------------ | ------------------------------------------------------------------------------------ |
+| 2025-12-04 | Quinn (QA)   | Initial draft from deferred items                                                    |
+| 2025-12-04 | Sarah (PO)   | Added DoD test requirement, status → Ready for Dev                                   |
+| 2026-01-03 | Quinn (QA)   | QA Review: CONCERNS (75/100) - missing WeekFilterBadge tests                         |
 | 2026-01-03 | Claude (Dev) | QA fixes: WeekFilterBadge tests exist (12), cursor style verified, status → Complete |
 
 ---

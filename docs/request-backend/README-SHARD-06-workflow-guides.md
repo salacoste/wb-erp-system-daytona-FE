@@ -71,6 +71,7 @@ frontend/docs/request-backend/
 ```
 
 **Naming Convention**:
+
 - Original requests: `XX-[kebab-case-title].md`
 - Backend responses: `XX-[kebab-case-title]-backend.md`
 - Backend summaries: `XX-[kebab-case-title]-[type].md` (e.g., `15-add-includecogs-to-product-list-endpoint-completion-summary.md`)
@@ -87,6 +88,7 @@ frontend/docs/request-backend/
 **Component**: Backend API - Products + Analytics + COGS Modules
 
 **Description**: Complete guide for margin and COGS integration for frontend. Contains:
+
 - Data architecture (tables, formulas)
 - All API endpoints with request/response examples
 - 5 response scenarios (A-E) with UI recommendations
@@ -97,6 +99,7 @@ frontend/docs/request-backend/
 - Frontend checklist
 
 **Documentation**:
+
 - **[24-margin-cogs-integration-guide.md](./24-margin-cogs-integration-guide.md)** - START HERE
 - Backend source: [docs/MARGIN-COGS-INTEGRATION-GUIDE.md](../../../docs/MARGIN-COGS-INTEGRATION-GUIDE.md)
 
@@ -109,12 +112,14 @@ frontend/docs/request-backend/
 **Component**: Backend Analytics + Frontend Display
 
 **Description**: Documentation of data architecture for SKU analytics:
+
 - Handling rows without article (nm_id = 'UNKNOWN')
 - SKU margin formula and its limitations
 - Data distribution schema from WB Excel
 - Fix for `missing_cogs_flag` (showed 0 instead of "Not assigned")
 
 **Key Schema**:
+
 ```
 WB Excel -> qty=1 (Product) -> SKU Analytics YES
          -> qty=0 (Service) -> Excluded from SKU NO
@@ -125,6 +130,7 @@ WB Excel -> qty=1 (Product) -> SKU Analytics YES
 **UI Recommendation**: Show user that SKU margin does not include operating expenses.
 
 **Documentation**:
+
 - **[30-sku-analytics-data-architecture.md](./30-sku-analytics-data-architecture.md)** - START HERE
 
 ---
@@ -137,11 +143,13 @@ WB Excel -> qty=1 (Product) -> SKU Analytics YES
 **Component**: Backend API + Frontend Display
 
 **Problem**: When latest COGS is assigned with date after current week midpoint:
+
 - UI shows only latest COGS (e.g., 11 RUB)
 - Message "COGS with future date" doesn't explain which COGS is actually applied
 - User doesn't understand that for current week previous COGS (e.g., 121 RUB) is used
 
 **Proposed Solution**:
+
 ```
 Current UI:         11.00 RUB from 23.11.2025
                     (COGS with future date)
@@ -152,6 +160,7 @@ Improved UI:        11.00 RUB from 23.11.2025
 ```
 
 **Documentation**:
+
 - **[31-cogs-display-improvement-show-applicable-cogs-backend.md](./31-cogs-display-improvement-show-applicable-cogs-backend.md)** - BACKEND REQUEST
 - [31-cogs-display-improvement-show-applicable-cogs.md](./31-cogs-display-improvement-show-applicable-cogs.md) - Overview
 - [Guide #29: COGS Temporal Versioning](./29-cogs-temporal-versioning-and-margin-calculation.md)
@@ -165,6 +174,7 @@ Improved UI:        11.00 RUB from 23.11.2025
 **Component**: Backend API - COGS Module + Analytics Module
 
 **Description**: Detailed explanation of COGS selection logic for margin calculation:
+
 - **Week Midpoint Strategy** - system uses week midpoint (~Thursday) to determine applicable COGS
 - Temporal versioning model (`valid_from` / `valid_to`)
 - 4 COGS application scenarios with visual diagrams
@@ -176,6 +186,7 @@ Improved UI:        11.00 RUB from 23.11.2025
 **Key Conclusion**: If COGS is changed on Fri-Sun of current week, it will only apply from **next week**.
 
 **Documentation**:
+
 - **[29-cogs-temporal-versioning-and-margin-calculation.md](./29-cogs-temporal-versioning-and-margin-calculation.md)** - START HERE
 
 ---
@@ -183,16 +194,19 @@ Improved UI:        11.00 RUB from 23.11.2025
 ## Related Documentation
 
 **Backend Documentation**:
+
 - `docs/stories/` - Backend epic stories and requirements
 - `docs/architecture/` - System architecture documentation
 - `docs/PRODUCTS-API-GUIDE.md` - Products API guide
 - `docs/MARGIN-COGS-INTEGRATION-GUIDE.md` - Margin & COGS Integration Guide
 
 **Frontend Documentation**:
+
 - `frontend/docs/stories/` - Frontend epic stories and requirements
 - `frontend/docs/api-integration-guide.md` - Frontend integration guide
 
 **Documentation Updates**:
+
 - [Documentation Update Summary (2025-01-26)](./00-documentation-update-2025-01-26.md) - Summary of recent documentation cleanup and corrections
 
 ---
@@ -202,6 +216,7 @@ Improved UI:        11.00 RUB from 23.11.2025
 **[Request #23: All Requests Completed Summary](./23-all-requests-completed-summary.md)** - START HERE
 
 Comprehensive summary of all 22 completed requests with:
+
 - Implementation status for each request
 - Key API endpoints added/enhanced
 - `missing_data_reason` values reference

@@ -11,7 +11,7 @@ chars: 5142
 
 В этой статье:
 
-- 
+-
 - <a href="#vozmozhnosti-selsup-pri-rabote-s-dropshippingom" rel="nofollow">Возможности SelSup при работе с дропшиппингом</a>
 - <a href="#regulyarnyj-obmen-v-selsup" rel="nofollow">Регулярный обмен в SelSup</a>
 - <a href="#sozdanie-kartochek-v-selsup" rel="nofollow">Создание карточек в SelSup</a>

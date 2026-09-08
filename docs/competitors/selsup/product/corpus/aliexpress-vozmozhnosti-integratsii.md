@@ -11,7 +11,7 @@ AliExpress — один из крупнейших маркетплейсов в
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojka-integratsii" rel="nofollow">Настройка интеграции</a>
 - <a href="#import-kartochek" rel="nofollow">Импорт карточек</a>
 - <a href="#sozdanie-i-upravlenie-kartochkami-tovarov" rel="nofollow">Создание и управление карточками товаров</a>
@@ -33,7 +33,7 @@ AliExpress — один из крупнейших маркетплейсов в
 
 - Инструкция по импорту товаров <a href="../import-kartochek-s-aliexpress/index.html" rel="noopener noreferrer" target="_blank">тут</a>.
 
-- Для корректной работы необходимо создать шаблон доставки в личном кабинете AliExpress (*Магазин → Шаблоны доставки*). SelSup автоматически подтянет данные по нему.
+- Для корректной работы необходимо создать шаблон доставки в личном кабинете AliExpress (_Магазин → Шаблоны доставки_). SelSup автоматически подтянет данные по нему.
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/shabloni-dostavki.png.webp)
 
@@ -101,7 +101,7 @@ SelSup предлагает мощный модуль [PIM-система](../..
 
 ## Как интернет-магазин увеличил продажи на AliExpress с SelSup
 
-Компания**:** *«TechGadgets»* (продажа электроники)\
+Компания**:** _«TechGadgets»_ (продажа электроники)\
 **Проблема:**
 
 - Вручную загружали товары на AliExpress, тратили много времени.

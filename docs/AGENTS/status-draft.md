@@ -1,7 +1,8 @@
 # Status: Draft
 
 [Rest of story content...]
-```
+
+````
 
 ## 8. Handoff Communication
 
@@ -28,4 +29,4 @@ Next Steps:
 2. Verify integration approach aligns with your system
 3. Approve story or request adjustments
 4. Dev agent can then implement with safety checks
-```
+````

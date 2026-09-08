@@ -16,7 +16,9 @@ User reported that the product search input field "Поиск по артику�
 ## Root Cause Analysis
 
 **Parameter Name Mismatch**:
+
 - **Frontend** (`useProducts.ts` line 46): Sent search value as `search` parameter
+
   ```typescript
   params.append('search', filters.search) // ❌ Wrong parameter name
   ```
@@ -37,6 +39,7 @@ User reported that the product search input field "Поиск по артику�
 **Modified File**: `frontend/src/hooks/useProducts.ts`
 
 **Before** (line 46):
+
 ```typescript
 if (filters.search) {
   params.append('search', filters.search)
@@ -44,6 +47,7 @@ if (filters.search) {
 ```
 
 **After** (lines 46-48):
+
 ```typescript
 if (filters.search) {
   // Backend expects 'q' parameter for search (see QueryProductsDto line 72)
@@ -52,6 +56,7 @@ if (filters.search) {
 ```
 
 **Documentation Update** (line 13):
+
 ```typescript
 export interface ProductFilters {
   has_cogs?: boolean  // Filter: true = with COGS, false = without COGS, undefined = all
@@ -68,6 +73,7 @@ export interface ProductFilters {
 **Endpoint**: `GET /v1/products`
 
 **Search Parameter**:
+
 ```yaml
 Name: q
 Type: string
@@ -77,6 +83,7 @@ Example: "куртка"
 ```
 
 **Controller Documentation** (`products.controller.ts` lines 210-214):
+
 ```typescript
 @ApiQuery({
   name: 'q',
@@ -104,11 +111,13 @@ Example: "куртка"
 ## Search Capabilities
 
 The search is **case-insensitive partial match** on three fields:
+
 - **nm_id** (article number) - e.g., "321678606"
 - **sa_name** (product name) - e.g., "Куртка зимняя"
 - **brand** (brand name) - e.g., "Nike"
 
 **Examples**:
+
 - Search "321678606" → Finds products with article containing "321678606"
 - Search "куртка" → Finds products with name containing "куртка"
 - Search "Nike" → Finds products from Nike brand
@@ -118,6 +127,7 @@ The search is **case-insensitive partial match** on three fields:
 ## Testing Verification
 
 **Before Fix**:
+
 ```
 GET /v1/products?search=Nike&limit=25
 ↓
@@ -127,6 +137,7 @@ Returns: All products (no filtering applied)
 ```
 
 **After Fix**:
+
 ```
 GET /v1/products?q=Nike&limit=25
 ↓
@@ -140,10 +151,12 @@ Returns: Only products matching "Nike"
 ## Related Files
 
 **Frontend**:
+
 - `frontend/src/hooks/useProducts.ts` - Fixed parameter name (line 47)
 - `frontend/src/components/custom/ProductList.tsx` - Search UI (lines 204-210)
 
 **Backend**:
+
 - `src/products/products.controller.ts` - API endpoint (lines 167-229)
 - `src/products/dto/query-products.dto.ts` - Parameter definition (lines 66-72)
 - `src/products/products.service.ts` - Search implementation
@@ -162,6 +175,7 @@ Returns: Only products matching "Nike"
 ## Prevention for Future
 
 **Recommendations**:
+
 1. Use shared TypeScript types between frontend and backend (e.g., tRPC, GraphQL schema)
 2. Add integration tests that verify API parameter names
 3. Document API contracts in OpenAPI/Swagger and generate TypeScript clients

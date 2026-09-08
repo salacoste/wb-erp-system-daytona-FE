@@ -17,6 +17,7 @@
 **Overall Score**: **8.5/10** - Excellent Implementation ⭐⭐⭐⭐
 
 **Key Findings**:
+
 - ✅ 2 issues **ALREADY FIXED** by development team (save feedback, unbind confirmation)
 - ❌ 1 **CRITICAL** issue found: Missing empty state hero banner
 - ❌ 1 **NICE-TO-HAVE** gap: Missing binding timestamp
@@ -24,6 +25,7 @@
 ### Proposed Solution
 
 **2 New Stories Created**:
+
 1. **Story 34.7-FE**: Empty State Hero Banner (🔴 CRITICAL, 3 SP, 2-3h)
 2. **Story 34.8-FE**: Binding Timestamp Display (🔵 LOW, 1 SP, 30-60min)
 
@@ -37,6 +39,7 @@
 ### ✅ Issues Already Fixed (Praise for Dev Team)
 
 **Issue #2: Save Feedback** - ✅ **IMPLEMENTED**
+
 ```typescript
 // NotificationPreferencesPanel.tsx lines 339-349
 <Button onClick={handleSave} disabled={!hasUnsavedChanges || isUpdating}>
@@ -62,6 +65,7 @@ toast.success('Настройки сохранены', { duration: 3000 });
 ---
 
 **Issue #3: Unbind Confirmation** - ✅ **IMPLEMENTED**
+
 ```typescript
 // UnbindConfirmationDialog.tsx - Full AlertDialog component
 <AlertDialog>
@@ -90,6 +94,7 @@ toast.success('Настройки сохранены', { duration: 3000 });
 **Issue #1: Empty State Hero Banner** - 🔴 **CRITICAL** (Story 34.7-FE)
 
 **Current Implementation**:
+
 ```
 ┌─────────────────────────────┐
 │ ℹ️ Telegram не подключен     │
@@ -100,12 +105,14 @@ toast.success('Настройки сохранены', { duration: 3000 });
 ```
 
 **Problem**:
+
 - ❌ Low visual prominence (small alert, gray)
 - ❌ No value proposition (doesn't explain "why")
 - ❌ Small CTA button (easily overlooked)
 - ❌ No motivation to complete binding
 
 **Impact on Conversion**:
+
 ```
 Current conversion funnel:
   100% land on page
@@ -119,6 +126,7 @@ Current conversion funnel:
 ```
 
 **UX Expert Quote**:
+
 > "This is the **highest ROI improvement** in the entire epic. **2.4x conversion lift** for ~2-3 hours of work. **Mandatory before launch.**"
 
 ---
@@ -126,6 +134,7 @@ Current conversion funnel:
 **Issue #4: Binding Timestamp** - 🔵 **NICE-TO-HAVE** (Story 34.8-FE)
 
 **Current Implementation**:
+
 ```
 🔔 Подключен
 @salacoste
@@ -133,6 +142,7 @@ Current conversion funnel:
 ```
 
 **Problem**:
+
 - ❌ No timestamp showing when binding occurred
 - ❌ Users occasionally ask "When did I connect?" (~10 tickets/month)
 - ❌ Missing context for troubleshooting
@@ -150,6 +160,7 @@ Current conversion funnel:
 **Business Impact**: **+140% conversion** (20% → 48%)
 
 **Deliverables**:
+
 ```
 ╔═════════════════════════════════════════╗
 ║  🚀 Получайте уведомления в Telegram     ║
@@ -167,6 +178,7 @@ Current conversion funnel:
 ```
 
 **Key Features**:
+
 - Gradient background with Telegram brand colors
 - Large rocket icon 🚀 (emotional trigger)
 - 3 clear benefits with checkmarks
@@ -174,6 +186,7 @@ Current conversion funnel:
 - Decorative blur elements (depth)
 
 **Acceptance Criteria**:
+
 1. Hero banner shows when `isBound === false`
 2. Gradient background: `from-telegram/5 via-white to-telegram/10`
 3. 3 benefits with bold keywords
@@ -182,11 +195,13 @@ Current conversion funnel:
 6. Responsive (375px to 1680px)
 
 **Expected Conversion**:
+
 - **Before**: 40% click rate → 20% overall
 - **After**: 80% click rate → 48% overall
 - **Lift**: +140% (2.4x improvement) 🚀
 
 **Technical Changes**:
+
 - Modify `TelegramBindingCard.tsx` (lines 94-113)
 - Add Telegram colors to `tailwind.config.ts`
 - Write unit tests (hero banner display/hide)
@@ -202,6 +217,7 @@ Current conversion funnel:
 **Business Impact**: ~30% reduction in "When did I bind?" support tickets
 
 **Deliverables**:
+
 ```
 Bound state with timestamp:
   🔔 Подключен
@@ -211,12 +227,14 @@ Bound state with timestamp:
 ```
 
 **Key Features**:
+
 - Timestamp below username (12px, gray-500)
 - Russian date format: "DD месяца YYYY, HH:MM"
 - `Intl.DateTimeFormat` with `ru-RU` locale
 - Graceful handling of invalid dates
 
 **Acceptance Criteria**:
+
 1. Timestamp shows when `bound_at` provided
 2. Format: "Подключено: DD месяца YYYY, HH:MM"
 3. Handles invalid timestamps ("Дата неизвестна")
@@ -225,6 +243,7 @@ Bound state with timestamp:
 **Backend Dependency**: ⚠️ Backend must provide `bound_at` field in API response
 
 **Technical Changes**:
+
 - Modify `TelegramBindingCard.tsx` (~line 130-134)
 - Add `formatBindingDate` helper function
 - Update `BindingStatusResponseDto.bound_at?: string`
@@ -242,6 +261,7 @@ Bound state with timestamp:
 **Return**: +140% conversion improvement
 
 **Detailed ROI Calculation**:
+
 ```
 Assumptions:
   - 1000 users/month visit /settings/notifications
@@ -273,6 +293,7 @@ ROI per hour: $3,967/hour 🚀
 **Return**: ~30% reduction in support tickets
 
 **Detailed ROI Calculation**:
+
 ```
 Assumptions:
   - 10 "When did I bind?" support tickets/month
@@ -305,6 +326,7 @@ ROI per hour: $75/hour
 ### Hero Banner (Story 34.7-FE)
 
 **Desktop (1680px)**:
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  Telegram Уведомления (H1)                                │
@@ -333,6 +355,7 @@ ROI per hour: $75/hour
 ```
 
 **Mobile (375px)**:
+
 ```
 ┌────────────────────────┐
 │  Telegram Уведомления  │
@@ -363,6 +386,7 @@ ROI per hour: $75/hour
 ### Binding Timestamp (Story 34.8-FE)
 
 **Desktop/Mobile (Same)**:
+
 ```
 ┌────────────────────────────┐
 │  📱 Подключение Telegram    │
@@ -383,14 +407,14 @@ ROI per hour: $75/hour
 
 ### Conversion Funnel Comparison
 
-| Stage | Current (%) | After Hero Banner (%) | Lift |
-|-------|-------------|----------------------|------|
-| Land on page | 100 | 100 | - |
-| Click "Подключить" | 40 | **80** | **+100%** |
-| Generate code | 38 | 76 | +100% |
-| Complete binding | 27 | 53 | +96% |
-| Configure prefs | 24 | 48 | +100% |
-| Save settings | 20 | **48** | **+140%** |
+| Stage              | Current (%) | After Hero Banner (%) | Lift      |
+| ------------------ | ----------- | --------------------- | --------- |
+| Land on page       | 100         | 100                   | -         |
+| Click "Подключить" | 40          | **80**                | **+100%** |
+| Generate code      | 38          | 76                    | +100%     |
+| Complete binding   | 27          | 53                    | +96%      |
+| Configure prefs    | 24          | 48                    | +100%     |
+| Save settings      | 20          | **48**                | **+140%** |
 
 **Overall Impact**: **2.4x improvement** in binding completion rate 🚀
 
@@ -399,10 +423,12 @@ ROI per hour: $75/hour
 ### Support Ticket Reduction
 
 **Current State**:
+
 - ~10 "When did I bind?" tickets/month
 - ~5 "How do I connect Telegram?" tickets/month (poor empty state visibility)
 
 **After Improvements**:
+
 - ~7 "When did I bind?" tickets/month (-30% from timestamp)
 - ~2 "How do I connect?" tickets/month (-60% from hero banner clarity)
 
@@ -429,6 +455,7 @@ ROI per hour: $75/hour
 ### Implementation Plan
 
 **Detailed Plan**: `docs/implementation-plans/epic-34-fe-ux-improvements-plan.md`
+
 - Phase 1: Hero Banner (2-3h)
 - Phase 2: Timestamp (30min)
 - Quality assurance plan
@@ -437,6 +464,7 @@ ROI per hour: $75/hour
 ### UX Analysis
 
 **Full UX Review**: `docs/code-review/UX-LIVE-REVIEW-EPIC-34-FE-2025-12-30.md`
+
 - 19,000+ words detailed analysis
 - Category-by-category scoring
 - Visual design analysis
@@ -447,6 +475,7 @@ ROI per hour: $75/hour
 ### Epic Updates
 
 **Epic 34-FE Updated**: `docs/epics/epic-34-fe-telegram-notifications-ui.md`
+
 - Added Stories 34.7 and 34.8 to Implementation Order
 - Updated total effort: 21 SP → 25 SP
 - Added UX Expert Review section
@@ -463,6 +492,7 @@ ROI per hour: $75/hour
 **Timeline**: Can deploy within 1 day
 
 **Recommendation**: ✅ **APPROVE**
+
 - Story 34.7-FE is **mandatory** (highest ROI in entire epic)
 - Story 34.8-FE is **optional** (depends on backend `bound_at` availability)
 
@@ -475,6 +505,7 @@ ROI per hour: $75/hour
 **Timeline**: Can deploy same day
 
 **Recommendation**: ✅ **MINIMUM VIABLE**
+
 - Captures 95% of business value
 - Skip timestamp if backend doesn't provide `bound_at`
 
@@ -487,6 +518,7 @@ ROI per hour: $75/hour
 **Risk**: Competitive disadvantage (Notion, Linear have hero banners)
 
 **Recommendation**: ❌ **NOT RECOMMENDED**
+
 - Missing 2.4x conversion opportunity
 - Low implementation cost vs high business value
 
@@ -497,14 +529,17 @@ ROI per hour: $75/hour
 **APPROVE Story 34.7-FE** (Hero Banner) - **CRITICAL** ✅
 
 **Conditional APPROVE Story 34.8-FE** (Timestamp):
+
 - ✅ If backend provides `bound_at` field → approve
 - ❌ If backend doesn't provide `bound_at` → defer or skip
 
 **Timeline**:
+
 - Story 34.7-FE: Deploy within 1 day (2-3h dev + 1h QA)
 - Story 34.8-FE: Deploy within 1 day (30min dev + 30min backend coordination)
 
 **Business Case**:
+
 - **3 hours investment** → **+140% conversion** → **$11,900/month incremental revenue**
 - **Highest ROI improvement** across all Epic 34-FE stories
 - **Zero risk** (non-breaking, pure enhancement)
@@ -550,13 +585,13 @@ ROI per hour: $75/hour
 
 ## 🚨 Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Hero banner too "salesy" | Low | Low | Use factual benefits, professional design |
-| Mobile layout breaks | Low | Medium | Responsive testing checklist (5 breakpoints) |
-| Conversion doesn't improve | Very Low | Medium | Based on industry benchmarks (Notion, Linear, Intercom) |
-| Backend missing `bound_at` | Medium | Low | Skip Story 34.8-FE or coordinate with backend |
-| Deployment delays | Low | Low | Can deploy in <4 hours total |
+| Risk                       | Likelihood | Impact | Mitigation                                              |
+| -------------------------- | ---------- | ------ | ------------------------------------------------------- |
+| Hero banner too "salesy"   | Low        | Low    | Use factual benefits, professional design               |
+| Mobile layout breaks       | Low        | Medium | Responsive testing checklist (5 breakpoints)            |
+| Conversion doesn't improve | Very Low   | Medium | Based on industry benchmarks (Notion, Linear, Intercom) |
+| Backend missing `bound_at` | Medium     | Low    | Skip Story 34.8-FE or coordinate with backend           |
+| Deployment delays          | Low        | Low    | Can deploy in <4 hours total                            |
 
 **Overall Risk Level**: ✅ **LOW** (safe to approve)
 
@@ -564,18 +599,19 @@ ROI per hour: $75/hour
 
 ## 📄 Appendix: UX Expert Scorecard
 
-| Category | Current Score | After Improvements | Change |
-|----------|--------------|-------------------|--------|
-| Visual Design | 9.5/10 | 9.5/10 | - |
-| Information Architecture | 9.5/10 | 9.5/10 | - |
-| Interaction Design | 9/10 | 9/10 | - |
-| Content Strategy | 9.5/10 | 9.5/10 | - |
-| Accessibility | 8.5/10 | 9/10 | +0.5 |
-| Responsive Design | 9/10 | 9/10 | - |
-| **Empty State** | **0/10** | **10/10** | **+10** |
-| **TOTAL** | **8.5/10** | **9.5/10** | **+1.0** |
+| Category                 | Current Score | After Improvements | Change   |
+| ------------------------ | ------------- | ------------------ | -------- |
+| Visual Design            | 9.5/10        | 9.5/10             | -        |
+| Information Architecture | 9.5/10        | 9.5/10             | -        |
+| Interaction Design       | 9/10          | 9/10               | -        |
+| Content Strategy         | 9.5/10        | 9.5/10             | -        |
+| Accessibility            | 8.5/10        | 9/10               | +0.5     |
+| Responsive Design        | 9/10          | 9/10               | -        |
+| **Empty State**          | **0/10**      | **10/10**          | **+10**  |
+| **TOTAL**                | **8.5/10**    | **9.5/10**         | **+1.0** |
 
 **UX Expert Final Assessment**:
+
 > "Epic 34-FE is an **excellent implementation** (8.5/10). With the hero banner (Story 34.7-FE), it becomes **nearly perfect** (9.5/10). This is a **mandatory improvement** before production launch. **2.4x conversion lift for 3 hours of work** - highest ROI in the epic."
 
 ---
@@ -585,11 +621,13 @@ ROI per hour: $75/hour
 **Epic 34-FE UX Improvements**:
 
 **Story 34.7-FE (Empty State Hero Banner)**:
+
 - [ ] ✅ **APPROVED** - Proceed with implementation
 - [ ] ❌ **REJECTED** - Reason: ___________________________
 - [ ] 🔄 **REVISIONS NEEDED** - Changes: _______________
 
 **Story 34.8-FE (Binding Timestamp Display)**:
+
 - [ ] ✅ **APPROVED** - Proceed with implementation
 - [ ] ❌ **REJECTED** - Reason: ___________________________
 - [ ] 🔄 **REVISIONS NEEDED** - Changes: _______________

@@ -34,6 +34,7 @@ When you assign COGS with a **past date** (e.g., 3 weeks ago):
 **Today:** 2025-11-23 (Week 2025-W47)
 
 **Action:** User assigns COGS to product "Краска для мебели" (nm_id: 321678606)
+
 - Cost: 999.00 ₽
 - **Date:** 2025-11-02 (3 weeks ago, Week 2025-W44)
 
@@ -46,6 +47,7 @@ When you assign COGS with a **past date** (e.g., 3 weeks ago):
 **Database Table:** `cogs`
 
 **New Record:**
+
 ```sql
 INSERT INTO cogs (
   nm_id,
@@ -71,6 +73,7 @@ INSERT INTO cogs (
 ```
 
 **Key Fields:**
+
 - `valid_from` = **2025-11-02** (effective date chosen by user)
 - `created_at` = **2025-11-23** (technical timestamp when record was created)
 - `valid_to` = **NULL** (this is the current active COGS)
@@ -84,6 +87,7 @@ INSERT INTO cogs (
 **Concept:** When calculating margin for **any past date**, the system can find the correct COGS.
 
 **SQL Query Example** (find COGS valid on 2025-11-10):
+
 ```sql
 -- What was the COGS for product 321678606 on 2025-11-10?
 SELECT *
@@ -107,12 +111,12 @@ LIMIT 1;
 
 **Current State (BEFORE adding retroactive COGS):**
 
-| week | nm_id | revenue | cogs | margin_pct | missing_cogs_units |
-|------|-------|---------|------|------------|-------------------|
-| 2025-W44 | 321678606 | 5000.00 | 0.00 | 0% | 10 ❌ |
-| 2025-W45 | 321678606 | 6000.00 | 0.00 | 0% | 12 ❌ |
-| 2025-W46 | 321678606 | 7000.00 | 0.00 | 0% | 15 ❌ |
-| 2025-W47 | 321678606 | No sales yet | — | — | — |
+| week     | nm_id     | revenue      | cogs | margin_pct | missing_cogs_units |
+| -------- | --------- | ------------ | ---- | ---------- | ------------------ |
+| 2025-W44 | 321678606 | 5000.00      | 0.00 | 0%         | 10 ❌              |
+| 2025-W45 | 321678606 | 6000.00      | 0.00 | 0%         | 12 ❌              |
+| 2025-W46 | 321678606 | 7000.00      | 0.00 | 0%         | 15 ❌              |
+| 2025-W47 | 321678606 | No sales yet | —    | —          | —                  |
 
 **Problem:** All past weeks show `missing_cogs_units` because COGS didn't exist when those weeks were calculated.
 
@@ -121,11 +125,13 @@ LIMIT 1;
 #### Step 4: What DOES NOT Happen Automatically ⚠️
 
 **Backend does NOT:**
+
 - ❌ Automatically recalculate `weekly_margin_fact` for weeks 2025-W44, W45, W46
 - ❌ Trigger background job to update past periods
 - ❌ Retroactively fix `missing_cogs_units` counters
 
 **Reason:** Performance and design decision
+
 - Recalculating ALL past periods after every COGS change would be expensive
 - Users might upload 1000 products with retroactive COGS → would trigger 1000 recalculations
 - Better to batch recalculate manually when needed
@@ -137,11 +143,13 @@ LIMIT 1;
 **Option A: Recalculate Specific Weeks (Frontend UI)**
 
 **Frontend Implementation (Request #17 - 2025-01-27):**
+
 - Warning alert appears in COGS assignment form when `valid_from` date is after last completed week
 - Manual recalculation button triggers recalculation for specific week
 - See: `docs/request-backend/17-cogs-assigned-after-completed-week-recalculation.md`
 
 **API Endpoint (Manual):** `POST /v1/tasks/enqueue`
+
 ```json
 {
   "task_type": "recalculate_weekly_margin",
@@ -157,6 +165,7 @@ LIMIT 1;
 **Option B: Recalculate All Historical Data**
 
 **Script:** `scripts/recalculate-direct.ts`
+
 ```bash
 node scripts/recalculate-direct.ts <cabinet_id>
 ```
@@ -166,11 +175,13 @@ node scripts/recalculate-direct.ts <cabinet_id>
 **Option C: Wait for Next Weekly Aggregation**
 
 **Process:** Weekly aggregation job runs automatically (e.g., Monday morning)
+
 - Picks up sales from previous week (2025-W47)
 - Uses temporal COGS lookup → finds 999.00 ₽ for sales dated 2025-11-18 to 2025-11-24
 - Creates `weekly_margin_fact` row for W47 with correct margin
 
 **Timeline:**
+
 - User assigns COGS: 2025-11-23 (Friday)
 - Week ends: 2025-11-24 (Sunday)
 - Aggregation runs: 2025-11-25 (Monday)
@@ -183,16 +194,19 @@ node scripts/recalculate-direct.ts <cabinet_id>
 ### Scenario 1: Late Invoice Received
 
 **Situation:**
+
 - You sold products in October (weeks W40-W43)
 - Supplier sends invoice in late November
 - Invoice dated: 2025-10-01
 
 **Action:**
+
 - Assign COGS with `valid_from` = 2025-10-01
 - Trigger recalculation for weeks W40-W43
 - Now you have **accurate historical margins**
 
 **Business Value:**
+
 - Financial reporting accuracy
 - Tax compliance (COGS must match accounting period)
 - Performance analysis (see which products were profitable in October)
@@ -202,15 +216,18 @@ node scripts/recalculate-direct.ts <cabinet_id>
 ### Scenario 2: Price Change Backdating
 
 **Situation:**
+
 - Supplier raised prices on 2025-11-01
 - You forgot to update COGS in system
 - Today is 2025-11-23
 
 **Action:**
+
 - **Old COGS:** 800.00 ₽ with `valid_from` = 2025-01-01
 - **New COGS:** 999.00 ₽ with `valid_from` = 2025-11-01
 
 **Backend Logic:**
+
 ```sql
 -- Step 1: Close old version
 UPDATE cogs
@@ -223,6 +240,7 @@ VALUES ('321678606', '2025-11-01', NULL, 999.00);
 ```
 
 **Timeline:**
+
 ```
 Jan 1      Nov 1           Nov 23 (today)
 ├──────────┼───────────────┤
@@ -232,6 +250,7 @@ Jan 1      Nov 1           Nov 23 (today)
 ```
 
 **Margin Calculation:**
+
 - Sales dated 2025-10-15 → uses COGS 800 ₽
 - Sales dated 2025-11-05 → uses COGS 999 ₽
 - Sales dated 2025-11-23 → uses COGS 999 ₽
@@ -241,11 +260,13 @@ Jan 1      Nov 1           Nov 23 (today)
 ### Scenario 3: Bulk Historical Upload
 
 **Situation:**
+
 - New seller onboarding
 - Has 500 products with sales data from last 12 months
 - Wants to upload all historical COGS at once
 
 **Action:**
+
 ```json
 POST /v1/cogs/bulk
 {
@@ -258,11 +279,13 @@ POST /v1/cogs/bulk
 ```
 
 **Backend Process:**
+
 1. ✅ Creates 500 COGS records (all with `valid_from` = 2025-01-01)
 2. ❌ Does NOT trigger 500 recalculations
 3. 📋 User manually triggers: `POST /v1/tasks/enqueue { task_type: "recalculate_all_weeks" }`
 
 **Timing:**
+
 - COGS upload: ~5 seconds
 - Recalculation: ~2-5 minutes (background job, non-blocking)
 
@@ -384,6 +407,7 @@ class MarginCalculationService {
 ### When User Assigns Retroactive COGS
 
 **Step 1: User Action (Frontend)**
+
 ```
 User opens: /cogs page
 Selects: Product "Краска для мебели" (321678606)
@@ -395,6 +419,7 @@ Clicks: "Назначить себестоимость"
 ```
 
 **Step 2: API Call**
+
 ```
 POST /v1/products/321678606/cogs
 {
@@ -406,6 +431,7 @@ POST /v1/products/321678606/cogs
 ```
 
 **Step 3: Backend Processing**
+
 ```typescript
 // CogsService.createCogs()
 1. Check if COGS exists for (nm_id=321678606, valid_from=2025-11-02)
@@ -418,6 +444,7 @@ POST /v1/products/321678606/cogs
 ```
 
 **Step 4: Frontend Updates**
+
 ```typescript
 // SingleCogsForm.tsx onSuccess callback
 1. Show success toast: "Себестоимость назначена успешно"
@@ -429,6 +456,7 @@ POST /v1/products/321678606/cogs
 ```
 
 **Step 5: What User Sees**
+
 - ✅ Form shows saved COGS: 999.00 ₽ with date 02.11.2025
 - ✅ Product list shows "has_cogs" badge
 - ✅ Current week margin (W47) will use this COGS
@@ -454,6 +482,7 @@ POST /v1/products/321678606/cogs
 ### What User Should Do 📋
 
 **If historical accuracy is important:**
+
 ```bash
 # Option 1: Trigger recalculation via API
 curl -X POST http://localhost:3000/v1/tasks/enqueue \
@@ -471,6 +500,7 @@ node scripts/recalculate-direct.ts <cabinet_id>
 ```
 
 **If only current data matters:**
+
 - ✅ No action needed! Next week's aggregation will work correctly.
 
 ---
@@ -481,21 +511,21 @@ node scripts/recalculate-direct.ts <cabinet_id>
 
 **Without Manual Recalculation:**
 
-| Week | Revenue | COGS | Margin | Missing COGS | Status |
-|------|---------|------|--------|-------------|--------|
-| W44 | 5000 ₽ | 0 ₽ | 0% | 10 units | ❌ Incorrect |
-| W45 | 6000 ₽ | 0 ₽ | 0% | 12 units | ❌ Incorrect |
-| W46 | 7000 ₽ | 0 ₽ | 0% | 15 units | ❌ Incorrect |
-| W47 | 8000 ₽ | 7992 ₽ | 0.1% | 0 units | ✅ Correct (new) |
+| Week | Revenue | COGS   | Margin | Missing COGS | Status           |
+| ---- | ------- | ------ | ------ | ------------ | ---------------- |
+| W44  | 5000 ₽  | 0 ₽    | 0%     | 10 units     | ❌ Incorrect     |
+| W45  | 6000 ₽  | 0 ₽    | 0%     | 12 units     | ❌ Incorrect     |
+| W46  | 7000 ₽  | 0 ₽    | 0%     | 15 units     | ❌ Incorrect     |
+| W47  | 8000 ₽  | 7992 ₽ | 0.1%   | 0 units      | ✅ Correct (new) |
 
 **With Manual Recalculation:**
 
-| Week | Revenue | COGS | Margin | Missing COGS | Status |
-|------|---------|------|--------|-------------|--------|
-| W44 | 5000 ₽ | 9990 ₽ | -99.8% | 0 units | ✅ Correct |
-| W45 | 6000 ₽ | 11988 ₽ | -99.8% | 0 units | ✅ Correct |
-| W46 | 7000 ₽ | 14985 ₽ | -114.1% | 0 units | ✅ Correct |
-| W47 | 8000 ₽ | 7992 ₽ | 0.1% | 0 units | ✅ Correct |
+| Week | Revenue | COGS    | Margin  | Missing COGS | Status     |
+| ---- | ------- | ------- | ------- | ------------ | ---------- |
+| W44  | 5000 ₽  | 9990 ₽  | -99.8%  | 0 units      | ✅ Correct |
+| W45  | 6000 ₽  | 11988 ₽ | -99.8%  | 0 units      | ✅ Correct |
+| W46  | 7000 ₽  | 14985 ₽ | -114.1% | 0 units      | ✅ Correct |
+| W47  | 8000 ₽  | 7992 ₽  | 0.1%    | 0 units      | ✅ Correct |
 
 **Insight:** Product was UNPROFITABLE for 3 weeks! This information is only visible after recalculation.
 
@@ -504,20 +534,24 @@ node scripts/recalculate-direct.ts <cabinet_id>
 ## 🔗 Related Documentation
 
 **Technical Specs:**
+
 - Story 10.4: `docs/stories/epic-10/story-10.4-margin-profit-calculation.md`
 - Epic 17: Weekly margin analytics with temporal COGS
 - Epic 18: Products API with margin integration
 
 **Backend Code:**
+
 - COGS Service: `src/cogs/services/cogs.service.ts`
 - Margin Calculation: `src/analytics/services/margin-calculation.service.ts`
 - Temporal Lookup: Uses `valid_from`/`valid_to` indexes
 
 **Database Schema:**
+
 - COGS table: `prisma/schema.prisma:387-419`
 - Weekly Margin Fact: `prisma/schema.prisma:421-460`
 
 **Frontend Docs:**
+
 - COGS History: `frontend/docs/COGS-HISTORY-AND-NOTES-EXPLANATION.md`
 - Date Bug Fix: `frontend/docs/BUG-FIX-DATE-INPUT-RESET.md`
 
@@ -528,6 +562,7 @@ node scripts/recalculate-direct.ts <cabinet_id>
 **Question:** What happens when you assign COGS with a date 3 weeks ago?
 
 **Answer:**
+
 1. ✅ COGS record created with retroactive `valid_from` date
 2. ✅ Temporal lookup works - system can find "COGS on date X"
 3. ✅ Future margin calculations use correct COGS
@@ -535,12 +570,14 @@ node scripts/recalculate-direct.ts <cabinet_id>
 5. 📋 Manual recalculation needed for historical accuracy
 
 **Business Value:**
+
 - Supports late invoice entry
 - Enables price change backdating
 - Maintains financial reporting accuracy
 - Provides complete cost history
 
 **User Responsibility:**
+
 - If historic data matters → trigger manual recalculation
 - If only current data matters → no action needed
 

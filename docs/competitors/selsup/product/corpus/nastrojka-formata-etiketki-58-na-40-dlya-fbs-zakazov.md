@@ -9,7 +9,7 @@ chars: 3173
 
 В этой статье:
 
-- 
+-
 - <a href="#wildberries" rel="nofollow">Wildberries</a>
 - <a href="#ozon" rel="nofollow">Ozon</a>
 - <a href="#yandeks-market" rel="nofollow">Яндекс.Маркет</a>

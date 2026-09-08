@@ -21,10 +21,10 @@ This causes two issues:
 
 Add two optional query parameters to `GET /v1/ai/evaluations/sku-accuracy`:
 
-| Param | Type | Required | Behavior |
-|---|---|---|---|
-| `modelId` | `string` (UUID) | No (recommended) | Filter response to SKUs evaluated by this model only |
-| `nmId` | `number` | No | Further filter to a single SKU (used for per-SKU drill-down) |
+| Param     | Type            | Required         | Behavior                                                     |
+| --------- | --------------- | ---------------- | ------------------------------------------------------------ |
+| `modelId` | `string` (UUID) | No (recommended) | Filter response to SKUs evaluated by this model only         |
+| `nmId`    | `number`        | No               | Further filter to a single SKU (used for per-SKU drill-down) |
 
 **Precedent**: Story 110.2-FE F-1 implemented the same pattern for `GET /v1/ai/evaluations?modelId=<uuid>`. Follow identical filter logic.
 

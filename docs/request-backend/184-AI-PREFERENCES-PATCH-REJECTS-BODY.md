@@ -28,13 +28,16 @@ So the endpoint can never receive `aiEnabled` — the GET returns `{aiEnabled}`,
 ## Requested fix
 
 Add a class-validator decorator to `UpdateAiPreferencesDto.aiEnabled`:
+
 ```ts
 @ApiProperty({ example: false, description: 'Set to false to disable AI features' })
 @IsBoolean()
 aiEnabled!: boolean;
 ```
+
 Then `whitelist` keeps the property and `setAiEnabled` receives the value. (Verify other body DTOs in the AI module don't share the same missing-decorator issue.)
 
 ## Evidence
+
 - Live: `PATCH {"aiEnabled":true}` → 400; `{"ai_enabled":true}`/`{"enabled":true}` → 400; `{}` → 200 (no-op).
 - FE: `frontend/src/lib/api/ai/system.ts` `patchAiPreferences` sends `{aiEnabled}`; `AiPreferencesForm` toggle → mutation → 400 → error toast, setting not saved.

@@ -25,6 +25,7 @@ The `/analytics/time-period` page returned HTTP 400 because the frontend sent `i
 ## Acceptance Criteria
 
 ### AC1: Page loads without errors
+
 Given I navigate to /analytics/time-period
 When the page loads
 Then the margin trend chart displays correctly
@@ -34,17 +35,19 @@ Then the margin trend chart displays correctly
 ## Technical Implementation
 
 ### Files Modified
-| File | Change |
-|------|--------|
-| `src/hooks-v1/useMarginTrends.ts` | Removed `includeCogs` from interface, destructuring, queryKey, URL params |
-| `src/app/(dashboard)/analytics/time-period/page.tsx` | Removed `includeCogs: true` from `MarginTrendChart` queryParams |
-| `src/hooks/useMarginTrends.test.tsx` | Removed `includeCogs` from test hook calls |
+
+| File                                                 | Change                                                                    |
+| ---------------------------------------------------- | ------------------------------------------------------------------------- |
+| `src/hooks-v1/useMarginTrends.ts`                    | Removed `includeCogs` from interface, destructuring, queryKey, URL params |
+| `src/app/(dashboard)/analytics/time-period/page.tsx` | Removed `includeCogs: true` from `MarginTrendChart` queryParams           |
+| `src/hooks/useMarginTrends.test.tsx`                 | Removed `includeCogs` from test hook calls                                |
 
 ---
 
 ## Definition of Done
+
 - [x] TypeScript compiles without errors
 - [x] ESLint passes
 - [x] /analytics/time-period page loads successfully
 
-*Created: 2026-02-21*
+_Created: 2026-02-21_

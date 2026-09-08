@@ -6,7 +6,7 @@
 
 ## Master Prompt
 
-```
+````
 # WB Repricer System - Financial Dashboard Frontend
 
 ## Project Overview
@@ -83,7 +83,8 @@ Create the main Dashboard page with key financial metrics, expense breakdown vis
        light: '#FFCDD2',
      }
    }
-   ```
+````
+
 6. Customize shadcn/ui Button component to add red primary variant
 7. Create project structure:
    ```
@@ -268,6 +269,7 @@ const config: Config = {
 ## Constraints & What NOT to Do
 
 **DO NOT:**
+
 - Create files over 200 lines - split into smaller modules
 - Use default shadcn/ui colors - always customize to red primary
 - Skip accessibility features - all components must be keyboard navigable
@@ -280,6 +282,7 @@ const config: Config = {
 - Create components without proper ARIA labels for accessibility
 
 **MUST:**
+
 - Keep all files under 200 lines
 - Use shadcn/ui as base, customize to red/white design
 - Implement mobile-first responsive design
@@ -292,6 +295,7 @@ const config: Config = {
 ## Strict Scope Definition
 
 **Files to Create/Modify:**
+
 1. `src/app/dashboard/page.tsx` - Main dashboard page
 2. `src/components/custom/Sidebar.tsx` - Sidebar navigation
 3. `src/components/custom/Navbar.tsx` - Top navbar
@@ -302,12 +306,14 @@ const config: Config = {
 8. `src/components/ui/button.tsx` - Customized shadcn/ui Button (add red primary variant)
 
 **Files to Leave Untouched:**
+
 - Any existing authentication code (if present)
 - Any existing routing structure (if present)
 - Other pages or components not related to dashboard
 - Package.json dependencies (unless explicitly needed)
 
 **Scope Boundaries:**
+
 - Focus ONLY on dashboard page and its required components
 - Do NOT implement authentication flow (assume user is already logged in)
 - Do NOT implement full API integration (use mock data or placeholder API calls)
@@ -317,17 +323,20 @@ const config: Config = {
 ## Mobile-First Responsive Design
 
 **Mobile (< 640px):**
+
 - Sidebar: Hidden by default, hamburger menu toggles overlay
 - Navbar: Compact, essential icons only
 - Metric Cards: Stack vertically, full width
 - Padding: Reduced (16px instead of 24px)
 
 **Tablet (640px - 768px):**
+
 - Sidebar: Can be persistent or collapsible
 - Metric Cards: 2-column grid
 - Standard spacing
 
 **Desktop (≥ 768px):**
+
 - Sidebar: Persistent, 240-280px width
 - Metric Cards: 2-column grid, large spacing
 - Full layout with all elements visible
@@ -355,6 +364,7 @@ const config: Config = {
 - Verify currency formatting matches requirements
 - Test error handling scenarios
 - Validate color contrast for WCAG AA compliance
+
 ```
 
 ---
@@ -386,17 +396,23 @@ const config: Config = {
 
 **After initial generation:**
 ```
+
 "Now customize the Button component to add a red primary variant (#E53935 background, white text). Update the Sidebar to use this red primary button for active navigation items."
+
 ```
 
 **For specific components:**
 ```
+
 "Create a MetricCard component based on shadcn/ui Card. It should display a title and a large formatted currency value. Use the formatCurrency utility to format RUB values. Include a loading state using Skeleton component."
+
 ```
 
 **For API integration:**
 ```
+
 "Integrate the dashboard page with the API client. Fetch dashboard metrics on page load using React Query. Display the data in MetricCard components. Handle loading, error, and success states properly."
+
 ```
 
 ---
@@ -424,7 +440,8 @@ This prompt follows the **Structured Prompting Framework**:
 
 ---
 
-**Generated:** 2025-01-20  
-**Author:** Sally (UX Expert)  
+**Generated:** 2025-01-20
+**Author:** Sally (UX Expert)
 **Based on:** Front-end Specification v1.0 and PRD v1.0
 
+```

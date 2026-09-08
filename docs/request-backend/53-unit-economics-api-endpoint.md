@@ -40,20 +40,20 @@ GET /v1/analytics/unit-economics
 
 ### Headers (Required)
 
-| Header | Description |
-|--------|-------------|
+| Header          | Description      |
+| --------------- | ---------------- |
 | `Authorization` | Bearer JWT token |
-| `X-Cabinet-Id` | Cabinet UUID |
+| `X-Cabinet-Id`  | Cabinet UUID     |
 
 ### Query Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `week` | string | **Yes** | - | ISO week format (e.g., "2025-W47") |
-| `view_by` | enum | No | "sku" | Aggregation: "sku" \| "category" \| "brand" \| "total" |
-| `sort_by` | string | No | "revenue" | Sort field: "revenue" \| "net_margin_pct" \| "cogs_pct" |
-| `sort_order` | enum | No | "desc" | Sort order: "asc" \| "desc" |
-| `limit` | number | No | 100 | Max results (max: 500) |
+| Parameter    | Type   | Required | Default   | Description                                             |
+| ------------ | ------ | -------- | --------- | ------------------------------------------------------- |
+| `week`       | string | **Yes**  | -         | ISO week format (e.g., "2025-W47")                      |
+| `view_by`    | enum   | No       | "sku"     | Aggregation: "sku" \| "category" \| "brand" \| "total"  |
+| `sort_by`    | string | No       | "revenue" | Sort field: "revenue" \| "net_margin_pct" \| "cogs_pct" |
+| `sort_order` | enum   | No       | "desc"    | Sort order: "asc" \| "desc"                             |
+| `limit`      | number | No       | 100       | Max results (max: 500)                                  |
 
 ### Response Format
 
@@ -122,27 +122,27 @@ GET /v1/analytics/unit-economics
 
 ### Cost Categories Mapping
 
-| Field | Source | Description |
-|-------|--------|-------------|
-| `cogs` | `cogs` table | Cost of Goods Sold (from COGS assignments) |
-| `commission` | `total_commission_rub` | WB sales commission |
-| `logistics_delivery` | Из `wb_finance_raw` или `logistics_cost` | Доставка покупателю |
-| `logistics_return` | Из `wb_finance_raw` или часть `logistics_cost` | Возврат логистика |
-| `storage` | `storage_cost` | Хранение на складе |
-| `paid_acceptance` | `paid_acceptance_cost` | Платная приёмка |
-| `penalties` | `penalties_total` | Штрафы |
-| `other_deductions` | `other_adjustments_net` | Прочие удержания |
-| `advertising` | *Future* | Реклама (MVP: 0) |
+| Field                | Source                                         | Description                                |
+| -------------------- | ---------------------------------------------- | ------------------------------------------ |
+| `cogs`               | `cogs` table                                   | Cost of Goods Sold (from COGS assignments) |
+| `commission`         | `total_commission_rub`                         | WB sales commission                        |
+| `logistics_delivery` | Из `wb_finance_raw` или `logistics_cost`       | Доставка покупателю                        |
+| `logistics_return`   | Из `wb_finance_raw` или часть `logistics_cost` | Возврат логистика                          |
+| `storage`            | `storage_cost`                                 | Хранение на складе                         |
+| `paid_acceptance`    | `paid_acceptance_cost`                         | Платная приёмка                            |
+| `penalties`          | `penalties_total`                              | Штрафы                                     |
+| `other_deductions`   | `other_adjustments_net`                        | Прочие удержания                           |
+| `advertising`        | _Future_                                       | Реклама (MVP: 0)                           |
 
 ### Profitability Status Classification
 
-| Status | Net Margin % | Color (Frontend) |
-|--------|--------------|------------------|
-| `excellent` | > 25% | Green (#22C55E) |
-| `good` | 15-25% | Light Green (#84CC16) |
-| `warning` | 5-15% | Yellow (#EAB308) |
-| `critical` | 0-5% | Orange (#F97316) |
-| `loss` | < 0% | Red (#EF4444) |
+| Status      | Net Margin % | Color (Frontend)      |
+| ----------- | ------------ | --------------------- |
+| `excellent` | > 25%        | Green (#22C55E)       |
+| `good`      | 15-25%       | Light Green (#84CC16) |
+| `warning`   | 5-15%        | Yellow (#EAB308)      |
+| `critical`  | 0-5%         | Orange (#F97316)      |
+| `loss`      | < 0%         | Red (#EF4444)         |
 
 ---
 
@@ -276,20 +276,24 @@ const summary = {
 ## View Aggregation (`view_by` parameter)
 
 ### `view_by=sku` (default)
+
 - Return individual SKU rows
 - Each row = one product
 
 ### `view_by=category`
+
 - Group by product category
 - `sku_id` → category name
 - Aggregate costs weighted by revenue
 
 ### `view_by=brand`
+
 - Group by brand
 - `sku_id` → brand name
 - Aggregate costs weighted by revenue
 
 ### `view_by=total`
+
 - Single row with portfolio totals
 - `sku_id` = "TOTAL"
 - All costs aggregated
@@ -298,24 +302,24 @@ const summary = {
 
 ## Error Responses
 
-| Status | Code | Message | When |
-|--------|------|---------|------|
-| 400 | `VALIDATION_ERROR` | "Week parameter is required" | Missing `week` |
-| 400 | `VALIDATION_ERROR` | "Invalid week format. Expected: YYYY-Www" | Bad `week` format |
-| 401 | `UNAUTHORIZED` | "Authentication required" | Missing/invalid JWT |
-| 403 | `FORBIDDEN` | "Access denied to cabinet" | Wrong cabinet |
-| 404 | `NOT_FOUND` | "No data for week 2025-W47" | No data exists |
-| 500 | `INTERNAL_ERROR` | "Internal server error" | Server error |
+| Status | Code               | Message                                   | When                |
+| ------ | ------------------ | ----------------------------------------- | ------------------- |
+| 400    | `VALIDATION_ERROR` | "Week parameter is required"              | Missing `week`      |
+| 400    | `VALIDATION_ERROR` | "Invalid week format. Expected: YYYY-Www" | Bad `week` format   |
+| 401    | `UNAUTHORIZED`     | "Authentication required"                 | Missing/invalid JWT |
+| 403    | `FORBIDDEN`        | "Access denied to cabinet"                | Wrong cabinet       |
+| 404    | `NOT_FOUND`        | "No data for week 2025-W47"               | No data exists      |
+| 500    | `INTERNAL_ERROR`   | "Internal server error"                   | Server error        |
 
 ---
 
 ## Performance Requirements
 
-| Metric | Target | Notes |
-|--------|--------|-------|
-| Response time (100 SKUs) | <500ms | p95 |
-| Response time (500 SKUs) | <1000ms | p95 |
-| Caching | 1 hour TTL | Redis key: `unit-econ:{cabinetId}:{week}:{viewBy}` |
+| Metric                   | Target     | Notes                                              |
+| ------------------------ | ---------- | -------------------------------------------------- |
+| Response time (100 SKUs) | <500ms     | p95                                                |
+| Response time (500 SKUs) | <1000ms    | p95                                                |
+| Caching                  | 1 hour TTL | Redis key: `unit-econ:{cabinetId}:{week}:{viewBy}` |
 
 ---
 
@@ -367,6 +371,7 @@ export class UnitEconomicsController {
 ## Testing Checklist
 
 ### Unit Tests
+
 - [ ] Cost percentage calculation (normal case)
 - [ ] Cost percentage calculation (zero revenue)
 - [ ] Profitability classification (all 5 statuses)
@@ -374,6 +379,7 @@ export class UnitEconomicsController {
 - [ ] View aggregation (category, brand, total)
 
 ### Integration Tests
+
 - [ ] GET with valid parameters
 - [ ] GET with missing week (400)
 - [ ] GET with invalid week format (400)
@@ -383,6 +389,7 @@ export class UnitEconomicsController {
 - [ ] Verify response matches contract
 
 ### Performance Tests
+
 - [ ] 100 SKUs < 500ms
 - [ ] 500 SKUs < 1000ms
 - [ ] Caching works correctly
@@ -428,16 +435,17 @@ export class UnitEconomicsController {
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-12-09 | 1.0 | Initial request | Sarah (PO) |
-| 2025-12-09 | 2.0 | **IMPLEMENTED** - Backend Epic 27 complete | James (Dev) |
+| Date       | Version | Description                                | Author      |
+| ---------- | ------- | ------------------------------------------ | ----------- |
+| 2025-12-09 | 1.0     | Initial request                            | Sarah (PO)  |
+| 2025-12-09 | 2.0     | **IMPLEMENTED** - Backend Epic 27 complete | James (Dev) |
 
 ---
 
 **Status**: ✅ **IMPLEMENTED**
 
 **Implementation Details**:
+
 - Endpoint: `GET /v1/analytics/unit-economics`
 - Service: `src/analytics/services/unit-economics.service.ts`
 - Controller: `src/analytics/controllers/unit-economics.controller.ts`

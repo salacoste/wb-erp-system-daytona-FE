@@ -37,6 +37,7 @@
 **Resolution date**: 2026-02-01
 **Summary**: Technical reference documenting all backend data transformations applied to raw WB API data before returning to frontend. Covers 8 major transformations: sales gross total, COGS, logistics, storage, advertising, payout, margin percentage, and operating profit. Critical for frontend team to understand what calculations have already been applied.
 **Remaining frontend action**: None - use as reference to avoid double-calculating already-aggregated metrics.
+
 ### Источник данных WB API
 
 **Endpoint**: `GET /api/v5/supplier/reportDetailByPeriod`
@@ -44,11 +45,11 @@
 
 ### Исходные поля WB API
 
-| Поле WB API | Описание |
-|-------------|----------|
-| `retail_price_with_discount` | Цена для покупателя с учётом скидок WB (руб.) |
-| `doc_type` | Тип документа: `Продажа` или `Возврат` |
-| `qty` | Количество: 1 = товар, 0 = услуга, 2 = транспорт |
+| Поле WB API                  | Описание                                         |
+| ---------------------------- | ------------------------------------------------ |
+| `retail_price_with_discount` | Цена для покупателя с учётом скидок WB (руб.)    |
+| `doc_type`                   | Тип документа: `Продажа` или `Возврат`           |
+| `qty`                        | Количество: 1 = товар, 0 = услуга, 2 = транспорт |
 
 ### Трансформации бэкенда
 
@@ -89,13 +90,14 @@ sale_gross_net = SUM(
 
 ### Связь с WB Dashboard
 
-| Поле бэкенда | Поле WB Dashboard |
-|--------------|-------------------|
-| `wb_sales_gross` | "Продажа" (SUM of `gross` для sale) |
+| Поле бэкенда       | Поле WB Dashboard                     |
+| ------------------ | ------------------------------------- |
+| `wb_sales_gross`   | "Продажа" (SUM of `gross` для sale)   |
 | `wb_returns_gross` | "Возврат" (SUM of `gross` для return) |
-| `sale_gross` | Нетто: Продажа - Возврат |
+| `sale_gross`       | Нетто: Продажа - Возврат              |
 
 **Файлы реализации**:
+
 - `src/aggregation/weekly-payout-aggregator.service.ts:288-306`
 - `docs/BUSINESS-LOGIC-REFERENCE.md#критичные-правила-фильтрации`
 
@@ -110,11 +112,11 @@ sale_gross_net = SUM(
 
 ### Исходные поля
 
-| Поле | Описание |
-|------|----------|
-| `unit_cost_rub` | Себестоимость единицы товара (руб.) |
-| `valid_from` | Дата начала действия себестоимости |
-| `valid_to` | Дата окончания (null = текущая версия) |
+| Поле            | Описание                               |
+| --------------- | -------------------------------------- |
+| `unit_cost_rub` | Себестоимость единицы товара (руб.)    |
+| `valid_from`    | Дата начала действия себестоимости     |
+| `valid_to`      | Дата окончания (null = текущая версия) |
 
 ### Трансформации бэкенда
 
@@ -124,6 +126,7 @@ sale_gross_net = SUM(
    - COGS ищется как: `valid_from <= midpoint` с сортировкой по `valid_from DESC LIMIT 1`
 
 2. **Агрегация по SKU**:
+
    ```typescript
    cogs_rub = unit_cost_rub × quantity_sold
    ```
@@ -155,14 +158,15 @@ cogs_total = SUM(cogs_rub) по всем SKU с продажами
 
 **Принцип**: Если `valid_from ≤ четверг недели` → новая COGS применяется к этой неделе.
 
-| Сценарий | valid_from | Midpoint (Thu) | Результат |
-|----------|------------|----------------|-----------|
-| COGS изменён в среду | 19.11.2025 | 21.11.2025 | Новая COGS ✓ |
-| COGS изменён в пятницу | 22.11.2025 | 21.11.2025 | Старая COGS (применится с W48) |
+| Сценарий               | valid_from | Midpoint (Thu) | Результат                      |
+| ---------------------- | ---------- | -------------- | ------------------------------ |
+| COGS изменён в среду   | 19.11.2025 | 21.11.2025     | Новая COGS ✓                   |
+| COGS изменён в пятницу | 22.11.2025 | 21.11.2025     | Старая COGS (применится с W48) |
 
 **Рекомендация для пользователей**: Если COGS изменён в конце недели (Пт-Вс) и нужно применить к текущей неделе — установите `valid_from` на понедельник этой недели.
 
 **Файлы реализации**:
+
 - `src/analytics/services/margin-calculation.service.ts:547-589` (lookupCogs)
 - `src/cogs/services/cogs.service.ts` (findCogsAtDate)
 - `docs/BUSINESS-LOGIC-REFERENCE.md#cogs-temporal-lookup-week-midpoint-strategy`
@@ -176,15 +180,16 @@ cogs_total = SUM(cogs_rub) по всем SKU с продажами
 **Endpoint**: `GET /api/v5/supplier/reportDetailByPeriod`
 **Поля в wb_finance_raw**:
 
-| Поле WB | Описание |
-|---------|----------|
-| `logistics_delivery` | Стоимость доставки покупателю |
-| `logistics_return` | Стоимость возврата товара |
+| Поле WB                   | Описание                                                 |
+| ------------------------- | -------------------------------------------------------- |
+| `logistics_delivery`      | Стоимость доставки покупателю                            |
+| `logistics_return`        | Стоимость возврата товара                                |
 | `transport_reimbursement` | Возмещение транспортных издержек (qty=2, информационный) |
 
 ### Трансформации бэкенда
 
 1. **Агрегация компонентов**:
+
    ```sql
    logistics_cost = ABS(logistics_delivery) + ABS(logistics_return)
    ```
@@ -213,6 +218,7 @@ transport_reimbursement_neutral = SUM(transport_reimbursement)  -- отдель�
 - **Фильтрация по report_id**: `report_id LIKE 'api-2025-W42-%'` для точного соответствия WB Dashboard
 
 **Пример W49 (1-7 Dec 2025)**:
+
 ```
 logistics_delivery = 24,139.82₽
 logistics_return = 2,000.00₽
@@ -220,6 +226,7 @@ logistics_cost_total = 26,139.82₽ ✓ WB Dashboard MATCH
 ```
 
 **Файлы реализации**:
+
 - `src/aggregation/weekly-payout-aggregator.service.ts:316`
 - `src/analytics/services/margin-calculation.service.ts:471-478`
 - `docs/BUSINESS-LOGIC-REFERENCE.md#критичные-правила-фильтрации`
@@ -233,18 +240,19 @@ logistics_cost_total = 26,139.82₽ ✓ WB Dashboard MATCH
 **Primary Source (Epic 24)**: `GET /api/v1/analytics/warehouses/stock/paid`
 **Таблица**: `paid_storage_daily`
 
-| Поле WB API | Описание |
-|-------------|----------|
+| Поле WB API      | Описание                                    |
+| ---------------- | ------------------------------------------- |
 | `warehousePrice` | Стоимость хранения за день по складу (руб.) |
-| `nmId` | Артикул товара |
-| `date` | Дата расчёта |
-| `warehouse` | Название склада WB |
-| `volume` | Объём товара (литры) |
+| `nmId`           | Артикул товара                              |
+| `date`           | Дата расчёта                                |
+| `warehouse`      | Название склада WB                          |
+| `volume`         | Объём товара (литры)                        |
 
 ### Трансформации бэкенда
 
 1. **Ежедневный импорт**: Cron в 06:00 MSK для всех кабинетов
 2. **Агрегация по неделям**:
+
    ```sql
    storage_cost_total = SUM(warehouse_price)
    WHERE date BETWEEN week_start AND week_end
@@ -288,6 +296,7 @@ storage_by_sku = (
   ```
 
 **Файлы реализации**:
+
 - `src/analytics/services/storage-analytics.service.ts`
 - `src/analytics/services/margin-calculation.service.ts:181-184`
 - `docs/STORAGE-API-GUIDE.md`
@@ -302,23 +311,25 @@ storage_by_sku = (
 **Endpoint (Costs)**: `GET /adv/v1/upd` (WB UPD/Cost data)
 **Таблицы**: `adv_daily_stats`, `adv_daily_cost`
 
-| Поле WB API | Описание |
-|-------------|----------|
-| `sum` | Потрачено на рекламу за день (руб.) |
-| `views` | Показы |
-| `clicks` | Клики |
-| `orders` | Заказы с рекламы |
-| `updSum` | Стоимость по УПД |
+| Поле WB API | Описание                            |
+| ----------- | ----------------------------------- |
+| `sum`       | Потрачено на рекламу за день (руб.) |
+| `views`     | Показы                              |
+| `clicks`    | Клики                               |
+| `orders`    | Заказы с рекламы                    |
+| `updSum`    | Стоимость по УПД                    |
 
 ### Трансформации бэкенда
 
 1. **Ежедневный импорт**: Cron в 07:00 MSK
 2. **Агрегация по date range**:
+
    ```sql
    totalSpend = SUM(spend) WHERE date BETWEEN :from AND :to
    ```
 
 3. **ROAS/ROI расчёт (Story 33.5)**:
+
    ```typescript
    roas = revenue / spend           // Return on Ad Spend
    roi = (profit - spend) / spend   // Return on Investment
@@ -352,16 +363,17 @@ END
 
 ### Бизнес-логика: Efficiency Classification
 
-| Status | Условие | Рекомендация |
-|--------|---------|--------------|
-| `excellent` | ROAS > 5 | Масштабировать |
-| `good` | ROAS 3-5 | Поддерживать |
-| `moderate` | ROAS 1-3 | Оптимизировать |
-| `poor` | ROAS 0.5-1 | Пересмотреть стратегию |
-| `loss` | ROAS < 0.5 | Остановить |
-| `unknown` | Нет данных | — |
+| Status      | Условие    | Рекомендация           |
+| ----------- | ---------- | ---------------------- |
+| `excellent` | ROAS > 5   | Масштабировать         |
+| `good`      | ROAS 3-5   | Поддерживать           |
+| `moderate`  | ROAS 1-3   | Оптимизировать         |
+| `poor`      | ROAS 0.5-1 | Пересмотреть стратегию |
+| `loss`      | ROAS < 0.5 | Остановить             |
+| `unknown`   | Нет данных | —                      |
 
 **Файлы реализации**:
+
 - `src/analytics/services/advertising-analytics.service.ts`
 - `src/analytics/services/adv-campaign.service.ts`
 - `docs/ADVERTISING-ANALYTICS-GUIDE.md`
@@ -390,15 +402,15 @@ payout_total = toPayGoods
 
 ### Исходные поля
 
-| Поле | Источник | Описание |
-|------|----------|----------|
-| `toPayGoods` | SUM(net_for_pay) | К перечислению за товар |
-| `logisticsCost` | delivery + return | Стоимость логистики |
-| `storageCost` | storage | Стоимость хранения |
-| `paidAcceptanceCost` | paid_acceptance | Стоимость платной приёмки |
-| `penaltiesTotal` | penalties | Общая сумма штрафов |
-| `otherAdjustmentsNet` | corrections + other_adjustments | Прочие удержания |
-| `wbCommissionAdj` | commission_other WHERE reason='Удержание' | Корректировка ВВ |
+| Поле                  | Источник                                  | Описание                  |
+| --------------------- | ----------------------------------------- | ------------------------- |
+| `toPayGoods`          | SUM(net_for_pay)                          | К перечислению за товар   |
+| `logisticsCost`       | delivery + return                         | Стоимость логистики       |
+| `storageCost`         | storage                                   | Стоимость хранения        |
+| `paidAcceptanceCost`  | paid_acceptance                           | Стоимость платной приёмки |
+| `penaltiesTotal`      | penalties                                 | Общая сумма штрафов       |
+| `otherAdjustmentsNet` | corrections + other_adjustments           | Прочие удержания          |
+| `wbCommissionAdj`     | commission_other WHERE reason='Удержание' | Корректировка ВВ          |
 
 ### Формула расчёта
 
@@ -429,14 +441,15 @@ SUM(CASE WHEN reason = 'Удержание' THEN ABS(commission_other) ELSE 0 EN
 -- НЕ ИСПОЛЬЗОВАТЬ: SUM(ABS(commission_other)) as wb_commission_adj
 ```
 
-| reason | Вычитаем? | Почему |
-|--------|-----------|--------|
-| Продажа | Нет | Уже в total_commission_rub |
-| Возврат | Нет | Уже в total_commission_rub |
-| Возмещение за ПВЗ | Нет | Это ДОХОД |
-| **Удержание** | **Да** | Реальное удержание = "Корректировка ВВ" |
+| reason            | Вычитаем? | Почему                                  |
+| ----------------- | --------- | --------------------------------------- |
+| Продажа           | Нет       | Уже в total_commission_rub              |
+| Возврат           | Нет       | Уже в total_commission_rub              |
+| Возмещение за ПВЗ | Нет       | Это ДОХОД                               |
+| **Удержание**     | **Да**    | Реальное удержание = "Корректировка ВВ" |
 
 **Пример W49 (1-7 Dec 2025)**:
+
 ```
 toPayGoods = 135,186.71₽
 logisticsCost = 26,139.82₽
@@ -450,6 +463,7 @@ payout_total = 53,907.27₽ ✓ WB Dashboard EXACT MATCH
 ```
 
 **Файлы реализации**:
+
 - `src/aggregation/formulas/payout-total.formula.ts`
 - `src/aggregation/weekly-payout-aggregator.service.ts:477-499`
 
@@ -502,6 +516,7 @@ calculateMargins(revenue: RevenueData, cogs: CogsData): MarginMetrics {
 - **Gross profit = 100% coverage ONLY**: `gross_profit` показывается только при `cogs_coverage_pct = 100%`
 
 **Файлы реализации**:
+
 - `src/analytics/services/margin-calculation.service.ts`
 - `docs/stories/epic-10/story-10.4-margin-profit-calculation.md`
 
@@ -518,6 +533,7 @@ calculateMargins(revenue: RevenueData, cogs: CogsData): MarginMetrics {
 ### Трансформации бэкенда
 
 1. **Агрегация расходов по SKU**:
+
    ```typescript
    total_expenses = logistics
      + storage
@@ -568,6 +584,7 @@ calculateOperatingMetrics(revenue, cogs, expenses): OperatingMetrics {
 ### Бизнес-логика
 
 **Total Expenses Formula (per SKU)**:
+
 ```typescript
 // src/analytics/services/margin-calculation.service.ts:522-532
 totalExpensesRub = logisticsCostRub
@@ -582,10 +599,12 @@ totalExpensesRub = logisticsCostRub
 ```
 
 **Request #65: Storage Cost Source Change**:
+
 - Проблема: `wb_finance_raw.storage` = 0 для конкретных SKU (относится к `nm_id='UNKNOWN'`)
 - Решение: `paid_storage_daily` как источник per-SKU хранения
 
 **Файлы реализации**:
+
 - `src/analytics/services/margin-calculation.service.ts:416-544`
 - `docs/epics/epic-26-per-sku-operating-profit.md`
 
@@ -593,16 +612,16 @@ totalExpensesRub = logisticsCostRub
 
 ## Сводная таблица источников данных
 
-| Метрика | WB API Endpoint | Таблица БД | Агрегация |
-|---------|-----------------|------------|-----------|
-| `wb_sales_gross_total` | `reportDetailByPeriod` | `wb_finance_raw` | SUM по неделе |
-| `cogs_total` | — (ручной ввод) | `cogs` | SUM(unit_cost × qty) |
-| `logistics_cost_total` | `reportDetailByPeriod` | `wb_finance_raw` | SUM по report_id |
-| `storage_cost_total` | `warehouses/stock/paid` | `paid_storage_daily` | SUM по дням недели |
-| `advertising.totalSpend` | `adv/v2/stat`, `adv/v1/upd` | `adv_daily_stats` | SUM по date range |
-| `payout_total` | — (расчётное) | `weekly_payout_summary` | Formula |
-| `margin_percent` | — (расчётное) | `weekly_margin_fact` | Per-SKU calculation |
-| `operating_profit` | — (расчётное) | `weekly_margin_fact` | Per-SKU calculation |
+| Метрика                  | WB API Endpoint             | Таблица БД              | Агрегация            |
+| ------------------------ | --------------------------- | ----------------------- | -------------------- |
+| `wb_sales_gross_total`   | `reportDetailByPeriod`      | `wb_finance_raw`        | SUM по неделе        |
+| `cogs_total`             | — (ручной ввод)             | `cogs`                  | SUM(unit_cost × qty) |
+| `logistics_cost_total`   | `reportDetailByPeriod`      | `wb_finance_raw`        | SUM по report_id     |
+| `storage_cost_total`     | `warehouses/stock/paid`     | `paid_storage_daily`    | SUM по дням недели   |
+| `advertising.totalSpend` | `adv/v2/stat`, `adv/v1/upd` | `adv_daily_stats`       | SUM по date range    |
+| `payout_total`           | — (расчётное)               | `weekly_payout_summary` | Formula              |
+| `margin_percent`         | — (расчётное)               | `weekly_margin_fact`    | Per-SKU calculation  |
+| `operating_profit`       | — (расчётное)               | `weekly_margin_fact`    | Per-SKU calculation  |
 
 ---
 
@@ -636,14 +655,14 @@ totalExpensesRub = logisticsCostRub
 
 ## Связанная документация
 
-| Документ | Описание |
-|----------|----------|
-| `docs/BUSINESS-LOGIC-REFERENCE.md` | Полный справочник бизнес-логики |
-| `docs/architecture/04-data-models.md` | Модели данных |
-| `docs/API-PATHS-REFERENCE.md` | API endpoints |
-| `docs/STORAGE-API-GUIDE.md` | Storage Analytics API |
-| `docs/ADVERTISING-ANALYTICS-GUIDE.md` | Advertising Analytics |
-| `docs/epics/epic-26-per-sku-operating-profit.md` | Operating Profit Epic |
+| Документ                                         | Описание                        |
+| ------------------------------------------------ | ------------------------------- |
+| `docs/BUSINESS-LOGIC-REFERENCE.md`               | Полный справочник бизнес-логики |
+| `docs/architecture/04-data-models.md`            | Модели данных                   |
+| `docs/API-PATHS-REFERENCE.md`                    | API endpoints                   |
+| `docs/STORAGE-API-GUIDE.md`                      | Storage Analytics API           |
+| `docs/ADVERTISING-ANALYTICS-GUIDE.md`            | Advertising Analytics           |
+| `docs/epics/epic-26-per-sku-operating-profit.md` | Operating Profit Epic           |
 
 ---
 

@@ -17,6 +17,7 @@
 ## Acceptance Criteria
 
 ### AC1: Date Range Picker Component
+
 - [x] Create `DateRangePicker` component with two week selectors
 - [x] Support "from week" and "to week" selection
 - [x] Validate: start week <= end week
@@ -24,18 +25,21 @@
 - [x] Show "Последние N недель" quick select option
 
 ### AC2: Update Analytics Hooks
+
 - [x] Update `useMarginAnalytics.ts` to support `weekStart`/`weekEnd` params
 - [x] Update `MarginAnalyticsFilters` interface
 - [x] Keep backward compatibility with single `week` param
 - [x] Handle aggregated response format with new fields
 
 ### AC3: Update Analytics Pages
+
 - [x] Update `/analytics/sku` page with date range picker
 - [x] Update `/analytics/brand` page with date range picker
 - [x] Update `/analytics/category` page with date range picker
 - [x] Pass `weekStart`/`weekEnd` to API calls
 
 ### AC4: Display Aggregated Data
+
 - [x] Show period label: "W44 — W47 (4 недели)"
 - [x] Display aggregated metrics (sums, weighted averages)
 - [x] Show `weeks_with_sales` count in meta info (DEFER-001 resolved)
@@ -127,6 +131,7 @@ meta: {
 ## Tasks / Subtasks
 
 ### Task 1: Create DateRangePicker Component (AC1)
+
 - [x] 1.1 Create `src/components/custom/DateRangePicker.tsx`
 - [x] 1.2 Add two WeekSelector components (weekStart / weekEnd)
 - [x] 1.3 Implement validation: start week ≤ end week
@@ -135,6 +140,7 @@ meta: {
 - [x] 1.6 Export component and types
 
 ### Task 2: Update useMarginAnalytics Hook (AC2)
+
 - [x] 2.1 Add `weekStart`/`weekEnd` to `MarginAnalyticsFilters` interface
 - [x] 2.2 Update query params building logic (weekStart/weekEnd OR week)
 - [x] 2.3 Maintain backward compatibility with single `week` param
@@ -142,29 +148,34 @@ meta: {
 - [x] 2.5 Handle aggregated response format with new fields
 
 ### Task 3: Update Analytics SKU Page (AC3)
+
 - [x] 3.1 Import DateRangePicker component
 - [x] 3.2 Add state for weekStart/weekEnd
 - [x] 3.3 Replace single WeekSelector with DateRangePicker
 - [x] 3.4 Pass weekStart/weekEnd to useMarginAnalytics hook
 
 ### Task 4: Update Analytics Brand Page (AC3)
+
 - [x] 4.1 Import DateRangePicker component
 - [x] 4.2 Add state for weekStart/weekEnd
 - [x] 4.3 Replace single WeekSelector with DateRangePicker
 - [x] 4.4 Pass weekStart/weekEnd to hook
 
 ### Task 5: Update Analytics Category Page (AC3)
+
 - [x] 5.1 Import DateRangePicker component
 - [x] 5.2 Add state for weekStart/weekEnd
 - [x] 5.3 Replace single WeekSelector with DateRangePicker
 - [x] 5.4 Pass weekStart/weekEnd to hook
 
 ### Task 6: Display Aggregated Data (AC4) ✅
+
 - [x] 6.1 Show period label: "W44 — W47 (4 недели)" in page header
 - [x] 6.2 Display `weeks_with_sales` count in table or meta info (DEFER-001 resolved)
 - [x] 6.3 Display `weeks_with_cogs` count where applicable (DEFER-001 resolved)
 
 ### Task 7: Testing (All ACs)
+
 - [x] 7.1 Unit tests for DateRangePicker validation logic
 - [x] 7.2 Unit tests for useMarginAnalytics hook changes
 - [ ] 7.3 Integration tests for SKU page with date range
@@ -232,19 +243,22 @@ src/
 ## Dev Agent Record
 
 ### Agent Model Used
+
 Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### File List
-| File | Action |
-|------|--------|
-| `src/components/custom/DateRangePicker.tsx` | Created |
-| `src/components/custom/__tests__/DateRangePicker.test.tsx` | Created |
-| `src/hooks/useMarginAnalytics.ts` | Modified |
-| `src/app/(dashboard)/analytics/sku/page.tsx` | Modified |
-| `src/app/(dashboard)/analytics/brand/page.tsx` | Modified |
-| `src/app/(dashboard)/analytics/category/page.tsx` | Modified |
+
+| File                                                       | Action   |
+| ---------------------------------------------------------- | -------- |
+| `src/components/custom/DateRangePicker.tsx`                | Created  |
+| `src/components/custom/__tests__/DateRangePicker.test.tsx` | Created  |
+| `src/hooks/useMarginAnalytics.ts`                          | Modified |
+| `src/app/(dashboard)/analytics/sku/page.tsx`               | Modified |
+| `src/app/(dashboard)/analytics/brand/page.tsx`             | Modified |
+| `src/app/(dashboard)/analytics/category/page.tsx`          | Modified |
 
 ### Completion Notes
+
 - DateRangePicker component created with validation, quick select, and period label
 - All 3 analytics pages updated to use DateRangePicker instead of single week selector
 - useMarginAnalytics hooks updated to support weekStart/weekEnd params with backward compatibility
@@ -256,9 +270,9 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-11-29 | 1.0 | Initial draft | Claude (Opus 4.5) |
-| 2025-11-29 | 1.1 | Added Tasks/Subtasks, Dev Notes with Source Tree, Change Log. Status confirmed Ready for Dev | Sarah (PO Agent) |
-| 2025-12-05 | 2.0 | Implementation complete. DateRangePicker, hook updates, page updates, tests. Status: Ready for Review | James (Dev Agent) |
-| 2025-12-05 | 2.1 | DEFER-001 resolved: Added weeks_with_sales/weeks_with_cogs display in MarginBySkuTable tooltip. TypeScript types updated. | Claude (Opus 4.5) |
+| Date       | Version | Description                                                                                                               | Author            |
+| ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| 2025-11-29 | 1.0     | Initial draft                                                                                                             | Claude (Opus 4.5) |
+| 2025-11-29 | 1.1     | Added Tasks/Subtasks, Dev Notes with Source Tree, Change Log. Status confirmed Ready for Dev                              | Sarah (PO Agent)  |
+| 2025-12-05 | 2.0     | Implementation complete. DateRangePicker, hook updates, page updates, tests. Status: Ready for Review                     | James (Dev Agent) |
+| 2025-12-05 | 2.1     | DEFER-001 resolved: Added weeks_with_sales/weeks_with_cogs display in MarginBySkuTable tooltip. TypeScript types updated. | Claude (Opus 4.5) |

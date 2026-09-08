@@ -15,14 +15,14 @@ chars: 3121
 
 В этой статье:
 
-- 
+-
 - <a href="#import-tovarov-iz-webasyst" rel="nofollow">Импорт товаров из Webasyst</a>
 - <a href="#massovaya-ustanovka-svyazi" rel="nofollow">Массовая установка связи</a>
 - <a href="#vozmozhnye-oshibki-importa" rel="nofollow">Возможные ошибки импорта</a>
 
 ## Импорт товаров из Webasyst
 
-*Обратите внимание: карточки товаров не импортируются из Webasyst в SelSup напрямую.* Однако если в SelSup уже загружены аналогичные товары с других маркетплейсов или сервисов, можно установить связь с товарами из Webasyst.\
+_Обратите внимание: карточки товаров не импортируются из Webasyst в SelSup напрямую._ Однако если в SelSup уже загружены аналогичные товары с других маркетплейсов или сервисов, можно установить связь с товарами из Webasyst.\
 Чтобы установить связь товаров в SelSup с товарами Webasyst перейдите в раздел [Товары](https://selsup.ru/application/products), найдите нужный товар и откройте его для редактирования.\
 На открывшейся странице редактирования карточки найдите параметр **"Артикул Webasyst"** и заполните его.\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/07/art.png.webp)\

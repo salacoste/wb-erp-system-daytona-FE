@@ -13,7 +13,7 @@ chars: 4487
 
 В этой статье:
 
-- 
+-
 - <a href="#chem-polezna-zagruzka-dannyh-dlya-voronki-prodazh" rel="nofollow">Чем полезна загрузка данных для воронки продаж</a>
 - <a href="#chto-nuzhno-dlya-raboty" rel="nofollow">Что нужно для работы</a>
 - <a href="#kak-zapustit-sbor-dannyh" rel="nofollow">Как запустить сбор данных</a>

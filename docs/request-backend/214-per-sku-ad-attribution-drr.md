@@ -6,6 +6,7 @@
 **Component**: Backend API — Analytics (by-SKU) + Promotion (ad attribution)
 **Requester**: Frontend Team (competitor-parity program)
 **Related**:
+
 - Competitor parity spec: `docs/competitor-analysis/competitor-financial-report-parity.md` (FR-2, §3-D/E fields AF/AG/AH)
 - FE type: `src/types/cogs/products.ts` (`MarginAnalyticsSku`)
 - FE by-SKU endpoint: `GET /v1/analytics/weekly/by-sku`
@@ -31,11 +32,11 @@ The competitor's financial report attributes advertising spend to individual SKU
 
 ## Current state (what we have)
 
-| Source | Granularity | Fields | File |
-|---|---|---|---|
-| Weekly finance report (`wb_finance_raw`) | **Cabinet** | `wb_promotion` (deduction) | `src/analytics/...` |
-| PromotionAPI (`adv_daily_stats`) | **Campaign** (some auto-campaigns → no nmId) | `ad_spend`, `ad_attributed_revenue`, views/clicks | `src/promotion/...` |
-| by-SKU analytics (`MarginAnalyticsSku`) | **SKU** | revenue, cogs, profit, logistics, … — **no ad fields** | `src/types/cogs/products.ts` |
+| Source                                   | Granularity                                  | Fields                                                 | File                         |
+| ---------------------------------------- | -------------------------------------------- | ------------------------------------------------------ | ---------------------------- |
+| Weekly finance report (`wb_finance_raw`) | **Cabinet**                                  | `wb_promotion` (deduction)                             | `src/analytics/...`          |
+| PromotionAPI (`adv_daily_stats`)         | **Campaign** (some auto-campaigns → no nmId) | `ad_spend`, `ad_attributed_revenue`, views/clicks      | `src/promotion/...`          |
+| by-SKU analytics (`MarginAnalyticsSku`)  | **SKU**                                      | revenue, cogs, profit, logistics, … — **no ad fields** | `src/types/cogs/products.ts` |
 
 Per project memory: `ad_spend` (PromotionAPI) ≠ `wb_promotion` (weekly report) — different tables, ~73 RUB diff is normal; revenue source isolation is guaranteed (Request #75). Either could be the basis; **PromotionAPI** is the richer source (has attributed revenue → real ROAS/ДРР).
 
@@ -76,6 +77,7 @@ interface MarginAnalyticsSkuAdFields {
 ## Acceptance (FE side)
 
 When the backend ships per-SKU `ad_spend` + `drr_pct`:
+
 - FE adds an "Реклама (₽)" + "ДРР %" column to `SkuFinancialsTable` (and by-brand/category) using `sharePercentage`-style rendering via `formatPercentage`.
 - "Доля продвижения WB" (FR-1, already shipped) stays sourced from `wb_promotion` — the new "ДРР %" is the ad-attributed metric; both can coexist with distinct tooltips.
 - Recompute displayed margin to optionally subtract ad (a "marketing-adjusted margin" toggle) — separate FE story once data lands.

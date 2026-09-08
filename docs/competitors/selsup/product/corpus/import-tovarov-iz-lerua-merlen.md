@@ -11,7 +11,7 @@ chars: 3445
 
 В этой статье:
 
-- 
+-
 - <a href="#import-tovarov-iz-lemana-pro-lerua" rel="nofollow">Импорт товаров из Лемана ПРО (Леруа)</a>
 - <a href="#vozmozhnye-oshibki-importa" rel="nofollow">Возможные ошибки импорта</a>
 

@@ -10,6 +10,7 @@
 > **🎉 Backend Ready!** Все 12 эндпоинтов Epic 60 реализованы. Синхронизация запускается автоматически каждые 15 минут.
 >
 > **Quick Start:**
+>
 > 1. Проверить статус: `GET /v1/analytics/fulfillment/sync-status`
 > 2. Если `isDataAvailable: false`, запустить backfill: `POST /v1/orders/fbo/backfill`
 > 3. Получить данные: `GET /v1/analytics/fulfillment/summary`
@@ -51,10 +52,10 @@
 
 ### Что такое FBO/FBS?
 
-| Тип | Название | Описание |
-|-----|----------|----------|
+| Тип     | Название                | Описание                                   |
+| ------- | ----------------------- | ------------------------------------------ |
 | **FBO** | Fulfillment by Operator | Заказы, выполняемые со складов Wildberries |
-| **FBS** | Fulfillment by Seller | Заказы, выполняемые со складов продавца |
+| **FBS** | Fulfillment by Seller   | Заказы, выполняемые со складов продавца    |
 
 ---
 
@@ -67,18 +68,21 @@ GET /v1/analytics/fulfillment/summary
 ```
 
 **Headers:**
-| Header | Тип | Обязательный | Описание |
-|--------|-----|--------------|----------|
-| `Authorization` | string | Да | `Bearer {{token}}` |
-| `X-Cabinet-Id` | UUID | Да | ID кабинета |
+
+| Header          | Тип    | Обязательный | Описание           |
+| --------------- | ------ | ------------ | ------------------ |
+| `Authorization` | string | Да           | `Bearer {{token}}` |
+| `X-Cabinet-Id`  | UUID   | Да           | ID кабинета        |
 
 **Query Parameters:**
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `from` | string | Да | Начало периода (YYYY-MM-DD) |
-| `to` | string | Да | Конец периода (YYYY-MM-DD, макс. 90 дней) |
+
+| Параметр | Тип    | Обязательный | Описание                                  |
+| -------- | ------ | ------------ | ----------------------------------------- |
+| `from`   | string | Да           | Начало периода (YYYY-MM-DD)               |
+| `to`     | string | Да           | Конец периода (YYYY-MM-DD, макс. 90 дней) |
 
 **Response 200:**
+
 ```json
 {
   "summary": {
@@ -119,13 +123,14 @@ GET /v1/analytics/fulfillment/summary
 ```
 
 **Ошибки:**
-| Код | Описание |
-|-----|----------|
+
+| Код                       | Описание                                     |
+| ------------------------- | -------------------------------------------- |
 | 400 `INVALID_DATE_FORMAT` | Неверный формат даты. Используйте YYYY-MM-DD |
-| 400 `DATE_RANGE_EXCEEDED` | Диапазон дат не может превышать 90 дней |
-| 401 | Unauthorized |
-| 403 | Cabinet ID required |
-| 404 `NO_DATA` | Данные FBO/FBS еще не синхронизированы |
+| 400 `DATE_RANGE_EXCEEDED` | Диапазон дат не может превышать 90 дней      |
+| 401                       | Unauthorized                                 |
+| 403                       | Cabinet ID required                          |
+| 404 `NO_DATA`             | Данные FBO/FBS еще не синхронизированы       |
 
 ---
 
@@ -136,14 +141,16 @@ GET /v1/analytics/fulfillment/trends
 ```
 
 **Query Parameters:**
-| Параметр | Тип | Обязательный | По умолчанию | Описание |
-|----------|-----|--------------|--------------|----------|
-| `from` | string | Да | - | Начало периода (YYYY-MM-DD) |
-| `to` | string | Да | - | Конец периода (YYYY-MM-DD) |
-| `type` | enum | Нет | `all` | Тип: `fbo`, `fbs`, `all` |
-| `metric` | enum | Нет | `orders` | Метрика: `orders`, `sales`, `revenue`, `returns` |
+
+| Параметр | Тип    | Обязательный | По умолчанию | Описание                                         |
+| -------- | ------ | ------------ | ------------ | ------------------------------------------------ |
+| `from`   | string | Да           | -            | Начало периода (YYYY-MM-DD)                      |
+| `to`     | string | Да           | -            | Конец периода (YYYY-MM-DD)                       |
+| `type`   | enum   | Нет          | `all`        | Тип: `fbo`, `fbs`, `all`                         |
+| `metric` | enum   | Нет          | `orders`     | Метрика: `orders`, `sales`, `revenue`, `returns` |
 
 **Response 200:**
+
 ```json
 {
   "trends": [
@@ -195,6 +202,7 @@ GET /v1/analytics/fulfillment/sync-status
 ```
 
 **Response 200:**
+
 ```json
 {
   "orders": {
@@ -222,6 +230,7 @@ GET /v1/analytics/fulfillment/sync-status
 ```
 
 **Response 200 (данные не синхронизированы):**
+
 ```json
 {
   "orders": null,
@@ -267,12 +276,12 @@ GET /v1/analytics/fulfillment/sync-status
 
 ### Отображаемые метрики
 
-| Метрика | Описание | Формула |
-|---------|----------|---------|
-| Количество заказов | Число заказов за период | `ordersCount` |
-| Сумма заказов | Общая сумма в рублях | `ordersRevenue` |
-| Изменение % | Сравнение с предыдущим периодом | `(current - previous) / previous * 100` |
-| Доля FBO/FBS | Процент от общего количества | `fboCount / totalCount * 100` |
+| Метрика            | Описание                        | Формула                                 |
+| ------------------ | ------------------------------- | --------------------------------------- |
+| Количество заказов | Число заказов за период         | `ordersCount`                           |
+| Сумма заказов      | Общая сумма в рублях            | `ordersRevenue`                         |
+| Изменение %        | Сравнение с предыдущим периодом | `(current - previous) / previous * 100` |
+| Доля FBO/FBS       | Процент от общего количества    | `fboCount / totalCount * 100`           |
 
 ### Пустое состояние
 
@@ -313,6 +322,7 @@ Content-Type: application/json
 ```
 
 **Response 201:**
+
 ```json
 {
   "success": true,
@@ -326,24 +336,24 @@ Content-Type: application/json
 
 ## 4. Сравнение FBS и FBO
 
-| Аспект | FBS (текущий) | FBO (запрашиваемый) |
-|--------|---------------|---------------------|
-| **Источник данных** | Orders FBS API | Reports API |
-| **Фильтр склада** | `Склад продавца` | `Склад WB` |
-| **Глубина истории** | 30-365 дней | 90 дней |
-| **Обновление** | Реалтайм (каждые 5 мин) | Ежедневно (06:00 MSK) |
-| **Статус заказа** | Детальная история | Финальный статус |
-| **Приоритет бэкенда** | Epic 40 (COMPLETE) | Epic 60 (PLANNED) |
+| Аспект                | FBS (текущий)           | FBO (запрашиваемый)   |
+| --------------------- | ----------------------- | --------------------- |
+| **Источник данных**   | Orders FBS API          | Reports API           |
+| **Фильтр склада**     | `Склад продавца`        | `Склад WB`            |
+| **Глубина истории**   | 30-365 дней             | 90 дней               |
+| **Обновление**        | Реалтайм (каждые 5 мин) | Ежедневно (06:00 MSK) |
+| **Статус заказа**     | Детальная история       | Финальный статус      |
+| **Приоритет бэкенда** | Epic 40 (COMPLETE)      | Epic 60 (PLANNED)     |
 
 ### Технические различия
 
-| Параметр | FBS API | Reports API (FBO) |
-|----------|---------|-------------------|
-| Rate Limit | 100 req/min | 1 req/min |
-| Max записей | 500/запрос | 80,000/запрос |
-| Поле типа склада | `warehouseId` | `warehouseType` |
-| Значение FBO | — | `"Склад WB"` |
-| Значение FBS | `warehouseId != 0` | `"Склад продавца"` |
+| Параметр         | FBS API            | Reports API (FBO)  |
+| ---------------- | ------------------ | ------------------ |
+| Rate Limit       | 100 req/min        | 1 req/min          |
+| Max записей      | 500/запрос         | 80,000/запрос      |
+| Поле типа склада | `warehouseId`      | `warehouseType`    |
+| Значение FBO     | —                  | `"Склад WB"`       |
+| Значение FBS     | `warehouseId != 0` | `"Склад продавца"` |
 
 ---
 
@@ -597,12 +607,12 @@ function FBOEmptyState({ onSyncClick }: { onSyncClick: () => void }) {
 
 ## 8. Rate Limits и Кэширование
 
-| Эндпоинт | Rate Limit | Cache TTL |
-|----------|------------|-----------|
-| `/v1/analytics/fulfillment/summary` | 60 req/min | 5 минут |
-| `/v1/analytics/fulfillment/trends` | 60 req/min | 5 минут |
+| Эндпоинт                                | Rate Limit  | Cache TTL |
+| --------------------------------------- | ----------- | --------- |
+| `/v1/analytics/fulfillment/summary`     | 60 req/min  | 5 минут   |
+| `/v1/analytics/fulfillment/trends`      | 60 req/min  | 5 минут   |
 | `/v1/analytics/fulfillment/sync-status` | 120 req/min | 30 секунд |
-| `/v1/admin/fulfillment/sync` | 5 req/min | - |
+| `/v1/admin/fulfillment/sync`            | 5 req/min   | -         |
 
 ---
 
@@ -610,14 +620,14 @@ function FBOEmptyState({ onSyncClick }: { onSyncClick: () => void }) {
 
 ### Бэкенд (Epic 60) - Статус: PLANNED
 
-| Story | Название | SP | Блокирует фронтенд | Статус |
-|-------|----------|-----|-------------------|--------|
-| 60.1 | Database Schema | 5 | Нет | TODO |
-| 60.2 | Orders Sync Service | 8 | Нет | TODO |
-| 60.3 | Sales Sync Service | 8 | Нет | TODO |
-| 60.4 | Daily Aggregation | 5 | Нет | TODO |
-| 60.5 | **API Endpoints** | 5 | **Да** | TODO |
-| 60.6 | Scheduler | 3 | Нет | TODO |
+| Story | Название            | SP  | Блокирует фронтенд | Статус |
+| ----- | ------------------- | --- | ------------------ | ------ |
+| 60.1  | Database Schema     | 5   | Нет                | TODO   |
+| 60.2  | Orders Sync Service | 8   | Нет                | TODO   |
+| 60.3  | Sales Sync Service  | 8   | Нет                | TODO   |
+| 60.4  | Daily Aggregation   | 5   | Нет                | TODO   |
+| 60.5  | **API Endpoints**   | 5   | **Да**             | TODO   |
+| 60.6  | Scheduler           | 3   | Нет                | TODO   |
 
 **Минимально необходимо для фронтенда:** Stories 60.1-60.5
 
@@ -626,12 +636,14 @@ function FBOEmptyState({ onSyncClick }: { onSyncClick: () => void }) {
 ### Фронтенд (ожидание)
 
 После реализации Story 60.5:
+
 1. Интеграция с новыми эндпоинтами (2-3 SP)
 2. Карточка FBO на дашборде (2 SP)
 3. Пустое состояние + кнопка синхронизации (1 SP)
 4. Объединённый график FBO/FBS (2 SP)
 
 **Общий таймлайн:**
+
 - Бэкенд Epic 60: ~34 SP (2-3 недели)
 - Фронтенд интеграция: ~8 SP (1 неделя после бэкенда)
 
@@ -660,15 +672,17 @@ GET /v1/analytics/fulfillment/products
 ```
 
 **Query Parameters:**
-| Параметр | Тип | Обязательный | По умолчанию | Описание |
-|----------|-----|--------------|--------------|----------|
-| `from` | string | Да | - | Начало периода (YYYY-MM-DD) |
-| `to` | string | Да | - | Конец периода (YYYY-MM-DD) |
-| `type` | enum | Нет | `all` | Тип: `fbo`, `fbs`, `all` |
-| `limit` | number | Нет | `50` | Максимум продуктов |
-| `sort` | enum | Нет | `revenue` | Сортировка: `revenue`, `orders`, `returns` |
+
+| Параметр | Тип    | Обязательный | По умолчанию | Описание                                   |
+| -------- | ------ | ------------ | ------------ | ------------------------------------------ |
+| `from`   | string | Да           | -            | Начало периода (YYYY-MM-DD)                |
+| `to`     | string | Да           | -            | Конец периода (YYYY-MM-DD)                 |
+| `type`   | enum   | Нет          | `all`        | Тип: `fbo`, `fbs`, `all`                   |
+| `limit`  | number | Нет          | `50`         | Максимум продуктов                         |
+| `sort`   | enum   | Нет          | `revenue`    | Сортировка: `revenue`, `orders`, `returns` |
 
 **Response 200:**
+
 ```json
 {
   "products": [

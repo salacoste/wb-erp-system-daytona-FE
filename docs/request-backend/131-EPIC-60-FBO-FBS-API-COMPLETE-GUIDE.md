@@ -34,6 +34,7 @@ if (!syncStatus?.isDataAvailable) {
 **Resolution date**: 2026-02-01
 **Summary**: Epic 60 complete guide with quick-start code examples for React Query hooks. Covers sync-status checking, aggregated data loading, FBO/FBS breakdown, and trend analysis. All 12 endpoints deployed and working.
 **Remaining frontend action**: Use quick-start patterns for dashboard FBO/FBS integration.
+
 ```typescript
 const { data: summary } = useQuery({
   queryKey: ['fulfillment-summary', cabinetId, from, to],
@@ -48,30 +49,30 @@ const { data: summary } = useQuery({
 
 ### Группа 1: Fulfillment Analytics (4 эндпоинта)
 
-| Метод | Эндпоинт | Описание |
-|-------|----------|----------|
-| GET | `/v1/analytics/fulfillment/summary` | Агрегат FBO/FBS за период |
-| GET | `/v1/analytics/fulfillment/trends` | Дневная разбивка |
-| GET | `/v1/analytics/fulfillment/products` | По товарам |
-| GET | `/v1/analytics/fulfillment/sync-status` | Статус синхронизации |
+| Метод | Эндпоинт                                | Описание                  |
+| ----- | --------------------------------------- | ------------------------- |
+| GET   | `/v1/analytics/fulfillment/summary`     | Агрегат FBO/FBS за период |
+| GET   | `/v1/analytics/fulfillment/trends`      | Дневная разбивка          |
+| GET   | `/v1/analytics/fulfillment/products`    | По товарам                |
+| GET   | `/v1/analytics/fulfillment/sync-status` | Статус синхронизации      |
 
 ### Группа 2: FBO Orders (6 эндпоинтов)
 
-| Метод | Эндпоинт | Описание |
-|-------|----------|----------|
-| GET | `/v1/orders/fbo` | Список FBO заказов (paginated) |
-| GET | `/v1/orders/fbo/:orderId` | Детали заказа |
-| GET | `/v1/orders/fbo/aggregate` | Агрегат заказов |
-| GET | `/v1/orders/fbo/sync-status` | Статус синхронизации заказов |
-| POST | `/v1/orders/fbo/sync` | Ручной запуск синхронизации |
-| POST | `/v1/orders/fbo/backfill` | Загрузка исторических данных |
+| Метод | Эндпоинт                     | Описание                       |
+| ----- | ---------------------------- | ------------------------------ |
+| GET   | `/v1/orders/fbo`             | Список FBO заказов (paginated) |
+| GET   | `/v1/orders/fbo/:orderId`    | Детали заказа                  |
+| GET   | `/v1/orders/fbo/aggregate`   | Агрегат заказов                |
+| GET   | `/v1/orders/fbo/sync-status` | Статус синхронизации заказов   |
+| POST  | `/v1/orders/fbo/sync`        | Ручной запуск синхронизации    |
+| POST  | `/v1/orders/fbo/backfill`    | Загрузка исторических данных   |
 
 ### Группа 3: FBO Sales (2 эндпоинта)
 
-| Метод | Эндпоинт | Описание |
-|-------|----------|----------|
-| GET | `/v1/sales/fbo` | Список FBO продаж (paginated) |
-| GET | `/v1/sales/fbo/aggregate` | Агрегат продаж |
+| Метод | Эндпоинт                  | Описание                      |
+| ----- | ------------------------- | ----------------------------- |
+| GET   | `/v1/sales/fbo`           | Список FBO продаж (paginated) |
+| GET   | `/v1/sales/fbo/aggregate` | Агрегат продаж                |
 
 ---
 
@@ -82,18 +83,21 @@ const { data: summary } = useQuery({
 **Назначение:** Главный эндпоинт для дашборда - агрегированные метрики FBO/FBS.
 
 **Headers:**
+
 ```http
 Authorization: Bearer {{token}}
 X-Cabinet-Id: {{cabinetId}}
 ```
 
 **Query Parameters:**
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| from | string | Да | YYYY-MM-DD |
-| to | string | Да | YYYY-MM-DD (max 90 days) |
+
+| Параметр | Тип    | Обязательный | Описание                 |
+| -------- | ------ | ------------ | ------------------------ |
+| from     | string | Да           | YYYY-MM-DD               |
+| to       | string | Да           | YYYY-MM-DD (max 90 days) |
 
 **Response 200:**
+
 ```json
 {
   "summary": {
@@ -140,14 +144,16 @@ X-Cabinet-Id: {{cabinetId}}
 **Назначение:** Дневная разбивка для графиков.
 
 **Query Parameters:**
-| Параметр | Тип | По умолчанию | Описание |
-|----------|-----|--------------|----------|
-| from | string | - | YYYY-MM-DD |
-| to | string | - | YYYY-MM-DD |
-| type | enum | `all` | `fbo`, `fbs`, `all` |
-| metric | enum | `orders` | `orders`, `sales`, `revenue`, `returns` |
+
+| Параметр | Тип    | По умолчанию | Описание                                |
+| -------- | ------ | ------------ | --------------------------------------- |
+| from     | string | -            | YYYY-MM-DD                              |
+| to       | string | -            | YYYY-MM-DD                              |
+| type     | enum   | `all`        | `fbo`, `fbs`, `all`                     |
+| metric   | enum   | `orders`     | `orders`, `sales`, `revenue`, `returns` |
 
 **Response 200:**
+
 ```json
 {
   "trends": [
@@ -168,6 +174,7 @@ X-Cabinet-Id: {{cabinetId}}
 **Назначение:** Проверка доступности данных (вызывать перед другими запросами).
 
 **Response 200 (данные есть):**
+
 ```json
 {
   "orders": {
@@ -185,6 +192,7 @@ X-Cabinet-Id: {{cabinetId}}
 ```
 
 **Response 200 (данных нет):**
+
 ```json
 {
   "orders": null,
@@ -200,17 +208,19 @@ X-Cabinet-Id: {{cabinetId}}
 **Назначение:** Список FBO заказов с пагинацией.
 
 **Query Parameters:**
-| Параметр | Тип | По умолчанию | Описание |
-|----------|-----|--------------|----------|
-| from | string | 30 дней назад | YYYY-MM-DD |
-| to | string | сегодня | YYYY-MM-DD |
-| nm_id | number | - | Фильтр по nmId товара |
-| limit | number | 100 | 1-1000 |
-| offset | number | 0 | Смещение |
-| sort_by | string | orderDate | orderDate, createdAt, totalPrice |
-| sort_order | string | desc | asc, desc |
+
+| Параметр   | Тип    | По умолчанию  | Описание                         |
+| ---------- | ------ | ------------- | -------------------------------- |
+| from       | string | 30 дней назад | YYYY-MM-DD                       |
+| to         | string | сегодня       | YYYY-MM-DD                       |
+| nm_id      | number | -             | Фильтр по nmId товара            |
+| limit      | number | 100           | 1-1000                           |
+| offset     | number | 0             | Смещение                         |
+| sort_by    | string | orderDate     | orderDate, createdAt, totalPrice |
+| sort_order | string | desc          | asc, desc                        |
 
 **Response 200:**
+
 ```json
 {
   "data": [
@@ -246,6 +256,7 @@ X-Cabinet-Id: {{cabinetId}}
 **Назначение:** Загрузка исторических данных FBO (до 90 дней).
 
 **Request Body:**
+
 ```json
 {
   "dateFrom": "2025-11-01",
@@ -254,6 +265,7 @@ X-Cabinet-Id: {{cabinetId}}
 ```
 
 **Response 202:**
+
 ```json
 {
   "jobId": "uuid",
@@ -274,6 +286,7 @@ X-Cabinet-Id: {{cabinetId}}
 **Query Parameters:** Аналогично `/v1/orders/fbo`
 
 **Response 200:**
+
 ```json
 {
   "data": [
@@ -535,14 +548,14 @@ Backend автоматически синхронизирует данные FBO
 
 ## Коды ошибок
 
-| Код | Описание | Действие |
-|-----|----------|----------|
-| 400 `INVALID_DATE_FORMAT` | Неверный формат даты | Проверить YYYY-MM-DD |
-| 400 `DATE_RANGE_EXCEEDED` | Диапазон > 90 дней | Уменьшить диапазон |
-| 401 | Unauthorized | Обновить токен |
-| 403 | Cabinet ID required | Добавить X-Cabinet-Id |
-| 404 `NO_DATA` | Данные не синхронизированы | Показать empty state |
-| 429 | Rate limit exceeded | Повторить через 60 сек |
+| Код                       | Описание                   | Действие               |
+| ------------------------- | -------------------------- | ---------------------- |
+| 400 `INVALID_DATE_FORMAT` | Неверный формат даты       | Проверить YYYY-MM-DD   |
+| 400 `DATE_RANGE_EXCEEDED` | Диапазон > 90 дней         | Уменьшить диапазон     |
+| 401                       | Unauthorized               | Обновить токен         |
+| 403                       | Cabinet ID required        | Добавить X-Cabinet-Id  |
+| 404 `NO_DATA`             | Данные не синхронизированы | Показать empty state   |
+| 429                       | Rate limit exceeded        | Повторить через 60 сек |
 
 ---
 

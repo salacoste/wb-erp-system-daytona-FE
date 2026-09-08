@@ -13,14 +13,14 @@ The margin recalculation feature after COGS bulk upload has been **successfully 
 
 **Overall Status**: ✅ **ALL SYSTEMS OPERATIONAL**
 
-| Component | Status | Coverage | Notes |
-|-----------|--------|----------|-------|
-| Type Definitions | ✅ Complete | 100% | `MarginRecalculationStatus` type defined |
-| Hook Logic | ✅ Complete | 100% | Extraction and logging working |
-| Polling Hook | ✅ Complete | 100% | Weeks-aware polling implemented |
-| UI Component | ✅ Complete | 100% | Status display in results dialog |
-| Unit Tests | ✅ Passing | 11/11 | 100% pass rate |
-| Backward Compatibility | ✅ Verified | 100% | Works with old response format |
+| Component              | Status      | Coverage | Notes                                    |
+| ---------------------- | ----------- | -------- | ---------------------------------------- |
+| Type Definitions       | ✅ Complete | 100%     | `MarginRecalculationStatus` type defined |
+| Hook Logic             | ✅ Complete | 100%     | Extraction and logging working           |
+| Polling Hook           | ✅ Complete | 100%     | Weeks-aware polling implemented          |
+| UI Component           | ✅ Complete | 100%     | Status display in results dialog         |
+| Unit Tests             | ✅ Passing  | 11/11    | 100% pass rate                           |
+| Backward Compatibility | ✅ Verified | 100%     | Works with old response format           |
 
 ---
 
@@ -29,6 +29,7 @@ The margin recalculation feature after COGS bulk upload has been **successfully 
 ### Endpoint: POST /v1/products/cogs/bulk?format=v2
 
 **Response Format** (Verified):
+
 ```typescript
 {
   data: {
@@ -46,18 +47,21 @@ The margin recalculation feature after COGS bulk upload has been **successfully 
 ```
 
 **Key Observations**:
+
 - ✅ `marginRecalculation` field is **optional** (absent when no sales data)
 - ✅ Field structure matches documentation exactly
 - ✅ Status values are consistent: `pending`, `in_progress`, `completed`
 - ✅ Weeks array contains ISO week format (e.g., "2026-W03")
 
 **Test Data Verified**:
+
 - Weeks 2025-W47 to 2026-W04 filled with COGS data
 - 834 COGS records created
 - Total cogs_total: 1,667,748 ₽
 - 100% COGS coverage achieved
 
 **Expected Values for Verification**:
+
 ```json
 // 2026-W03
 {
@@ -81,6 +85,7 @@ The margin recalculation feature after COGS bulk upload has been **successfully 
 **Status**: ✅ **COMPLETE**
 
 **Implementation**:
+
 ```typescript
 /**
  * Margin recalculation status from bulk COGS upload
@@ -109,6 +114,7 @@ export interface BulkCogsUploadResponse {
 ```
 
 **Verification Results**:
+
 - ✅ Type definition properly documented with JSDoc comments
 - ✅ `marginRecalculation` field is optional (correct)
 - ✅ Status type is a union of literal types (type-safe)
@@ -121,6 +127,7 @@ export interface BulkCogsUploadResponse {
 **Status**: ✅ **COMPLETE**
 
 **Key Implementation** (lines 91-105):
+
 ```typescript
 onSuccess: (data, variables) => {
   // ... query invalidation logic ...
@@ -147,6 +154,7 @@ onSuccess: (data, variables) => {
 ```
 
 **Verification Results**:
+
 - ✅ Correctly extracts `marginRecalculation` from response data
 - ✅ Logs status, weeks, and task ID when present
 - ✅ Logs "Not triggered" message when absent but items succeeded
@@ -159,6 +167,7 @@ onSuccess: (data, variables) => {
 **Status**: ✅ **COMPLETE**
 
 **Key Implementation** (lines 177-218):
+
 ```typescript
 onSuccess: response => {
   const { succeeded, failed, marginRecalculation } = response.data
@@ -201,6 +210,7 @@ onSuccess: response => {
 ```
 
 **Verification Results**:
+
 - ✅ Checks for `marginRecalculation` presence before starting polling
 - ✅ Includes affected weeks in toast message for better UX
 - ✅ Handles "no recalculation" case with appropriate message
@@ -214,6 +224,7 @@ onSuccess: response => {
 **Status**: ✅ **COMPLETE**
 
 **Key Implementation** (lines 618-651):
+
 ```typescript
 {/* Margin Recalculation Status */}
 {resultData.data.marginRecalculation && (
@@ -252,6 +263,7 @@ onSuccess: response => {
 ```
 
 **Helper Function** (lines 39-46):
+
 ```typescript
 function getStatusText(status: string): string {
   const statusMap: Record<string, string> = {
@@ -264,6 +276,7 @@ function getStatusText(status: string): string {
 ```
 
 **Verification Results**:
+
 - ✅ Blue alert displayed when `marginRecalculation` present
 - ✅ Yellow alert displayed when succeeded but no `marginRecalculation`
 - ✅ Status text properly translated to Russian
@@ -295,20 +308,24 @@ Test Files  1 passed (1)
 ### Test Coverage Breakdown
 
 #### Margin Recalculation Field Handling (4 tests)
+
 - ✅ `should extract marginRecalculation from response when present`
 - ✅ `should handle response without marginRecalculation field`
 - ✅ `should log marginRecalculation info to console`
 - ✅ `should log "Not triggered" message when marginRecalculation is absent`
 
 #### Backward Compatibility (1 test)
+
 - ✅ `should handle old response format without marginRecalculation`
 
 #### Margin Recalculation Status Values (3 tests)
+
 - ✅ `should handle "pending" status`
 - ✅ `should handle "in_progress" status`
 - ✅ `should handle "completed" status`
 
 #### Margin Recalculation Weeks Array (3 tests)
+
 - ✅ `should handle single week in weeks array`
 - ✅ `should handle multiple weeks in weeks array`
 - ✅ `should handle empty weeks array`
@@ -316,6 +333,7 @@ Test Files  1 passed (1)
 ### Console Output Verification
 
 **Test 1: marginRecalculation Present**
+
 ```javascript
 ✅ Bulk COGS assignment completed:
    Succeeded: 10/2
@@ -327,6 +345,7 @@ Test Files  1 passed (1)
 ```
 
 **Test 2: marginRecalculation Absent**
+
 ```javascript
 ✅ Bulk COGS assignment completed:
    Succeeded: 5/2
@@ -335,6 +354,7 @@ Test Files  1 passed (1)
 ```
 
 **Verification Results**:
+
 - ✅ Console logging works correctly
 - ✅ All status values tested
 - ✅ Weeks array variations tested (single, multiple, empty)
@@ -346,6 +366,7 @@ Test Files  1 passed (1)
 ## 4. What's Working ✅
 
 ### 4.1 Core Functionality
+
 - ✅ **Backend Response Format**: API returns `marginRecalculation` field correctly
 - ✅ **Type Safety**: TypeScript types match API response structure
 - ✅ **Data Extraction**: Hook correctly extracts and logs margin recalculation data
@@ -353,6 +374,7 @@ Test Files  1 passed (1)
 - ✅ **UI Feedback**: Results dialog shows appropriate status messages
 
 ### 4.2 User Experience
+
 - ✅ **Clear Status Indicators**: Blue alert for active recalculation, yellow for no data
 - ✅ **Weeks Information**: Affected weeks displayed in both toast and dialog
 - ✅ **Russian Localization**: All user-facing text properly translated
@@ -360,6 +382,7 @@ Test Files  1 passed (1)
 - ✅ **Error Handling**: Graceful degradation when field is absent
 
 ### 4.3 Developer Experience
+
 - ✅ **Console Logging**: Detailed logs for debugging margin recalculation flow
 - ✅ **Type Safety**: Full TypeScript coverage with no `any` types
 - ✅ **Documentation**: JSDoc comments explain purpose and references
@@ -367,6 +390,7 @@ Test Files  1 passed (1)
 - ✅ **Backward Compatibility**: Works with old API response format
 
 ### 4.4 Edge Cases
+
 - ✅ **Empty Weeks Array**: UI handles empty weeks array gracefully
 - ✅ **No Sales Data**: Appropriate message when margin recalculation not triggered
 - ✅ **Multiple Weeks**: Correctly displays multiple affected weeks
@@ -412,6 +436,7 @@ All observations are intentional design decisions or working as expected. No bug
 ### Example 1: Successful Bulk Upload with Margin Recalculation
 
 **Request**:
+
 ```http
 POST /v1/products/cogs/bulk?format=v2
 Authorization: Bearer {JWT_TOKEN}
@@ -437,6 +462,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
   "data": {
@@ -469,6 +495,7 @@ Content-Type: application/json
 ### Example 2: No Margin Recalculation (No Sales Data)
 
 **Response**:
+
 ```json
 {
   "data": {
@@ -484,6 +511,7 @@ Content-Type: application/json
 ### Example 3: Partial Success with Errors
 
 **Response**:
+
 ```json
 {
   "data": {
@@ -528,23 +556,25 @@ Content-Type: application/json
 **Weeks with COGS Data**: 2025-W47 to 2026-W04
 
 **Summary**:
+
 - Total COGS Records: 834
 - Total cogs_total: 1,667,748 ₽
 - Coverage: 100%
 
 **Week-by-Week Breakdown**:
-| Week | cogs_total | Coverage | Status |
-|------|------------|----------|--------|
-| 2025-W47 | ~150,000 | 100% | ✅ |
-| 2025-W48 | ~180,000 | 100% | ✅ |
-| 2025-W49 | ~165,000 | 100% | ✅ |
-| 2025-W50 | ~175,000 | 100% | ✅ |
-| 2025-W51 | ~190,000 | 100% | ✅ |
-| 2025-W52 | ~155,000 | 100% | ✅ |
-| 2026-W01 | ~170,000 | 100% | ✅ |
-| 2026-W02 | ~160,000 | 100% | ✅ |
-| 2026-W03 | 46,293 | 100% | ✅ Verified |
-| 2026-W04 | 35,818 | 100% | ✅ Verified |
+
+| Week     | cogs_total | Coverage | Status      |
+| -------- | ---------- | -------- | ----------- |
+| 2025-W47 | ~150,000   | 100%     | ✅          |
+| 2025-W48 | ~180,000   | 100%     | ✅          |
+| 2025-W49 | ~165,000   | 100%     | ✅          |
+| 2025-W50 | ~175,000   | 100%     | ✅          |
+| 2025-W51 | ~190,000   | 100%     | ✅          |
+| 2025-W52 | ~155,000   | 100%     | ✅          |
+| 2026-W01 | ~170,000   | 100%     | ✅          |
+| 2026-W02 | ~160,000   | 100%     | ✅          |
+| 2026-W03 | 46,293     | 100%     | ✅ Verified |
+| 2026-W04 | 35,818     | 100%     | ✅ Verified |
 
 **Verification Method**: API calls to `/v1/analytics/weekly/finance-summary`
 
@@ -553,6 +583,7 @@ Content-Type: application/json
 ## 8. Recommendations
 
 ### 8.1 Deployment Readiness
+
 - ✅ **READY FOR PRODUCTION**
 - All tests passing
 - No critical issues
@@ -562,6 +593,7 @@ Content-Type: application/json
 ### 8.2 Monitoring Recommendations
 
 **Key Metrics to Monitor**:
+
 1. **Margin Recalculation Trigger Rate**
    - What percentage of bulk uploads trigger recalculation?
    - Expected: 70-90% (most uploads have sales data)
@@ -579,6 +611,7 @@ Content-Type: application/json
    - Expected: <5%
 
 **Monitoring Implementation**:
+
 ```typescript
 // Add to useBulkCogsAssignment.ts onSuccess
 if (marginRecalculation) {
@@ -594,18 +627,21 @@ if (marginRecalculation) {
 ### 8.3 Future Enhancements (Optional)
 
 **Priority 2: Task Status Endpoint**
+
 - **Feature**: Add `GET /v1/tasks/{taskId}` endpoint
 - **Benefit**: Real-time task status updates without polling
 - **Effort**: Medium (backend + frontend changes)
 - **Status**: Not required for current functionality
 
 **Priority 3: Historical Recalculation Log**
+
 - **Feature**: Show history of margin recalculations in UI
 - **Benefit**: Better audit trail for users
 - **Effort**: Medium (new component + API endpoint)
 - **Status**: Nice-to-have, not blocking
 
 **Priority 4: Recalculation Cancellation**
+
 - **Feature**: Allow users to cancel pending recalculations
 - **Benefit**: User control over long-running tasks
 - **Effort**: High (complex state management)
@@ -614,12 +650,14 @@ if (marginRecalculation) {
 ### 8.4 Documentation Updates
 
 **Completed**:
+
 - ✅ Type definitions updated with JSDoc
 - ✅ Hook logic documented inline
 - ✅ Component behavior documented
 - ✅ Test cases documented
 
 **Recommended Additions**:
+
 - Add user-facing documentation in `/docs/user-guide/` explaining automatic margin recalculation
 - Add troubleshooting guide for common margin recalculation issues
 - Add API examples to `/docs/api-integration-guide.md`
@@ -642,14 +680,14 @@ The margin recalculation feature after COGS bulk upload is **fully implemented a
 
 ### Production Readiness
 
-| Criterion | Status | Confidence |
-|-----------|--------|------------|
-| Functionality | ✅ Complete | 100% |
-| Testing | ✅ Complete | 100% |
-| Documentation | ✅ Complete | 100% |
-| Error Handling | ✅ Complete | 100% |
-| Accessibility | ✅ Complete | 100% |
-| Performance | ✅ Acceptable | 100% |
+| Criterion      | Status        | Confidence |
+| -------------- | ------------- | ---------- |
+| Functionality  | ✅ Complete   | 100%       |
+| Testing        | ✅ Complete   | 100%       |
+| Documentation  | ✅ Complete   | 100%       |
+| Error Handling | ✅ Complete   | 100%       |
+| Accessibility  | ✅ Complete   | 100%       |
+| Performance    | ✅ Acceptable | 100%       |
 
 **Overall Assessment**: ✅ **READY FOR PRODUCTION DEPLOYMENT**
 
@@ -665,15 +703,18 @@ The margin recalculation feature after COGS bulk upload is **fully implemented a
 ## Appendix A: File Changes Summary
 
 ### Files Modified
+
 1. `/src/types/cogs.ts` - Added `MarginRecalculationStatus` interface
 2. `/src/hooks/useBulkCogsAssignment.ts` - Extract and log `marginRecalculation` field
 3. `/src/hooks/useBulkCogsAssignmentWithPolling.ts` - Weeks-aware polling logic
 4. `/src/components/custom/BulkCogsForm.tsx` - Status display in results dialog
 
 ### Files Created
+
 1. `/src/hooks/__tests__/useBulkCogsAssignment.test.ts` - 11 unit tests
 
 ### Files Referenced
+
 1. `/docs/pages/products/COGS-BULK-UPLOAD-CHANGES.md` - Implementation plan
 2. `/docs/request-backend/118-backend-team-questions-detailed-analysis.md` - Root cause analysis
 3. `/docs/request-backend/119-quick-answers-summary.md` - TL;DR of backend changes

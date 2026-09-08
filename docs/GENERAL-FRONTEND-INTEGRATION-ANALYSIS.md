@@ -12,6 +12,7 @@
 This analysis consolidates findings from 16 backend documentation files, focusing on general frontend integration opportunities, API contracts, validation endpoints, and Telegram notifications.
 
 **Key Findings**:
+
 - ✅ All major backend epics are production-ready
 - ✅ No critical pending tasks from previous requests (#91-92)
 - ✅ Complete API contracts available for integration
@@ -27,6 +28,7 @@ This analysis consolidates findings from 16 backend documentation files, focusin
 **Status**: Backend Complete ✅ | Frontend Pending ⏳
 
 **What's Done**:
+
 - ✅ 6 Telegram endpoints implemented
 - ✅ Bot service operational (@Kernel_crypto_bot)
 - ✅ Notification templates with task-specific metrics
@@ -34,6 +36,7 @@ This analysis consolidates findings from 16 backend documentation files, focusin
 - ✅ Rich metrics for all task types (products_sync, adv_sync, etc.)
 
 **Frontend Work Required** (Estimated 4-6 hours):
+
 ```typescript
 // Required endpoints:
 POST /v1/notifications/telegram/bind        // Generate binding code
@@ -55,18 +58,21 @@ POST /v1/notifications/test                 // Send test notification
 **Status**: Backend Complete ✅ | Frontend Pending ⏳
 
 **What's Done**:
+
 - ✅ Data validation API (4 checks: row_balance, alternative_reconstruction, storno_control, transport_exclusion)
 - ✅ Orders integrity health check (6 checks: duplicates, orphans, missing_history, invalid_transitions, sync_overlaps)
 - ✅ Reconciliation endpoint for WB Dashboard comparison
 - ✅ Complete TypeScript interfaces documented
 
 **Frontend Work Required**:
+
 - UI for health status monitoring (healthy/warning/unhealthy indicators)
 - Integrity checks table with 6 checks
 - Reconciliation panel for WB Dashboard comparison
 - Polling every 5 minutes for real-time status
 
 **Required Endpoints**:
+
 ```http
 GET /health/orders-integrity?cabinet_id={uuid}
 GET /v1/orders/reconciliation?cabinet_id={uuid}&from={date}&to={date}
@@ -86,16 +92,18 @@ GET /v1/validation/:cabinetId/summary
 
 **Critical Discovery**: Wildberries has TWO tariff systems:
 
-| System | Purpose | Endpoint | Use Case |
-|--------|---------|----------|----------|
-| **Inventory** | Actual storage costs today | `GET /v1/tariffs/warehouses-with-tariffs` | Calculate current expenses, margin reports |
-| **Supply** | Planning 14 days ahead | `GET /v1/tariffs/acceptance/coefficients` | Plan future shipments, check warehouse availability |
+| System        | Purpose                    | Endpoint                                  | Use Case                                            |
+| ------------- | -------------------------- | ----------------------------------------- | --------------------------------------------------- |
+| **Inventory** | Actual storage costs today | `GET /v1/tariffs/warehouses-with-tariffs` | Calculate current expenses, margin reports          |
+| **Supply**    | Planning 14 days ahead     | `GET /v1/tariffs/acceptance/coefficients` | Plan future shipments, check warehouse availability |
 
 **Key Point**: Rate differences between Marketplace and API are NORMAL (10-15% variance):
+
 - Marketplace shows Supply rates (planning, usually higher)
 - API returns Inventory rates (actual costs, usually lower)
 
 **Frontend Action Required**:
+
 - Use `/warehouses-with-tariffs` for Price Calculator default (actual costs)
 - Use `/acceptance/coefficients` only when planning future shipments
 - Add UI tooltip explaining the difference to users
@@ -111,14 +119,15 @@ GET /v1/validation/:cabinetId/summary
 **Original Status Update (2026-01-02)**:
 Document #91 was created with outdated data. After code review, all listed tasks were already complete:
 
-| Task | Original Status | Actual Status | Evidence |
-|------|-----------------|---------------|----------|
-| Epic 36-FE (Product Card Linking) | "Pending" | ✅ Complete | 91 tests, full implementation |
-| Epic 37-FE (Merged Group Table) | "Pending" | ✅ Done | Quality score 89.4/100 |
-| Epic 37 Grafana Dashboards | "Pending" | ✅ Completed | 61 panels across 5 dashboards |
-| Epic 39 (Dashboard Bugfixes) | Complete | ✅ Complete | Verified |
+| Task                              | Original Status | Actual Status | Evidence                      |
+| --------------------------------- | --------------- | ------------- | ----------------------------- |
+| Epic 36-FE (Product Card Linking) | "Pending"       | ✅ Complete   | 91 tests, full implementation |
+| Epic 37-FE (Merged Group Table)   | "Pending"       | ✅ Done       | Quality score 89.4/100        |
+| Epic 37 Grafana Dashboards        | "Pending"       | ✅ Completed  | 61 panels across 5 dashboards |
+| Epic 39 (Dashboard Bugfixes)      | Complete        | ✅ Complete   | Verified                      |
 
 **Current Frontend Status**:
+
 - 40/40 stories completed across 7 epics
 - 145+ story points delivered
 - No pending tasks from this request
@@ -132,12 +141,14 @@ Document #91 was created with outdated data. After code review, all listed tasks
 **Status**: ✅ Complete (91 tests)
 
 **Key Features**:
+
 - Toggle "По артикулам" / "По склейкам"
 - `group_by` parameter support (sku | imtId)
 - URL state persistence (`?group_by=sku|imtId`)
 - Full backward compatibility with Epic 33
 
 **API Response Format**:
+
 ```typescript
 interface AdvertisingGroup {
   group_by: 'sku' | 'imtId';
@@ -157,6 +168,7 @@ interface AdvertisingGroup {
 **Status**: ✅ Done (Quality Score: 89.4/100)
 
 **Delivered Components**:
+
 - Story 37.1: Backend API Validation ✅
 - Story 37.2: MergedGroupTable Component (3-tier rowspan) ✅
 - Story 37.3: Aggregate Metrics Display ✅
@@ -173,6 +185,7 @@ interface AdvertisingGroup {
 **Status**: ✅ Epic Complete (7/7 stories + enhancements)
 
 **Latest Enhancements (Story 40.6)**:
+
 - At-Risk Orders Pagination: `atRiskLimit`, `atRiskOffset` parameters
 - `atRiskTotal` field: Total count before pagination
 - `cachedAt` field: Cache timestamp for all analytics endpoints
@@ -180,6 +193,7 @@ interface AdvertisingGroup {
 - Integration Tests: Complex query validation
 
 **Key Endpoints**:
+
 ```http
 GET /v1/orders                             // List with filters
 GET /v1/orders/{orderId}                   // Details with history
@@ -203,12 +217,14 @@ GET /v1/orders/sync-status                  // Sync status
 **Status**: ✅ Production Ready (221 tests, 100% passed)
 
 **4 Validation Checks**:
+
 1. **row_balance**: Total sum matches row-by-row reconstruction
 2. **alternative_reconstruction**: Alternative calculation validation
 3. **storno_control**: Storno sales ratio monitoring
 4. **transport_exclusion**: Transport reimbursement exclusion verification
 
 **Response Structure**:
+
 ```json
 {
   "week": "2025-W05",
@@ -233,6 +249,7 @@ GET /v1/orders/sync-status                  // Sync status
 **Status**: Backend Complete ✅
 
 **6 Integrity Checks**:
+
 1. `duplicates`: Duplicate order_id in orders_fbs
 2. `orphans`: Records without linked cabinet
 3. `missing_history`: Orders without status history
@@ -241,6 +258,7 @@ GET /v1/orders/sync-status                  // Sync status
 6. `sync_overlaps`: Conflicting parallel sync operations
 
 **Health Status Levels**:
+
 - `healthy`: All checks pass (Green #22C55E)
 - `warning`: Minor issues (Yellow #F59E0B)
 - `unhealthy`: Critical problems (Red #EF4444)
@@ -254,20 +272,23 @@ GET /v1/orders/sync-status                  // Sync status
 ### Backend Status: ✅ Production Ready
 
 **System Architecture**:
+
 - Backend owns 100% of notification content, formatting, and logic
 - Frontend manages ONLY user preferences (binding, enable/disable, quiet hours)
 - Rate limiting: 60 messages/hour per chat
 - Complete audit trail in `notification_log` table
 
 **Event Types**:
-| Event | Description | User Control |
-|-------|-------------|--------------|
-| `task.completed` | Task finished successfully | ✅ Can disable |
-| `task.failed` | Task failed after all retries | ✅ Can disable |
-| `task.stalled` | Worker stopped responding | ✅ Can disable |
-| `daily_digest` | Daily summary | Planned (not yet) |
+
+| Event            | Description                   | User Control      |
+| ---------------- | ----------------------------- | ----------------- |
+| `task.completed` | Task finished successfully    | ✅ Can disable    |
+| `task.failed`    | Task failed after all retries | ✅ Can disable    |
+| `task.stalled`   | Worker stopped responding     | ✅ Can disable    |
+| `daily_digest`   | Daily summary                 | Planned (not yet) |
 
 **Task-Specific Metrics** (Enhanced 2025-12-30):
+
 ```typescript
 // products_sync
 {
@@ -287,6 +308,7 @@ GET /v1/orders/sync-status                  // Sync status
 **Frontend Implementation Requirements**:
 
 1. **Telegram Binding Section**:
+
 ```tsx
 // Unbound State
 <TelegramBindingPanel>
@@ -316,6 +338,7 @@ GET /v1/orders/sync-status                  // Sync status
 ```
 
 2. **Polling Strategy**:
+
 ```typescript
 // Poll status every 3 seconds while modal open
 useEffect(() => {
@@ -332,6 +355,7 @@ useEffect(() => {
 ```
 
 3. **Required Hooks**:
+
 ```typescript
 // hooks/useTelegramBinding.ts
 export function useTelegramBinding(cabinetId: string) {
@@ -361,6 +385,7 @@ export function useNotificationPreferences(cabinetId: string) {
 **Recommendation**: Implement Telegram binding UI in user settings
 
 **Steps**:
+
 1. Create Telegram settings section in User Settings page
 2. Implement binding flow with QR code and deep link
 3. Add preferences form (enable/disable, quiet hours)
@@ -377,6 +402,7 @@ export function useNotificationPreferences(cabinetId: string) {
 **Recommendation**: Build dedicated Orders Integrity page
 
 **Steps**:
+
 1. Create `/orders/integrity` route
 2. Implement health status card (healthy/warning/unhealthy)
 3. Build integrity checks table (6 checks)
@@ -391,6 +417,7 @@ export function useNotificationPreferences(cabinetId: string) {
 **Impact**: Business analytics available in Grafana
 **Effort**: None (already done)
 **Deliverables**: 61 panels across 5 dashboards
+
 - Executive Dashboard (CEO/Owner) - 5 panels
 - Financial Dashboard (CFO) - 14 panels
 - Commercial Dashboard - 11 panels
@@ -406,6 +433,7 @@ export function useNotificationPreferences(cabinetId: string) {
 **Status**: ✅ Complete (25 SP, 8 stories)
 
 **New Admin Endpoints** (Backend-only):
+
 ```http
 PUT    /v1/tariffs/settings           // Full replacement
 PATCH  /v1/tariffs/settings           // Partial update
@@ -416,6 +444,7 @@ DELETE /v1/tariffs/settings/:id       // Delete scheduled version
 ```
 
 **Frontend Impact**: Minimal
+
 - Existing `GET /v1/tariffs/settings` unchanged
 - Cache TTL reduced from 24h to 1h (version switching support)
 - Admin-only access (Manager/Owner/Analyst get 403)
@@ -431,6 +460,7 @@ DELETE /v1/tariffs/settings/:id       // Delete scheduled version
 **Status**: ✅ All Issues Resolved (2026-01-21)
 
 **3 Critical Fixes**:
+
 1. **Warehouse Search Response Format**: Fixed to return `{data: {warehouses, updated_at}}`
 2. **Dimensions/Category Always Null**: Fixed field mapping from `subjectName` → `category`
 3. **Warehouse Data Not Loaded**: Implemented tariffs fallback (81 warehouses from tariffs data)
@@ -449,6 +479,7 @@ DELETE /v1/tariffs/settings/:id       // Delete scheduled version
 **Improvement**: Display "Data updated at {time}" in UI
 **Effort**: 1-2 hours
 **Example**:
+
 ```tsx
 {data.cachedAt && (
   <div className="text-xs text-muted-foreground">
@@ -465,6 +496,7 @@ DELETE /v1/tariffs/settings/:id       // Delete scheduled version
 **Improvement**: Show validation badge on weekly report cards
 **Effort**: 2-3 hours
 **Example**:
+
 ```tsx
 // Add to weekly report list
 <ValidationBadge
@@ -482,6 +514,7 @@ DELETE /v1/tariffs/settings/:id       // Delete scheduled version
 **Improvement**: Show green/red dot next to warehouse name
 **Effort**: 1-2 hours
 **Example**:
+
 ```tsx
 < WarehouseCard >
   <WarehouseName>{name}</WarehouseName>
@@ -521,35 +554,35 @@ Standard error format:
 
 ### HTTP Status Codes
 
-| Code | Meaning | Example |
-|------|---------|---------|
-| 200 | Success | Data returned successfully |
-| 400 | Bad Request | Missing/invalid parameters |
-| 401 | Unauthorized | Invalid/expired JWT |
-| 403 | Forbidden | Insufficient permissions |
-| 404 | Not Found | Resource doesn't exist |
-| 409 | Conflict | Duplicate/resource conflict |
-| 429 | Too Many Requests | Rate limit exceeded |
-| 500 | Internal Server Error | Backend error |
+| Code | Meaning               | Example                     |
+| ---- | --------------------- | --------------------------- |
+| 200  | Success               | Data returned successfully  |
+| 400  | Bad Request           | Missing/invalid parameters  |
+| 401  | Unauthorized          | Invalid/expired JWT         |
+| 403  | Forbidden             | Insufficient permissions    |
+| 404  | Not Found             | Resource doesn't exist      |
+| 409  | Conflict              | Duplicate/resource conflict |
+| 429  | Too Many Requests     | Rate limit exceeded         |
+| 500  | Internal Server Error | Backend error               |
 
 ---
 
 ## Documentation Cross-Reference
 
-| Request # | Topic | Status | Priority |
-|-----------|-------|--------|----------|
-| #79 | Advertising Sync Fix | ✅ Complete | N/A (deployed) |
-| #91 | Frontend Pending Tasks | ✅ All Complete | N/A (archive) |
-| #92 | Frontend Status Update | ℹ️ Informational | N/A (reference) |
-| #89 | Telegram Integration Guide | ✅ Backend Ready | High (frontend TODO) |
-| #90 | Telegram System Architecture | ✅ Documentation Complete | Reference |
-| #93 | Epic 40 Orders FBS Guide | ✅ Epic Complete | Reference |
-| #96 | Epic 44-48 Validation API | ✅ Backend Ready | Medium (frontend TODO) |
-| #97 | Epic 48 Orders Integrity UI | ✅ Documentation Ready | Medium (frontend TODO) |
-| #100 | Epic 44 Bugfixes | ✅ All Resolved | N/A (deployed) |
-| #101 | Epic 52 Tariff Admin API | ✅ Complete | N/A (admin-only) |
-| #102 | Tariffs Base Rates Guide | ✅ Documentation Ready | Reference |
-| #108 | Two Tariff Systems Message | ℹ️ Important Info | Reference |
+| Request # | Topic                        | Status                    | Priority               |
+| --------- | ---------------------------- | ------------------------- | ---------------------- |
+| #79       | Advertising Sync Fix         | ✅ Complete               | N/A (deployed)         |
+| #91       | Frontend Pending Tasks       | ✅ All Complete           | N/A (archive)          |
+| #92       | Frontend Status Update       | ℹ️ Informational          | N/A (reference)        |
+| #89       | Telegram Integration Guide   | ✅ Backend Ready          | High (frontend TODO)   |
+| #90       | Telegram System Architecture | ✅ Documentation Complete | Reference              |
+| #93       | Epic 40 Orders FBS Guide     | ✅ Epic Complete          | Reference              |
+| #96       | Epic 44-48 Validation API    | ✅ Backend Ready          | Medium (frontend TODO) |
+| #97       | Epic 48 Orders Integrity UI  | ✅ Documentation Ready    | Medium (frontend TODO) |
+| #100      | Epic 44 Bugfixes             | ✅ All Resolved           | N/A (deployed)         |
+| #101      | Epic 52 Tariff Admin API     | ✅ Complete               | N/A (admin-only)       |
+| #102      | Tariffs Base Rates Guide     | ✅ Documentation Ready    | Reference              |
+| #108      | Two Tariff Systems Message   | ℹ️ Important Info         | Reference              |
 
 ---
 
@@ -598,6 +631,7 @@ Standard error format:
 ### Manual Testing Checklist
 
 **Telegram Integration**:
+
 - [ ] Generate binding code
 - [ ] Open deep link in Telegram
 - [ ] Verify binding successful
@@ -606,6 +640,7 @@ Standard error format:
 - [ ] Unbind account
 
 **Orders Integrity**:
+
 - [ ] Check health status endpoint
 - [ ] View all 6 integrity checks
 - [ ] Trigger reconciliation
@@ -613,6 +648,7 @@ Standard error format:
 - [ ] Check breakdown by status/date
 
 **Price Calculator**:
+
 - [ ] Select warehouse
 - [ ] Verify rates match expected system (Inventory vs Supply)
 - [ ] Calculate logistics cost
@@ -624,11 +660,13 @@ Standard error format:
 ## Contact & Support
 
 **Backend Team**:
+
 - Swagger UI: `http://localhost:3000/api`
 - Test Examples: `test-api/*.http` files
 - API Reference: `docs/API-PATHS-REFERENCE.md`
 
 **Frontend Team**:
+
 - Current Status: All epics complete
 - Pending Work: Telegram UI, Orders Integrity Dashboard
 - Documentation: `frontend/docs/request-backend/*.md`

@@ -14,10 +14,12 @@
 Backend расширил API endpoint `GET /v1/analytics/advertising/stats` новой вложенной структурой для merged groups:
 
 **ДО** (Epic 36 - базовая версия):
+
 - Aggregate метрики на уровне группы
 - Простой массив `mergedProducts[]` с 5 полями (nmId, vendorCode, spend, revenue, orders)
 
 **ПОСЛЕ** (Request #88 - расширенная версия):
+
 - ✅ Aggregate метрики (14 полей) в отдельном объекте `aggregateMetrics`
 - ✅ Идентификация главного продукта в `mainProduct` объекте
 - ✅ Количество продуктов в группе `productCount`
@@ -35,6 +37,7 @@ Backend расширил API endpoint `GET /v1/analytics/advertising/stats` но
 **URL**: `GET /v1/analytics/advertising/stats`
 
 **Authentication**:
+
 ```
 Authorization: Bearer {JWT_TOKEN}
 X-Cabinet-Id: {CABINET_UUID}
@@ -42,16 +45,17 @@ X-Cabinet-Id: {CABINET_UUID}
 
 **Query Parameters**:
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `from` | string | ✅ Yes | - | Начало периода (YYYY-MM-DD) |
-| `to` | string | ✅ Yes | - | Конец периода (YYYY-MM-DD) |
-| `groupBy` | string | No | `sku` | Режим группировки: `sku` или `imtId` |
-| `viewBy` | string | No | `sku` | Срез данных: `sku`, `brand`, `category` |
+| Parameter | Type   | Required | Default | Description                             |
+| --------- | ------ | -------- | ------- | --------------------------------------- |
+| `from`    | string | ✅ Yes   | -       | Начало периода (YYYY-MM-DD)             |
+| `to`      | string | ✅ Yes   | -       | Конец периода (YYYY-MM-DD)              |
+| `groupBy` | string | No       | `sku`   | Режим группировки: `sku` или `imtId`    |
+| `viewBy`  | string | No       | `sku`   | Срез данных: `sku`, `brand`, `category` |
 
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 | `page` | number | No | 1 | Номер страницы |
 | `limit` | number | No | 50 | Размер страницы (max 100) |
@@ -59,6 +63,7 @@ X-Cabinet-Id: {CABINET_UUID}
 | `sortOrder` | string | No | `desc` | `asc` или `desc` |
 
 **Для получения merged groups с полными метриками**:
+
 ```
 GET /v1/analytics/advertising/stats?groupBy=imtId&from=2025-12-01&to=2025-12-07
 ```
@@ -205,6 +210,7 @@ GET /v1/analytics/advertising/stats?groupBy=imtId&from=2025-12-01&to=2025-12-07
 ### 1. Идентификация главного продукта
 
 **Способ 1: Через поле `mainProduct`** (рекомендуется):
+
 ```typescript
 // Главный продукт доступен напрямую
 const mainProductNmId = item.mainProduct?.nmId;
@@ -212,12 +218,14 @@ const mainProductVendorCode = item.mainProduct?.vendorCode;
 ```
 
 **Способ 2: Через массив `products[]`**:
+
 ```typescript
 // Найти главный продукт в массиве
 const mainProduct = item.products?.find(p => p.isMainProduct);
 ```
 
 **Гарантии backend**:
+
 - ✅ Ровно 1 продукт с `isMainProduct: true` в каждой группе
 - ✅ Это продукт с `totalSpend > 0` (или первый, если все spend = 0)
 - ✅ `mainProduct.nmId` всегда совпадает с nmId из `products[]` где `isMainProduct: true`
@@ -227,6 +235,7 @@ const mainProduct = item.products?.find(p => p.isMainProduct);
 ### 2. Отображение количества продуктов
 
 **Использование**:
+
 ```tsx
 // Badge с количеством продуктов
 {item.type === 'merged_group' && (
@@ -237,6 +246,7 @@ const mainProduct = item.products?.find(p => p.isMainProduct);
 ```
 
 **Гарантии backend**:
+
 - ✅ `productCount` всегда равен `item.products.length`
 - ✅ Присутствует только для `type: 'merged_group'`
 - ✅ Minimum = 2 (если 1 продукт → тип будет `individual`)
@@ -246,6 +256,7 @@ const mainProduct = item.products?.find(p => p.isMainProduct);
 ### 3. Работа с aggregate метриками
 
 **Использование для группы в целом**:
+
 ```typescript
 // Метрики на уровне всей группы (14 полей)
 const {
@@ -274,6 +285,7 @@ const {
 ```
 
 **Null handling**:
+
 - `roas`, `roi` могут быть `null` (когда `totalSpend = 0`)
 - `cpc` может быть `null` (когда `totalClicks = 0`)
 - Все остальные поля всегда `number` (не null)
@@ -283,6 +295,7 @@ const {
 ### 4. Таблица индивидуальных продуктов (18 полей)
 
 **Структура `products[]` массива**:
+
 ```typescript
 type MergedGroupProduct = {
   // Identity (4 fields)
@@ -314,6 +327,7 @@ type MergedGroupProduct = {
 ```
 
 **Пример таблицы**:
+
 ```tsx
 <Table>
   <TableHeader>
@@ -368,10 +382,12 @@ type MergedGroupProduct = {
 ### 5. Сортировка products[] массива
 
 **Backend гарантирует сортировку**:
+
 1. **Главный продукт всегда первый** (`products[0].isMainProduct === true`)
 2. **Остальные отсортированы по `totalSales` DESC**
 
 **Клиентская сортировка НЕ НУЖНА**:
+
 ```typescript
 // ❌ НЕ ДЕЛАЙТЕ ТАК (backend уже отсортировал)
 const sorted = item.products?.sort((a, b) => {
@@ -384,6 +400,7 @@ const products = item.products; // Уже отсортировано!
 ```
 
 **Преимущества**:
+
 - Консистентная сортировка на всех клиентах
 - Меньше кода на frontend
 - Главный продукт всегда на вершине таблицы
@@ -393,6 +410,7 @@ const products = item.products; // Уже отсортировано!
 ### 6. Epic 35: Organic Sales Integration
 
 **Формулы** (для валидации на frontend):
+
 ```typescript
 // Органическая выручка
 organicSales = totalSales - totalRevenue;
@@ -404,11 +422,13 @@ organicContribution = (organicSales / totalSales) × 100;
 **Доступно на двух уровнях**:
 
 **1. Aggregate level** (вся группа):
+
 ```typescript
 const organicPct = item.aggregateMetrics.organicContribution; // 4.25%
 ```
 
 **2. Product level** (каждый продукт):
+
 ```typescript
 item.products.forEach(product => {
   console.log(`${product.vendorCode}: ${product.organicContribution.toFixed(1)}% органики`);
@@ -416,6 +436,7 @@ item.products.forEach(product => {
 ```
 
 **Edge cases**:
+
 - ✅ Negative `organicSales` возможны (WB API иногда переатрибутирует продажи рекламе)
 - ✅ `organicContribution` может быть отрицательным (например, -15%)
 - ✅ При `totalSales = 0` → `organicContribution = 0` (деление на ноль обработано)
@@ -425,11 +446,13 @@ item.products.forEach(product => {
 ### 7. Null handling для calculated метрик
 
 **Метрики с возможным `null`**:
+
 - `roas` - null когда `totalSpend = 0`
 - `roi` - null когда `totalSpend = 0`
 - `cpc` - null когда `totalClicks = 0`
 
 **UI Pattern**:
+
 ```tsx
 // Безопасное отображение null значений
 const formatMetric = (value: number | null, decimals = 2) => {
@@ -443,6 +466,7 @@ const formatMetric = (value: number | null, decimals = 2) => {
 ```
 
 **Цветовая индикация** (опционально):
+
 ```tsx
 // ROAS индикатор
 const roasColor = (roas: number | null) => {
@@ -469,15 +493,17 @@ const newProducts = item.products; // Рекомендуется
 ```
 
 **Mapping LEGACY → NEW**:
-| LEGACY поле | NEW поле | Комментарий |
-|-------------|----------|-------------|
-| `mergedProducts[i].nmId` | `products[i].nmId` | Одинаковый nmId |
-| `mergedProducts[i].vendorCode` | `products[i].vendorCode` | Одинаковый артикул |
-| `mergedProducts[i].spend` | `products[i].totalSpend` | Rename |
-| `mergedProducts[i].revenue` | `products[i].totalRevenue` | Rename |
-| `mergedProducts[i].orders` | `products[i].totalOrders` | Rename |
+
+| LEGACY поле                    | NEW поле                   | Комментарий        |
+| ------------------------------ | -------------------------- | ------------------ |
+| `mergedProducts[i].nmId`       | `products[i].nmId`         | Одинаковый nmId    |
+| `mergedProducts[i].vendorCode` | `products[i].vendorCode`   | Одинаковый артикул |
+| `mergedProducts[i].spend`      | `products[i].totalSpend`   | Rename             |
+| `mergedProducts[i].revenue`    | `products[i].totalRevenue` | Rename             |
+| `mergedProducts[i].orders`     | `products[i].totalOrders`  | Rename             |
 
 **План deprecation**:
+
 - 2025-12-29: LEGACY поля работают (текущий статус)
 - 2026-Q1: Мониторинг использования LEGACY полей
 - 2026-Q2: Deprecation warning в API docs
@@ -490,6 +516,7 @@ const newProducts = item.products; // Рекомендуется
 ### Пример 1: Получить merged groups за неделю
 
 **Request**:
+
 ```bash
 GET /v1/analytics/advertising/stats?groupBy=imtId&from=2025-12-01&to=2025-12-07
 Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
@@ -497,6 +524,7 @@ X-Cabinet-Id: 550e8400-e29b-41d4-a716-446655440000
 ```
 
 **Expected Response**:
+
 ```json
 {
   "items": [
@@ -520,6 +548,7 @@ X-Cabinet-Id: 550e8400-e29b-41d4-a716-446655440000
 ### Пример 2: Проверить конкретную группу
 
 **Request**:
+
 ```bash
 # Фильтр по конкретному imtId (если backend поддерживает)
 GET /v1/analytics/advertising/stats?groupBy=imtId&imtId=328632&from=2025-12-01&to=2025-12-07
@@ -530,11 +559,13 @@ GET /v1/analytics/advertising/stats?groupBy=imtId&imtId=328632&from=2025-12-01&t
 ### Пример 3: Single product с imtId
 
 **Request**:
+
 ```bash
 GET /v1/analytics/advertising/stats?groupBy=imtId&from=2025-12-01&to=2025-12-07
 ```
 
 **Expected Response** (для single product):
+
 ```json
 {
   "items": [
@@ -561,23 +592,27 @@ GET /v1/analytics/advertising/stats?groupBy=imtId&from=2025-12-01&to=2025-12-07
 ### Обязательные проверки
 
 **Базовая интеграция**:
+
 - [ ] Endpoint `GET /v1/analytics/advertising/stats?groupBy=imtId` подключен
 - [ ] JWT auth и `X-Cabinet-Id` header настроены
 - [ ] Response TypeScript типы созданы (можно скопировать из backend DTOs)
 
 **UI Components**:
+
 - [ ] Отображается `mainProduct` (nmId + vendorCode)
 - [ ] Отображается `productCount` badge/label
 - [ ] Aggregate метрики из `aggregateMetrics` объекта
 - [ ] Таблица продуктов из `products[]` массива (все 18 полей)
 
 **Data Handling**:
+
 - [ ] Null handling для `roas`, `roi`, `cpc`
 - [ ] Negative `organicSales` обрабатывается корректно
 - [ ] `isMainProduct: true` визуально выделен (badge/icon/цвет)
 - [ ] Сортировка не применяется клиентом (используется backend sorting)
 
 **Backward Compatibility**:
+
 - [ ] Старый код Epic 36 не сломался (если есть)
 - [ ] Переход с `mergedProducts[]` на `products[]` выполнен
 
@@ -588,28 +623,34 @@ GET /v1/analytics/advertising/stats?groupBy=imtId&from=2025-12-01&to=2025-12-07
 ### Основные документы
 
 **Request #88 - Полная спецификация**:
+
 - 📄 `frontend/docs/request-backend/88-epic-37-individual-product-metrics.md`
 - Содержит: требования, implementation plan, acceptance criteria, API examples
 
 **Epic 36 - Product Card Linking**:
+
 - 📄 `docs/epics/epic-36-product-card-linking.md`
 - Содержит: базовую структуру merged groups, imtId концепцию
 
 **Epic 35 - Total Sales & Organic Split**:
+
 - 📄 `docs/epics/epic-35-total-sales-organic-split.md`
 - Содержит: формулы для totalSales, organicSales, organicContribution
 
 **WB Dashboard Metrics**:
+
 - 📄 `docs/WB-DASHBOARD-METRICS.md`
 - Содержит: соответствие наших метрик дашборду WB
 
 **API Paths Reference**:
+
 - 📄 `docs/API-PATHS-REFERENCE.md`
 - Содержит: все endpoints, auth, rate limits
 
 ### Backend DTOs (для TypeScript типов)
 
 **Копируйте типы из**:
+
 - 📄 `src/analytics/dto/response/advertising-response.dto.ts`
 - Lines 78-100: `MainProductDto`
 - Lines 102-190: `AggregateMetricsDto`
@@ -617,6 +658,7 @@ GET /v1/analytics/advertising/stats?groupBy=imtId&from=2025-12-01&to=2025-12-07
 - Lines 320-363: `AdvertisingItemDto` (расширенный)
 
 **Или используйте Swagger**:
+
 - 🌐 `http://localhost:3000/api#/Analytics/AdvertisingStatsController_getStats`
 
 ---
@@ -626,11 +668,13 @@ GET /v1/analytics/advertising/stats?groupBy=imtId&from=2025-12-01&to=2025-12-07
 ### Data Integrity
 
 **Backend валидация** (в development mode):
+
 - Проверяет `aggregateMetrics = SUM(products[])` для 6 метрик
 - Tolerance: ±0.01 для floating point
 - Логирует warnings при нарушениях
 
 **Рекомендация для frontend**:
+
 - Можете добавить аналогичную клиентскую валидацию (опционально)
 - Если видите warnings в backend logs → сообщите backend team
 
@@ -639,16 +683,19 @@ GET /v1/analytics/advertising/stats?groupBy=imtId&from=2025-12-01&to=2025-12-07
 ### Performance
 
 **Текущая производительность** (Epic 36 baseline):
+
 - p50: ~50-80ms
 - p95: ~100-150ms
 - p99: ~150-200ms
 
 **Request #88 impact**:
+
 - Response size: 5x увеличение (18 полей vs 5 полей)
 - Latency: без значительного увеличения (те же SQL queries)
 - Pagination: поддерживается (limit max 100)
 
 **Рекомендации**:
+
 - Используйте pagination для больших периодов
 - Кэшируйте ответы на клиенте (если нужно)
 - Мониторьте размер ответа при большом количестве групп
@@ -658,6 +705,7 @@ GET /v1/analytics/advertising/stats?groupBy=imtId&from=2025-12-01&to=2025-12-07
 ### Type Safety Tips
 
 **TypeScript интерфейсы**:
+
 ```typescript
 // Базовый интерфейс (скопируйте из backend DTOs)
 interface MergedGroupItem {
@@ -727,12 +775,14 @@ if (isMergedGroup(item)) {
 ### Technical Debt (Minor)
 
 **1. Optional profit/efficiency fields**:
+
 - Поля `profit` и `efficiency` опциональны в `products[]` массиве
 - Причина: backward compatibility с Epic 36
 - Impact: Low - не влияет на Request #88 функциональность
 - Timeline: Будет исправлено в API V2
 
 **2. LEGACY field deprecation**:
+
 - Поле `mergedProducts[]` будет удалено в API V2
 - Рекомендация: мигрируйте на `products[]` сейчас
 - Timeline: Deprecation в Q2 2026
@@ -744,15 +794,18 @@ if (isMergedGroup(item)) {
 ### Куда обращаться
 
 **Вопросы по API**:
+
 - Backend Team: Slack #backend-team
 - API Documentation: `docs/API-PATHS-REFERENCE.md`
 - Swagger: `http://localhost:3000/api`
 
 **Баги и issues**:
+
 - GitHub Issues: тег `[Request #88]`
 - Slack: #backend-qa channel
 
 **Срочные вопросы**:
+
 - Тегайте @backend-team в Slack
 - Или @sarah-po для business questions
 
@@ -763,6 +816,7 @@ if (isMergedGroup(item)) {
 ### Минимальный integration checklist
 
 **За 30 минут**:
+
 1. ✅ Добавьте TypeScript типы (скопируйте из backend DTOs)
 2. ✅ Подключите endpoint с `groupBy=imtId` parameter
 3. ✅ Отобразите `mainProduct` и `productCount`
@@ -776,6 +830,7 @@ if (isMergedGroup(item)) {
 ### Расширенная интеграция (по желанию)
 
 **Дополнительные фичи**:
+
 - Aggregate metrics display (14 полей)
 - Epic 35 organic sales charts
 - Main product highlighting (badge/icon)
@@ -789,27 +844,23 @@ if (isMergedGroup(item)) {
 ### Тестовые кейсы для frontend
 
 **Базовые тесты**:
+
 1. Merged group с 2 продуктами отображается корректно
 2. Merged group с 6+ продуктами отображается корректно
 3. Main product визуально выделен
 4. Products[] отсортирован корректно (main first)
 5. Null values (roas/roi/cpc) обработаны
 
-**Epic 35 тесты**:
-6. Organic sales отображаются корректно
-7. Negative organic sales не ломают UI
-8. Organic contribution % корректно вычислен
+**Epic 35 тесты**: 6. Organic sales отображаются корректно 7. Negative organic sales не ломают UI 8. Organic contribution % корректно вычислен
 
-**Edge cases**:
-9. Merged group где все `totalSpend = 0`
-10. Merged group с negative `organicSales`
-11. Single product с `imtId` (должен быть `type: 'individual'`)
+**Edge cases**: 9. Merged group где все `totalSpend = 0` 10. Merged group с negative `organicSales` 11. Single product с `imtId` (должен быть `type: 'individual'`)
 
 ---
 
 ## 🎯 Success Criteria
 
 **Ваша интеграция готова когда**:
+
 - ✅ Все 18 полей на продукт отображаются в UI
 - ✅ Main product визуально выделен
 - ✅ Aggregate metrics отображаются (14 полей)
@@ -822,15 +873,18 @@ if (isMergedGroup(item)) {
 ## 📚 Дополнительные ресурсы
 
 **Backend Architecture**:
+
 - `docs/architecture/04-data-models.md` - Data models
 - `docs/architecture/06-external-apis.md` - WB SDK integration
 
 **Epic References**:
+
 - `docs/epics/epic-33-advertising-analytics-api.md` - Advertising API foundation
 - `docs/epics/epic-35-total-sales-organic-split.md` - Organic sales
 - `docs/epics/epic-36-product-card-linking.md` - Merged groups
 
 **Completed Epics**:
+
 - `docs/COMPLETED-EPICS-REFERENCE.md` - All completed epics reference
 
 ---

@@ -18,6 +18,7 @@
 When margin equals exactly 0%, the UI displays "—" (no data) instead of "0%".
 
 **User Impact**:
+
 - User sees "—" when margin is actually 0%
 - This is misleading - user thinks there is no data available
 - Zero margin is valid business data that should be clearly displayed
@@ -57,12 +58,12 @@ undefined == null // true (loose equality)
 
 ### Affected Patterns
 
-| Pattern | Problem | Fix |
-|---------|---------|-----|
-| `!value` | `!0` returns `true` | `value == null` |
-| `value && format(value)` | `0 && format(0)` returns `0` | `value != null && format(value)` |
-| `value ? format(value) : '—'` | `0 ? x : y` returns `y` | `value != null ? format(value) : '—'` |
-| `value || '—'` | `0 || '—'` returns `'—'` | `value ?? '—'` (nullish coalescing) |
+| Pattern                       | Problem                      | Fix                                   |
+| ----------------------------- | ---------------------------- | ------------------------------------- |
+| `!value`                      | `!0` returns `true`          | `value == null`                       |
+| `value && format(value)`      | `0 && format(0)` returns `0` | `value != null && format(value)`      |
+| `value ? format(value) : '—'` | `0 ? x : y` returns `y`      | `value != null ? format(value) : '—'` |
+| `value                        |                              | '—'`                                  | `0  |     | '—'`returns`'—'` | `value ?? '—'` (nullish coalescing) |
 
 ---
 
@@ -72,19 +73,20 @@ undefined == null // true (loose equality)
 
 Based on codebase analysis, these files need review:
 
-| File | Pattern Found | Risk |
-|------|---------------|------|
-| `src/components/custom/PnLWaterfall.tsx` | `grossProfit && grossProfit > 0` (line 668, 680) | Medium - affects profit indicator |
-| `src/components/custom/FinancialSummaryTable.tsx` | `grossProfit !== null` | OK - correct pattern |
-| `src/components/custom/MarginDisplay.tsx` | `marginPct !== null && marginPct !== undefined` | OK - correct pattern |
-| `src/components/custom/ProductMarginCell.tsx` | `typeof product.current_margin_pct === 'number'` | OK - correct pattern |
-| `src/components/custom/MarginTrendChart.tsx` | `margin_pct !== null && margin_pct !== undefined` | OK - correct pattern |
-| `src/components/custom/MarginBySkuTable.tsx` | `profit !== null` | OK - correct pattern |
-| `src/lib/analytics-utils.ts` | `value === null || value === undefined` | OK - correct pattern |
+| File                                              | Pattern Found                                     | Risk                              |
+| ------------------------------------------------- | ------------------------------------------------- | --------------------------------- |
+| `src/components/custom/PnLWaterfall.tsx`          | `grossProfit && grossProfit > 0` (line 668, 680)  | Medium - affects profit indicator |
+| `src/components/custom/FinancialSummaryTable.tsx` | `grossProfit !== null`                            | OK - correct pattern              |
+| `src/components/custom/MarginDisplay.tsx`         | `marginPct !== null && marginPct !== undefined`   | OK - correct pattern              |
+| `src/components/custom/ProductMarginCell.tsx`     | `typeof product.current_margin_pct === 'number'`  | OK - correct pattern              |
+| `src/components/custom/MarginTrendChart.tsx`      | `margin_pct !== null && margin_pct !== undefined` | OK - correct pattern              |
+| `src/components/custom/MarginBySkuTable.tsx`      | `profit !== null`                                 | OK - correct pattern              |
+| `src/lib/analytics-utils.ts`                      | `value === null                                   |                                   | value === undefined` | OK - correct pattern |
 
 ### Known Issues in PnLWaterfall.tsx
 
 Lines 668 and 680:
+
 ```typescript
 // CURRENT (needs review):
 highlight={grossProfit && grossProfit > 0 ? 'positive' : 'negative'}
@@ -96,6 +98,7 @@ highlight={grossProfit && grossProfit > 0 ? 'positive' : 'negative'}
 ```
 
 **Note**: The current logic in PnLWaterfall.tsx is **intentional** for profit categorization:
+
 - Positive profit → green
 - Zero profit → shows as negative (which might be acceptable for profit)
 - Null profit → hidden
@@ -107,23 +110,28 @@ This may be **by design** since zero profit is arguably not "positive". Document
 ## Acceptance Criteria
 
 ### AC1: Zero Margin Displays as "0%"
+
 - [ ] When `margin_pct = 0`, display "0,00%" (Russian locale)
 - [ ] When `margin_pct = 0`, use neutral color (gray) not positive/negative
 
 ### AC2: Null/Undefined Shows Dash
+
 - [ ] When `margin_pct = null`, display "—"
 - [ ] When `margin_pct = undefined`, display "—"
 
 ### AC3: Negative Zero Edge Case
+
 - [ ] When `margin_pct = -0`, treat as `0` and display "0,00%"
 - [ ] `Object.is(-0, 0)` returns `false`, but should display same
 
 ### AC4: Color Coding for Zero
+
 - [ ] Zero margin uses neutral color (gray-500 or similar)
 - [ ] Not green (positive) or red (negative)
 - [ ] Consistent across all components
 
 ### AC5: Type Safety
+
 - [ ] All margin/profit checks use `!= null` pattern
 - [ ] No `!value` pattern for numeric values
 - [ ] ESLint rule consideration: `@typescript-eslint/strict-boolean-expressions`
@@ -190,6 +198,7 @@ return '—'
 ### Reference Implementation (MarginDisplay.tsx)
 
 This file already has correct pattern:
+
 ```typescript
 // src/components/custom/MarginDisplay.tsx:65-68
 if (marginPct !== null && marginPct !== undefined) {

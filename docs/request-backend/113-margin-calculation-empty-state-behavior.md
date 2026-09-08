@@ -11,6 +11,7 @@
 ## Executive Summary
 
 The FrontEnd team observed that Margin % fields return `null` values:
+
 - **Endpoint**: `GET /v1/analytics/weekly/finance-summary?week=YYYY-Www`
 - **Observed Response**: `{ "sale_gross_total": 305778.32, "cogs_total": null, "gross_profit": null }`
 - **Root Cause**: `weekly_margin_fact` table is empty (data pipeline not implemented)
@@ -30,6 +31,7 @@ The FrontEnd team observed that Margin % fields return `null` values:
 ### FrontEnd Observation
 
 **API Response**:
+
 ```json
 {
   "sale_gross_total": 305778.32,
@@ -41,12 +43,12 @@ The FrontEnd team observed that Margin % fields return `null` values:
 
 ### Expected vs Actual Behavior
 
-| Field | Expected | Actual | Status |
-|-------|----------|--------|--------|
-| `sale_gross_total` | Number | 305778.32 | ✅ Working |
-| `cogs_total` | Number | `null` | ⚠️ Empty table |
-| `gross_profit` | Number | `null` | ⚠️ Empty table |
-| `margin_pct` | Number | `null` | ⚠️ Empty table |
+| Field              | Expected | Actual    | Status         |
+| ------------------ | -------- | --------- | -------------- |
+| `sale_gross_total` | Number   | 305778.32 | ✅ Working     |
+| `cogs_total`       | Number   | `null`    | ⚠️ Empty table |
+| `gross_profit`     | Number   | `null`    | ⚠️ Empty table |
+| `margin_pct`       | Number   | `null`    | ⚠️ Empty table |
 
 ---
 
@@ -57,12 +59,14 @@ The FrontEnd team observed that Margin % fields return `null` values:
 **Table**: `weekly_margin_fact`
 
 **Current State**:
+
 ```sql
 SELECT COUNT(*) FROM weekly_margin_fact;
 -- Result: 0 (EMPTY)
 ```
 
 **COGS Data Available**:
+
 ```sql
 SELECT COUNT(*) FROM cogs;
 -- Result: 40 records exist
@@ -73,11 +77,13 @@ SELECT COUNT(*) FROM cogs;
 The `weekly_margin_fact` table is **not being populated** by any data aggregation pipeline.
 
 **Current Pipeline Status**:
+
 - ✅ `weekly_payout_summary` - Working (populated by Epic 2)
 - ✅ `cogs` table - Has 40 records (Epic 12, 16)
 - ❌ `weekly_margin_fact` - **EMPTY** (no aggregation pipeline implemented)
 
 **Epic 56 Status**: Historical Inventory Import (completed 2026-01-29)
+
 - Epic 56 implemented COGS import from WB Analytics API
 - Epic 56 does **NOT** populate `weekly_margin_fact`
 - Separate Epic needed for margin data aggregation
@@ -91,6 +97,7 @@ The `weekly_margin_fact` table is **not being populated** by any data aggregatio
 **File**: `src/analytics/weekly-analytics.service.ts`
 
 **Query Logic** (simplified):
+
 ```sql
 SELECT
   COALESCE(SUM(wmf.cogs_rub * wfs.quantity), 0) as cogs_total,
@@ -103,6 +110,7 @@ WHERE wmf.cabinet_id = $1
 ```
 
 **Result**: When `weekly_margin_fact` is empty:
+
 - `SUM()` returns `NULL`
 - `COALESCE(NULL, 0)` converts to `0` (but still shows as `null` in API response due to serialization)
 
@@ -115,6 +123,7 @@ WHERE wmf.cabinet_id = $1
 **When `cogs_total === null` and `gross_profit === null`**:
 
 #### Option 1: Empty State Component (Recommended)
+
 ```tsx
 import { CogsMissingState } from '@/components/custom/CogsMissingState';
 
@@ -130,6 +139,7 @@ import { CogsMissingState } from '@/components/custom/CogsMissingState';
 ```
 
 #### Option 2: Warning Badge
+
 ```tsx
 {data.cogs_total === null && (
   <Badge variant="warning" className="mb-4">
@@ -139,6 +149,7 @@ import { CogsMissingState } from '@/components/custom/CogsMissingState';
 ```
 
 #### Option 3: Metrics with Empty State
+
 ```tsx
 <div className="grid grid-cols-3 gap-4">
   <MetricCard
@@ -161,11 +172,13 @@ import { CogsMissingState } from '@/components/custom/CogsMissingState';
 ### Component Reference
 
 **Existing Components**:
+
 - `CogsMissingState` - Displays when COGS coverage < 100%
 - `MissingCogsAlert` - Shows warning with call-to-action
 - `MetricCardEnhanced` - Supports empty state display
 
 **Files**:
+
 - `frontend/src/components/custom/MissingCogsAlert.tsx`
 - `frontend/src/components/custom/CogsMissingState.tsx` (if exists)
 - `frontend/src/components/custom/MetricCardEnhanced.tsx`
@@ -176,21 +189,23 @@ import { CogsMissingState } from '@/components/custom/CogsMissingState';
 
 ### Current Status (2026-01-30)
 
-| Component | Status | Details |
-|-----------|--------|---------|
-| **COGS Import** | ✅ Working | 40 records in `cogs` table |
-| **Margin Aggregation** | ❌ Not Implemented | `weekly_margin_fact` is EMPTY |
-| **Finance Summary** | ✅ Working | Returns `null` for margin fields when table empty |
+| Component              | Status             | Details                                           |
+| ---------------------- | ------------------ | ------------------------------------------------- |
+| **COGS Import**        | ✅ Working         | 40 records in `cogs` table                        |
+| **Margin Aggregation** | ❌ Not Implemented | `weekly_margin_fact` is EMPTY                     |
+| **Finance Summary**    | ✅ Working         | Returns `null` for margin fields when table empty |
 
 ### Implementation Timeline
 
 **Completed**:
+
 - ✅ Epic 12 (2025-01): Products & COGS Management API
 - ✅ Epic 16 (2025-01): COGS Assignment UI
 - ✅ Epic 20 (2025-01): Auto Margin Recalculation (COGS → Margin trigger)
 - ✅ Epic 56 (2026-01-29): Historical Inventory Import (COGS import from WB API)
 
 **NOT Implemented**:
+
 - ❌ **Data Aggregation Pipeline**: `cogs` → `weekly_margin_fact`
   - This is a separate Epic that needs to be planned
   - Requires aggregation logic: COGS per product per week
@@ -217,6 +232,7 @@ import { CogsMissingState } from '@/components/custom/CogsMissingState';
 **Required Epic**: Margin Data Aggregation Pipeline
 
 **Scope**:
+
 1. **Aggregation Task**: Populate `weekly_margin_fact` from `cogs` table
 2. **Trigger Points**:
    - After COGS assignment (automatic)
@@ -237,6 +253,7 @@ import { CogsMissingState } from '@/components/custom/CogsMissingState';
 ### Manual Testing
 
 **Step 1**: Check Database
+
 ```sql
 -- Check if weekly_margin_fact is empty
 SELECT COUNT(*) FROM weekly_margin_fact;
@@ -249,6 +266,7 @@ SELECT COUNT(*) FROM weekly_finance_summary;
 ```
 
 **Step 2**: Test API Response
+
 ```bash
 curl -X GET "http://localhost:3000/v1/analytics/weekly/finance-summary?week=2026-W04" \
   -H "Authorization: Bearer <token>" \
@@ -257,12 +275,14 @@ curl -X GET "http://localhost:3000/v1/analytics/weekly/finance-summary?week=2026
 ```
 
 **Expected Result**:
+
 - If `weekly_margin_fact` is empty → `null` values
 - If `weekly_margin_fact` has data → numeric values
 
 ### FrontEnd Testing
 
 **Scenario 1**: Empty State Display
+
 ```
 Given: API returns { cogs_total: null, gross_profit: null }
 When: User views finance summary
@@ -272,6 +292,7 @@ And: Provide CTA to assign COGS
 ```
 
 **Scenario 2**: Data Available Display
+
 ```
 Given: API returns { cogs_total: 53626.0, gross_profit: 102038.76 }
 When: User views finance summary
@@ -379,6 +400,7 @@ export function useFinanceSummary({ week }: { week: string }) {
 ### Q: When will this be fixed?
 
 **A**: This requires a **new Epic** for the margin data aggregation pipeline. Epic 56 (completed 2026-01-29) implemented COGS import from WB API but does NOT populate `weekly_margin_fact`. A separate Epic needs to be planned for:
+
 1. Aggregating COGS data into `weekly_margin_fact`
 2. Triggering aggregation on COGS assignment
 3. Weekly aggregation for new data
@@ -386,11 +408,13 @@ export function useFinanceSummary({ week }: { week: string }) {
 ### Q: What should FrontEnd display in the meantime?
 
 **A**: Display an **empty state** component when:
+
 - `cogs_total === null`
 - `gross_profit === null`
 - `margin_pct === null`
 
 Show:
+
 - Warning badge: "Недостаточно данных для расчёта маржи"
 - Call-to-action: "Назначить себестоимость товарам"
 - Link to Products page
@@ -398,6 +422,7 @@ Show:
 ### Q: Can we manually populate `weekly_margin_fact`?
 
 **A**: Yes, but this is a **temporary workaround**:
+
 1. Write aggregation script to populate `weekly_margin_fact` from `cogs` table
 2. Run script manually via: `npm run scripts:aggregate-margin`
 3. **Note**: This will need to be rerun after each COGS assignment until the automated pipeline is implemented

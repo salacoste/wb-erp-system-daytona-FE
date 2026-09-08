@@ -17,7 +17,8 @@
 - Always ask before switching techniques: "Ready to try a different approach?"
 - Offer options: "Should we explore this idea deeper or generate more alternatives?"
 - Respect their process and timing
-```
+
+````
 
 ## Task: execute-checklist
 Source: .bmad-core/tasks/execute-checklist.md
@@ -25,3 +26,4 @@ Source: .bmad-core/tasks/execute-checklist.md
 
 ```md
 <!-- Powered by BMAD™ Core -->
+````

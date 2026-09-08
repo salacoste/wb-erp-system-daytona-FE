@@ -16,14 +16,14 @@
 
 Все открытые запросы фронтенда теперь закрыты:
 
-| Запрос | Тема | Статус | Что изменилось |
-|--------|------|--------|----------------|
-| **#153** | FBO Return Classification Gap | **CLOSED** | Пайплайн `return_classification_sync` работает ежедневно в 06:30 MSK. Все 3 ранее неклассифицированных типа возвратов теперь обрабатываются через `sdk.returns` + `enrichReturnsWithType()`. |
-| **#154** | Buyout/Return Data Mismatch | **CLOSED** | `sdk.returns.getReturns()` унифицирует данные FBO + FBS + finance. Выкупов/возвратов сверка (`BuyoutReconciliationService`) работает через единый `ReturnsSyncProcessor` (06:30 MSK). Аномалии: `return_without_buyout`, `orphan_buyout`, `return_quantity_mismatch`. |
-| **#148** | Fulfillment Returns Count=0 | **FIXED** | Возвращено корректное количество возвратов в fulfillment summary. Исправлено в Epic 106 + Story 107.8. |
-| **#150** | Monitoring False Alarms | **RESOLVED** | StaleTaskReaperService автоматически отменяет зависшие задачи (in_progress > timeout*2 → fail, pending > 2h → cancel). Мониторинг больше не генерирует ложные алармы. |
-| **#165** | Orders Price Inversion | **CLOSED** | price/salePrice инверсия исправлена в Story 103.1. |
-| **#158** | Stale CLAUDE.md Shards | **CLOSED** | Все shard-документы обновлены, 28 stale markers убраны. |
+| Запрос   | Тема                          | Статус       | Что изменилось                                                                                                                                                                                                                                                        |
+| -------- | ----------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **#153** | FBO Return Classification Gap | **CLOSED**   | Пайплайн `return_classification_sync` работает ежедневно в 06:30 MSK. Все 3 ранее неклассифицированных типа возвратов теперь обрабатываются через `sdk.returns` + `enrichReturnsWithType()`.                                                                          |
+| **#154** | Buyout/Return Data Mismatch   | **CLOSED**   | `sdk.returns.getReturns()` унифицирует данные FBO + FBS + finance. Выкупов/возвратов сверка (`BuyoutReconciliationService`) работает через единый `ReturnsSyncProcessor` (06:30 MSK). Аномалии: `return_without_buyout`, `orphan_buyout`, `return_quantity_mismatch`. |
+| **#148** | Fulfillment Returns Count=0   | **FIXED**    | Возвращено корректное количество возвратов в fulfillment summary. Исправлено в Epic 106 + Story 107.8.                                                                                                                                                                |
+| **#150** | Monitoring False Alarms       | **RESOLVED** | StaleTaskReaperService автоматически отменяет зависшие задачи (in_progress > timeout*2 → fail, pending > 2h → cancel). Мониторинг больше не генерирует ложные алармы.                                                                                                 |
+| **#165** | Orders Price Inversion        | **CLOSED**   | price/salePrice инверсия исправлена в Story 103.1.                                                                                                                                                                                                                    |
+| **#158** | Stale CLAUDE.md Shards        | **CLOSED**   | Все shard-документы обновлены, 28 stale markers убраны.                                                                                                                                                                                                               |
 
 ---
 
@@ -43,6 +43,7 @@
 Предварительный расчёт налогов для **незавершённых** недель. Раньше налоговые данные были доступны только для завершённых недель через `finance-summary`. Теперь можно получить предварительный расчёт для любой даты.
 
 **Response** (обёрнут в объект `tax`):
+
 ```json
 {
   "tax": {
@@ -75,6 +76,7 @@
 **Когда налоговая система не настроена**: `{ "tax": null }`
 
 **Ключевые поля (snake_case!)**:
+
 - `tax_system`: `"usn6"` | `"usn15"` | `"manual"` | `null`
 - `tax_amount`: предварительная сумма налога (RUB)
 - `tax_base`: база для расчёта налога
@@ -102,13 +104,15 @@
 SDK обновлён с v3.9.3 до v3.10.0. Это **чисто backend** изменение — фронтенд не работает с SDK напрямую, но получает улучшенные данные.
 
 **Что нового в sdk.returns**:
-| Метод | Описание |
-|-------|----------|
-| `getReturns({ dateFrom, dateTo, orderType? })` | Унифицированные данные возвратов FBO + FBS |
-| `getReturnByOrderId(orderId, { dateFrom, dateTo })` | Возврат по конкретному заказу |
-| `getReturnStats({ dateFrom, dateTo, groupBy })` | Агрегация по nmId / category / orderType |
+
+| Метод                                               | Описание                                   |
+| --------------------------------------------------- | ------------------------------------------ |
+| `getReturns({ dateFrom, dateTo, orderType? })`      | Унифицированные данные возвратов FBO + FBS |
+| `getReturnByOrderId(orderId, { dateFrom, dateTo })` | Возврат по конкретному заказу              |
+| `getReturnStats({ dateFrom, dateTo, groupBy })`     | Агрегация по nmId / category / orderType   |
 
 **Что это значит для фронтенда**:
+
 - Возвраты FBO теперь классифицируются через SDK (ранее — вручную по status history)
 - Данные выкупов/возвратов сверяются ежедневно через единый пайплайн
 - Endpoint `GET /v1/analytics/buyout/reconciliation` использует новые данные
@@ -122,10 +126,10 @@ SDK обновлён с v3.9.3 до v3.10.0. Это **чисто backend** из�
 
 Два устаревших пайплайна объединены в один:
 
-| Устаревший (удалён) | Замена |
-|---------------------|--------|
+| Устаревший (удалён)                          | Замена                     |
+| -------------------------------------------- | -------------------------- |
 | `fbo_return_classification_sync` (06:30 MSK) | `returns_sync` (06:30 MSK) |
-| `buyout_reconciliation_sync` (07:00 MSK) | `returns_sync` (06:30 MSK) |
+| `buyout_reconciliation_sync` (07:00 MSK)     | `returns_sync` (06:30 MSK) |
 
 **Итого**: 17 пайплайнов. Monitoring dashboard (`GET /v1/monitoring/pipeline-health-grid`) отражает актуальное состояние.
 
@@ -135,14 +139,14 @@ SDK обновлён с v3.9.3 до v3.10.0. Это **чисто backend** из�
 
 ### 5.1 Returns Analytics
 
-| Endpoint | Изменение |
-|----------|-----------|
-| `GET /v1/analytics/returns/reasons` | Данные теперь из `sdk.returns` (унифицированный источник) |
-| `GET /v1/analytics/returns/reasons/by-sku` | То же |
-| `GET /v1/analytics/buyout/reconciliation` | Улучшенные данные через `sdk.returns.getReturnStats()` |
-| `GET /v1/analytics/buyout/by-sku` | Return counts из унифицированного источника |
-| `GET /v1/analytics/buyout/summary` | То же |
-| `GET /v1/analytics/fulfillment/summary` | `returnsCount` теперь корректный (fix #148) |
+| Endpoint                                   | Изменение                                                 |
+| ------------------------------------------ | --------------------------------------------------------- |
+| `GET /v1/analytics/returns/reasons`        | Данные теперь из `sdk.returns` (унифицированный источник) |
+| `GET /v1/analytics/returns/reasons/by-sku` | То же                                                     |
+| `GET /v1/analytics/buyout/reconciliation`  | Улучшенные данные через `sdk.returns.getReturnStats()`    |
+| `GET /v1/analytics/buyout/by-sku`          | Return counts из унифицированного источника               |
+| `GET /v1/analytics/buyout/summary`         | То же                                                     |
+| `GET /v1/analytics/fulfillment/summary`    | `returnsCount` теперь корректный (fix #148)               |
 
 ### 5.2 Acquiring Analytics (Epic 101 — ранее)
 
@@ -156,19 +160,20 @@ Endpointы acquiring остаются без изменений. Провере�
 
 ## 6. СИСТЕМНЫЕ УЛУЧШЕНИЯ (не влияют на API контракт, но улучшают работу)
 
-| Улучшение | Описание |
-|-----------|----------|
-| **tokenType propagation** | Все 24 WB SDK вызова теперь передают `tokenType: 'personal'`. С 2026-03-30 WB rate-limitит по типу токена. |
-| **WbReturnsService caching** | 15-минутный кэш для `sdk.returns` вызовов. Снижает нагрузку на WB API. |
-| **StaleTaskReaper** | Автоматическая очистка зависших задач: in_progress > timeout*2 → fail, pending > 2h → cancel. |
-| **Queue cleanup** | Устаревшие очереди Redis очищены. Deprecated schedulers удалены. |
-| **Monitoring hardening** | Health score корректно считает новые кабинеты. Completeness monitor использует правильные timezone-aware week boundaries. |
+| Улучшение                    | Описание                                                                                                                  |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **tokenType propagation**    | Все 24 WB SDK вызова теперь передают `tokenType: 'personal'`. С 2026-03-30 WB rate-limitит по типу токена.                |
+| **WbReturnsService caching** | 15-минутный кэш для `sdk.returns` вызовов. Снижает нагрузку на WB API.                                                    |
+| **StaleTaskReaper**          | Автоматическая очистка зависших задач: in_progress > timeout*2 → fail, pending > 2h → cancel.                             |
+| **Queue cleanup**            | Устаревшие очереди Redis очищены. Deprecated schedulers удалены.                                                          |
+| **Monitoring hardening**     | Health score корректно считает новые кабинеты. Completeness monitor использует правильные timezone-aware week boundaries. |
 
 ---
 
 ## 7. ЦЕЛОСТНОСТЬ ДАННЫХ — W16-W17 Re-Aggregation
 
 Исправлены данные за недели W16 (2026-W16) и W17 (2026-W17):
+
 - **W16**: promo expenses были 0 → исправлены на 40,881 (dry-run verified)
 - **W17**: promo expenses были 0 → исправлены на 45,144 (dry-run verified)
 - **Combined fields**: `weekly_payout_total` пересчитаны с учётом исправленных promo
@@ -180,6 +185,7 @@ Endpointы acquiring остаются без изменений. Провере�
 ## 8. ЗАПРОСЫ СТАТУСА
 
 ### Все закрыты:
+
 - **#130**: Dashboard FBO Orders API — **COMPLETE** (backend реализован в Epic 60, фронтенд ожидает реализации)
 - **#153**: FBO Return Classification — **CLOSED**
 - **#154**: Buyout/Return Mismatch — **CLOSED**
@@ -195,15 +201,15 @@ Endpointы acquiring остаются без изменений. Провере�
 
 ## 9. ТЕКУЩИЙ STACK
 
-| Компонент | Версия |
-|-----------|--------|
-| WB SDK | v3.10.0 |
-| NestJS | v11.x |
-| Node.js | v25.8.1 |
-| PostgreSQL | 15.x |
-| Redis | 7.2.4 |
-| BullMQ | v5.x |
-| Tests | 6529 passing, 0 failures |
+| Компонент  | Версия                   |
+| ---------- | ------------------------ |
+| WB SDK     | v3.10.0                  |
+| NestJS     | v11.x                    |
+| Node.js    | v25.8.1                  |
+| PostgreSQL | 15.x                     |
+| Redis      | 7.2.4                    |
+| BullMQ     | v5.x                     |
+| Tests      | 6529 passing, 0 failures |
 
 ---
 

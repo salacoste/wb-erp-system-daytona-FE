@@ -6,6 +6,7 @@
 **Component**: Backend — Analytics (by-SKU / by-brand / by-category) + Tax + Stock + Ads
 **Requester**: Frontend Team
 **Related**:
+
 - Per-FR specs: `214-per-sku-ad-attribution-drr.md` (FR-2), `215-per-sku-net-profit-tax-allocation.md` (FR-3), `216-stock-at-purchase-price-and-share.md` (FR-4), `217-spp-cancellations-extra-costs.md` (FR-5)
 - Competitor parity spec: `docs/competitor-analysis/competitor-financial-report-parity.md`
 
@@ -25,23 +26,25 @@
 
 ## 1. The single integration point (extend these)
 
-| Layer | Backend file | Note |
-|---|---|---|
-| Controller | `src/analytics/controllers/weekly/weekly-breakdown.controller.ts` | `@Get('by-sku')` ~L65, `by-brand` ~L111, `by-category` ~L155 |
-| Query DTO (flag pattern) | `src/analytics/dto/query/weekly-by-sku-query.dto.ts` ~L114-123 | `include_cogs` — copy for `include_ads`/`include_stock` (also in brand/category query DTOs) |
-| Response DTO (add fields) | `src/analytics/dto/response/sku-analytics.dto.ts` | `SkuAnalyticsDto` — already has placeholder `advertising_cost?` (~L260), `net_profit?` (~L272), `net_margin_pct?` (~L285) |
-| Builder + flag merge | `src/analytics/services/sku-analytics.service.ts` | `getWeeklyBySku()` L54; `if (options.includeCogs)` merge block ~L148 |
-| Mapper (populate) | `src/analytics/services/sku-analytics.mapper.ts` | `mapWeeklyBySkuRow` ~L138 (sets `advertising_cost: null` today); `mergeMarginData` ~L277 |
-| by-brand/category (single-week) | `src/analytics/services/breakdown-analytics-query.service.ts` | supports `includeCogs` (L154, L352) |
-| by-brand/category (range) | `src/analytics/services/breakdown-analytics-range.service.ts` | ⚠️ does NOT support `includeCogs` yet |
+| Layer                           | Backend file                                                      | Note                                                                                                                      |
+| ------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Controller                      | `src/analytics/controllers/weekly/weekly-breakdown.controller.ts` | `@Get('by-sku')` ~L65, `by-brand` ~L111, `by-category` ~L155                                                              |
+| Query DTO (flag pattern)        | `src/analytics/dto/query/weekly-by-sku-query.dto.ts` ~L114-123    | `include_cogs` — copy for `include_ads`/`include_stock` (also in brand/category query DTOs)                               |
+| Response DTO (add fields)       | `src/analytics/dto/response/sku-analytics.dto.ts`                 | `SkuAnalyticsDto` — already has placeholder `advertising_cost?` (~L260), `net_profit?` (~L272), `net_margin_pct?` (~L285) |
+| Builder + flag merge            | `src/analytics/services/sku-analytics.service.ts`                 | `getWeeklyBySku()` L54; `if (options.includeCogs)` merge block ~L148                                                      |
+| Mapper (populate)               | `src/analytics/services/sku-analytics.mapper.ts`                  | `mapWeeklyBySkuRow` ~L138 (sets `advertising_cost: null` today); `mergeMarginData` ~L277                                  |
+| by-brand/category (single-week) | `src/analytics/services/breakdown-analytics-query.service.ts`     | supports `includeCogs` (L154, L352)                                                                                       |
+| by-brand/category (range)       | `src/analytics/services/breakdown-analytics-range.service.ts`     | ⚠️ does NOT support `includeCogs` yet                                                                                     |
 
 **`include_cogs` pattern to mirror** (from `weekly-by-sku-query.dto.ts`):
+
 ```ts
 @IsOptional()
 @Transform(({ value }) => value === 'true' || value === true)
 @IsBoolean()
 include_ads?: boolean = false;
 ```
+
 Gating: `if (options.includeAds === true) { ... fetch + merge ... }`. When false, optional fields stay `null`.
 
 ---
@@ -58,7 +61,8 @@ Gating: `if (options.includeAds === true) { ... fetch + merge ... }`. When false
 
 ## 3. Per-FR detail
 
-### FR-2 — per-SKU advertising attribution + ДРР %  *(mostly WIRING)*
+### FR-2 — per-SKU advertising attribution + ДРР % _(mostly WIRING)_
+
 - **Goal**: per-SKU `ad_spend` + `drr_pct` (+ optional `ad_attributed_revenue`, `ad_cost_per_unit`).
 - **Data (already per-nmId!)**: `adv_daily_stats` table — `model AdvDailyStats` (`prisma/schema.prisma:792`), unique on `[cabinetId, advertId, date, nmId]`, has `spend`/`orders`/`orderSum`/`views`/`clicks`/`canceled`. Campaign→nmId map: `model AdvCampaign.nmIds Int[]` (`schema.prisma:771`); campaign type (auto vs manual) in `AdvCampaign.type`.
 - **Compute (exists)**: `AdvQueryService.getBaseAdStats()` + `AdvMergeMetricsService` (ROAS/ROI/efficiency) — per-SKU attribution logic already lives in the advertising-analytics module (`src/analytics/services/adv-*.service.ts`). Cabinet-level `ad_spend` for tax is aggregated in `weekly-payout-persistence.service.ts:292`.
@@ -68,7 +72,8 @@ Gating: `if (options.includeAds === true) { ... fetch + merge ... }`. When false
 - **Blocking question (PM)**: attribution method for **auto-campaigns** (which aren't nmId-targeted): manual-only / proportional split by attributed revenue / WB-native? See #214 §"Open questions".
 - **Effort**: **Low–Medium** (wiring + one product decision). The hard part (attribution service) exists.
 
-### FR-3 — per-SKU net profit after tax + tax/VAT allocation  *(mostly WIRING if Epic 72 columns are populated)*
+### FR-3 — per-SKU net profit after tax + tax/VAT allocation _(mostly WIRING if Epic 72 columns are populated)_
+
 - **Goal**: per-SKU `tax_allocated`, `vat_allocated`, `net_profit_after_tax`.
 - **Data (per-SKU tax columns ALREADY EXIST — Epic 72)**: `model WeeklyMarginFact` (`schema.prisma:456`) has `taxAmountRub` (L489), `netProfitAfterTaxRub` (L490), `netMarginAfterTaxPct` (L491). **⚠️ Backend must confirm these are actually populated** (the columns exist; verify the write path).
 - **Compute (cabinet)**: `src/tax/tax-calculation.service.ts` (`calculate()` L32; USN6/USN15+1%min/Manual; VAT). Cabinet tax persisted to `WeeklyPayoutTotal` via `weekly-payout-persistence.service.ts:307`.
@@ -78,7 +83,8 @@ Gating: `if (options.includeAds === true) { ... fetch + merge ... }`. When false
 - **Blocking question (PM)**: tax **allocation method** (proportional to operating-profit / revenue / COGS). FE recommends proportional-to-operating-profit. **Invariant**: `net_profit_after_tax ≤ operating_profit` per row (ties to Request #213). See #215.
 - **Effort**: **Low–Medium** (mostly wiring, IF Epic 72 columns are populated; Medium if they need population).
 
-### FR-4 — stock at purchase price + stock-share  *(HARD BLOCKER: FBO source)*
+### FR-4 — stock at purchase price + stock-share _(HARD BLOCKER: FBO source)_
+
 - **Goal**: per-SKU `stock_fbs`, `stock_fbo`, `stock_total`, `stock_value_rub` (stock × COGS/unit), `stock_value_share_pct`.
 - **Data (FBS, exists)**: `inventory_snapshots` — `model InventorySnapshot` (`schema.prisma:722`): `totalStock`, `inWayToClient`, `inWayFromClient`, per `[cabinetId, date, nmId]`. Served by `regional-stock-db.service.ts` / `fbs-stock-analytics.controller.ts` (which hardcodes `stockValue: null` at L151).
 - **Data (FBO — THE BLOCKER)**: **no normalized table.** Source is async CSV export only: `warehouse-remains.service.ts` (WB SDK `createWarehouseRemainsTask()` → poll → CSV). `InTransitShipment` (`schema.prisma:742`) tracks in-transit supply per nmId.
@@ -88,7 +94,8 @@ Gating: `if (options.includeAds === true) { ... fetch + merge ... }`. When false
 - **Blocking question (PM/backend)**: **FBO stock source** — materialize the CSV into a `warehouse_remains` table (recommended, enables history) or on-demand query? See #216.
 - **Effort**: **Medium–High** (FBO materialization is the cost; FBS + valuation is Low).
 
-### FR-5 — СПП + cancellations + extra costs  *(mostly WIRING)*
+### FR-5 — СПП + cancellations + extra costs _(mostly WIRING)_
+
 - **Goal**: per-SKU `spp_rub`/`spp_pct`, `cancellations_qty`, `extra_costs_rub`.
 - **СПП (per-row EXISTS)**: `WbFinanceRaw.sppDiscountPercent` (`schema.prisma:292`). Today only cabinet-averaged: `WeeklyPayoutSummary.avgSppDiscountPercent` (`weekly-payout-aggregation-query.service.ts:298` — `AVG(spp_discount_percent)`). Per-SKU aggregation not surfaced.
 - **Cancellations (EXIST in orders)**: `orders_fbs` — `model OrderFbs.wbStatus` (`schema.prisma:1151`) with `'canceled'`/`'canceled_by_client'`/`'declined_by_client'`/`'defect'`. Counted in funnel/fulfillment/FBS DTOs (`cancelCount`/`cancelRate`) but NOT joined into by-sku margin analytics.
@@ -101,12 +108,12 @@ Gating: `if (options.includeAds === true) { ... fetch + merge ... }`. When false
 
 ## 4. Revised priority + sequencing (informed by the data map)
 
-| Order | FR | Why | Effort |
-|---|---|---|---|
-| 1 | **FR-5** | Cheapest (pure wiring; extra-costs path already exists). Quick parity win. | Low |
-| 2 | **FR-2** | Highest user value (true unit margin after marketing); data + attribution service exist. One product decision. | Low–Med |
-| 3 | **FR-3** | High value; Low if Epic 72 tax columns are populated (verify first), Medium if not. | Low–Med |
-| 4 | **FR-4** | Blocked on FBO stock materialization decision. Defer until PM commits to the FBO source. | Med–High |
+| Order | FR       | Why                                                                                                            | Effort   |
+| ----- | -------- | -------------------------------------------------------------------------------------------------------------- | -------- |
+| 1     | **FR-5** | Cheapest (pure wiring; extra-costs path already exists). Quick parity win.                                     | Low      |
+| 2     | **FR-2** | Highest user value (true unit margin after marketing); data + attribution service exist. One product decision. | Low–Med  |
+| 3     | **FR-3** | High value; Low if Epic 72 tax columns are populated (verify first), Medium if not.                            | Low–Med  |
+| 4     | **FR-4** | Blocked on FBO stock materialization decision. Defer until PM commits to the FBO source.                       | Med–High |
 
 Suggested first step: **verify `WeeklyMarginFact.taxAmountRub`/`netProfitAfterTaxRub` population** (FR-3 precondition) and **decide the FR-2 auto-campaign attribution method** — these unblock the two highest-value items.
 

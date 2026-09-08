@@ -44,11 +44,13 @@ Each row in `wb_finance_raw` has two different "seller revenue" values:
 ### Why net_for_pay > gross
 
 WB partially compensates sellers for SPP discounts. For loyal buyers (SPP ~46%), WB:
+
 1. Shows buyer the discounted price
 2. Pays the seller MORE than the post-SPP price
 3. Absorbs part of the SPP discount as a marketplace cost
 
 Example from W08 data:
+
 ```
 Product: Protape Изоленты (nm_id 412096139)
 retail_price_with_discount: 387,00 ₽
@@ -82,11 +84,11 @@ SPP compensation:            79,30 ₽  ← WB subsidizes this
 
 ## Breakdown by Report Type
 
-| Report Type | Delta (net_for_pay − gross) | Transactions | Notes |
-|---|---|---|---|
-| Основной | +11 063,34 ₽ | 251 | WB compensates SPP → seller gets more |
-| По выкупам | −1 411,01 ₽ | 15 | Buyouts: WB deducts extra → seller gets less |
-| **Total** | **+9 652,33 ₽** | 266 | Net positive for seller |
+| Report Type | Delta (net_for_pay − gross) | Transactions | Notes                                        |
+| ----------- | --------------------------- | ------------ | -------------------------------------------- |
+| Основной    | +11 063,34 ₽                | 251          | WB compensates SPP → seller gets more        |
+| По выкупам  | −1 411,01 ₽                 | 15           | Buyouts: WB deducts extra → seller gets less |
+| **Total**   | **+9 652,33 ₽**             | 266          | Net positive for seller                      |
 
 ---
 
@@ -125,22 +127,24 @@ GROUP BY report_type;
 
 ## Related Fields in WeeklyPayoutSummary
 
-| Field | W08 Value | Notes |
-|---|---|---|
-| `transport_reimbursement_neutral` | 3 408,10 ₽ | Tracked but not displayed separately in P&L |
-| `seller_delivery_revenue` | 0,00 ₽ | Would contribute to delta if present |
-| `corrections_amount` | 22 137,00 ₽ | WB.Продвижение (mapped to `other_adjustments_net`) |
+| Field                             | W08 Value   | Notes                                              |
+| --------------------------------- | ----------- | -------------------------------------------------- |
+| `transport_reimbursement_neutral` | 3 408,10 ₽  | Tracked but not displayed separately in P&L        |
+| `seller_delivery_revenue`         | 0,00 ₽      | Would contribute to delta if present               |
+| `corrections_amount`              | 22 137,00 ₽ | WB.Продвижение (mapped to `other_adjustments_net`) |
 
 ---
 
 ## Recommendation
 
 **No code changes required.** This document serves as reference for:
+
 1. QA team — understanding why P&L "Итого" ≠ sum of lines
 2. Support team — explaining SPP compensation to sellers
 3. Future developers — understanding `gross` vs `net_for_pay` semantics
 
 Consider adding a tooltip on the P&L "Итого удержания WB" explaining:
+
 > "Итого удержания WB рассчитывается как разница между реализацией и выплатой (sale_gross − payout_total). Отличается от суммы отдельных строк на величину компенсации СПП."
 
 ---

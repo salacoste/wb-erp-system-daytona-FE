@@ -11,7 +11,7 @@ chars: 6231
 
 В этой статье:
 
-- 
+-
 - <a href="#zachem-nuzhen-svoj-katalog-kategorij" rel="nofollow">Зачем нужен свой каталог категорий?</a>
 - <a href="#dopolnitelnye-preimushhestva-sozdaniya-svoego-kataloga" rel="nofollow">Дополнительные преимущества создания своего каталога</a>
 - <a href="#vidy-kataloga-tovarov" rel="nofollow">Виды каталога товаров</a>

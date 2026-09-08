@@ -11,7 +11,7 @@ chars: 8767
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-takoe-unikalnye-kody" rel="nofollow">Что такое уникальные коды</a>
 - <a href="#shemy-hraneniya-na-sklade" rel="nofollow">Схемы хранения на складе</a>
 - <a href="#kak-raspechatat-unikalnyj-kod-tovara" rel="nofollow">Как распечатать уникальный код товара</a>

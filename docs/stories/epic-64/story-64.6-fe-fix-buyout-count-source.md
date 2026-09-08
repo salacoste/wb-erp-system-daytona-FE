@@ -25,6 +25,7 @@ Dashboard showed 167 buyouts using `fulfillment.fbo.salesCount` (FBO only). The 
 ## Acceptance Criteria
 
 ### AC1: Buyout count includes all channels
+
 Given the dashboard loads
 When "Выкупы, шт" is displayed
 Then it shows `product_transactions` from finance-summary (all channels)
@@ -34,15 +35,17 @@ Then it shows `product_transactions` from finance-summary (all channels)
 ## Technical Implementation
 
 ### Files Modified
-| File | Change |
-|------|--------|
-| `src/types/finance-summary.ts` | Added `product_transactions?: number` field |
+
+| File                                                            | Change                                                                                                     |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `src/types/finance-summary.ts`                                  | Added `product_transactions?: number` field                                                                |
 | `src/app/(dashboard)/dashboard/components/DashboardContent.tsx` | Changed `salesCount` from `fbo.salesCount + fbs.salesCount` to `product_transactions` from finance-summary |
 
 ---
 
 ## Definition of Done
+
 - [x] Выкупы шт matches finance-summary product_transactions
 - [x] TypeScript compiles without errors
 
-*Created: 2026-02-21*
+_Created: 2026-02-21_

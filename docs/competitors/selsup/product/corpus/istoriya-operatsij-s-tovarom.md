@@ -11,7 +11,7 @@ chars: 5302
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-perejti-v-etot-razdel" rel="nofollow">Как перейти в этот раздел</a>
 - <a href="#opisanie-stranitsy" rel="nofollow">Описание страницы</a>
 - <a href="#vozmozhnye-tipy-operatsij" rel="nofollow">Возможные типы операций</a>

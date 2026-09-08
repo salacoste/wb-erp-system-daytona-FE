@@ -26,6 +26,7 @@
 ### Remotes
 
 **Parent repo** (`cd /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new`):
+
 ```
 origin    https://github.com/salacoste/wb-erp-system-daytona.git       (backend monorepo)
 frontend  https://github.com/salacoste/wb-erp-system-daytona-FE.git    (frontend mirror — second remote)
@@ -34,34 +35,37 @@ frontend  https://github.com/salacoste/wb-erp-system-daytona-FE.git    (frontend
 The parent's `frontend` remote allows pushing frontend-directory changes to the frontend repo URL directly from the parent. This is the bridge mechanism — but typically commits land in each repo separately.
 
 **Nested frontend repo** (`cd /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend`):
+
 ```
 origin  https://github.com/salacoste/wb-erp-system-daytona-FE.git      (frontend only)
 ```
 
 ## When each repo gets commits
 
-| Change scope | Which repo | Rationale |
-|---|---|---|
-| `frontend/src/**`, `frontend/components/**`, frontend tests | **Nested frontend repo** | Frontend code; owned by frontend |
-| `frontend/CLAUDE.md`, `frontend/CLAUDE-*.md`, frontend docs | **Nested frontend repo** | Frontend project instructions |
-| `frontend/_bmad-output/**` (BMAD artifacts) | **Nested frontend repo** (use `git add -f` — gitignored) | Story specs, sprint-status, retros |
-| `frontend/scripts/**` | **Nested frontend repo** | Frontend tooling |
-| `eslint.config.js` at parent root | **Parent repo** | Shared lint config; affects both frontend + backend lint |
-| `tsconfig.json` at parent root | **Parent repo** | Shared TS config |
-| `package.json` / `pnpm-workspace.yaml` at parent root | **Parent repo** | Workspace-level deps |
-| Backend code (`src/**` in parent, `test-api/**`) | **Parent repo** | Backend domain |
-| Shared docs (`docs/` at parent root) | **Parent repo** | Backend + shared docs |
+| Change scope                                                | Which repo                                               | Rationale                                                |
+| ----------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `frontend/src/**`, `frontend/components/**`, frontend tests | **Nested frontend repo**                                 | Frontend code; owned by frontend                         |
+| `frontend/CLAUDE.md`, `frontend/CLAUDE-*.md`, frontend docs | **Nested frontend repo**                                 | Frontend project instructions                            |
+| `frontend/_bmad-output/**` (BMAD artifacts)                 | **Nested frontend repo** (use `git add -f` — gitignored) | Story specs, sprint-status, retros                       |
+| `frontend/scripts/**`                                       | **Nested frontend repo**                                 | Frontend tooling                                         |
+| `eslint.config.js` at parent root                           | **Parent repo**                                          | Shared lint config; affects both frontend + backend lint |
+| `tsconfig.json` at parent root                              | **Parent repo**                                          | Shared TS config                                         |
+| `package.json` / `pnpm-workspace.yaml` at parent root       | **Parent repo**                                          | Workspace-level deps                                     |
+| Backend code (`src/**` in parent, `test-api/**`)            | **Parent repo**                                          | Backend domain                                           |
+| Shared docs (`docs/` at parent root)                        | **Parent repo**                                          | Backend + shared docs                                    |
 
 **Rule of thumb**: paths INSIDE `frontend/` are frontend repo's domain (commit there); paths OUTSIDE `frontend/` (at parent root or in sibling dirs) are parent repo's domain.
 
 ## Cross-repo work — when one logical story spans both
 
 A single Story (e.g., Story 105.1-FE) sometimes requires commits in BOTH repos:
+
 - **Story 105.1-FE example**: ESLint rule lives in `eslint.config.js` at parent root (parent repo). Pre-existing violation allowlists live in `frontend/src/**` files (frontend repo). Both repos need commits for the story to be fully shipped.
 
 ### Recommended sequence
 
 1. **Commit parent first** (foundational change — config, root-level tooling)
+
    ```bash
    cd /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new
    git add eslint.config.js
@@ -69,6 +73,7 @@ A single Story (e.g., Story 105.1-FE) sometimes requires commits in BOTH repos:
    ```
 
 2. **Commit nested frontend repo** (dependent change — assumes parent's config exists)
+
    ```bash
    cd /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend
    git add src/ scripts/ CLAUDE.md
@@ -85,6 +90,7 @@ A single Story (e.g., Story 105.1-FE) sometimes requires commits in BOTH repos:
 ### Commit-message convention
 
 Each repo's commit message should:
+
 - Reference the OTHER repo's commit hash if it's a paired commit (e.g., "Pairs with parent repo commit `43c11001`")
 - Clearly state the scope ("frontend half:", "parent half:")
 - Survive being read independently — a reader of just the frontend repo should understand what changed in parent
@@ -113,6 +119,7 @@ Without `-f`, `git add` silently skips these files.
 The parent repo's `git status` shows changes inside `frontend/` because the parent tracks `frontend/` as a directory tree (not a git submodule). These are typically "phantom" mirrors of work already committed in the nested frontend repo.
 
 Two strategies:
+
 - **Ignore the parent's frontend-internal diffs**: most cross-team work happens in the parent's backend domain; the frontend mirror in parent isn't typically committed there
 - **OR commit them in parent too**: if there's automation or convention that the parent should also track the frontend changes (e.g., for CI cohesion), commit them as `chore(frontend): mirror frontend Story NNN.N-FE changes`. The user (or automation) does this manually.
 
@@ -124,11 +131,11 @@ The parent has `origin` AND `frontend` remotes — easy to push to the wrong one
 
 When asking "should I push?" for cross-repo work, the answer is usually:
 
-| Scenario | Frontend repo push | Parent repo push |
-|---|---|---|
-| Pure frontend change (only files in `frontend/`) | Yes — automatic per session pattern | No — nothing to push |
-| Pure parent change (ESLint config, backend) | No — nothing to push | Yes — coordinate with backend team if it affects them |
-| Cross-repo paired commit (e.g., Story 105.1) | Yes — push parent FIRST, then frontend | Yes — push parent FIRST, then frontend |
+| Scenario                                         | Frontend repo push                     | Parent repo push                                      |
+| ------------------------------------------------ | -------------------------------------- | ----------------------------------------------------- |
+| Pure frontend change (only files in `frontend/`) | Yes — automatic per session pattern    | No — nothing to push                                  |
+| Pure parent change (ESLint config, backend)      | No — nothing to push                   | Yes — coordinate with backend team if it affects them |
+| Cross-repo paired commit (e.g., Story 105.1)     | Yes — push parent FIRST, then frontend | Yes — push parent FIRST, then frontend                |
 
 ### Confirmation required for parent push
 

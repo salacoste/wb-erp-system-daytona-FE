@@ -1,12 +1,12 @@
 # Story 70.5-FE: [Backend Request] Funnel Buyout Data JOIN
 
-| Field | Value |
-|-------|-------|
-| Epic | 70-FE Validation Fixes |
-| Priority | P1 |
-| SP | 2 |
-| Status | ✅ Done (Backend fixed) |
-| Group | C (D-12) |
+| Field           | Value                    |
+| --------------- | ------------------------ |
+| Epic            | 70-FE Validation Fixes   |
+| Priority        | P1                       |
+| SP              | 2                        |
+| Status          | ✅ Done (Backend fixed)  |
+| Group           | C (D-12)                 |
 | Backend Request | ✅ Resolved (2026-02-27) |
 
 ## Description
@@ -22,10 +22,10 @@ Endpoint `GET /v1/analytics/funnel` возвращает `buyoutCount=0` и `can
 
 ### Evidence
 
-| Source | Views | Orders | Buyouts | Cancels |
-|--------|-------|--------|---------|---------|
+| Source     | Views    | Orders | Buyouts  | Cancels  |
+| ---------- | -------- | ------ | -------- | -------- |
 | Funnel API | 4,092 ✅ | 119 ✅ | **0** ❌ | **0** ❌ |
-| Buyout API | — | — | 677 ✅ | 9 ✅ |
+| Buyout API | —        | —      | 677 ✅   | 9 ✅     |
 
 ### Root Cause (Backend)
 
@@ -37,12 +37,12 @@ Funnel endpoint берёт `openCardCount`, `addToCartCount`, `ordersCount` из
 **Frontend полностью готов** — типы, компоненты, отображение buyoutCount/cancelCount
 корректно реализованы:
 
-| Component | Field | Status |
-|-----------|-------|--------|
-| `FunnelSummaryCards.tsx:51` | `summary?.buyoutCount` | ✅ Ready |
-| `FunnelTable.tsx:139` | `item.buyoutCount` | ✅ Ready |
-| `FunnelChart.tsx:80` | buyoutCount bar | ✅ Ready |
-| `analytics-funnel.ts` (types) | `buyoutCount: number` | ✅ Defined |
+| Component                     | Field                  | Status     |
+| ----------------------------- | ---------------------- | ---------- |
+| `FunnelSummaryCards.tsx:51`   | `summary?.buyoutCount` | ✅ Ready   |
+| `FunnelTable.tsx:139`         | `item.buyoutCount`     | ✅ Ready   |
+| `FunnelChart.tsx:80`          | buyoutCount bar        | ✅ Ready   |
+| `analytics-funnel.ts` (types) | `buyoutCount: number`  | ✅ Defined |
 
 ## Backend Request
 
@@ -58,6 +58,7 @@ Funnel endpoint берёт `openCardCount`, `addToCartCount`, `ordersCount` из
 ### Data Source Suggestion
 
 Использовать логику из работающего `BuyoutAnalyticsService`:
+
 - `/v1/analytics/buyout/by-sku` правильно считает выкупы из orders/finance данных
 - Merge эту логику в funnel aggregation
 
@@ -93,6 +94,7 @@ interface FunnelProductItem {
 the funnel service now enriches results at query time using `daily_sales_raw` and `orders_fbs` tables.
 
 **Live verification**:
+
 ```
 GET /v1/analytics/funnel?from=2026-02-01&to=2026-02-27&groupBy=product
 → summary.buyoutCount = 637 ✅ (was 0)

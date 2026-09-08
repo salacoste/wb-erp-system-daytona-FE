@@ -45,11 +45,11 @@ Authorization: Bearer <admin-jwt>
 
 ### Query Parameters
 
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| `page` | number | No | Page number (default: 1) |
-| `limit` | number | No | Items per page (default: 50) |
-| `field_name` | string | No | Filter by specific field |
+| Param        | Type   | Required | Description                  |
+| ------------ | ------ | -------- | ---------------------------- |
+| `page`       | number | No       | Page number (default: 1)     |
+| `limit`      | number | No       | Items per page (default: 50) |
+| `field_name` | string | No       | Filter by specific field     |
 
 ### Response
 
@@ -83,12 +83,12 @@ Authorization: Bearer <admin-jwt>
 
 ### Components
 
-| Component | File | Purpose |
-|-----------|------|---------|
-| `AuditLogTable` | `AuditLogTable.tsx` | Main audit table |
-| `AuditFieldFilter` | `AuditFieldFilter.tsx` | Field name dropdown filter |
-| `AuditValueDisplay` | `AuditValueDisplay.tsx` | Format old/new values |
-| `AuditActionBadge` | `AuditActionBadge.tsx` | Action type badge |
+| Component           | File                    | Purpose                    |
+| ------------------- | ----------------------- | -------------------------- |
+| `AuditLogTable`     | `AuditLogTable.tsx`     | Main audit table           |
+| `AuditFieldFilter`  | `AuditFieldFilter.tsx`  | Field name dropdown filter |
+| `AuditValueDisplay` | `AuditValueDisplay.tsx` | Format old/new values      |
+| `AuditActionBadge`  | `AuditActionBadge.tsx`  | Action type badge          |
 
 ### Hook
 
@@ -164,15 +164,15 @@ export interface TariffAuditResponse {
 
 ### Table Columns
 
-| Column | Width | Format |
-|--------|-------|--------|
-| Дата/время | 100px | `DD.MM.YY HH:mm` |
-| Пользователь | 150px | Email (truncated) |
-| Действие | 80px | Badge |
-| Поле | 150px | Field name (translated) |
-| Было | flex | Formatted value |
-| Стало | flex | Formatted value |
-| IP | 100px | IP address |
+| Column       | Width | Format                  |
+| ------------ | ----- | ----------------------- |
+| Дата/время   | 100px | `DD.MM.YY HH:mm`        |
+| Пользователь | 150px | Email (truncated)       |
+| Действие     | 80px  | Badge                   |
+| Поле         | 150px | Field name (translated) |
+| Было         | flex  | Formatted value         |
+| Стало        | flex  | Formatted value         |
+| IP           | 100px | IP address              |
 
 ### Action Badge Colors
 
@@ -305,6 +305,7 @@ src/hooks/useTariffAuditLog.ts
 **Status:** ✅ Complete
 
 ### Implemented Components
+
 - `AuditLogTable.tsx` (274 lines) - Main audit table with filtering and pagination
 - `AuditFieldFilter.tsx` - Field name dropdown filter with 21 options + Russian labels
 - `AuditActionBadge.tsx` - Color-coded action badges (UPDATE/CREATE/DELETE)
@@ -312,6 +313,7 @@ src/hooks/useTariffAuditLog.ts
 - `__tests__/AuditLogTable.test.tsx` - Comprehensive test coverage
 
 ### Notes
+
 Uses useTariffAuditLog hook with server-side pagination. Filter resets to page 1 on change. Pagination controls show "Показано X-Y из Z" format.
 
 ---

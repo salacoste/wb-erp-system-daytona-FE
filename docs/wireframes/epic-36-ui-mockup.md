@@ -109,10 +109,12 @@ This document provides visual mockups for Epic 36 UI changes to the advertising 
 ```
 
 **States**:
+
 - **По артикулам** (default): `group_by=sku` - Shows each nmId separately
 - **По склейкам**: `group_by=imtId` - Groups products with same imtId
 
 **Implementation**:
+
 ```typescript
 <div className="flex gap-2">
   <Button
@@ -162,6 +164,7 @@ This document provides visual mockups for Epic 36 UI changes to the advertising 
 ```
 
 **Component Props**:
+
 ```typescript
 <MergedProductBadge
   imtId={328632}
@@ -288,6 +291,7 @@ User clicks "По склейкам"
 **Duration**: ~300-500ms (standard React Query refetch)
 
 **Animation**:
+
 - Button: Instant highlight (no delay)
 - Table: 200ms fade-out → data update → 200ms fade-in
 - Badge: Appears with parent row (no separate animation)
@@ -360,12 +364,14 @@ Component Re-render:
 ### Badge Colors
 
 **Merged Product Badge**:
+
 - Background: `secondary` variant (gray-100 in light mode)
 - Text: `secondary-foreground` (gray-700)
 - Icon: 🔗 (Unicode link symbol)
 - Hover: `secondary-hover` (gray-200)
 
 **Efficiency Badge** (unchanged):
+
 - Excellent: Green (`green-500`)
 - Good: Blue (`blue-500`)
 - Moderate: Yellow (`yellow-500`)
@@ -376,11 +382,13 @@ Component Re-render:
 ### Toggle Button States
 
 **Active** (`variant="default"`):
+
 - Background: `primary` (blue-600)
 - Text: White
 - Border: None
 
 **Inactive** (`variant="outline"`):
+
 - Background: Transparent
 - Text: `foreground` (gray-700)
 - Border: 1px solid `border` (gray-200)
@@ -392,6 +400,7 @@ Component Re-render:
 ### ARIA Labels
 
 **Toggle Buttons**:
+
 ```html
 <button
   aria-label="Группировать по артикулам"
@@ -409,6 +418,7 @@ Component Re-render:
 ```
 
 **Merged Badge**:
+
 ```html
 <div
   role="button"
@@ -433,19 +443,20 @@ Component Re-render:
 
 ### UI Labels
 
-| English | Russian |
-|---------|---------|
-| Group By | Группировка |
-| By SKU | По артикулам |
-| By Merged Cards | По склейкам |
-| Merged Card | Объединённая карточка |
-| Group | Группа |
-| Products in group | Товары в группе |
-| No merged cards | Нет объединённых карточек |
+| English           | Russian                   |
+| ----------------- | ------------------------- |
+| Group By          | Группировка               |
+| By SKU            | По артикулам              |
+| By Merged Cards   | По склейкам               |
+| Merged Card       | Объединённая карточка     |
+| Group             | Группа                    |
+| Products in group | Товары в группе           |
+| No merged cards   | Нет объединённых карточек |
 
 ### Tooltips
 
 **Merged Badge**:
+
 > Объединённая карточка #{imtId}
 >
 > Товары в группе:
@@ -455,9 +466,11 @@ Component Re-render:
 > 💡 Рекламные затраты основной карточки распределены между всеми товарами группы
 
 **Group By Info**:
+
 > Склейки объединяют метрики для объединённых карточек товаров на Wildberries
 
 **Empty State**:
+
 > В текущем кабинете нет товаров со склейками. Все товары отображаются индивидуально.
 
 ---

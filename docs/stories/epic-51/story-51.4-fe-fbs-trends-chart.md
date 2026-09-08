@@ -22,6 +22,7 @@
 ## Background
 
 This story implements the main trends visualization for FBS Historical Analytics. The chart displays time-series data from the `/v1/analytics/orders/trends` endpoint with:
+
 - Multi-line chart showing 3 metrics
 - Data source indicators showing where data comes from
 - Aggregation controls for day/week/month granularity
@@ -143,13 +144,13 @@ This story implements the main trends visualization for FBS Historical Analytics
 
 ## Components to Create
 
-| File | Lines (Est.) | Description |
-|------|--------------|-------------|
-| `FbsTrendsChart.tsx` | ~150 | Main chart component with Recharts |
-| `DataSourceIndicator.tsx` | ~40 | Badge showing data source |
-| `AggregationToggle.tsx` | ~60 | Day/Week/Month switcher |
-| `TrendsLegend.tsx` | ~50 | Interactive legend with toggles |
-| `TrendsTooltip.tsx` | ~40 | Custom tooltip component |
+| File                      | Lines (Est.) | Description                        |
+| ------------------------- | ------------ | ---------------------------------- |
+| `FbsTrendsChart.tsx`      | ~150         | Main chart component with Recharts |
+| `DataSourceIndicator.tsx` | ~40          | Badge showing data source          |
+| `AggregationToggle.tsx`   | ~60          | Day/Week/Month switcher            |
+| `TrendsLegend.tsx`        | ~50          | Interactive legend with toggles    |
+| `TrendsTooltip.tsx`       | ~40          | Custom tooltip component           |
 
 **Total**: ~340 lines across 5 files
 
@@ -613,12 +614,12 @@ export function TrendsTooltip({ active, payload }: TrendsTooltipProps) {
 
 ## Data Resolution Strategy
 
-| Range | Default Aggregation | Max Points | Data Source |
-|-------|-------------------|------------|-------------|
-| 0-30 days | Daily | 30 | orders_fbs (Реалтайм) |
-| 31-90 days | Daily | 90 | reports (Ежедневно) |
-| 91-180 days | Weekly | 26 | analytics (Еженедельно) |
-| 181-365 days | Weekly | 52 | analytics (Еженедельно) |
+| Range        | Default Aggregation | Max Points | Data Source             |
+| ------------ | ------------------- | ---------- | ----------------------- |
+| 0-30 days    | Daily               | 30         | orders_fbs (Реалтайм)   |
+| 31-90 days   | Daily               | 90         | reports (Ежедневно)     |
+| 91-180 days  | Weekly              | 26         | analytics (Еженедельно) |
+| 181-365 days | Weekly              | 52         | analytics (Еженедельно) |
 
 ---
 
@@ -754,17 +755,17 @@ test('FBS Trends Chart displays correctly', async ({ page }) => {
 
 ### Required (Blocking)
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Story 51.1-FE | Ready | Types for `TrendDataPoint`, `TrendsResponse` |
-| Story 51.2-FE | Ready | `useFbsTrends` hook |
-| Story 51.3-FE | Ready | `DateRangePickerExtended` component |
-| `recharts` | Installed | Chart library |
+| Dependency    | Status    | Notes                                        |
+| ------------- | --------- | -------------------------------------------- |
+| Story 51.1-FE | Ready     | Types for `TrendDataPoint`, `TrendsResponse` |
+| Story 51.2-FE | Ready     | `useFbsTrends` hook                          |
+| Story 51.3-FE | Ready     | `DateRangePickerExtended` component          |
+| `recharts`    | Installed | Chart library                                |
 
 ### Non-Blocking
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
+| Dependency    | Status  | Notes                              |
+| ------------- | ------- | ---------------------------------- |
 | Story 51.5-FE | Pending | Summary cards (separate component) |
 | Story 51.8-FE | Pending | FBS Analytics Page (consumes this) |
 
@@ -824,8 +825,8 @@ import {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author                 | Change                 |
+| ---------- | ---------------------- | ---------------------- |
 | 2026-01-29 | Claude Code (PM Agent) | Initial story creation |
 
 ---

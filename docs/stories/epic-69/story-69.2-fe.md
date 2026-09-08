@@ -1,11 +1,11 @@
 # Story 69.2-FE: TanStack Query Hooks
 
-| Field | Value |
-|-------|-------|
-| Epic | 69-FE Buyout Analytics |
-| Priority | P1 |
-| SP | 3 |
-| Status | ✅ Complete |
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Epic     | 69-FE Buyout Analytics |
+| Priority | P1                     |
+| SP       | 3                      |
+| Status   | ✅ Complete            |
 
 ## Description
 
@@ -21,10 +21,11 @@
 
 ## Files
 
-| File | Action | Lines |
-|------|--------|-------|
-| `src/hooks/use-buyout-analytics.ts` | Created | 49 |
+| File                                | Action  | Lines |
+| ----------------------------------- | ------- | ----- |
+| `src/hooks/use-buyout-analytics.ts` | Created | 49    |
 
 ## Dependencies
+
 - Blocked by: 69.1
 - Blocks: 69.3, 69.4, 69.5

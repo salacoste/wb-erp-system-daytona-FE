@@ -15,6 +15,7 @@
 **So that** I get accurate logistics costs without manual lookup of WB tariff tables.
 
 **Non-goals**:
+
 - Backend API changes (use existing tariffs API)
 - Logistics reverse calculation (covered in Story 44.10)
 - FBS logistics mode (assume FBO for this story)
@@ -33,6 +34,7 @@ logistics_forward = (baseLiterRub + (volume - 1) × additionalLiterRub) × coeff
 ```
 
 **Where:**
+
 - `baseLiterRub` = Cost for first liter (e.g., 48 ₽)
 - `additionalLiterRub` = Cost per additional liter (e.g., 5 ₽)
 - `volume` = Product volume in liters (from Story 44.7)
@@ -65,6 +67,7 @@ logistics_forward = (baseLiterRub + (volume - 1) × additionalLiterRub) × coeff
 ```
 
 **Key formulas from SDK:**
+
 - `baseLiterRub = 48` (from `boxDeliveryBase = "48*1"`)
 - `additionalLiterRub = 5` (from `boxDeliveryLiter = "5*x"`)
 - `coefficient = 100 / 100 = 1.0` (normalized from integer)
@@ -75,13 +78,14 @@ logistics_forward = (baseLiterRub + (volume - 1) × additionalLiterRub) × coeff
 
 WB categorizes shipments into three cargo types based on maximum dimension:
 
-| Cargo Type | Code | Max Dimension | Box Tariff | Description |
-|-----------|------|---------------|-----------|-------------|
-| **MGT** | MGT | ≤ 60 cm | ✅ Yes | Small packages (auto-fill supported) |
-| **SGT** | SGT | ≤ 120 cm | ✅ Yes | Medium packages (auto-fill supported) |
-| **KGT** | KGT | > 120 cm | ❌ No | Large/heavy items (manual input required) |
+| Cargo Type | Code | Max Dimension | Box Tariff | Description                               |
+| ---------- | ---- | ------------- | ---------- | ----------------------------------------- |
+| **MGT**    | MGT  | ≤ 60 cm       | ✅ Yes     | Small packages (auto-fill supported)      |
+| **SGT**    | SGT  | ≤ 120 cm      | ✅ Yes     | Medium packages (auto-fill supported)     |
+| **KGT**    | KGT  | > 120 cm      | ❌ No      | Large/heavy items (manual input required) |
 
 **Selection Logic** (from Story 44.7 dimensions input):
+
 ```
 if (maxDimension <= 60) {
   cargoType = MGT  // Auto-fill supported
@@ -110,12 +114,14 @@ Backend response now includes `autoFillSupported` boolean flag (from Backend Res
 ```
 
 **Auto-Fill Trigger Conditions** (from Backend Response #102):
+
 1. ✅ `warehouse_name` provided (Story 44.12)
 2. ✅ `volume_liters` OR `dimensions` provided (Story 44.7)
 3. ✅ `autoFillSupported = true` in API response (MGT/SGT only)
 4. ❌ NOT triggered if `autoFillSupported = false` (KGT cargo type)
 
 **When NOT to Auto-Fill**:
+
 - KGT cargo type (> 120cm) → Show error, require manual input
 - Missing warehouse → Use fallback with info notice
 - Insufficient dimensions → Wait for volume calculation
@@ -125,6 +131,7 @@ Backend response now includes `autoFillSupported` boolean flag (from Backend Res
 ### KGT (Large/Heavy) Cargo Handling
 
 **When cargoType = KGT** (max dimension > 120cm):
+
 1. **Block auto-calculation** - Do not auto-fill logistics value
 2. **Show error alert**:
    ```
@@ -136,6 +143,7 @@ Backend response now includes `autoFillSupported` boolean flag (from Backend Res
 5. **No tariff breakdown display** - Since calculation is N/A for KGT
 
 **Implementation**:
+
 - Check `cargoType` from dimensions (Story 44.7)
 - If `cargoType === 'KGT'`, disable auto-fill and show alert
 - Require manual input via form field
@@ -146,12 +154,14 @@ Backend response now includes `autoFillSupported` boolean flag (from Backend Res
 ### Forward vs Reverse Logistics Auto-Fill
 
 **Forward Logistics** (Story 44.8 - This Story):
+
 - Trigger: warehouse_name + (volume OR dimensions)
 - Response includes: `autoFillSupported` boolean
 - KGT handling: Manual input required, show error
 - Cargo types: MGT/SGT only
 
 **Reverse Logistics** (Story 44.10):
+
 - Trigger: warehouse_name + reverse_shipping_method
 - Response includes: separate `autoFillSupported` flag
 - KGT handling: TBD by Story 44.10
@@ -162,6 +172,7 @@ Backend response now includes `autoFillSupported` boolean flag (from Backend Res
 ## Acceptance Criteria
 
 ### AC1: Volume-Based Tariff Calculation (from Story 44.7 dimensions)
+
 - [ ] Use volume from Story 44.7 dimension inputs
 - [ ] Apply WB logistics formula: `(base + (volume - 1) × per_liter) × coefficient`
 - [ ] For volume ≤ 1L: Use only base rate (no additional liters)
@@ -169,6 +180,7 @@ Backend response now includes `autoFillSupported` boolean flag (from Backend Res
 - [ ] Display calculated tariff with breakdown
 
 ### AC2: Warehouse Tariff Integration (from Backend API)
+
 - [ ] When warehouse selected (Story 44.12), fetch tariffs from API
 - [ ] Use `boxDeliveryBase` for first liter cost (e.g., 48 ₽)
 - [ ] Use `boxDeliveryLiter` for additional liter cost (e.g., 5 ₽)
@@ -176,6 +188,7 @@ Backend response now includes `autoFillSupported` boolean flag (from Backend Res
 - [ ] Show tariff source: "Тариф склада {warehouse_name}"
 
 ### AC3: Calculation Breakdown Display
+
 - [ ] Show 4-step breakdown:
   1. "Объём: X л" (Volume from dimensions)
   2. "Базовый тариф (1 л): Y ₽" (Base rate)
@@ -185,6 +198,7 @@ Backend response now includes `autoFillSupported` boolean flag (from Backend Res
 - [ ] Breakdown collapsible (collapsed by default)
 
 ### AC4: Form Integration
+
 - [ ] Auto-fill `logistics_forward_rub` field when all inputs provided
 - [ ] Allow manual override of calculated value
 - [ ] Show "Рассчитано" badge when auto-filled
@@ -192,6 +206,7 @@ Backend response now includes `autoFillSupported` boolean flag (from Backend Res
 - [ ] "Восстановить" button to revert to calculated value
 
 ### AC5: Fallback Mode (No Warehouse Selected)
+
 - [ ] If no warehouse selected, use default tariffs:
   - `baseLiterRub = 46 ₽`
   - `additionalLiterRub = 14 ₽`
@@ -200,12 +215,14 @@ Backend response now includes `autoFillSupported` boolean flag (from Backend Res
 - [ ] Allow manual input of tariff values
 
 ### AC6: Real-time Updates
+
 - [ ] Recalculate when volume changes (from Story 44.7)
 - [ ] Recalculate when warehouse changes (from Story 44.12)
 - [ ] Recalculate when coefficient changes (from Story 44.13)
 - [ ] Debounce recalculation (300ms delay)
 
 ### AC7: Cargo Type Classification
+
 - [ ] Classify cargo type from max dimension (Story 44.7):
   - MGT: max dimension ≤ 60cm → Auto-fill supported ✅
   - SGT: max dimension ≤ 120cm → Auto-fill supported ✅
@@ -214,6 +231,7 @@ Backend response now includes `autoFillSupported` boolean flag (from Backend Res
 - [ ] Error message (Russian): "Товар категории KGT (>120см) требует индивидуального расчёта логистики. Пожалуйста, введите стоимость логистики вручную..."
 
 ### AC8: Auto-Fill Support Indicator
+
 - [ ] Check `autoFillSupported` boolean from API response
 - [ ] Only enable auto-fill when:
   1. Warehouse selected (warehouseId provided)
@@ -234,6 +252,7 @@ Backend response now includes `autoFillSupported` boolean flag (from Backend Res
 **Endpoint**: `GET /v1/tariffs/acceptance/coefficients?warehouseId={id}`
 
 **Request**:
+
 ```http
 GET /v1/tariffs/acceptance/coefficients?warehouseId=507
 Authorization: Bearer {token}
@@ -241,6 +260,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Response**:
+
 ```json
 {
   "data": {
@@ -768,49 +788,49 @@ export function LogisticsTariffDisplay({
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| **Volume < 0.001 L** | Use minimum 1 L for calculation |
-| **Volume exactly 1 L** | Only base rate applies (no additional liters) |
-| **Volume 1.001 L** | Base + 0.001L additional (minimal extra) |
-| **Large volume (10 L)** | Base + 9L additional |
-| **Coefficient = 0** | Treat as 1.0 (no adjustment) |
-| **Coefficient > 5.0** | Allow but show warning |
-| **No warehouse selected** | Use DEFAULT_BOX_TARIFFS, show info notice |
-| **Manual override** | Keep user value, show "Вручную" badge |
-| **Dimension changed** | Recalculate if auto-calculate enabled |
-| **Warehouse changed** | Refetch tariffs, recalculate |
-| **Cargo Type = MGT** | max_dim ≤ 60cm, auto-fill supported ✅ |
-| **Cargo Type = SGT** | max_dim ≤ 120cm, auto-fill supported ✅ |
-| **Cargo Type = KGT** | max_dim > 120cm, manual input required, show error ❌ |
-| **KGT Selected** | Disable auto-fill toggle, show error alert, require manual input |
-| **API Missing autoFillSupported** | Assume true for MGT/SGT, false for KGT |
-| **autoFillSupported = false** | Disable auto-fill, allow manual input |
-| **Insufficient data for auto-fill** | Use fallback, show info notice |
+| Scenario                            | Expected Behavior                                                |
+| ----------------------------------- | ---------------------------------------------------------------- |
+| **Volume < 0.001 L**                | Use minimum 1 L for calculation                                  |
+| **Volume exactly 1 L**              | Only base rate applies (no additional liters)                    |
+| **Volume 1.001 L**                  | Base + 0.001L additional (minimal extra)                         |
+| **Large volume (10 L)**             | Base + 9L additional                                             |
+| **Coefficient = 0**                 | Treat as 1.0 (no adjustment)                                     |
+| **Coefficient > 5.0**               | Allow but show warning                                           |
+| **No warehouse selected**           | Use DEFAULT_BOX_TARIFFS, show info notice                        |
+| **Manual override**                 | Keep user value, show "Вручную" badge                            |
+| **Dimension changed**               | Recalculate if auto-calculate enabled                            |
+| **Warehouse changed**               | Refetch tariffs, recalculate                                     |
+| **Cargo Type = MGT**                | max_dim ≤ 60cm, auto-fill supported ✅                           |
+| **Cargo Type = SGT**                | max_dim ≤ 120cm, auto-fill supported ✅                          |
+| **Cargo Type = KGT**                | max_dim > 120cm, manual input required, show error ❌            |
+| **KGT Selected**                    | Disable auto-fill toggle, show error alert, require manual input |
+| **API Missing autoFillSupported**   | Assume true for MGT/SGT, false for KGT                           |
+| **autoFillSupported = false**       | Disable auto-fill, allow manual input                            |
+| **Insufficient data for auto-fill** | Use fallback, show info notice                                   |
 
 ### Test Scenarios
 
-| Volume (L) | Base (₽) | Per-L (₽) | Coef | Cargo | Expected Cost | Expected Result |
-|------------|----------|-----------|------|-------|----------------|-----------------|
-| 1.0 | 48 | 5 | 1.0 | MGT | 48.00 ₽ | Auto-fill ✅ |
-| 2.0 | 48 | 5 | 1.0 | SGT | 53.00 ₽ | Auto-fill ✅ |
-| 3.0 | 48 | 5 | 1.0 | SGT | 58.00 ₽ | Auto-fill ✅ |
-| 3.0 | 48 | 5 | 1.25 | SGT | 72.50 ₽ | Auto-fill ✅ |
-| 5.0 | 48 | 5 | 1.0 | SGT | 68.00 ₽ | Auto-fill ✅ |
-| 10.0 | 48 | 5 | 1.5 | SGT | 117.00 ₽ | Auto-fill ✅ |
-| 0.5 | 48 | 5 | 1.0 | MGT | 48.00 ₽ | Auto-fill ✅ (min 1L) |
-| — | — | — | — | KGT | — | Error: Manual input required ❌ |
+| Volume (L) | Base (₽) | Per-L (₽) | Coef | Cargo | Expected Cost | Expected Result                 |
+| ---------- | -------- | --------- | ---- | ----- | ------------- | ------------------------------- |
+| 1.0        | 48       | 5         | 1.0  | MGT   | 48.00 ₽       | Auto-fill ✅                    |
+| 2.0        | 48       | 5         | 1.0  | SGT   | 53.00 ₽       | Auto-fill ✅                    |
+| 3.0        | 48       | 5         | 1.0  | SGT   | 58.00 ₽       | Auto-fill ✅                    |
+| 3.0        | 48       | 5         | 1.25 | SGT   | 72.50 ₽       | Auto-fill ✅                    |
+| 5.0        | 48       | 5         | 1.0  | SGT   | 68.00 ₽       | Auto-fill ✅                    |
+| 10.0       | 48       | 5         | 1.5  | SGT   | 117.00 ₽      | Auto-fill ✅                    |
+| 0.5        | 48       | 5         | 1.0  | MGT   | 48.00 ₽       | Auto-fill ✅ (min 1L)           |
+| —          | —        | —         | —    | KGT   | —             | Error: Manual input required ❌ |
 
 **KGT-Specific Test Cases**:
 
-| Max Dimension | Cargo | autoFillSupported | Expected Behavior |
-|---------------|-------|------------------|-------------------|
-| 50 cm | MGT | true | Auto-fill enabled ✅ |
-| 100 cm | SGT | true | Auto-fill enabled ✅ |
-| 120 cm | SGT | true | Auto-fill enabled ✅ |
-| 121 cm | KGT | false | Error alert shown, manual input required ❌ |
-| 200 cm | KGT | false | Error alert shown, manual input required ❌ |
-| 300 cm | KGT | false | Error alert shown, manual input required ❌ |
+| Max Dimension | Cargo | autoFillSupported | Expected Behavior                           |
+| ------------- | ----- | ----------------- | ------------------------------------------- |
+| 50 cm         | MGT   | true              | Auto-fill enabled ✅                        |
+| 100 cm        | SGT   | true              | Auto-fill enabled ✅                        |
+| 120 cm        | SGT   | true              | Auto-fill enabled ✅                        |
+| 121 cm        | KGT   | false             | Error alert shown, manual input required ❌ |
+| 200 cm        | KGT   | false             | Error alert shown, manual input required ❌ |
+| 300 cm        | KGT   | false             | Error alert shown, manual input required ❌ |
 
 ---
 
@@ -870,6 +890,7 @@ export function LogisticsTariffDisplay({
 ```
 
 **Decision Points**:
+
 1. **Cargo Type Check** (from dimensions max_dimension)
    - MGT/SGT → Continue to auto-fill flow
    - KGT → Show error, require manual input
@@ -914,18 +935,21 @@ export function LogisticsTariffDisplay({
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Description |
-|------|-------------|-------------|
-| `src/lib/logistics-tariff.ts` | CREATE | Tariff calculation logic with WB formula |
-| `src/types/tariffs.ts` | UPDATE | Add box tariff types |
-| `src/components/custom/price-calculator/LogisticsTariffCalculator.tsx` | CREATE | Calculator with auto-fill |
-| `src/components/custom/price-calculator/LogisticsTariffDisplay.tsx` | CREATE | Tariff breakdown display |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | Integrate tariff calculator |
+
+| File                                                                   | Change Type | Description                              |
+| ---------------------------------------------------------------------- | ----------- | ---------------------------------------- |
+| `src/lib/logistics-tariff.ts`                                          | CREATE      | Tariff calculation logic with WB formula |
+| `src/types/tariffs.ts`                                                 | UPDATE      | Add box tariff types                     |
+| `src/components/custom/price-calculator/LogisticsTariffCalculator.tsx` | CREATE      | Calculator with auto-fill                |
+| `src/components/custom/price-calculator/LogisticsTariffDisplay.tsx`    | CREATE      | Tariff breakdown display                 |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`       | UPDATE      | Integrate tariff calculator              |
 
 ### Change Log
+
 _To be filled during implementation_
 
 ### Review Follow-ups
+
 _To be filled during code review_
 
 ---
@@ -954,22 +978,24 @@ _To be filled during code review_
 **Gate Decision**: _Pending_
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Volume-based calculation | ⏳ | |
-| AC2 | Warehouse tariff integration | ⏳ | |
-| AC3 | Breakdown display | ⏳ | |
-| AC4 | Form integration | ⏳ | |
-| AC5 | Fallback mode | ⏳ | |
-| AC6 | Real-time updates | ⏳ | |
+
+| AC  | Requirement                  | Status | Evidence |
+| --- | ---------------------------- | ------ | -------- |
+| AC1 | Volume-based calculation     | ⏳     |          |
+| AC2 | Warehouse tariff integration | ⏳     |          |
+| AC3 | Breakdown display            | ⏳     |          |
+| AC4 | Form integration             | ⏳     |          |
+| AC5 | Fallback mode                | ⏳     |          |
+| AC6 | Real-time updates            | ⏳     |          |
 
 ### Accessibility Check
-| Check | Status | Evidence |
-|-------|--------|----------|
-| Screen reader support | ⏳ | |
-| Keyboard navigation | ⏳ | |
-| Color contrast | ⏳ | |
-| aria-live updates | ⏳ | |
+
+| Check                 | Status | Evidence |
+| --------------------- | ------ | -------- |
+| Screen reader support | ⏳     |          |
+| Keyboard navigation   | ⏳     |          |
+| Color contrast        | ⏳     |          |
+| aria-live updates     | ⏳     |          |
 
 ---
 

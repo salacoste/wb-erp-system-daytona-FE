@@ -13,7 +13,7 @@ chars: 6369
 
 В этой статье:
 
-- 
+-
 - <a href="#sozdanie-peremeshheniya" rel="nofollow">Создание перемещения</a>
 - <a href="#list-sborki-dlya-peremeshhenij" rel="nofollow">Лист сборки для перемещений</a>
 - <a href="#redaktirovanie-peremeshheniya" rel="nofollow">Редактирование перемещения</a>

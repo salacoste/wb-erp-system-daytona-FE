@@ -9,7 +9,7 @@ chars: 5945
 
 В этой статье:
 
-- 
+-
 - <a href="#lenta-shk-korobov-wildberries" rel="nofollow">Лента ШК коробов Wildberries</a>
 - <a href="#upakovka-fbo" rel="nofollow">Упаковка FBO</a>
 - <a href="#upakovka-s-dobavleniem-v-zakaz-fbo" rel="nofollow">Упаковка с добавлением в заказ FBO</a>

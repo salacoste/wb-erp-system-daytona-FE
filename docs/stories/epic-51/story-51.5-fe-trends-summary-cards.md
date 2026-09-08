@@ -22,6 +22,7 @@
 ## Background
 
 This story implements summary metric cards that display aggregate statistics from the FBS trends data. The cards provide an at-a-glance view of:
+
 - Total orders and revenue for the selected period
 - Average orders per day
 - Cancellation rate
@@ -133,12 +134,12 @@ Mobile (1 column):
 
 ## Components to Create
 
-| File | Lines (Est.) | Description |
-|------|--------------|-------------|
-| `TrendsSummaryCards.tsx` | ~80 | Container for all 4 summary cards |
-| `SummaryMetricCard.tsx` | ~50 | Individual metric card component |
-| `TrendIndicator.tsx` | ~35 | Up/down arrow with color and percentage |
-| `MetricValue.tsx` | ~30 | Formatted value display |
+| File                     | Lines (Est.) | Description                             |
+| ------------------------ | ------------ | --------------------------------------- |
+| `TrendsSummaryCards.tsx` | ~80          | Container for all 4 summary cards       |
+| `SummaryMetricCard.tsx`  | ~50          | Individual metric card component        |
+| `TrendIndicator.tsx`     | ~35          | Up/down arrow with color and percentage |
+| `MetricValue.tsx`        | ~30          | Formatted value display                 |
 
 **Total**: ~195 lines across 4 files
 
@@ -424,6 +425,7 @@ interface TrendsSummary {
 ### Trend Calculation
 
 To calculate trends, fetch two periods:
+
 1. Current period (user-selected date range)
 2. Previous period (same length, immediately before)
 
@@ -575,17 +577,17 @@ test('Trend indicators show correct colors', async ({ page }) => {
 
 ### Required (Blocking)
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Story 51.1-FE | ✅ Complete | `TrendsSummary` type definition |
-| Story 51.2-FE | ✅ Complete | `useFbsTrends` hook |
-| shadcn/ui Card | Installed | Card component |
+| Dependency     | Status      | Notes                           |
+| -------------- | ----------- | ------------------------------- |
+| Story 51.1-FE  | ✅ Complete | `TrendsSummary` type definition |
+| Story 51.2-FE  | ✅ Complete | `useFbsTrends` hook             |
+| shadcn/ui Card | Installed   | Card component                  |
 
 ### Non-Blocking
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Story 51.4-FE | Ready | FbsTrendsChart (sibling component) |
+| Dependency    | Status  | Notes                              |
+| ------------- | ------- | ---------------------------------- |
+| Story 51.4-FE | Ready   | FbsTrendsChart (sibling component) |
 | Story 51.8-FE | Pending | FBS Analytics Page (consumes this) |
 
 ---
@@ -639,11 +641,11 @@ change.toLocaleString('ru-RU', { signDisplay: 'always', maximumFractionDigits: 1
 
 ### Color Reference
 
-| State | Color | Tailwind Class |
-|-------|-------|----------------|
+| State           | Color | Tailwind Class             |
+| --------------- | ----- | -------------------------- |
 | Positive (good) | Green | `text-green-600` (#16A34A) |
-| Negative (bad) | Red | `text-red-500` (#EF4444) |
-| Neutral | Gray | `text-gray-500` (#6B7280) |
+| Negative (bad)  | Red   | `text-red-500` (#EF4444)   |
+| Neutral         | Gray  | `text-gray-500` (#6B7280)  |
 
 ### Accessibility Notes
 
@@ -655,8 +657,8 @@ change.toLocaleString('ru-RU', { signDisplay: 'always', maximumFractionDigits: 1
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author                 | Change                 |
+| ---------- | ---------------------- | ---------------------- |
 | 2026-01-29 | Claude Code (PM Agent) | Initial story creation |
 
 ---

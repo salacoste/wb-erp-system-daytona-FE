@@ -27,6 +27,7 @@ Evidence sourced from three retrospective files (Epic 94: 2026-04-27, Epic 95: 2
 **Definition**: After a fix corrects a source defect, consequences propagate through the document but the fix block does not re-scan adjacent locations. The 2nd pass catches these consistently.
 
 **Evidence**:
+
 - Epic 94 retro C-2: Stories 94.6 + 94.7 both had 2nd-pass M-NEW-1
 - Epic 95 retro C-1: 5-consecutive-story chain (94.6, 94.7, 95.1, 95.2, 95.3)
 - Epic 96 retro C-6: 6 more recurrences (96.10, 96.11, 96.13, 96.14, 96.15, 96.16)
@@ -43,6 +44,7 @@ Evidence sourced from three retrospective files (Epic 94: 2026-04-27, Epic 95: 2
 **Definition**: Incorrect claims about codebase state — wrong line counts, grep hit counts, test totals, file sizes. Sub-classes: summary-visualization misread, filesystem-metadata-cited-as-canonical, grep-count-from-memory, head-truncated-count.
 
 **Evidence**:
+
 - Epic 94 retro C-1: 12 recurrences across 7 stories
 - Epic 95 retro C-2 + C-3: 18 recurrences across 10 stories
 - Epic 96 retro C-5: Story 96.16 `head -20` truncation (claimed 20, actual 128)
@@ -117,10 +119,10 @@ Evidence sourced from three retrospective files (Epic 94: 2026-04-27, Epic 95: 2
 
 ## Existing HALT Scripts
 
-| Script | Lines | Tests | Trigger | Maintenance | Uptime |
-|---|---|---|---|---|---|
-| `check-fix-propagation.sh` | 248 | 6 self-tests | Manual invocation | Low (pure bash + grep) | Since Story 97.1 |
-| `check-doc-citations.sh` | 664 | 11 self-tests | CI (`npm run check:docs`) | Moderate (baseline file, EXCLUDE_PATHS) | Since Story 89.3 (4+ months stable) |
+| Script                     | Lines | Tests         | Trigger                   | Maintenance                             | Uptime                              |
+| -------------------------- | ----- | ------------- | ------------------------- | --------------------------------------- | ----------------------------------- |
+| `check-fix-propagation.sh` | 248   | 6 self-tests  | Manual invocation         | Low (pure bash + grep)                  | Since Story 97.1                    |
+| `check-doc-citations.sh`   | 664   | 11 self-tests | CI (`npm run check:docs`) | Moderate (baseline file, EXCLUDE_PATHS) | Since Story 89.3 (4+ months stable) |
 
 **Key insight**: The citation validator is approximately 2.7× larger than the propagation checker (664/248) because it includes file-discovery logic, baseline management, and extensive self-test infrastructure. Simple grep-and-exit scripts (like `check-fix-propagation.sh`) have minimal maintenance; scanning/baselining scripts have moderate maintenance.
 
@@ -130,15 +132,15 @@ Evidence sourced from three retrospective files (Epic 94: 2026-04-27, Epic 95: 2
 
 ROI = (catch_rate × incidents_per_epic) / (impl_cost + annual_maintenance)
 
-| Defect Class | Catch Rate | Incidents/Epic (avg) | Impl Cost (LoC) | Annual Maint. | ROI |
-|---|---|---|---|---|---|
-| Fix-block propagation (workflow integration) | 80% | 4-6 (Epic 94: 2, Epic 95: 0, Epic 96: 6) | 15 (XML only) | Low | **Highest** |
-| ESLint rule-name validation | 95% | ~1 (prevented, codebase-wide) | 30-50 | Negligible | **High** |
-| Workflow-XML compliance (story markers) | 90% | ~1 per epic | 60-80 | Low | **Medium** |
-| Cabinet-isolation grep | 50% | 1-2 (Epic 96 only) | 40-60 | Medium (FP) | **Low** |
-| API-client status-code coverage | 60% | ~1 (1 incident total) | 30-40 | Low | **Low** |
-| Attestation drift | 0% | 6-8 (cumulative 20+ across Epics 94-96) | N/A | N/A | **N/A** (not automatable) |
-| grep-co-occurrence | 0% | ~0 (1 incident total) | N/A | N/A | **N/A** (not automatable) |
+| Defect Class                                 | Catch Rate | Incidents/Epic (avg)                     | Impl Cost (LoC) | Annual Maint. | ROI                       |
+| -------------------------------------------- | ---------- | ---------------------------------------- | --------------- | ------------- | ------------------------- |
+| Fix-block propagation (workflow integration) | 80%        | 4-6 (Epic 94: 2, Epic 95: 0, Epic 96: 6) | 15 (XML only)   | Low           | **Highest**               |
+| ESLint rule-name validation                  | 95%        | ~1 (prevented, codebase-wide)            | 30-50           | Negligible    | **High**                  |
+| Workflow-XML compliance (story markers)      | 90%        | ~1 per epic                              | 60-80           | Low           | **Medium**                |
+| Cabinet-isolation grep                       | 50%        | 1-2 (Epic 96 only)                       | 40-60           | Medium (FP)   | **Low**                   |
+| API-client status-code coverage              | 60%        | ~1 (1 incident total)                    | 30-40           | Low           | **Low**                   |
+| Attestation drift                            | 0%         | 6-8 (cumulative 20+ across Epics 94-96)  | N/A             | N/A           | **N/A** (not automatable) |
+| grep-co-occurrence                           | 0%         | ~0 (1 incident total)                    | N/A             | N/A           | **N/A** (not automatable) |
 
 ---
 
@@ -147,6 +149,7 @@ ROI = (catch_rate × incidents_per_epic) / (impl_cost + annual_maintenance)
 ### Tier A — Implement now (high ROI, low cost)
 
 **1. `scripts/check-eslint-rules.sh` (30-50 LoC)**
+
 - Parses `.eslintrc.json` rules keys
 - Cross-references against ESLint's known rule list (via `eslint --print-config` or hardcoded core rules)
 - Exit 1 if any rule name is unrecognized
@@ -155,6 +158,7 @@ ROI = (catch_rate × incidents_per_epic) / (impl_cost + annual_maintenance)
 - **Maintenance**: negligible (runs only when `.eslintrc.json` changes)
 
 **2. dev-story workflow integration for `check-fix-propagation.sh` (~15 LoC in workflow XML)**
+
 - Add a Step 9 sub-step that prompts the author to run `check-fix-propagation.sh` after each fix application
 - This is a **structural reminder**, not a full HALT gate — a rigid HALT would be too inflexible for diverse fix patterns, but a dismissible prose instruction has proven 0% compliance across 2 epics. The structural middle ground converts the current 0% invocation rate to structural prompting that cannot be silently skipped.
 - **Catch rate**: 80% (converts the current 0% invocation rate to structural prompting)
@@ -163,6 +167,7 @@ ROI = (catch_rate × incidents_per_epic) / (impl_cost + annual_maintenance)
 ### Tier B — Implement next sprint (medium ROI)
 
 **3. `scripts/check-story-markers.sh` (60-80 LoC)**
+
 - Verifies story files have required structural markers before `done` transition:
   - ≥2 `### Post-Nth-pass-review fixes` sub-headings
   - Final Change Log row contains `**Lessons:**`

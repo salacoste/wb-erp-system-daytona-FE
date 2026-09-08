@@ -13,7 +13,7 @@ chars: 4535
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojka-i-pechat-etiketki-o-videofiksatsii" rel="nofollow">Настройка и печать этикетки о видеофиксации</a>
 - <a href="#pechat-etiketki-o-videofiksatsii-v-umnoj-lente" rel="nofollow">Печать этикетки о видеофиксации в Умной ленте</a>
 - <a href="#pechat-etiketki-o-videofiksatsii-pri-komplektatsii-zakazov" rel="nofollow">Печать этикетки о видеофиксации при комплектации заказов</a>

@@ -12,14 +12,18 @@
 Вся необходимая документация готова для начала работы:
 
 ### 1. Quick Start (Обязательно прочитать первым)
+
 📄 **`docs/HOW-COGS-MARGIN-SHOULD-WORK.md`**
+
 - ⏱️ 5 минут чтения
 - 🎯 Объясняет основной принцип работы системы
 - 📊 3 ключевых сценария с ожидаемым поведением
 - ✅ Acceptance criteria
 
 ### 2. Detailed Specification (Основная документация)
+
 📄 **`frontend/docs/request-backend/14-automatic-margin-recalculation-on-cogs-update.md`**
+
 - ⏱️ 30-40 минут изучения
 - 🔍 7 детальных user flows с кодом
 - 💻 Code examples для каждого компонента
@@ -27,6 +31,7 @@
 - 🧪 Testing scenarios
 
 ### 3. Related Documentation
+
 - 📄 `frontend/docs/COGS-BACKDATING-BUSINESS-LOGIC.md` - Temporal COGS versioning
 - 📄 `frontend/docs/request-backend/README.md` - Request index
 - 📄 `docs/architecture/09-database-schema.md` - Database schema reference
@@ -94,6 +99,7 @@
 ## 🔍 Key Technical Requirements
 
 ### Database Tables
+
 ```sql
 -- Source data
 cogs (nm_id, valid_from, valid_to, unit_cost_rub, ...)
@@ -106,6 +112,7 @@ tasks (task_uuid, task_type='recalculate_weekly_margin', ...)
 ```
 
 ### Formulas
+
 ```typescript
 // Margin calculation
 margin_percent = ((revenue_net - cogs_total) / revenue_net) × 100%
@@ -144,6 +151,7 @@ function calculateAffectedWeeks(validFrom: string | Date): string[] {
 ```
 
 ### Performance Targets
+
 - Single week calculation: **≤ 5 seconds**
 - 7 weeks batch: **≤ 30 seconds**
 - Bulk 500 products: **≤ 60 seconds**
@@ -154,6 +162,7 @@ function calculateAffectedWeeks(validFrom: string | Date): string[] {
 ## ✅ Acceptance Criteria
 
 ### Must Have
+
 - [ ] После создания COGS автоматически enqueue background task
 - [ ] Background worker успешно рассчитывает margin
 - [ ] Margin появляется в `GET /v1/products?include_cogs=true` автоматически
@@ -162,11 +171,13 @@ function calculateAffectedWeeks(validFrom: string | Date): string[] {
 - [ ] Historical COGS: пересчитываются ВСЕ затронутые недели
 
 ### Performance
+
 - [ ] Single week calculation: ≤ 5 seconds
 - [ ] 7 weeks batch: ≤ 30 seconds
 - [ ] No duplicate tasks (idempotency)
 
 ### Error Handling
+
 - [ ] Failed margin calculation НЕ блокирует COGS assignment
 - [ ] Auto-retry (3 attempts with exponential backoff)
 - [ ] Partial failures не останавливают обработку других недель
@@ -192,11 +203,13 @@ function calculateAffectedWeeks(validFrom: string | Date): string[] {
 ## 📞 Communication
 
 ### Questions & Clarifications
+
 - **Frontend team contact:** See `frontend/docs/request-backend/README.md`
 - **Documentation issues:** Create issue referencing Request #14
 - **Technical questions:** Reference specific user flow number (1-7) from detailed spec
 
 ### Progress Updates
+
 - [ ] Started implementation (update README.md status)
 - [ ] Core tasks complete (Phase 1 done)
 - [ ] Testing in progress (Phase 3)
@@ -204,7 +217,9 @@ function calculateAffectedWeeks(validFrom: string | Date): string[] {
 - [ ] Deployed to production
 
 ### Completion
+
 When complete:
+
 1. Update `frontend/docs/request-backend/README.md` → move Request #14 to "Resolved Requests"
 2. Document actual effort vs. estimate
 3. Notify frontend team for integration testing
@@ -214,16 +229,19 @@ When complete:
 ## 🎯 Quick Summary
 
 **Current State:**
+
 - ✅ COGS assignment works
 - ✅ Request #15 (`include_cogs=true`) works
 - ❌ Margin calculation NOT automatic
 
 **Needed:**
+
 - 🔴 Auto-enqueue background task after COGS create/update
 - 🔴 Background worker to process margin calculation
 - 🔴 Populate `weekly_margin_fact` automatically
 
 **Result:**
+
 - ✨ Perfect UX: User assigns COGS → margin appears automatically
 - ✨ No manual scripts needed
 - ✨ Data consistency guaranteed

@@ -13,7 +13,7 @@ chars: 2505
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojka-integratsii" rel="nofollow">Настройка интеграции</a>
 - <a href="#udalenie-integratsii" rel="nofollow">Удаление интеграции</a>
 - <a href="#udalenie-organizatsii" rel="nofollow">Удаление организации</a>

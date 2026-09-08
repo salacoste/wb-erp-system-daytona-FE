@@ -9,7 +9,7 @@ chars: 5598
 
 В этой статье:
 
-- 
+-
 - <a href="#uvedomleniya-o-novyh-zakazah-fbs" rel="nofollow">Уведомления о новых заказах FBS</a>
 - <a href="#uvedomleniya-o-zakanchivayushhihsya-ostatkah-fbo" rel="nofollow">Уведомления о заканчивающихся остатках FBO</a>
 - <a href="#podpiska-na-novostnoj-kanal-i-svyaz-s-tehnicheskoj-podderzhkoj-cherez-" rel="nofollow">Подписка на новостной канал и связь с технической поддержкой через Telegram</a>
@@ -82,7 +82,7 @@ chars: 5598
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2025/01/hlfyg7tfie.png.webp)
 
-------------------------------------------------------------------------
+---
 
 После подключения бота у вас появится возможность гибко управлять функциями уведомлений. Вы можете включать или отключать уведомления в один клик:
 

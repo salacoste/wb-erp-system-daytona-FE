@@ -12,26 +12,29 @@
 `GET /v1/analytics/fbs/enhanced` envelope shape is correct (top-level `orderStats`, `stockAnalytics`, `regionalData`, `calculatedMetrics`), and `calculatedMetrics` matches the FE 1:1. But two sections have field-name **and semantic** mismatches:
 
 ### orderStats
-| FE `FbsOrderStats` reads | Backend live emits | Issue |
-|---|---|---|
-| `totalOrders` | `ordersCount` | rename → FE gets 0 |
-| `deliveredOrders` | `buyoutCount` | **semantic**: delivered ≠ bought-out |
-| `returnedOrders` | `cancelCount` | **semantic**: returned ≠ canceled |
-| `returnRate` | `cancelRate` | **semantic**: return ≠ cancel |
-| `buyoutRate` | `buyoutRate` | ✅ match |
-| `averageOrderValue` | — (backend sends `ordersSumRub`) | FE wants avg, backend sends sum |
+
+| FE `FbsOrderStats` reads | Backend live emits               | Issue                                |
+| ------------------------ | -------------------------------- | ------------------------------------ |
+| `totalOrders`            | `ordersCount`                    | rename → FE gets 0                   |
+| `deliveredOrders`        | `buyoutCount`                    | **semantic**: delivered ≠ bought-out |
+| `returnedOrders`         | `cancelCount`                    | **semantic**: returned ≠ canceled    |
+| `returnRate`             | `cancelRate`                     | **semantic**: return ≠ cancel        |
+| `buyoutRate`             | `buyoutRate`                     | ✅ match                             |
+| `averageOrderValue`      | — (backend sends `ordersSumRub`) | FE wants avg, backend sends sum      |
 
 ### stockAnalytics
-| FE `FbsStockAnalytics` reads | Backend live emits | Issue |
-|---|---|---|
-| `totalUnits` | `totalStock` | rename → 0 |
-| `totalSkus` | `productCount` | rename → 0 |
-| `lowStockSkus` | — (absent) | no backend source |
-| `outOfStockSkus` | — (absent) | no backend source |
-| `avgDaysOfCover` | — (in `calculatedMetrics.stockCoverageDays`?) | wrong section |
-| — | `availableStock`, `reservedStock`, `inTransit`, `sources` | backend extras the FE drops |
+
+| FE `FbsStockAnalytics` reads | Backend live emits                                        | Issue                       |
+| ---------------------------- | --------------------------------------------------------- | --------------------------- |
+| `totalUnits`                 | `totalStock`                                              | rename → 0                  |
+| `totalSkus`                  | `productCount`                                            | rename → 0                  |
+| `lowStockSkus`               | — (absent)                                                | no backend source           |
+| `outOfStockSkus`             | — (absent)                                                | no backend source           |
+| `avgDaysOfCover`             | — (in `calculatedMetrics.stockCoverageDays`?)             | wrong section               |
+| —                            | `availableStock`, `reservedStock`, `inTransit`, `sources` | backend extras the FE drops |
 
 ### funnelData
+
 The FE normalizer expects a `funnelData` section (`productViews`, `cartAdds`, `orders`, `deliveries`). The live response has **no `funnelData`** → all 0.
 
 ## Why the FE can't just remap
@@ -43,6 +46,7 @@ The mismatches are not pure renames — `returnedOrders ← cancelCount` and `de
 Reconcile the FBS-enhanced contract (same decision as #181): either the backend emits the FE-designed fields (delivered/returned/totalUnits/totalSkus/lowStock/outOfStock/avgDaysOfCover/funnelData), or the FE is redesigned around the backend's actual buyout/cancel/totalStock/productCount/sources model. Confirm whether `funnelData` is intended.
 
 ## Evidence
+
 - Live top keys: `['period','orderStats','stockAnalytics','regionalData','calculatedMetrics','sources']`
 - orderStats live keys: `['ordersCount','ordersSumRub','cancelCount','cancelRate','buyoutCount','buyoutRate']`
 - stockAnalytics live keys: `['totalStock','availableStock','reservedStock','inTransit','productCount']`

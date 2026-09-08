@@ -10,6 +10,7 @@
 ## Overview
 
 **Phase 1 (AI-Completed)** ✅:
+
 - ✅ Unit tests for metrics-calculator.ts (55 tests, 100% pass)
 - ✅ Unit tests for formatters.ts (22 tests, 100% pass)
 - ✅ E2E test code for MergedGroupTable (7 scenarios)
@@ -17,6 +18,7 @@
 - ✅ User guide documentation
 
 **Phase 2 (QA Team Tasks)** 🚧:
+
 - UAT with 3 real users (Story 37.5 AC 7)
 - Performance testing & profiling (AC 8)
 - Screenshot capture for documentation (AC 9)
@@ -64,6 +66,7 @@
 ### Test Participants
 
 **Required**: 3 users with different experience levels:
+
 - **User 1**: Power user (frequent WB seller, tech-savvy)
 - **User 2**: Intermediate user (occasional WB seller, moderate tech skills)
 - **User 3**: Novice user (new to WB analytics, low tech skills)
@@ -104,6 +107,7 @@ Follow-up questions:
 **File to create**: `frontend/docs/stories/epic-37/UAT-RESULTS.md`
 
 **Template**:
+
 ```markdown
 # UAT Results: Story 37.5
 
@@ -138,6 +142,7 @@ Follow-up questions:
 **Tool**: Chrome DevTools Performance tab
 
 **Steps**:
+
 1. Open Chrome DevTools (F12) → Performance tab
 2. Click Record (red circle)
 3. Navigate to `/analytics/advertising?group_by=imtId`
@@ -146,6 +151,7 @@ Follow-up questions:
 6. Analyze flamegraph
 
 **Success Criteria**:
+
 - **LCP (Largest Contentful Paint)**: <200ms on WiFi, <3s on Fast 3G
 - **FCP (First Contentful Paint)**: <100ms on WiFi, <1.5s on Fast 3G
 - **TTI (Time to Interactive)**: <500ms on WiFi, <5s on Fast 3G
@@ -158,6 +164,7 @@ Follow-up questions:
 **Tool**: Chrome DevTools Performance Monitor
 
 **Steps**:
+
 1. Open DevTools → More tools → Performance monitor
 2. Monitor CPU usage and FPS while:
    - Hovering over detail rows (transition effects)
@@ -166,6 +173,7 @@ Follow-up questions:
    - Scrolling table horizontally on mobile
 
 **Success Criteria**:
+
 - **FPS**: ≥60fps during all interactions
 - **CPU usage**: <30% average, <80% peak
 - **Rendering time**: <16ms per frame (60fps threshold)
@@ -177,12 +185,14 @@ Follow-up questions:
 **Tool**: Chrome DevTools Network tab
 
 **Steps**:
+
 1. Enable Network throttling: Fast 3G
 2. Clear cache (Cmd+Shift+R)
 3. Navigate to `/analytics/advertising?group_by=imtId`
 4. Measure API response times
 
 **Success Criteria**:
+
 - **API response time**: <500ms for `/v1/analytics/advertising?group_by=imtId`
 - **Bundle size**: <500KB for initial JavaScript, <2MB total
 - **Images/assets**: <50KB per icon/image
@@ -194,12 +204,14 @@ Follow-up questions:
 **Tool**: Chrome DevTools Lighthouse tab
 
 **Steps**:
+
 1. Open Lighthouse tab
 2. Select: Performance, Accessibility, Best Practices
 3. Device: Desktop and Mobile
 4. Run audit
 
 **Success Criteria**:
+
 - **Performance**: ≥90/100
 - **Accessibility**: 100/100 (WCAG 2.1 AA compliance)
 - **Best Practices**: ≥90/100
@@ -211,6 +223,7 @@ Follow-up questions:
 **File to create**: `frontend/docs/stories/epic-37/PERFORMANCE-REPORT.md`
 
 **Include**:
+
 - Screenshots of all performance tests
 - Comparison table: Desktop vs Mobile vs Fast 3G
 - Bottleneck analysis (if any scores <90)
@@ -269,6 +282,7 @@ Follow-up questions:
 - **Automated**: Playwright screenshot capture (see E2E tests)
 
 **Command to capture with Playwright**:
+
 ```bash
 npx playwright test e2e/merged-group-table-epic-37.spec.ts --headed --project=chromium
 # Screenshots saved to: test-results/
@@ -279,6 +293,7 @@ npx playwright test e2e/merged-group-table-epic-37.spec.ts --headed --project=ch
 **File to create**: `frontend/docs/stories/epic-37/SCREENSHOTS/README.md`
 
 **Include**:
+
 - All 10 screenshots (PNG format, 1400×900 minimum resolution)
 - Annotations and captions for each screenshot
 - Usage guide (how to embed in user documentation)
@@ -292,6 +307,7 @@ npx playwright test e2e/merged-group-table-epic-37.spec.ts --headed --project=ch
 ### 4.1 macOS VoiceOver Testing
 
 **Steps**:
+
 1. Enable VoiceOver: Cmd+F5
 2. Navigate to `/analytics/advertising?group_by=imtId`
 3. Use VoiceOver rotor (Cmd+U) to navigate:
@@ -301,6 +317,7 @@ npx playwright test e2e/merged-group-table-epic-37.spec.ts --headed --project=ch
    - Tables (should announce table structure)
 
 **Success Criteria**:
+
 - Toggle buttons announced as "Button, По артикулам, pressed" or "Button, По склейкам, not pressed"
 - Table announced as "Table with X rows and 7 columns"
 - Column headers announced with proper labels
@@ -308,6 +325,7 @@ npx playwright test e2e/merged-group-table-epic-37.spec.ts --headed --project=ch
 - Rowspan cell announces group ID and product count
 
 **Notes to capture**:
+
 - Any missing or unclear announcements
 - Navigation flow issues
 - Comparison with "По артикулам" mode
@@ -315,6 +333,7 @@ npx playwright test e2e/merged-group-table-epic-37.spec.ts --headed --project=ch
 ### 4.2 Windows NVDA Testing
 
 **Steps**:
+
 1. Install NVDA (free): https://www.nvaccess.org/download/
 2. Start NVDA, navigate to `/analytics/advertising?group_by=imtId`
 3. Use table navigation (Ctrl+Alt+Arrow keys):
@@ -323,6 +342,7 @@ npx playwright test e2e/merged-group-table-epic-37.spec.ts --headed --project=ch
    - Read cell content
 
 **Success Criteria**:
+
 - Same as VoiceOver testing
 - Table navigation smooth and logical
 - No "clickable" announcements on non-interactive elements
@@ -330,16 +350,19 @@ npx playwright test e2e/merged-group-table-epic-37.spec.ts --headed --project=ch
 ### 4.3 Mobile Screen Reader Testing
 
 **iOS VoiceOver**:
+
 1. Settings → Accessibility → VoiceOver → On
 2. Navigate using 2-finger swipe (next/previous)
 3. Activate with double-tap
 
 **Android TalkBack**:
+
 1. Settings → Accessibility → TalkBack → On
 2. Navigate using swipe gestures
 3. Activate with double-tap
 
 **Success Criteria**:
+
 - Toggle buttons accessible via swipe
 - Table scrolls without losing screen reader focus
 - Sticky columns remain accessible while scrolling
@@ -349,6 +372,7 @@ npx playwright test e2e/merged-group-table-epic-37.spec.ts --headed --project=ch
 **File to create**: `frontend/docs/stories/epic-37/SCREEN-READER-REPORT.md`
 
 **Template**:
+
 ```markdown
 # Screen Reader Testing Report
 
@@ -384,6 +408,7 @@ npx playwright test e2e/merged-group-table-epic-37.spec.ts --headed --project=ch
 ### 5.1 Install Mixpanel SDK
 
 **Steps**:
+
 1. Install Mixpanel: `npm install mixpanel-browser`
 2. Initialize in `src/lib/mixpanel.ts`:
 
@@ -401,6 +426,7 @@ export default mixpanel
 ```
 
 3. Add to `.env.local`:
+
 ```
 NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 ```
@@ -410,6 +436,7 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 **Events to track**:
 
 #### Event 1: Toggle Mode Switch
+
 ```typescript
 // In MergedGroupTable.tsx or parent component
 import mixpanel from '@/lib/mixpanel'
@@ -425,6 +452,7 @@ const handleToggle = (mode: 'sku' | 'imtId') => {
 ```
 
 #### Event 2: Table Sort
+
 ```typescript
 const handleSort = (column: string, direction: 'asc' | 'desc') => {
   mixpanel.track('Advertising Analytics - Sort Table', {
@@ -437,6 +465,7 @@ const handleSort = (column: string, direction: 'asc' | 'desc') => {
 ```
 
 #### Event 3: Row Click (Detail Row)
+
 ```typescript
 const handleRowClick = (nmId: number, groupId: number | null) => {
   mixpanel.track('Advertising Analytics - Row Click', {
@@ -449,6 +478,7 @@ const handleRowClick = (nmId: number, groupId: number | null) => {
 ```
 
 #### Event 4: Page View
+
 ```typescript
 // In page component: app/(dashboard)/analytics/advertising/page.tsx
 useEffect(() => {
@@ -461,6 +491,7 @@ useEffect(() => {
 ### 5.3 Validation
 
 **Test events in Mixpanel dashboard**:
+
 1. Log in to Mixpanel: https://mixpanel.com
 2. Navigate to your project
 3. Go to **Events** tab
@@ -468,6 +499,7 @@ useEffect(() => {
 5. Verify events appear in real-time stream
 
 **Success Criteria**:
+
 - All 4 events fire correctly
 - Properties (mode, column, nmId, etc.) captured accurately
 - Events appear in Mixpanel within 10 seconds
@@ -478,6 +510,7 @@ useEffect(() => {
 **File to create**: `frontend/docs/stories/epic-37/MIXPANEL-SETUP.md`
 
 **Include**:
+
 - Mixpanel project token (masked in docs, stored in .env.local)
 - List of tracked events and properties
 - Example Mixpanel queries for analytics insights
@@ -492,6 +525,7 @@ useEffect(() => {
 ### Steps
 
 1. **Install axe-core**:
+
 ```bash
 npm install --save-dev @axe-core/playwright
 ```
@@ -501,11 +535,13 @@ npm install --save-dev @axe-core/playwright
    - Look for `// TODO (QA): Uncomment` comments
 
 3. **Run accessibility tests**:
+
 ```bash
 npx playwright test e2e/accessibility-merged-groups-epic-37.spec.ts
 ```
 
 **Success Criteria**:
+
 - ✅ 0 axe-core violations (WCAG 2.1 AA)
 - ✅ All 7 test scenarios pass
 - ✅ Test execution time <30 seconds
@@ -515,6 +551,7 @@ npx playwright test e2e/accessibility-merged-groups-epic-37.spec.ts
 **File to create**: `frontend/docs/stories/epic-37/ACCESSIBILITY-REPORT.md`
 
 **Include**:
+
 - axe-core scan results (violations, passes, incomplete)
 - Screenshots of any violations found
 - Remediation steps for each violation
@@ -527,12 +564,14 @@ npx playwright test e2e/accessibility-merged-groups-epic-37.spec.ts
 Before marking Story 37.5 COMPLETE, verify:
 
 ### Phase 1 (AI) ✅
+
 - [x] Unit tests: 77/77 passing (55 metrics + 22 formatters)
 - [x] E2E test code: 7 scenarios implemented
 - [x] Accessibility test code: 7 scenarios implemented
 - [x] User guide: Complete and comprehensive
 
 ### Phase 2 (QA) 🚧
+
 - [ ] UAT: ≥3 users tested, ≥90% satisfaction
 - [ ] Performance: LCP <200ms, FPS ≥60
 - [ ] Screenshots: 10 annotated screenshots captured
@@ -541,6 +580,7 @@ Before marking Story 37.5 COMPLETE, verify:
 - [ ] Axe-core: 0 violations, all tests passing
 
 ### Files to Create
+
 - [ ] `frontend/docs/stories/epic-37/UAT-RESULTS.md`
 - [ ] `frontend/docs/stories/epic-37/PERFORMANCE-REPORT.md`
 - [ ] `frontend/docs/stories/epic-37/SCREENSHOTS/README.md` + 10 PNGs
@@ -552,21 +592,22 @@ Before marking Story 37.5 COMPLETE, verify:
 
 ## Estimated Time (Phase 2)
 
-| Task | Estimated Time | Assigned To |
-|------|----------------|-------------|
-| UAT (3 users) | 2-3 hours | QA Lead + Users |
-| Performance testing | 1-2 hours | QA Engineer |
-| Screenshot capture | 1 hour | QA/Designer |
-| Screen reader testing | 2-3 hours | Accessibility Specialist |
-| Mixpanel integration | 1-2 hours | Frontend Dev |
-| Axe-core integration | 30 min | Frontend Dev |
-| **Total** | **7.5-11.5 hours** | **QA Team** |
+| Task                  | Estimated Time     | Assigned To              |
+| --------------------- | ------------------ | ------------------------ |
+| UAT (3 users)         | 2-3 hours          | QA Lead + Users          |
+| Performance testing   | 1-2 hours          | QA Engineer              |
+| Screenshot capture    | 1 hour             | QA/Designer              |
+| Screen reader testing | 2-3 hours          | Accessibility Specialist |
+| Mixpanel integration  | 1-2 hours          | Frontend Dev             |
+| Axe-core integration  | 30 min             | Frontend Dev             |
+| **Total**             | **7.5-11.5 hours** | **QA Team**              |
 
 ---
 
 ## Success Criteria Summary
 
 **Story 37.5 is COMPLETE when**:
+
 1. ✅ Phase 1 complete (AI tasks)
 2. ✅ Phase 2 complete (all 6 QA tasks above)
 3. ✅ All documentation files created
@@ -576,6 +617,7 @@ Before marking Story 37.5 COMPLETE, verify:
 7. ✅ Mixpanel events validated
 
 **Epic 37 is COMPLETE when**:
+
 - Story 37.1: Backend API Validation (blocked, defer to post-MVP)
 - Story 37.2: MergedGroupTable Component ✅ (9.8/10)
 - Story 37.3: Aggregate Metrics Display ✅ (9.7/10)
@@ -587,6 +629,7 @@ Before marking Story 37.5 COMPLETE, verify:
 ## Contact & Support
 
 **Questions?** Contact:
+
 - **QA Lead**: [Name/Email]
 - **Frontend Dev**: [Name/Email]
 - **Product Owner**: [Name/Email]
@@ -599,6 +642,7 @@ Before marking Story 37.5 COMPLETE, verify:
 ---
 
 **🎯 Phase 2 Quick Start**:
+
 1. Install @axe-core/playwright and run accessibility tests
 2. Run UAT with 3 users (different experience levels)
 3. Capture 10 annotated screenshots

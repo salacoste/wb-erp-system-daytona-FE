@@ -188,29 +188,29 @@ The Order Picker Drawer is the most complex component in Epic 53-FE. It must:
 
 ### Pages/Containers
 
-| File | Purpose | Lines Est. |
-|------|---------|------------|
-| `OrderPickerDrawer.tsx` | Full-screen drawer container | ~150 |
+| File                    | Purpose                      | Lines Est. |
+| ----------------------- | ---------------------------- | ---------- |
+| `OrderPickerDrawer.tsx` | Full-screen drawer container | ~150       |
 
 ### Components
 
-| File | Purpose | Lines Est. |
-|------|---------|------------|
-| `OrderPickerHeader.tsx` | Header with title and close button | ~60 |
-| `OrderPickerFilters.tsx` | Search input and status filter | ~80 |
-| `OrderPickerTable.tsx` | Virtualized list with react-window | ~120 |
-| `OrderPickerRow.tsx` | Single row for virtualization | ~50 |
-| `OrderPickerFooter.tsx` | Sticky footer with add button | ~40 |
-| `OrderPickerEmptyState.tsx` | Empty state component | ~30 |
-| `OrderPickerSkeleton.tsx` | Loading skeleton | ~40 |
+| File                        | Purpose                            | Lines Est. |
+| --------------------------- | ---------------------------------- | ---------- |
+| `OrderPickerHeader.tsx`     | Header with title and close button | ~60        |
+| `OrderPickerFilters.tsx`    | Search input and status filter     | ~80        |
+| `OrderPickerTable.tsx`      | Virtualized list with react-window | ~120       |
+| `OrderPickerRow.tsx`        | Single row for virtualization      | ~50        |
+| `OrderPickerFooter.tsx`     | Sticky footer with add button      | ~40        |
+| `OrderPickerEmptyState.tsx` | Empty state component              | ~30        |
+| `OrderPickerSkeleton.tsx`   | Loading skeleton                   | ~40        |
 
 ### Hooks
 
-| Hook | File Path | Purpose |
-|------|-----------|---------|
-| `useOrdersForSupply` | `src/hooks/useOrdersForSupply.ts` | Fetch eligible orders |
-| `useAddOrdersToSupply` | `src/hooks/useAddOrdersToSupply.ts` | Batch add mutation |
-| `useOrderSelection` | `src/hooks/useOrderSelection.ts` | Selection state management |
+| Hook                   | File Path                           | Purpose                    |
+| ---------------------- | ----------------------------------- | -------------------------- |
+| `useOrdersForSupply`   | `src/hooks/useOrdersForSupply.ts`   | Fetch eligible orders      |
+| `useAddOrdersToSupply` | `src/hooks/useAddOrdersToSupply.ts` | Batch add mutation         |
+| `useOrderSelection`    | `src/hooks/useOrderSelection.ts`    | Selection state management |
 
 ---
 
@@ -601,15 +601,15 @@ export function useAddOrdersToSupply(supplyId: string) {
 
 ## Error Handling
 
-| HTTP Status | Error Message (Russian) | Action |
-|-------------|-------------------------|--------|
-| 400 | "Неверный запрос" | Show inline error |
-| 401 | "Сессия истекла" | Redirect to login |
-| 403 | "Нет доступа" | Show error, close drawer |
-| 404 | "Поставка не найдена" | Show error, close drawer |
-| 409 | "Заказ уже в другой поставке" | Show in failed list |
-| 422 | "Превышен лимит заказов" | Show toast warning |
-| 500 | "Ошибка сервера" | Show retry button |
+| HTTP Status | Error Message (Russian)       | Action                   |
+| ----------- | ----------------------------- | ------------------------ |
+| 400         | "Неверный запрос"             | Show inline error        |
+| 401         | "Сессия истекла"              | Redirect to login        |
+| 403         | "Нет доступа"                 | Show error, close drawer |
+| 404         | "Поставка не найдена"         | Show error, close drawer |
+| 409         | "Заказ уже в другой поставке" | Show in failed list      |
+| 422         | "Превышен лимит заказов"      | Show toast warning       |
+| 500         | "Ошибка сервера"              | Show retry button        |
 
 ---
 
@@ -707,25 +707,25 @@ export function useAddOrdersToSupply(supplyId: string) {
 
 ### Required (Blocking)
 
-| Dependency | Story | Status | Notes |
-|------------|-------|--------|-------|
+| Dependency         | Story   | Status   | Notes        |
+| ------------------ | ------- | -------- | ------------ |
 | Types & API Client | 53.1-FE | Required | Supply types |
 | Supply Detail Page | 53.4-FE | Required | Opens drawer |
-| useOrders hook | 40.2-FE | Required | Fetch orders |
+| useOrders hook     | 40.2-FE | Required | Fetch orders |
 
 ### External
 
-| Dependency | Package | Version |
-|------------|---------|---------|
-| react-window | `react-window` | ^1.8.x |
-| @types/react-window | `@types/react-window` | ^1.8.x |
+| Dependency          | Package               | Version |
+| ------------------- | --------------------- | ------- |
+| react-window        | `react-window`        | ^1.8.x  |
+| @types/react-window | `@types/react-window` | ^1.8.x  |
 
 ### Backend
 
-| Endpoint | Method | Status |
-|----------|--------|--------|
-| `/v1/orders` | GET | Complete (Epic 40) |
-| `/v1/supplies/:id/orders` | POST | Complete (Epic 53) |
+| Endpoint                  | Method | Status             |
+| ------------------------- | ------ | ------------------ |
+| `/v1/orders`              | GET    | Complete (Epic 40) |
+| `/v1/supplies/:id/orders` | POST   | Complete (Epic 53) |
 
 ---
 
@@ -776,23 +776,23 @@ src/
 
 ## Tasks Breakdown
 
-| # | Task | Est. Hours | Notes |
-|---|------|------------|-------|
-| 1 | Install react-window package | 0.5 | npm install |
-| 2 | Create useOrderSelection hook | 2 | Selection state logic |
-| 3 | Create useOrdersForSupply hook | 1 | Wraps useOrders with filters |
-| 4 | Create useAddOrdersToSupply hook | 2 | Mutation with partial success |
-| 5 | Create OrderPickerRow component | 1 | Memoized row |
-| 6 | Create OrderPickerTable component | 4 | Virtualization core |
-| 7 | Create OrderPickerFilters component | 2 | Search + status filter |
-| 8 | Create OrderPickerHeader component | 1 | Title + close |
-| 9 | Create OrderPickerFooter component | 1 | Add button |
-| 10 | Create OrderPickerDrawer container | 3 | Full integration |
-| 11 | Create empty/loading states | 1 | UX polish |
-| 12 | Accessibility audit | 2 | WCAG compliance |
-| 13 | Unit tests | 4 | All components |
-| 14 | Performance testing | 2 | 1000+ orders |
-| **Total** | | **25.5** | ~3 days |
+| #         | Task                                | Est. Hours | Notes                         |
+| --------- | ----------------------------------- | ---------- | ----------------------------- |
+| 1         | Install react-window package        | 0.5        | npm install                   |
+| 2         | Create useOrderSelection hook       | 2          | Selection state logic         |
+| 3         | Create useOrdersForSupply hook      | 1          | Wraps useOrders with filters  |
+| 4         | Create useAddOrdersToSupply hook    | 2          | Mutation with partial success |
+| 5         | Create OrderPickerRow component     | 1          | Memoized row                  |
+| 6         | Create OrderPickerTable component   | 4          | Virtualization core           |
+| 7         | Create OrderPickerFilters component | 2          | Search + status filter        |
+| 8         | Create OrderPickerHeader component  | 1          | Title + close                 |
+| 9         | Create OrderPickerFooter component  | 1          | Add button                    |
+| 10        | Create OrderPickerDrawer container  | 3          | Full integration              |
+| 11        | Create empty/loading states         | 1          | UX polish                     |
+| 12        | Accessibility audit                 | 2          | WCAG compliance               |
+| 13        | Unit tests                          | 4          | All components                |
+| 14        | Performance testing                 | 2          | 1000+ orders                  |
+| **Total** |                                     | **25.5**   | ~3 days                       |
 
 ---
 
@@ -808,9 +808,9 @@ src/
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2026-01-29 | 1.0 | Initial story creation | Claude Code (PM Agent) |
+| Date       | Version | Description            | Author                 |
+| ---------- | ------- | ---------------------- | ---------------------- |
+| 2026-01-29 | 1.0     | Initial story creation | Claude Code (PM Agent) |
 
 ---
 

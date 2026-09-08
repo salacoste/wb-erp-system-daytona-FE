@@ -11,7 +11,7 @@ chars: 2938
 
 В этой статье:
 
-- 
+-
 - <a href="#posledstviya-udaleniya-organizatsii" rel="nofollow">Последствия удаления организации</a>
 - <a href="#kak-udalit-organizatsiyu" rel="nofollow">Как удалить организацию</a>
 - <a href="#kak-vosstanovit-organizatsiyu" rel="nofollow">Как восстановить организацию</a>

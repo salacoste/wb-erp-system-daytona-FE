@@ -17,6 +17,7 @@
 ## Background
 
 After closing a supply, the status transitions automatically as WB processes the delivery:
+
 - `CLOSED` -> WB accepts supply, starts processing
 - `DELIVERING` -> Supply is in transit to WB warehouse
 - `DELIVERED` -> Supply received at warehouse
@@ -149,18 +150,18 @@ Rate Limited State:
 
 ### New Components
 
-| File | Purpose | Lines Est. |
-|------|---------|------------|
-| `PollingStatusBadge.tsx` | Animated polling indicator | ~50 |
-| `SyncButton.tsx` | Manual sync with rate limit | ~80 |
+| File                     | Purpose                     | Lines Est. |
+| ------------------------ | --------------------------- | ---------- |
+| `PollingStatusBadge.tsx` | Animated polling indicator  | ~50        |
+| `SyncButton.tsx`         | Manual sync with rate limit | ~80        |
 
 ### Components to Update
 
-| File | Changes | Notes |
-|------|---------|-------|
-| `SyncStatusIndicator.tsx` | Add last sync time display | May already exist from 53.2-FE |
-| `SupplyHeader.tsx` | Integrate polling badge and sync button | Story 53.4-FE component |
-| `SupplyDetailPage` | Add polling configuration | page.tsx |
+| File                      | Changes                                 | Notes                          |
+| ------------------------- | --------------------------------------- | ------------------------------ |
+| `SyncStatusIndicator.tsx` | Add last sync time display              | May already exist from 53.2-FE |
+| `SupplyHeader.tsx`        | Integrate polling badge and sync button | Story 53.4-FE component        |
+| `SupplyDetailPage`        | Add polling configuration               | page.tsx                       |
 
 ### Component Location
 
@@ -181,11 +182,11 @@ src/components/custom/
 
 ## Hooks to Create/Update
 
-| Hook | File Path | Purpose |
-|------|-----------|---------|
-| `useSupplyPolling` | `src/hooks/useSupplyPolling.ts` | Conditional polling logic |
-| `useSyncSupplies` | `src/hooks/useSyncSupplies.ts` | Manual sync with rate limit |
-| `useSyncCooldown` | `src/hooks/useSyncCooldown.ts` | Cooldown timer management |
+| Hook               | File Path                       | Purpose                     |
+| ------------------ | ------------------------------- | --------------------------- |
+| `useSupplyPolling` | `src/hooks/useSupplyPolling.ts` | Conditional polling logic   |
+| `useSyncSupplies`  | `src/hooks/useSyncSupplies.ts`  | Manual sync with rate limit |
+| `useSyncCooldown`  | `src/hooks/useSyncCooldown.ts`  | Cooldown timer management   |
 
 ---
 
@@ -539,25 +540,25 @@ export function formatLastSyncTime(date: Date | string): string {
 
 ## Polling Configuration Matrix
 
-| Status | Auto-Poll | Poll Interval | Manual Sync |
-|--------|-----------|---------------|-------------|
-| OPEN | No | - | Yes |
-| CLOSED | Yes | 30s | Yes |
-| DELIVERING | Yes | 30s | Yes |
-| DELIVERED | No | - | Yes |
-| CANCELLED | No | - | Yes |
+| Status     | Auto-Poll | Poll Interval | Manual Sync |
+| ---------- | --------- | ------------- | ----------- |
+| OPEN       | No        | -             | Yes         |
+| CLOSED     | Yes       | 30s           | Yes         |
+| DELIVERING | Yes       | 30s           | Yes         |
+| DELIVERED  | No        | -             | Yes         |
+| CANCELLED  | No        | -             | Yes         |
 
 ---
 
 ## Error Handling
 
-| HTTP Status | Error Code | Message (Russian) | Action |
-|-------------|------------|-------------------|--------|
-| 401 | UNAUTHORIZED | "Сессия истекла" | Redirect to login |
-| 403 | FORBIDDEN | "Нет доступа" | Show error toast |
-| 429 | RATE_LIMIT_EXCEEDED | "Слишком частые запросы" | Start cooldown timer |
-| 500 | SERVER_ERROR | "Ошибка сервера" | Show retry toast |
-| Network | - | "Проблемы с сетью" | Auto-retry polling |
+| HTTP Status | Error Code          | Message (Russian)        | Action               |
+| ----------- | ------------------- | ------------------------ | -------------------- |
+| 401         | UNAUTHORIZED        | "Сессия истекла"         | Redirect to login    |
+| 403         | FORBIDDEN           | "Нет доступа"            | Show error toast     |
+| 429         | RATE_LIMIT_EXCEEDED | "Слишком частые запросы" | Start cooldown timer |
+| 500         | SERVER_ERROR        | "Ошибка сервера"         | Show retry toast     |
+| Network     | -                   | "Проблемы с сетью"       | Auto-retry polling   |
 
 ---
 
@@ -644,18 +645,18 @@ export function formatLastSyncTime(date: Date | string): string {
 
 ### Required (Blocking)
 
-| Dependency | Story | Status | Notes |
-|------------|-------|--------|-------|
-| Types & API Client | 53.1-FE | Required | SupplyStatus type |
-| Supply Detail Page | 53.4-FE | Required | Integration point |
-| Close Supply | 53.6-FE | Required | Status transitions |
+| Dependency         | Story   | Status   | Notes              |
+| ------------------ | ------- | -------- | ------------------ |
+| Types & API Client | 53.1-FE | Required | SupplyStatus type  |
+| Supply Detail Page | 53.4-FE | Required | Integration point  |
+| Close Supply       | 53.6-FE | Required | Status transitions |
 
 ### Backend
 
-| Endpoint | Method | Status |
-|----------|--------|--------|
-| `/v1/supplies/:id` | GET | Complete |
-| `/v1/supplies/sync` | POST | Complete |
+| Endpoint            | Method | Status   |
+| ------------------- | ------ | -------- |
+| `/v1/supplies/:id`  | GET    | Complete |
+| `/v1/supplies/sync` | POST   | Complete |
 
 ---
 
@@ -700,19 +701,19 @@ src/
 
 ## Tasks Breakdown
 
-| # | Task | Est. Hours | Notes |
-|---|------|------------|-------|
-| 1 | Create useSupplyPolling hook | 2 | Conditional polling logic |
-| 2 | Create useSyncCooldown hook | 2 | Cooldown timer |
-| 3 | Create useSyncSupplies hook | 2 | Mutation with rate limit |
-| 4 | Create PollingStatusBadge | 1 | Animated indicator |
-| 5 | Create SyncButton | 2 | Button with states |
-| 6 | Update SyncStatusIndicator | 1 | Last sync time |
-| 7 | Integrate into SupplyHeader | 2 | Wire everything together |
-| 8 | Add utility functions | 0.5 | formatCooldownTime |
-| 9 | Unit tests | 3 | All hooks and components |
-| 10 | Manual testing | 1 | Full flow verification |
-| **Total** | | **16.5** | ~2 days |
+| #         | Task                         | Est. Hours | Notes                     |
+| --------- | ---------------------------- | ---------- | ------------------------- |
+| 1         | Create useSupplyPolling hook | 2          | Conditional polling logic |
+| 2         | Create useSyncCooldown hook  | 2          | Cooldown timer            |
+| 3         | Create useSyncSupplies hook  | 2          | Mutation with rate limit  |
+| 4         | Create PollingStatusBadge    | 1          | Animated indicator        |
+| 5         | Create SyncButton            | 2          | Button with states        |
+| 6         | Update SyncStatusIndicator   | 1          | Last sync time            |
+| 7         | Integrate into SupplyHeader  | 2          | Wire everything together  |
+| 8         | Add utility functions        | 0.5        | formatCooldownTime        |
+| 9         | Unit tests                   | 3          | All hooks and components  |
+| 10        | Manual testing               | 1          | Full flow verification    |
+| **Total** |                              | **16.5**   | ~2 days                   |
 
 ---
 
@@ -727,9 +728,9 @@ src/
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2026-01-29 | 1.0 | Initial story creation | Claude Code (PM Agent) |
+| Date       | Version | Description            | Author                 |
+| ---------- | ------- | ---------------------- | ---------------------- |
+| 2026-01-29 | 1.0     | Initial story creation | Claude Code (PM Agent) |
 
 ---
 

@@ -8,13 +8,14 @@ The `/v1/analytics/fulfillment/summary` endpoint returns `returnsCount: 0` and `
 
 **January 2026 data comparison:**
 
-| Source | Returns (RUB) | Returns (units) |
-|--------|--------------|-----------------|
-| finance-summary (5 weeks summed) | 20 229 ₽ | N/A |
-| fulfillment/summary FBO | 0 | 0 |
-| fulfillment/summary FBS | 0 | 0 |
+| Source                           | Returns (RUB) | Returns (units) |
+| -------------------------------- | ------------- | --------------- |
+| finance-summary (5 weeks summed) | 20 229 ₽      | N/A             |
+| fulfillment/summary FBO          | 0             | 0               |
+| fulfillment/summary FBS          | 0             | 0               |
 
 **Per-week finance-summary wb_returns_gross_total:**
+
 - W01: 5 234 ₽
 - W02: 10 544 ₽
 - W03: 958 ₽
@@ -53,6 +54,7 @@ No frontend workaround is possible without a backend fix, since returns count da
 Populate `returnsCount`, `returnsRevenue`, and `returnRate` fields in the fulfillment summary response by querying return records from the same data source used by finance-summary.
 
 **Expected behavior:**
+
 ```json
 {
   "fbo": {
@@ -108,6 +110,7 @@ curl -s 'http://localhost:3000/v1/analytics/weekly/finance-summary?week=2026-W02
 **Root cause**: `reports_sales.is_storno` had **0 storno records** — WB daily sales API does not return storno for this seller. Returns only exist in `wb_finance_raw` (weekly financial reports) as `doc_type='return'`.
 
 **Fix**: Changed `getReturnMetrics()` and trends SQL to query `wb_finance_raw` as primary source:
+
 - `doc_type = 'return'` for return records
 - `paid_delivery_flag = false` → FBO, `paid_delivery_flag = true` → FBS
 - Falls back to `reports_sales.isStorno` if wb_finance_raw has no data

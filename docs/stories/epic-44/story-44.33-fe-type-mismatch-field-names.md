@@ -17,6 +17,7 @@
 **So that** the frontend correctly handles product data without runtime errors or type mismatches.
 
 **Non-goals**:
+
 - Backend API changes (backend contract is fixed)
 - Breaking changes to existing working features
 - Changes to data transformation logic (only type fixes)
@@ -27,11 +28,11 @@
 
 Backend Request #99 revealed three critical type/field mismatches between frontend expectations and actual API responses:
 
-| Issue | Frontend Expected | Backend Returns | Impact |
-|-------|------------------|-----------------|--------|
-| **#1: nm_id type** | `number` | `string` | Type errors in product search |
-| **#2: title field** | `title` | `sa_name` | Product name undefined |
-| **#3: category field** | `category` | `category_hierarchy` | Category data undefined |
+| Issue                  | Frontend Expected | Backend Returns      | Impact                        |
+| ---------------------- | ----------------- | -------------------- | ----------------------------- |
+| **#1: nm_id type**     | `number`          | `string`             | Type errors in product search |
+| **#2: title field**    | `title`           | `sa_name`            | Product name undefined        |
+| **#3: category field** | `category`        | `category_hierarchy` | Category data undefined       |
 
 **Source**: `frontend/docs/request-backend/FRONTEND-INTEGRATION-GUIDE.md`
 
@@ -40,6 +41,7 @@ Backend Request #99 revealed three critical type/field mismatches between fronte
 ## Acceptance Criteria
 
 ### AC1: Fix nm_id Type Mismatch
+
 - [ ] Update `Product.nm_id` type from `number` to `string`
 - [ ] Update all component props using `nm_id` to accept `string`
 - [ ] Update all API calls passing `nm_id` to use string value
@@ -47,6 +49,7 @@ Backend Request #99 revealed three critical type/field mismatches between fronte
 - [ ] No TypeScript errors related to `nm_id` type mismatches
 
 ### AC2: Fix Product Name Field Reference
+
 - [ ] Replace all references to `product.title` with `product.sa_name`
 - [ ] Update product display components to use `sa_name`
 - [ ] Update product search/filter to search `sa_name` field
@@ -54,6 +57,7 @@ Backend Request #99 revealed three critical type/field mismatches between fronte
 - [ ] No "undefined" product names in UI
 
 ### AC3: Fix Category Field Reference
+
 - [ ] Replace all references to `product.category` with `product.category_hierarchy`
 - [ ] Update category display logic to use nested object structure:
   - `category_hierarchy.subject_name` (leaf category)
@@ -63,6 +67,7 @@ Backend Request #99 revealed three critical type/field mismatches between fronte
 - [ ] No "undefined" category data in UI
 
 ### AC4: Update TypeScript Type Definitions
+
 - [ ] Update `src/types/products.ts` with correct field types
 - [ ] Update `src/types/price-calculator.ts` with correct product reference
 - [ ] Add `CategoryHierarchy` interface for nested category structure
@@ -70,6 +75,7 @@ Backend Request #99 revealed three critical type/field mismatches between fronte
 - [ ] All types match backend response exactly
 
 ### AC5: Update Product Search/Filter Components
+
 - [ ] Product search returns results with correct field names
 - [ ] Product search displays product names using `sa_name`
 - [ ] Product search displays categories using `category_hierarchy`
@@ -77,6 +83,7 @@ Backend Request #99 revealed three critical type/field mismatches between fronte
 - [ ] No console errors related to undefined fields
 
 ### AC6: Update Price Calculator Product Integration
+
 - [ ] Auto-fill product dimensions works correctly
 - [ ] Auto-fill product category works correctly
 - [ ] Product search in calculator shows correct names
@@ -84,6 +91,7 @@ Backend Request #99 revealed three critical type/field mismatches between fronte
 - [ ] Calculator form validates without type errors
 
 ### AC7: Update Product List Views
+
 - [ ] Product list table displays `sa_name` in name column
 - [ ] Product list displays category using `category_hierarchy.subject_name`
 - [ ] Product list filters by category work correctly
@@ -91,6 +99,7 @@ Backend Request #99 revealed three critical type/field mismatches between fronte
 - [ ] No undefined values in product list
 
 ### AC8: Update Forms Using Product Data
+
 - [ ] Single COGS form shows product name using `sa_name`
 - [ ] Bulk COGS form shows product names using `sa_name`
 - [ ] Margin by SKU table shows product names using `sa_name`
@@ -109,6 +118,7 @@ Backend Request #99 revealed three critical type/field mismatches between fronte
 - **Story 44.26b**: Auto-fill Dimensions & Category (product data usage)
 
 **Backend Response Example**:
+
 ```json
 {
   "products": [
@@ -520,12 +530,14 @@ export interface PriceCalculatorFormData {
 ## Migration Strategy
 
 ### Step 1: Update Type Definitions (Non-Breaking)
+
 1. Update `Product` interface in `src/types/products.ts`
 2. Add backward compatibility type aliases (compile errors for old usage)
 3. Add helper functions in `src/lib/product-utils.ts`
 4. Run type check: `npm run type-check` (expect errors)
 
 ### Step 2: Update Components (File by File)
+
 1. Start with components NOT using product data (no errors)
 2. Update components using `product.title` → `product.sa_name`
 3. Update components using `product.category` → `product.category_hierarchy`
@@ -533,12 +545,14 @@ export interface PriceCalculatorFormData {
 5. Run type check after each file update
 
 ### Step 3: Update Hooks and Services
+
 1. Update `useProducts` hook
 2. Update `useProductSearch` hook
 3. Update API client type definitions
 4. Run integration tests
 
 ### Step 4: Verify End-to-End
+
 1. Test product search functionality
 2. Test product list displays
 3. Test price calculator product auto-fill
@@ -546,6 +560,7 @@ export interface PriceCalculatorFormData {
 5. Run E2E tests
 
 ### Step 5: Cleanup
+
 1. Remove backward compatibility type aliases
 2. Remove unused imports
 3. Update documentation comments
@@ -556,12 +571,14 @@ export interface PriceCalculatorFormData {
 ## Testing Checklist
 
 ### Type System Tests
+
 - [ ] No TypeScript errors after type updates
 - [ ] `nm_id` type is `string` in all components
 - [ ] `sa_name` used instead of `title` everywhere
 - [ ] `category_hierarchy` used instead of `category` everywhere
 
 ### Component Tests
+
 - [ ] ProductTable displays `sa_name` correctly
 - [ ] ProductTable displays category hierarchy correctly
 - [ ] ProductAutoFill uses correct field names
@@ -569,12 +586,14 @@ export interface PriceCalculatorFormData {
 - [ ] BulkCogsForm displays product names correctly
 
 ### Integration Tests
+
 - [ ] Product search returns correct data structure
 - [ ] Price calculator auto-fill works with correct types
 - [ ] COGS forms submit with string `nm_id`
 - [ ] Category filtering works with nested structure
 
 ### E2E Tests
+
 - [ ] User can search for products
 - [ ] Product list shows correct names and categories
 - [ ] User can select product for price calculator
@@ -585,14 +604,14 @@ export interface PriceCalculatorFormData {
 
 ## Invariants & Edge Cases
 
-| Scenario | Handling |
-|----------|----------|
-| `nm_id` used as route param | Route params are strings, no conversion needed |
-| `nm_id` used in API query | API expects string, no conversion needed |
-| `category_hierarchy` is null | Display "Без категории" (helper function) |
-| `sa_name` is empty | Fallback to `nm_id` for display |
-| Product without dimensions | Handle `null` dimensions gracefully |
-| Product without category | Handle `null` category_hierarchy gracefully |
+| Scenario                     | Handling                                       |
+| ---------------------------- | ---------------------------------------------- |
+| `nm_id` used as route param  | Route params are strings, no conversion needed |
+| `nm_id` used in API query    | API expects string, no conversion needed       |
+| `category_hierarchy` is null | Display "Без категории" (helper function)      |
+| `sa_name` is empty           | Fallback to `nm_id` for display                |
+| Product without dimensions   | Handle `null` dimensions gracefully            |
+| Product without category     | Handle `null` category_hierarchy gracefully    |
 
 ---
 
@@ -623,26 +642,29 @@ export interface PriceCalculatorFormData {
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/types/products.ts` | UPDATE | +20 | Fix Product interface types |
-| `src/types/price-calculator.ts` | UPDATE | +10 | Fix Product reference types |
-| `src/lib/product-utils.ts` | CREATE | ~40 | Helper functions for category display |
-| `src/components/custom/product-list/ProductTable.tsx` | UPDATE | +5 | Use sa_name, category_hierarchy |
-| `src/components/custom/price-calculator/ProductAutoFill.tsx` | UPDATE | +8 | Use correct field names |
-| `src/components/custom/cogs/SingleCogsForm.tsx` | UPDATE | +5 | Use sa_name for display |
-| `src/components/custom/cogs/BulkCogsForm.tsx` | UPDATE | +5 | Use sa_name for display |
-| `src/hooks/useProducts.ts` | UPDATE | +3 | Return correct types |
-| `src/hooks/useProductSearch.ts` | UPDATE | +5 | Search uses correct types |
+
+| File                                                         | Change Type | Lines (Est.) | Description                           |
+| ------------------------------------------------------------ | ----------- | ------------ | ------------------------------------- |
+| `src/types/products.ts`                                      | UPDATE      | +20          | Fix Product interface types           |
+| `src/types/price-calculator.ts`                              | UPDATE      | +10          | Fix Product reference types           |
+| `src/lib/product-utils.ts`                                   | CREATE      | ~40          | Helper functions for category display |
+| `src/components/custom/product-list/ProductTable.tsx`        | UPDATE      | +5           | Use sa_name, category_hierarchy       |
+| `src/components/custom/price-calculator/ProductAutoFill.tsx` | UPDATE      | +8           | Use correct field names               |
+| `src/components/custom/cogs/SingleCogsForm.tsx`              | UPDATE      | +5           | Use sa_name for display               |
+| `src/components/custom/cogs/BulkCogsForm.tsx`                | UPDATE      | +5           | Use sa_name for display               |
+| `src/hooks/useProducts.ts`                                   | UPDATE      | +3           | Return correct types                  |
+| `src/hooks/useProductSearch.ts`                              | UPDATE      | +5           | Search uses correct types             |
 
 ### Dependencies on Previous Stories
-| Story | Component/Type Used |
-|-------|---------------------|
-| 44.1 | TypeScript type definitions (base types) |
-| 44.2 | Price calculator form (product auto-fill) |
+
+| Story  | Component/Type Used                                 |
+| ------ | --------------------------------------------------- |
+| 44.1   | TypeScript type definitions (base types)            |
+| 44.2   | Price calculator form (product auto-fill)           |
 | 44.26b | Auto-fill dimensions & category (uses product data) |
 
 ### Change Log
+
 _(To be filled by Dev Agent during implementation)_
 
 ---
@@ -656,16 +678,17 @@ _(To be filled after implementation)_
 **Gate Decision**:
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Fix nm_id Type Mismatch | ⏳ | |
-| AC2 | Fix Product Name Field | ⏳ | |
-| AC3 | Fix Category Field | ⏳ | |
-| AC4 | Update TypeScript Types | ⏳ | |
-| AC5 | Update Product Search/Filter | ⏳ | |
-| AC6 | Update Price Calculator | ⏳ | |
-| AC7 | Update Product List Views | ⏳ | |
-| AC8 | Update Forms Using Product Data | ⏳ | |
+
+| AC  | Requirement                     | Status | Evidence |
+| --- | ------------------------------- | ------ | -------- |
+| AC1 | Fix nm_id Type Mismatch         | ⏳     |          |
+| AC2 | Fix Product Name Field          | ⏳     |          |
+| AC3 | Fix Category Field              | ⏳     |          |
+| AC4 | Update TypeScript Types         | ⏳     |          |
+| AC5 | Update Product Search/Filter    | ⏳     |          |
+| AC6 | Update Price Calculator         | ⏳     |          |
+| AC7 | Update Product List Views       | ⏳     |          |
+| AC8 | Update Forms Using Product Data | ⏳     |          |
 
 ---
 

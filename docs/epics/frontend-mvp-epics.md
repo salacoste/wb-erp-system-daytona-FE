@@ -71,68 +71,76 @@ This document provides the complete epic and story breakdown for WB Repricer Sys
 ### Additional Requirements
 
 **State Management:**
+
 - Server State: TanStack Query (React Query v5)
 - Client State: Zustand (auth, UI state)
 - Form State: React Hook Form
 
 **Component Library:**
+
 - shadcn/ui (copy-paste architecture)
 - Radix UI primitives
 - Tailwind CSS styling
 - Lucide React icons
 
 **Key Technical Constraints:**
+
 - Next.js 15.x (App Router)
 - TypeScript strict mode
 - 200-line file limit (strict)
 - WCAG AA accessibility compliance
 
 **Target Personas:**
+
 - Primary: Business Owner / Entrepreneur (50-5000 SKUs, 500K-50M RUB revenue)
 - Secondary: Financial Director / CFO (1000+ SKUs)
 
 ### FR Coverage Map
 
-| FR | Epic | Description |
-|----|------|-------------|
-| FR1 | Epic 1 | Registration/login with JWT |
-| FR2 | Epic 1 | Session management |
-| FR3 | Epic 2 | Onboarding flow |
-| FR4 | Epic 2 | WB token validation |
-| FR5 | Epic 2 | Progress indicators |
-| FR6 | Epic 3 | Dashboard metric cards |
-| FR7 | Epic 3 | Expense breakdown visualization |
-| FR8 | Epic 3 | Trend graphs |
-| FR9 | Epic 3 | Quick access links |
-| FR10 | Epic 4 | Single product COGS |
-| FR11 | Epic 4 | Bulk COGS assignment |
-| FR12 | Epic 4 | COGS validation |
-| FR13 | Epic 4 | COGS save confirmation |
-| FR14 | Epic 4 | Auto margin calculation |
-| FR15 | Epic 4 | Margin analysis by dimensions |
-| FR16 | Epic 3 | Financial summary view |
-| FR17 | Epic 3 | Basic filtering |
-| FR18 | All | 33+ API integration |
-| FR19 | Epic 1 | Auth headers (JWT + Cabinet) |
-| FR20 | All | Error handling |
-| FR21 | All | Loading states |
-| FR22 | All | Currency formatting |
-| FR23 | All | Percentage formatting |
-| FR24 | All | Date formatting |
-| FR25 | All | Color coding |
+| FR   | Epic   | Description                     |
+| ---- | ------ | ------------------------------- |
+| FR1  | Epic 1 | Registration/login with JWT     |
+| FR2  | Epic 1 | Session management              |
+| FR3  | Epic 2 | Onboarding flow                 |
+| FR4  | Epic 2 | WB token validation             |
+| FR5  | Epic 2 | Progress indicators             |
+| FR6  | Epic 3 | Dashboard metric cards          |
+| FR7  | Epic 3 | Expense breakdown visualization |
+| FR8  | Epic 3 | Trend graphs                    |
+| FR9  | Epic 3 | Quick access links              |
+| FR10 | Epic 4 | Single product COGS             |
+| FR11 | Epic 4 | Bulk COGS assignment            |
+| FR12 | Epic 4 | COGS validation                 |
+| FR13 | Epic 4 | COGS save confirmation          |
+| FR14 | Epic 4 | Auto margin calculation         |
+| FR15 | Epic 4 | Margin analysis by dimensions   |
+| FR16 | Epic 3 | Financial summary view          |
+| FR17 | Epic 3 | Basic filtering                 |
+| FR18 | All    | 33+ API integration             |
+| FR19 | Epic 1 | Auth headers (JWT + Cabinet)    |
+| FR20 | All    | Error handling                  |
+| FR21 | All    | Loading states                  |
+| FR22 | All    | Currency formatting             |
+| FR23 | All    | Percentage formatting           |
+| FR24 | All    | Date formatting                 |
+| FR25 | All    | Color coding                    |
 
 ## Epic List
 
 ### Epic 1-FE: Foundation & Authentication (5 stories, 13 points)
+
 Users can register, log in, and securely access the application.
 
 ### Epic 2-FE: Onboarding & Initial Data Setup (4 stories, 14 points)
+
 New users can complete setup by creating a cabinet, providing their Wildberries token, and viewing their initial processed data.
 
 ### Epic 3-FE: Dashboard & Financial Overview (5 stories, 16 points)
+
 Business owners can quickly understand their financial position through key metrics, expense breakdowns, and trend visualizations.
 
 ### Epic 4-FE: COGS Management & Margin Analysis (7 stories, 21 points)
+
 Users can assign COGS (single and bulk), see automatic margin calculations, and analyze profitability across multiple dimensions.
 
 ---
@@ -1128,13 +1136,13 @@ Users can assign COGS (single and bulk), see automatic margin calculations, and 
 
 ## Summary
 
-| Epic | Stories | Points | FRs |
-|------|---------|--------|-----|
-| Epic 1: Foundation & Authentication | 5 | 13 | FR1, FR2, FR18, FR19, FR20, FR21 |
-| Epic 2: Onboarding & Initial Data Setup | 4 | 14 | FR3, FR4, FR5 |
-| Epic 3: Dashboard & Financial Overview | 5 | 16 | FR6, FR7, FR8, FR9, FR16, FR17, FR22, FR24, FR25 |
-| Epic 4: COGS Management & Margin Analysis | 7 | 21 | FR10, FR11, FR12, FR13, FR14, FR15, FR22, FR23, FR25 |
-| **Total** | **21** | **64** | **All 25 FRs covered** |
+| Epic                                      | Stories | Points | FRs                                                  |
+| ----------------------------------------- | ------- | ------ | ---------------------------------------------------- |
+| Epic 1: Foundation & Authentication       | 5       | 13     | FR1, FR2, FR18, FR19, FR20, FR21                     |
+| Epic 2: Onboarding & Initial Data Setup   | 4       | 14     | FR3, FR4, FR5                                        |
+| Epic 3: Dashboard & Financial Overview    | 5       | 16     | FR6, FR7, FR8, FR9, FR16, FR17, FR22, FR24, FR25     |
+| Epic 4: COGS Management & Margin Analysis | 7       | 21     | FR10, FR11, FR12, FR13, FR14, FR15, FR22, FR23, FR25 |
+| **Total**                                 | **21**  | **64** | **All 25 FRs covered**                               |
 
 ## Document Metadata
 
@@ -1145,4 +1153,4 @@ Users can assign COGS (single and bulk), see automatic margin calculations, and 
 
 ---
 
-*This document follows the BMad Create Epics and Stories workflow template structure.*
+_This document follows the BMad Create Epics and Stories workflow template structure._

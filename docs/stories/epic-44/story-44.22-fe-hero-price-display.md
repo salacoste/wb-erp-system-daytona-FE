@@ -16,6 +16,7 @@
 **So that** I immediately see the most important result without scanning the page.
 
 **Non-goals**:
+
 - Animation effects (covered in Story 44.25)
 - Copy functionality changes (already implemented)
 - Price calculation logic changes
@@ -25,12 +26,14 @@
 ## Background: Current State
 
 The current `TwoLevelPriceHeader.tsx` displays the recommended price with:
+
 - `text-3xl font-bold text-primary` - Good size but lacks visual impact
 - `border-2 border-primary bg-primary/5` - Basic highlighting
 - No gradient or depth
 - Plain flat appearance
 
 ### UX Audit Finding #2
+
 > "Hero price недостаточно выделен" - The most important value (recommended price) doesn't stand out enough
 
 ---
@@ -38,17 +41,20 @@ The current `TwoLevelPriceHeader.tsx` displays the recommended price with:
 ## Acceptance Criteria
 
 ### AC1: Enhanced Recommended Price Visual
+
 - [ ] Apply gradient background: `bg-gradient-to-br from-primary/10 via-primary/5 to-background`
 - [ ] Increase font size to `text-4xl` on desktop, `text-3xl` on mobile
 - [ ] Add decorative ring: `ring-2 ring-primary/20 ring-offset-2`
 - [ ] Apply shadow: `shadow-lg` for elevation
 
 ### AC2: Price Value Emphasis
+
 - [ ] Add subtle text shadow for depth: `drop-shadow-sm`
 - [ ] Animate value on change with `transition-all duration-300`
 - [ ] Add currency symbol (`₽`) in lighter weight: `font-normal text-2xl`
 
 ### AC3: Price Gap Indicator Enhancement
+
 - [ ] Upgrade color coding with backgrounds:
   - Green (>20%): `bg-green-50 text-green-700 border-green-200`
   - Yellow (10-20%): `bg-yellow-50 text-yellow-700 border-yellow-200`
@@ -57,12 +63,14 @@ The current `TwoLevelPriceHeader.tsx` displays the recommended price with:
 - [ ] Make border visible: `border` instead of just background
 
 ### AC4: Visual Hierarchy Reinforcement
+
 - [ ] Minimum price: muted, smaller (`text-xl`)
 - [ ] Recommended price: prominent, largest (`text-4xl`)
 - [ ] Customer price: secondary, medium (`text-lg`)
 - [ ] Clear visual progression top-to-bottom
 
 ### AC5: Responsive Behavior
+
 - [ ] Desktop: Full hero treatment with all effects
 - [ ] Tablet: Reduce ring offset, maintain gradient
 - [ ] Mobile: Simpler treatment, reduce font sizes by one step
@@ -73,9 +81,9 @@ The current `TwoLevelPriceHeader.tsx` displays the recommended price with:
 
 ### Files to Modify
 
-| File | Change | Lines Est. |
-|------|--------|------------|
-| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx` | Major styling update | ~30 |
+| File                                                             | Change               | Lines Est. |
+| ---------------------------------------------------------------- | -------------------- | ---------- |
+| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx` | Major styling update | ~30        |
 
 ### Tailwind Classes to Use
 
@@ -108,19 +116,20 @@ const gapRedClasses = "p-3 rounded-lg bg-red-50 text-red-700 border border-red-2
 
 ### Design Tokens
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `primary` | `#E53935` | Main brand color |
-| `primary/10` | `rgba(229, 57, 53, 0.1)` | Gradient start |
-| `primary/5` | `rgba(229, 57, 53, 0.05)` | Gradient mid |
-| `shadow-lg` | Standard Tailwind | Hero elevation |
-| `ring-offset-2` | `2px` | Ring spacing |
+| Token           | Value                     | Usage            |
+| --------------- | ------------------------- | ---------------- |
+| `primary`       | `#E53935`                 | Main brand color |
+| `primary/10`    | `rgba(229, 57, 53, 0.1)`  | Gradient start   |
+| `primary/5`     | `rgba(229, 57, 53, 0.05)` | Gradient mid     |
+| `shadow-lg`     | Standard Tailwind         | Hero elevation   |
+| `ring-offset-2` | `2px`                     | Ring spacing     |
 
 ---
 
 ## Design Specifications
 
 ### Before (Current)
+
 ```html
 <div className="p-4 border-2 border-primary rounded-lg bg-primary/5">
   <div className="text-sm text-muted-foreground uppercase tracking-wide">
@@ -133,6 +142,7 @@ const gapRedClasses = "p-3 rounded-lg bg-red-50 text-red-700 border border-red-2
 ```
 
 ### After (Enhanced)
+
 ```html
 <div className={cn(
   "p-6 rounded-xl",
@@ -162,6 +172,7 @@ const gapRedClasses = "p-3 rounded-lg bg-red-50 text-red-700 border border-red-2
 ```
 
 ### Visual Mockup
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  ┌─────────────────────────────────────────────────────┐   │
@@ -205,15 +216,15 @@ const gapRedClasses = "p-3 rounded-lg bg-red-50 text-red-700 border border-red-2
 
 ### Test Cases
 
-| # | Test | Expected Result |
-|---|------|-----------------|
-| 1 | View recommended price section | Has gradient, shadow, ring |
-| 2 | Check font size on desktop | `text-4xl` or `text-5xl` |
-| 3 | Check font size on mobile | `text-3xl` |
-| 4 | View price gap >20% | Green background with border |
-| 5 | View price gap 10-20% | Yellow background with border |
-| 6 | View price gap <10% | Red background with border + warning |
-| 7 | Recalculate price | Value transitions smoothly |
+| #   | Test                           | Expected Result                      |
+| --- | ------------------------------ | ------------------------------------ |
+| 1   | View recommended price section | Has gradient, shadow, ring           |
+| 2   | Check font size on desktop     | `text-4xl` or `text-5xl`             |
+| 3   | Check font size on mobile      | `text-3xl`                           |
+| 4   | View price gap >20%            | Green background with border         |
+| 5   | View price gap 10-20%          | Yellow background with border        |
+| 6   | View price gap <10%            | Red background with border + warning |
+| 7   | Recalculate price              | Value transitions smoothly           |
 
 ---
 
@@ -277,11 +288,13 @@ const getPriceGapStyles = (pct: number) => {
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx` | UPDATE | ~30 | Hero styling + gap indicator enhancement |
+
+| File                                                             | Change Type | Lines (Est.) | Description                              |
+| ---------------------------------------------------------------- | ----------- | ------------ | ---------------------------------------- |
+| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx` | UPDATE      | ~30          | Hero styling + gap indicator enhancement |
 
 ### Change Log
+
 _(To be filled by Dev Agent during implementation)_
 
 ---
@@ -293,13 +306,14 @@ _(To be filled by Dev Agent during implementation)_
 **Gate Decision**: ✅ PASSED
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
+
+| AC  | Requirement                       | Status    | Evidence                                                                                                                                                                  |
+| --- | --------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | AC1 | Enhanced recommended price visual | ✅ PASSED | TwoLevelPriceHeader.tsx:93-99 - gradient `bg-gradient-to-br from-primary/10 via-primary/5 to-background`, ring `ring-2 ring-primary/20 ring-offset-2`, shadow `shadow-lg` |
-| AC2 | Price value emphasis | ✅ PASSED | TwoLevelPriceHeader.tsx:111 - `text-4xl md:text-5xl font-bold text-primary drop-shadow-sm transition-all duration-300`, currency split at line 116 |
-| AC3 | Price gap indicator enhancement | ✅ PASSED | TwoLevelPriceHeader.tsx:12-29 - getPriceGapStyles() returns colored backgrounds (green-50/yellow-50/red-50) with borders and icons (TrendingUp/AlertTriangle) |
-| AC4 | Visual hierarchy reinforcement | ✅ PASSED | Minimum: text-2xl (line 83), Recommended: text-4xl md:text-5xl (line 111), Customer: text-xl (line 130) |
-| AC5 | Responsive behavior | ✅ PASSED | TwoLevelPriceHeader.tsx:111 - responsive font `text-4xl md:text-5xl` |
+| AC2 | Price value emphasis              | ✅ PASSED | TwoLevelPriceHeader.tsx:111 - `text-4xl md:text-5xl font-bold text-primary drop-shadow-sm transition-all duration-300`, currency split at line 116                        |
+| AC3 | Price gap indicator enhancement   | ✅ PASSED | TwoLevelPriceHeader.tsx:12-29 - getPriceGapStyles() returns colored backgrounds (green-50/yellow-50/red-50) with borders and icons (TrendingUp/AlertTriangle)             |
+| AC4 | Visual hierarchy reinforcement    | ✅ PASSED | Minimum: text-2xl (line 83), Recommended: text-4xl md:text-5xl (line 111), Customer: text-xl (line 130)                                                                   |
+| AC5 | Responsive behavior               | ✅ PASSED | TwoLevelPriceHeader.tsx:111 - responsive font `text-4xl md:text-5xl`                                                                                                      |
 
 ---
 

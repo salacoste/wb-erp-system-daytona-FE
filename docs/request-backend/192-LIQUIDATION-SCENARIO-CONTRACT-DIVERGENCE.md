@@ -17,6 +17,7 @@ provides. The mapper reads field names the backend doesn't send, so every scenar
 ## Evidence (live, cabinet `f75836f7-…`)
 
 Backend ships per item:
+
 ```json
 "liquidation_scenarios": {
   "full_price":    { "discountPct": 0,   "recovery": 312000, "daysToClear": 999 },
@@ -30,15 +31,16 @@ The FE `LiquidationScenario` type / mapper expects: `target_days`, `required_vel
 `expected_profit`, `is_profitable`.
 
 Field reconciliation:
-| FE field | backend field | status |
-|---|---|---|
-| `expected_revenue` | `recovery` | **rename — directly mappable** (currently dropped → 0) |
-| `target_days` | `daysToClear` | **rename — directly mappable** (currently defaults 30) |
-| `suggested_discount_pct` | `discountPct` (fraction) / key | derivable (FE infers from key) |
-| `new_price` | — | **not provided** by backend |
-| `expected_profit` | — | **not provided** (could be `recovery − frozen_capital`?) |
-| `required_velocity` / `velocity_multiplier` | — | **not provided** (could be `stock / daysToClear`?) |
-| `is_profitable` | — | **not provided** |
+
+| FE field                                    | backend field                  | status                                                   |
+| ------------------------------------------- | ------------------------------ | -------------------------------------------------------- |
+| `expected_revenue`                          | `recovery`                     | **rename — directly mappable** (currently dropped → 0)   |
+| `target_days`                               | `daysToClear`                  | **rename — directly mappable** (currently defaults 30)   |
+| `suggested_discount_pct`                    | `discountPct` (fraction) / key | derivable (FE infers from key)                           |
+| `new_price`                                 | —                              | **not provided** by backend                              |
+| `expected_profit`                           | —                              | **not provided** (could be `recovery − frozen_capital`?) |
+| `required_velocity` / `velocity_multiplier` | —                              | **not provided** (could be `stock / daysToClear`?)       |
+| `is_profitable`                             | —                              | **not provided**                                         |
 
 ## Impact
 
@@ -63,7 +65,7 @@ planner showing "Нет доступных сценариев" until the contrac
 2. **OR** agree the canonical scenario shape is the simpler `{discountPct, recovery, daysToClear}`,
    and the FE planner is redesigned to that model (drop new_price/profit/velocity columns or compute
    the derivable ones — `expected_profit = recovery − frozen_capital`, `required_velocity =
-   stock / daysToClear` — with product sign-off on the formulas).
+stock / daysToClear` — with product sign-off on the formulas).
 
 Either way the FE needs an agreed contract before re-wiring the planner. Related contract-divergence
 precedents: #181, #182 (FBS analytics).

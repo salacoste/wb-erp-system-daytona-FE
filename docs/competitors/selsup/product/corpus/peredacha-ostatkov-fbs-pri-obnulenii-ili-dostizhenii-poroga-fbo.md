@@ -11,7 +11,7 @@ chars: 3498
 
 В этой статье:
 
-- 
+-
 - <a href="#peredacha-fbs-pri-dostizhenii-minimalnogo-poroga-fbo" rel="nofollow">Передача FBS при достижении минимального порога FBO</a>
 - <a href="#kak-eto-rabotaet-i-kak-chasto-obnovlyayutsya-ostatki" rel="nofollow">Как это работает и как часто обновляются остатки</a>
 - <a href="#zachem-eto-nuzhno" rel="nofollow">Зачем это нужно?</a>
@@ -44,6 +44,7 @@ chars: 3498
 ## Как это работает и как часто обновляются остатки
 
 Когда происходит обновление остатков FBS, мы проверяем остаток FBO:\
+
 - Если есть остаток FBO, то по FBS отправляется 0.\
 - Если нет остатка FBO, то отправляется остаток FBS, который на складе
 

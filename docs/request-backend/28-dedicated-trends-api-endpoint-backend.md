@@ -24,13 +24,13 @@ X-Cabinet-Id: <cabinet-uuid>
 
 ### Query Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `from` | string | **Yes** | - | Start week (ISO format: `YYYY-Www`) |
-| `to` | string | **Yes** | - | End week (ISO format: `YYYY-Www`) |
-| `metrics` | string | No | all | Comma-separated list of metrics |
-| `report_type` | string | No | `total` | Filter: `rus`, `eaeu`, `total` |
-| `include_summary` | boolean | No | `true` | Include trend statistics |
+| Parameter         | Type    | Required | Default | Description                         |
+| ----------------- | ------- | -------- | ------- | ----------------------------------- |
+| `from`            | string  | **Yes**  | -       | Start week (ISO format: `YYYY-Www`) |
+| `to`              | string  | **Yes**  | -       | End week (ISO format: `YYYY-Www`)   |
+| `metrics`         | string  | No       | all     | Comma-separated list of metrics     |
+| `report_type`     | string  | No       | `total` | Filter: `rus`, `eaeu`, `total`      |
+| `include_summary` | boolean | No       | `true`  | Include trend statistics            |
 
 ### Available Metrics
 
@@ -129,6 +129,7 @@ When no data exists for the requested range:
 ### Validation Errors (400 Bad Request)
 
 **Invalid week format:**
+
 ```json
 {
   "statusCode": 400,
@@ -138,6 +139,7 @@ When no data exists for the requested range:
 ```
 
 **Range reversed (from > to):**
+
 ```json
 {
   "statusCode": 400,
@@ -147,6 +149,7 @@ When no data exists for the requested range:
 ```
 
 **Range exceeds 52 weeks:**
+
 ```json
 {
   "statusCode": 400,
@@ -288,11 +291,11 @@ function TrendGraph({ weekStart, weekEnd }: { weekStart: string; weekEnd: string
 
 ## Performance Comparison
 
-| Approach | Requests | Latency (4 weeks) | Latency (12 weeks) |
-|----------|----------|-------------------|---------------------|
-| **Before** (N requests) | N | ~400ms | ~1200ms |
-| **After** (single request) | 1 | ~120ms | ~200ms |
-| **Improvement** | **-75%** | **~70%** | **~83%** |
+| Approach                   | Requests | Latency (4 weeks) | Latency (12 weeks) |
+| -------------------------- | -------- | ----------------- | ------------------ |
+| **Before** (N requests)    | N        | ~400ms            | ~1200ms            |
+| **After** (single request) | 1        | ~120ms            | ~200ms             |
+| **Improvement**            | **-75%** | **~70%**          | **~83%**           |
 
 ---
 
@@ -308,6 +311,7 @@ function TrendGraph({ weekStart, weekEnd }: { weekStart: string; weekEnd: string
 ## Files Implemented
 
 ### Backend (NestJS)
+
 - `src/analytics/dto/query/trends-query.dto.ts` - Query DTO with validation
 - `src/analytics/dto/response/trends-response.dto.ts` - Response DTOs
 - `src/analytics/weekly-analytics.service.ts` - `getTrends()` method
@@ -315,6 +319,7 @@ function TrendGraph({ weekStart, weekEnd }: { weekStart: string; weekEnd: string
 - `src/analytics/weekly-analytics.service.spec.ts` - 6 unit tests
 
 ### Test Examples
+
 - `test-api/06-analytics-advanced.http` - Trends API examples
 
 ---
@@ -323,12 +328,12 @@ function TrendGraph({ weekStart, weekEnd }: { weekStart: string; weekEnd: string
 
 **Gate: PASS** (92/100)
 
-| Category | Status |
-|----------|--------|
-| Unit Tests | ✅ 6/6 passing |
-| Security | ✅ JWT + CabinetGuard |
-| Performance | ✅ Single SQL query |
-| Validation | ✅ All edge cases covered |
+| Category    | Status                    |
+| ----------- | ------------------------- |
+| Unit Tests  | ✅ 6/6 passing            |
+| Security    | ✅ JWT + CabinetGuard     |
+| Performance | ✅ Single SQL query       |
+| Validation  | ✅ All edge cases covered |
 
 ---
 
@@ -345,4 +350,5 @@ function TrendGraph({ weekStart, weekEnd }: { weekStart: string; weekEnd: string
 **QA Score**: 92/100
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.

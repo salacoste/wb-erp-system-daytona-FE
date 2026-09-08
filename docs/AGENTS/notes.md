@@ -5,7 +5,8 @@
 - Documents technical debt, workarounds, and constraints honestly
 - For brownfield projects with PRD: Provides clear enhancement impact analysis
 - The goal is PRACTICAL documentation for AI agents doing real work
-```
+
+````
 
 ## Task: create-next-story
 Source: .bmad-core/tasks/create-next-story.md
@@ -13,3 +14,4 @@ Source: .bmad-core/tasks/create-next-story.md
 
 ```md
 <!-- Powered by BMAD™ Core -->
+````

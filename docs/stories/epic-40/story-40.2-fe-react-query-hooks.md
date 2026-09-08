@@ -18,6 +18,7 @@
 **So that** I can efficiently fetch, cache, and manage orders data with proper loading and error states.
 
 **Non-goals**:
+
 - UI components (stories 40.3-40.6)
 - Custom pagination logic (handled by useOrders hook)
 
@@ -79,11 +80,11 @@
 
 ### Files to Create
 
-| File | Lines (Est.) | Description |
-|------|--------------|-------------|
-| `src/hooks/useOrders.ts` | ~150 | Orders list, details, sync hooks |
-| `src/hooks/useOrderHistory.ts` | ~120 | History hooks (local, WB, full) |
-| `src/hooks/useOrdersAnalytics.ts` | ~130 | Analytics hooks (velocity, SLA, volume) |
+| File                              | Lines (Est.) | Description                             |
+| --------------------------------- | ------------ | --------------------------------------- |
+| `src/hooks/useOrders.ts`          | ~150         | Orders list, details, sync hooks        |
+| `src/hooks/useOrderHistory.ts`    | ~120         | History hooks (local, WB, full)         |
+| `src/hooks/useOrdersAnalytics.ts` | ~130         | Analytics hooks (velocity, SLA, volume) |
 
 ### Hook Signatures
 
@@ -701,13 +702,13 @@ export function useVolumeMetrics(
 
 ### Cache Strategy by Data Type
 
-| Data Type | staleTime | gcTime | refetchInterval | Rationale |
-|-----------|-----------|--------|-----------------|-----------|
-| Orders list | 30s | 5min | - | Semi-realtime, may change |
-| Order details | 30s | 5min | - | May be viewed repeatedly |
-| History | 30s | 5min | - | Doesn't change after fetch |
-| SLA metrics | 0 | 1min | 60s | Real-time monitoring |
-| Velocity/Volume | 5min | 10min | - | Historical aggregates |
+| Data Type       | staleTime | gcTime | refetchInterval | Rationale                  |
+| --------------- | --------- | ------ | --------------- | -------------------------- |
+| Orders list     | 30s       | 5min   | -               | Semi-realtime, may change  |
+| Order details   | 30s       | 5min   | -               | May be viewed repeatedly   |
+| History         | 30s       | 5min   | -               | Doesn't change after fetch |
+| SLA metrics     | 0         | 1min   | 60s             | Real-time monitoring       |
+| Velocity/Volume | 5min      | 10min  | -               | Historical aggregates      |
 
 ### On-Demand History Fetching
 
@@ -775,20 +776,20 @@ import { getWbStatusLabel, getWbStatusConfig } from '@/lib/wb-status-mapping'
 
 ### Required (Blocking)
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Story 40.1-FE | Pending | Types & API Client (provides types and API functions) |
-| TanStack Query v5 | ✅ Installed | React Query library |
-| `src/lib/api-client.ts` | ✅ Exists | Centralized API client |
+| Dependency              | Status       | Notes                                                 |
+| ----------------------- | ------------ | ----------------------------------------------------- |
+| Story 40.1-FE           | Pending      | Types & API Client (provides types and API functions) |
+| TanStack Query v5       | ✅ Installed | React Query library                                   |
+| `src/lib/api-client.ts` | ✅ Exists    | Centralized API client                                |
 
 ### Non-Blocking
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Story 40.3-FE | Pending | Orders List Page (consumes useOrders) |
+| Dependency    | Status  | Notes                                                         |
+| ------------- | ------- | ------------------------------------------------------------- |
+| Story 40.3-FE | Pending | Orders List Page (consumes useOrders)                         |
 | Story 40.4-FE | Pending | Order Details Modal (consumes useOrderDetails, history hooks) |
-| Story 40.5-FE | Pending | History Timeline (consumes history hooks) |
-| Story 40.6-FE | Pending | Analytics Dashboard (consumes analytics hooks) |
+| Story 40.5-FE | Pending | History Timeline (consumes history hooks)                     |
+| Story 40.6-FE | Pending | Analytics Dashboard (consumes analytics hooks)                |
 
 ---
 
@@ -804,8 +805,8 @@ import { getWbStatusLabel, getWbStatusConfig } from '@/lib/wb-status-mapping'
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author                 | Change        |
+| ---------- | ---------------------- | ------------- |
 | 2026-01-29 | Claude Code (PM Agent) | Initial draft |
 
 ---

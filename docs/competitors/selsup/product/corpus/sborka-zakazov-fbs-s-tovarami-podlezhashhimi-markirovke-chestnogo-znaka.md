@@ -11,7 +11,7 @@ chars: 10414
 
 В этой статье:
 
-- 
+-
 - <a href="#sborka-i-peredacha-kodov-markirovki-na-wildberries-i-ozon" rel="nofollow">Сборка и передача кодов маркировки на Wildberries и Ozon</a>
 - <a href="#nastrojka-markiruemoj-kategorii" rel="nofollow">Настройка маркируемой категории</a>
 - <a href="#nastrojka-zadaniya-komplektatsiya-zakazov" rel="nofollow">Настройка задания «Комплектация заказов»</a>
@@ -103,7 +103,7 @@ chars: 10414
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/09/8wjabbo7kx.png.webp)
 
-------------------------------------------------------------------------
+---
 
 **Внутри заказа FBS → столбец «Маркировка»**
 
@@ -113,7 +113,7 @@ chars: 10414
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/09/grsxuyjee4.png.webp)
 
-------------------------------------------------------------------------
+---
 
 **Внутри заказа FBS → подраздел «Коды маркировки»**
 

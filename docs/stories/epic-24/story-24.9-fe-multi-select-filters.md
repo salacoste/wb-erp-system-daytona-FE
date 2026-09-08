@@ -21,6 +21,7 @@ In Story 24.2-fe, multi-select filters were implemented as placeholder buttons d
 ## Acceptance Criteria
 
 ### AC1: Brand Multi-select Filter ✅
+
 - [x] Replace placeholder with functional multi-select dropdown
 - [x] Load brands list from API (derived from storage data)
 - [x] Allow selecting multiple brands (checkbox list)
@@ -29,6 +30,7 @@ In Story 24.2-fe, multi-select filters were implemented as placeholder buttons d
 - [x] Apply filter to all storage queries
 
 ### AC2: Warehouse Multi-select Filter ✅
+
 - [x] Replace placeholder with functional multi-select dropdown
 - [x] Load warehouses list from API (derived from storage data)
 - [x] Allow selecting multiple warehouses (checkbox list)
@@ -37,12 +39,14 @@ In Story 24.2-fe, multi-select filters were implemented as placeholder buttons d
 - [x] Apply filter to all storage queries
 
 ### AC3: Filter State Management ✅
+
 - [x] Persist filters in URL query params (shareable links)
-- [x] Clear brand/warehouse filters when switching week range *(PO Decision: reset for cleaner UX, fewer edge cases)*
+- [x] Clear brand/warehouse filters when switching week range _(PO Decision: reset for cleaner UX, fewer edge cases)_
 - [x] Loading state while fetching filter options
 - [x] Empty state when no options available
 
 ### AC4: Performance ✅
+
 - [x] Debounce filter changes (300ms) - via React Query staleTime
 - [x] Memoize filter options to prevent re-renders (useMemo)
 - [x] Efficient re-fetching when filters change
@@ -56,12 +60,14 @@ Update existing `StorageFilters.tsx` component.
 ### Filter Options API
 
 Option 1: Derive from existing `by-sku` data (client-side):
+
 ```typescript
 const brands = [...new Set(data?.data.map(item => item.brand).filter(Boolean))]
 const warehouses = [...new Set(data?.data.flatMap(item => item.warehouses))]
 ```
 
 Option 2: Dedicated endpoint (if performance is concern):
+
 ```http
 GET /v1/analytics/storage/filter-options?weekStart=&weekEnd=
 ```
@@ -69,6 +75,7 @@ GET /v1/analytics/storage/filter-options?weekStart=&weekEnd=
 ### Multi-select Component
 
 Use or create `MultiSelectDropdown` component:
+
 ```typescript
 interface MultiSelectDropdownProps {
   label: string
@@ -106,27 +113,32 @@ interface MultiSelectDropdownProps {
 ## Tasks / Subtasks
 
 ### Phase 1: Multi-select Component
+
 - [ ] Create `MultiSelectDropdown.tsx` component
 - [ ] Implement checkbox list with "select all" toggle
 - [ ] Add search/filter within dropdown (if >10 options)
 - [ ] Add keyboard navigation support
 
 ### Phase 2: Brand Filter
+
 - [ ] Extract unique brands from storage data
 - [ ] Wire up to StorageFilters
 - [ ] Pass to all storage queries
 
-### Phase 3: Warehouse Filter  
+### Phase 3: Warehouse Filter
+
 - [ ] Extract unique warehouses from storage data
 - [ ] Wire up to StorageFilters
 - [ ] Pass to all storage queries
 
 ### Phase 4: URL State
+
 - [ ] Sync filters to URL params
 - [ ] Read initial state from URL on page load
 - [ ] Handle edge cases (invalid values)
 
 ### Phase 5: Testing
+
 - [ ] Unit tests for MultiSelectDropdown
 - [ ] Integration tests for filter → query flow
 - [ ] URL state persistence tests
@@ -157,12 +169,12 @@ interface MultiSelectDropdownProps {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-12-04 | Quinn (QA) | Initial draft from deferred items |
-| 2025-12-04 | Sarah (PO) | AC3 clarified (reset on range change), status → Ready for Dev |
+| Date       | Author      | Change                                                                                            |
+| ---------- | ----------- | ------------------------------------------------------------------------------------------------- |
+| 2025-12-04 | Quinn (QA)  | Initial draft from deferred items                                                                 |
+| 2025-12-04 | Sarah (PO)  | AC3 clarified (reset on range change), status → Ready for Dev                                     |
 | 2025-12-04 | James (Dev) | Implementation complete: MultiSelectDropdown + URL state + 26 tests, status → Ready for QA Review |
-| 2026-01-03 | Quinn (QA) | QA Review complete: PASS (90/100), status → Done |
+| 2026-01-03 | Quinn (QA)  | QA Review complete: PASS (90/100), status → Done                                                  |
 
 ---
 

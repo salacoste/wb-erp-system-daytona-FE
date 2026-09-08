@@ -1,11 +1,11 @@
 # Story 69.6-FE: Data Source UX & Edge Cases
 
-| Field | Value |
-|-------|-------|
-| Epic | 69-FE Buyout Analytics |
-| Priority | P3 |
-| SP | 3 |
-| Status | ✅ Complete |
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Epic     | 69-FE Buyout Analytics |
+| Priority | P3                     |
+| SP       | 3                      |
+| Status   | ✅ Complete            |
 
 ## Description
 
@@ -22,11 +22,12 @@
 - AC7: `returnsCount > salesCount` capped at 0% (anomaly state handled)
 
 ## Related Issues
+
 - Request #154: Data source mismatch between weekly report and FBS statuses — backend fix pending
 
 ## Files
 
-| File | Action | Lines |
-|------|--------|-------|
-| `src/app/(dashboard)/analytics/buyout/components/BuyoutTable.tsx` | Part of 69.4 | — |
-| `src/app/(dashboard)/analytics/buyout/components/BuyoutSummaryWidget.tsx` | Part of 69.3 | — |
+| File                                                                      | Action       | Lines |
+| ------------------------------------------------------------------------- | ------------ | ----- |
+| `src/app/(dashboard)/analytics/buyout/components/BuyoutTable.tsx`         | Part of 69.4 | —     |
+| `src/app/(dashboard)/analytics/buyout/components/BuyoutSummaryWidget.tsx` | Part of 69.3 | —     |

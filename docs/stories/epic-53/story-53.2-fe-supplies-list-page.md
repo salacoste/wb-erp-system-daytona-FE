@@ -133,31 +133,31 @@
 
 ### Pages
 
-| File | Purpose |
-|------|---------|
-| `src/app/(dashboard)/supplies/page.tsx` | Main supplies page |
-| `src/app/(dashboard)/supplies/loading.tsx` | Loading skeleton |
+| File                                       | Purpose            |
+| ------------------------------------------ | ------------------ |
+| `src/app/(dashboard)/supplies/page.tsx`    | Main supplies page |
+| `src/app/(dashboard)/supplies/loading.tsx` | Loading skeleton   |
 
 ### Components
 
-| File | Purpose | Lines (Est.) |
-|------|---------|--------------|
-| `src/app/(dashboard)/supplies/components/SuppliesPageHeader.tsx` | Title + action buttons | ~70 |
-| `src/app/(dashboard)/supplies/components/SuppliesFilters.tsx` | Status + date filters | ~100 |
-| `src/app/(dashboard)/supplies/components/SuppliesTable.tsx` | Data table component | ~120 |
-| `src/app/(dashboard)/supplies/components/SuppliesTableRow.tsx` | Single row component | ~80 |
-| `src/app/(dashboard)/supplies/components/SuppliesPagination.tsx` | Pagination controls | ~60 |
-| `src/app/(dashboard)/supplies/components/SupplyStatusBadge.tsx` | Status badge with icon | ~50 |
-| `src/app/(dashboard)/supplies/components/SuppliesEmptyState.tsx` | Empty state display | ~50 |
-| `src/app/(dashboard)/supplies/components/SuppliesLoadingSkeleton.tsx` | Loading skeleton | ~40 |
-| `src/app/(dashboard)/supplies/components/SyncStatusIndicator.tsx` | Sync status + countdown | ~60 |
+| File                                                                  | Purpose                 | Lines (Est.) |
+| --------------------------------------------------------------------- | ----------------------- | ------------ |
+| `src/app/(dashboard)/supplies/components/SuppliesPageHeader.tsx`      | Title + action buttons  | ~70          |
+| `src/app/(dashboard)/supplies/components/SuppliesFilters.tsx`         | Status + date filters   | ~100         |
+| `src/app/(dashboard)/supplies/components/SuppliesTable.tsx`           | Data table component    | ~120         |
+| `src/app/(dashboard)/supplies/components/SuppliesTableRow.tsx`        | Single row component    | ~80          |
+| `src/app/(dashboard)/supplies/components/SuppliesPagination.tsx`      | Pagination controls     | ~60          |
+| `src/app/(dashboard)/supplies/components/SupplyStatusBadge.tsx`       | Status badge with icon  | ~50          |
+| `src/app/(dashboard)/supplies/components/SuppliesEmptyState.tsx`      | Empty state display     | ~50          |
+| `src/app/(dashboard)/supplies/components/SuppliesLoadingSkeleton.tsx` | Loading skeleton        | ~40          |
+| `src/app/(dashboard)/supplies/components/SyncStatusIndicator.tsx`     | Sync status + countdown | ~60          |
 
 ### Hooks (Story 53.1-FE provides API, hooks created here)
 
-| File | Purpose | Lines (Est.) |
-|------|---------|--------------|
-| `src/hooks/useSupplies.ts` | List supplies hook | ~60 |
-| `src/hooks/useSyncSupplies.ts` | Sync mutation hook | ~50 |
+| File                           | Purpose            | Lines (Est.) |
+| ------------------------------ | ------------------ | ------------ |
+| `src/hooks/useSupplies.ts`     | List supplies hook | ~60          |
+| `src/hooks/useSyncSupplies.ts` | Sync mutation hook | ~50          |
 
 ---
 
@@ -202,6 +202,7 @@ GET /v1/supplies?status={status}&from={date}&to={date}&sort_by={field}&sort_orde
 ```
 
 **Response structure** (from Story 53.1-FE):
+
 ```typescript
 {
   items: SupplyListItem[]
@@ -546,17 +547,17 @@ const handleRowClick = (supplyId: string) => {
 
 ### Required (Blocking)
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Story 53.1-FE | 📋 Ready | Types & API Client |
-| `src/lib/api-client.ts` | ✅ Exists | Centralized API client |
-| shadcn/ui components | ✅ Exists | Table, Select, Button, Badge |
+| Dependency              | Status    | Notes                        |
+| ----------------------- | --------- | ---------------------------- |
+| Story 53.1-FE           | 📋 Ready  | Types & API Client           |
+| `src/lib/api-client.ts` | ✅ Exists | Centralized API client       |
+| shadcn/ui components    | ✅ Exists | Table, Select, Button, Badge |
 
 ### Non-Blocking
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Story 53.3-FE | Pending | Create Supply Modal (button prepared) |
+| Dependency    | Status  | Notes                                    |
+| ------------- | ------- | ---------------------------------------- |
+| Story 53.3-FE | Pending | Create Supply Modal (button prepared)    |
 | Story 53.4-FE | Pending | Supply Detail Page (row click navigates) |
 
 ---
@@ -574,8 +575,8 @@ const handleRowClick = (supplyId: string) => {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author                 | Change                                      |
+| ---------- | ---------------------- | ------------------------------------------- |
 | 2026-01-29 | Claude Code (PM Agent) | Initial story creation from Epic 53-FE spec |
 
 ---

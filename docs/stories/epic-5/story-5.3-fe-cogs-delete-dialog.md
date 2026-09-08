@@ -1,6 +1,7 @@
 # Story 5.3-fe: COGS Delete Confirmation Dialog
 
 ## Status
+
 Approved
 
 ## Story
@@ -12,11 +13,13 @@ Approved
 ## Acceptance Criteria
 
 ### Dialog Trigger
+
 1. Delete button в COGS History table dropdown открывает confirmation dialog
 2. Кнопка недоступна для Analyst (только Manager/Owner/Admin)
 3. Кнопка недоступна для уже удалённых записей (`is_active = false`)
 
 ### Confirmation Dialog
+
 4. Modal dialog с заголовком "⚠️ Удаление записи COGS"
 5. **Детальный summary** — показывает что именно произойдёт:
    ```
@@ -58,6 +61,7 @@ Approved
    ```
 
 ### Form Actions
+
 9. Кнопка "Удалить" — destructive action (red background)
 10. Кнопка "Отмена" — secondary/outline
 11. Loading state во время удаления (spinner + disabled buttons)
@@ -79,6 +83,7 @@ Approved
     ```
 
 ### Success Flow
+
 13. После успешного удаления:
     - Toast notification "Запись COGS удалена"
     - Описание: "При необходимости обратитесь к администратору для восстановления"
@@ -88,6 +93,7 @@ Approved
 14. **Без undo опции** — это soft delete, восстановление через admin
 
 ### Error Handling
+
 15. 403 (forbidden) — toast "Недостаточно прав для удаления"
 16. 404 (not found / already deleted) — toast "Запись не найдена или уже удалена"
 17. Network error — toast с кнопкой "Повторить"
@@ -135,14 +141,17 @@ Approved
 ### API Integration
 
 **Backend Endpoint:** `DELETE /v1/cogs/:cogsId`
+
 - Backend Story: `docs/stories/epic-5/story-5.3-delete-cogs.md`
 - Backend Status: ✅ Done (QA PASSED 90/100)
 
 **Headers:**
+
 - `Authorization: Bearer <token>`
 - `X-Cabinet-Id: <uuid>`
 
 **Response (200 OK):**
+
 ```typescript
 interface DeleteCogsResponse {
   deleted: boolean;
@@ -162,6 +171,7 @@ interface DeleteCogsResponse {
 ```
 
 **Error Responses:**
+
 - `403 Forbidden` — Analyst role or wrong cabinet
 - `404 Not Found` — COGS not found or already deleted
 
@@ -208,6 +218,7 @@ function analyzeVersionChain(
 ### Relevant Source Tree
 
 **New Files:**
+
 ```
 src/
 ├── components/custom/
@@ -219,6 +230,7 @@ src/
 ### Component Patterns
 
 **AlertDialog with Detailed Summary (UX Decision):**
+
 ```tsx
 interface CogsDeleteDialogProps {
   open: boolean;
@@ -328,6 +340,7 @@ function CogsDeleteDialog({ open, onOpenChange, record, versionInfo, onDelete }:
 ```
 
 **Mutation Hook with Toast (UX Decision - No undo):**
+
 ```typescript
 const useCogsDelete = (onSuccess?: () => void) => {
   const queryClient = useQueryClient();
@@ -380,6 +393,7 @@ const useCogsDelete = (onSuccess?: () => void) => {
 **Test file:** `src/components/custom/CogsDeleteDialog.test.tsx`
 
 **Test scenarios:**
+
 - Dialog displays record info correctly (cost, date, weeks)
 - Detailed summary shows what will happen after deletion
 - Version chain warning displayed when deleting current version with previous
@@ -409,34 +423,37 @@ const useCogsDelete = (onSuccess?: () => void) => {
 
 ## UX Decisions (Resolved 2025-11-28)
 
-| # | Question | Decision | Rationale |
-|---|----------|----------|-----------|
-| 1 | Тон предупреждения | Детальный summary | Informed consent для деструктивных действий |
-| 2 | Version chain warning | Информативный текст с суммой | Понятно, конкретно, не пугает |
-| 3 | Единственная версия | Красный alert block | Критическая ситуация требует внимания |
-| 4 | Подтверждение | Кнопка + checkbox для единственной версии | Баланс UX и безопасности |
-| 5 | Undo опция | Нет (soft delete → admin recovery) | Технически сложно, есть альтернатива |
+| #   | Question              | Decision                                  | Rationale                                   |
+| --- | --------------------- | ----------------------------------------- | ------------------------------------------- |
+| 1   | Тон предупреждения    | Детальный summary                         | Informed consent для деструктивных действий |
+| 2   | Version chain warning | Информативный текст с суммой              | Понятно, конкретно, не пугает               |
+| 3   | Единственная версия   | Красный alert block                       | Критическая ситуация требует внимания       |
+| 4   | Подтверждение         | Кнопка + checkbox для единственной версии | Баланс UX и безопасности                    |
+| 5   | Undo опция            | Нет (soft delete → admin recovery)        | Технически сложно, есть альтернатива        |
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-11-28 | 1.0 | Initial story creation | Sarah (PO) |
-| 2025-11-28 | 1.1 | UX decisions applied, status → Approved | Sarah (PO) |
-| 2025-11-28 | 1.2 | Implementation complete, 18 tests passing, status → Dev Complete | James (Dev Agent) |
-| 2025-11-28 | 1.3 | QA PASS (95/100), status → Approved | Quinn (QA) |
+| Date       | Version | Description                                                      | Author            |
+| ---------- | ------- | ---------------------------------------------------------------- | ----------------- |
+| 2025-11-28 | 1.0     | Initial story creation                                           | Sarah (PO)        |
+| 2025-11-28 | 1.1     | UX decisions applied, status → Approved                          | Sarah (PO)        |
+| 2025-11-28 | 1.2     | Implementation complete, 18 tests passing, status → Dev Complete | James (Dev Agent) |
+| 2025-11-28 | 1.3     | QA PASS (95/100), status → Approved                              | Quinn (QA)        |
 
 ## Dev Agent Record
 
 ### Agent Model Used
+
 Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
+
 - CogsDeleteDialog.tsx already existed from Story 5.1-fe integration
 - Refactored to use separate useCogsDelete hook with exported helper functions
 - Fixed test expectation: empty history → isOnlyVersion=false (0 !== 1)
 
 ### Completion Notes List
+
 1. Created `useCogsDelete.ts` hook with exported helper functions for testability
 2. Refactored `CogsDeleteDialog.tsx` to use the hook and helper functions
 3. Hook handles all toast notifications and query invalidation
@@ -445,18 +462,22 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 6. All 17 AC covered by implementation
 
 ### File List
+
 **New Files Created:**
+
 ```
 src/hooks/useCogsDelete.ts                    # Mutation hook + helpers
 src/hooks/useCogsDelete.test.ts               # 18 unit tests
 ```
 
 **Modified Files:**
+
 ```
 src/components/custom/CogsDeleteDialog.tsx    # Refactored to use hook
 ```
 
 ### Test Results
+
 - `useCogsDelete.test.ts`: 18 tests passed ✅
 
 ## QA Results
@@ -466,26 +487,31 @@ src/components/custom/CogsDeleteDialog.tsx    # Refactored to use hook
 **Date**: 2025-11-28
 
 ### Summary
+
 Complete implementation with all 17 ACs met, 18 unit tests passing, sophisticated version chain analysis, and proper destructive action UX patterns.
 
 ### NFR Validation
-| NFR | Status | Notes |
-|-----|--------|-------|
-| Security | ✅ PASS | Role-based access (Analyst cannot delete), soft delete allows admin recovery |
-| Performance | ✅ PASS | TanStack Mutation with query invalidation, efficient version chain analysis |
-| Reliability | ✅ PASS | Comprehensive error handling (403/404/network), toast notifications |
-| Maintainability | ✅ PASS | analyzeVersionChain exported for testing, formatters extracted to hook |
-| Accessibility | ✅ PASS | AlertDialog pattern for destructive actions, checkbox with label association |
+
+| NFR             | Status  | Notes                                                                        |
+| --------------- | ------- | ---------------------------------------------------------------------------- |
+| Security        | ✅ PASS | Role-based access (Analyst cannot delete), soft delete allows admin recovery |
+| Performance     | ✅ PASS | TanStack Mutation with query invalidation, efficient version chain analysis  |
+| Reliability     | ✅ PASS | Comprehensive error handling (403/404/network), toast notifications          |
+| Maintainability | ✅ PASS | analyzeVersionChain exported for testing, formatters extracted to hook       |
+| Accessibility   | ✅ PASS | AlertDialog pattern for destructive actions, checkbox with label association |
 
 ### Test Coverage
+
 - **18 unit tests** covering version chain analysis and formatting
 - All 17 acceptance criteria verified
 - Edge cases: empty history, self-match prevention
 
 ### Risks Identified
+
 None
 
 ### Recommendations
+
 - Future: Consider E2E test for delete workflow with version chain scenarios
 - Future: Consider visual regression test for red alert styling
 

@@ -9,7 +9,7 @@ chars: 3406
 
 В этой статье:
 
-- 
+-
 - <a href="#gabarity-kartochki-v-selsup" rel="nofollow">Габариты карточки в SelSup</a>
 - <a href="#gabarity-na-marketplejsah-mp" rel="nofollow">Габариты на маркетплейсах</a>
 - <a href="#kak-proverit--importiruyutsya-li-gabarity-s-mp" rel="nofollow">Как проверить, импортируются ли габариты с маркетплейса?</a>
@@ -35,11 +35,7 @@ chars: 3406
 
 ❌ **Не импортироваться**, если маркетплейс указывает их как свойство какого-то параметра.
 
-> 
->
 > Методы работы маркетплейсов постоянно меняются, поэтому нельзя точно сказать, как именно каждый маркетплейс передает габариты в данный момент.
->
-> 
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 

@@ -22,12 +22,14 @@
 ## Background
 
 The backend provides admin endpoints for managing historical data backfill. This story implements the types and hooks needed for the admin UI (Story 51.11). While basic types were included in Story 51.1, this story extends them with:
+
 - Complete validation logic
 - React Query hooks with mutations
 - Progress polling mechanism
 - Error handling utilities
 
 **Backend Endpoints** (from `docs/request-backend/110-epic-51-fbs-historical-analytics-api.md`):
+
 - `GET /v1/admin/backfill/status` - Get all cabinet backfill statuses
 - `POST /v1/admin/backfill/start` - Start backfill for cabinet
 - `POST /v1/admin/backfill/pause` - Pause running backfill

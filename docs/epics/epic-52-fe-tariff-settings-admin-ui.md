@@ -27,12 +27,14 @@
 ### Current State
 
 **Backend Status**: Complete
+
 - 7 admin endpoints implemented (`/v1/tariffs/settings/*`)
 - Per-field audit trail (21 tracked fields)
 - Versioning with effective dates
 - Rate limiting (10 req/min for mutations)
 
 **Frontend Status**: Missing
+
 - No admin UI for tariff management
 - No visibility into version history
 - No audit trail viewer
@@ -42,6 +44,7 @@
 ### User Impact
 
 **Без Admin UI администраторы НЕ МОГУТ**:
+
 1. Просматривать историю версий тарифов
 2. Редактировать текущие тарифные настройки через UI
 3. Планировать будущие изменения тарифов
@@ -50,13 +53,13 @@
 
 ### Business Value
 
-| Ценность | Описание |
-|----------|----------|
+| Ценность                   | Описание                                     |
+| -------------------------- | -------------------------------------------- |
 | **Operational Efficiency** | Управление тарифами без прямого доступа к БД |
-| **Audit Compliance** | Полная история изменений для compliance |
-| **Planning Capability** | Планирование тарифов заранее |
-| **Error Reduction** | Валидация на уровне UI предотвращает ошибки |
-| **Transparency** | Видимость всех изменений для команды |
+| **Audit Compliance**       | Полная история изменений для compliance      |
+| **Planning Capability**    | Планирование тарифов заранее                 |
+| **Error Reduction**        | Валидация на уровне UI предотвращает ошибки  |
+| **Transparency**           | Видимость всех изменений для команды         |
 
 ---
 
@@ -112,26 +115,26 @@
 
 ### Key Components
 
-| Component | Purpose | File |
-|-----------|---------|------|
-| `TariffSettingsPage` | Main page with tabs | `page.tsx` |
-| `TariffSettingsForm` | Edit current settings | `TariffSettingsForm.tsx` |
-| `VersionHistoryTable` | List all versions | `VersionHistoryTable.tsx` |
-| `ScheduleVersionModal` | Create future version | `ScheduleVersionModal.tsx` |
-| `AuditLogTable` | Audit trail viewer | `AuditLogTable.tsx` |
+| Component              | Purpose                 | File                       |
+| ---------------------- | ----------------------- | -------------------------- |
+| `TariffSettingsPage`   | Main page with tabs     | `page.tsx`                 |
+| `TariffSettingsForm`   | Edit current settings   | `TariffSettingsForm.tsx`   |
+| `VersionHistoryTable`  | List all versions       | `VersionHistoryTable.tsx`  |
+| `ScheduleVersionModal` | Create future version   | `ScheduleVersionModal.tsx` |
+| `AuditLogTable`        | Audit trail viewer      | `AuditLogTable.tsx`        |
 | `LogisticsTiersEditor` | Edit volume tiers array | `LogisticsTiersEditor.tsx` |
-| `RateLimitIndicator` | Show rate limit status | `RateLimitIndicator.tsx` |
+| `RateLimitIndicator`   | Show rate limit status  | `RateLimitIndicator.tsx`   |
 
 ### React Query Hooks
 
-| Hook | Purpose | File |
-|------|---------|------|
-| `useTariffSettings` | GET current settings | `useTariffSettings.ts` |
-| `useTariffVersionHistory` | GET version history | `useTariffVersionHistory.ts` |
-| `useTariffAuditLog` | GET audit trail | `useTariffAuditLog.ts` |
-| `useUpdateTariffSettings` | PUT/PATCH settings | `useUpdateTariffSettings.ts` |
-| `useScheduleTariffVersion` | POST schedule | `useScheduleTariffVersion.ts` |
-| `useDeleteTariffVersion` | DELETE scheduled | `useDeleteTariffVersion.ts` |
+| Hook                       | Purpose              | File                          |
+| -------------------------- | -------------------- | ----------------------------- |
+| `useTariffSettings`        | GET current settings | `useTariffSettings.ts`        |
+| `useTariffVersionHistory`  | GET version history  | `useTariffVersionHistory.ts`  |
+| `useTariffAuditLog`        | GET audit trail      | `useTariffAuditLog.ts`        |
+| `useUpdateTariffSettings`  | PUT/PATCH settings   | `useUpdateTariffSettings.ts`  |
+| `useScheduleTariffVersion` | POST schedule        | `useScheduleTariffVersion.ts` |
+| `useDeleteTariffVersion`   | DELETE scheduled     | `useDeleteTariffVersion.ts`   |
 
 ---
 
@@ -142,6 +145,7 @@
 **User Story**: As an Admin, I want to view all tariff versions with their status so that I can understand the history and plan future changes.
 
 **Acceptance Criteria**:
+
 - [ ] Table displays all versions from `GET /v1/tariffs/settings/history`
 - [ ] Each row shows: effective_from, effective_until, status badge, source, notes, created_at, updated_by
 - [ ] Status badges: `scheduled` (blue), `active` (green), `expired` (gray)
@@ -152,6 +156,7 @@
 **API Endpoints**: `GET /v1/tariffs/settings/history`
 
 **Components**:
+
 - `VersionHistoryTable.tsx` - Main table component
 - `VersionStatusBadge.tsx` - Status indicator
 
@@ -164,6 +169,7 @@
 **User Story**: As an Admin, I want to edit current tariff settings through a form so that I can update rates without database access.
 
 **Acceptance Criteria**:
+
 - [ ] Form displays all 21 editable fields grouped by category
 - [ ] Categories: Acceptance, Logistics, Returns, Commission, Storage, FBS
 - [ ] Validation rules match backend (positive numbers, 0-100 for percentages)
@@ -174,11 +180,13 @@
 - [ ] Confirm dialog before save
 
 **API Endpoints**:
+
 - `GET /v1/tariffs/settings` (load current)
 - `PUT /v1/tariffs/settings` (full replace)
 - `PATCH /v1/tariffs/settings` (partial update)
 
 **Components**:
+
 - `TariffSettingsForm.tsx` - Main form container
 - `AcceptanceRatesSection.tsx` - Acceptance fields
 - `LogisticsRatesSection.tsx` - Logistics fields + tiers editor
@@ -196,6 +204,7 @@
 **User Story**: As an Admin, I want to schedule a future tariff version so that I can plan rate changes in advance.
 
 **Acceptance Criteria**:
+
 - [ ] "Schedule New Version" button opens modal
 - [ ] Modal includes: date picker for `effective_from`, all tariff fields (pre-filled from current)
 - [ ] Date validation: must be future date (tomorrow or later)
@@ -208,6 +217,7 @@
 **API Endpoints**: `POST /v1/tariffs/settings/schedule`
 
 **Components**:
+
 - `ScheduleVersionModal.tsx` - Modal with form
 - `ScheduleVersionForm.tsx` - Form fields (reuses sections from 52-FE.2)
 
@@ -220,6 +230,7 @@
 **User Story**: As an Admin, I want to view the audit trail of tariff changes so that I can track who changed what and when.
 
 **Acceptance Criteria**:
+
 - [ ] Table displays audit entries from `GET /v1/tariffs/settings/audit`
 - [ ] Columns: timestamp, user_email, field_name, old_value, new_value, IP address
 - [ ] Filter dropdown by field_name (21 options)
@@ -231,6 +242,7 @@
 **API Endpoints**: `GET /v1/tariffs/settings/audit?page=1&limit=50&field_name=storageFreeDays`
 
 **Components**:
+
 - `AuditLogTable.tsx` - Main audit table
 - `AuditFieldFilter.tsx` - Field name filter dropdown
 - `AuditValueDisplay.tsx` - Format old/new values
@@ -244,6 +256,7 @@
 **User Story**: As an Admin, I want to delete a scheduled tariff version so that I can cancel planned changes that are no longer needed.
 
 **Acceptance Criteria**:
+
 - [ ] Delete button visible only for `status = "scheduled"` versions
 - [ ] Confirmation dialog: "Are you sure you want to delete the version scheduled for {date}?"
 - [ ] Submit calls `DELETE /v1/tariffs/settings/:id`
@@ -254,6 +267,7 @@
 **API Endpoints**: `DELETE /v1/tariffs/settings/:id`
 
 **Components**:
+
 - `DeleteVersionDialog.tsx` - Confirmation dialog
 
 **Story Points**: 2
@@ -265,6 +279,7 @@
 **User Story**: As an Admin, I want to see rate limit status and clear error messages so that I understand when I'm approaching limits.
 
 **Acceptance Criteria**:
+
 - [ ] Rate limit indicator shows remaining requests (from response headers)
 - [ ] Warning toast when <3 requests remaining
 - [ ] 429 error handling with retry countdown
@@ -275,6 +290,7 @@
 **API Endpoints**: All mutation endpoints (PUT, PATCH, POST, DELETE)
 
 **Components**:
+
 - `RateLimitIndicator.tsx` - Shows remaining requests
 - Error handling in all mutation hooks
 
@@ -287,6 +303,7 @@
 **User Story**: As an Admin, I want a well-organized settings page with tabs so that I can easily navigate between current settings, history, and audit.
 
 **Acceptance Criteria**:
+
 - [ ] Page at `/settings/tariffs` with 3 tabs
 - [ ] Admin role check (redirect non-admins to dashboard)
 - [ ] Sidebar navigation: Settings > Tariffs (Admin only)
@@ -299,6 +316,7 @@
 **API Endpoints**: All endpoints
 
 **Components**:
+
 - `src/app/(dashboard)/settings/tariffs/page.tsx` - Main page
 - `src/types/tariffs-admin.ts` - TypeScript types
 - `src/lib/api/tariffs-admin.ts` - API client functions
@@ -315,6 +333,7 @@
 **Access Control**: Admin role only
 
 **Layout**:
+
 ```
 ┌────────────────────────────────────────────────────────────┐
 │  Home > Settings > Tariff Settings                          │
@@ -352,15 +371,15 @@ Settings
 
 ### Endpoints Summary
 
-| Endpoint | Method | Purpose | Rate Limit | Hook |
-|----------|--------|---------|------------|------|
-| `/v1/tariffs/settings` | GET | Current settings | None | `useTariffSettings()` |
-| `/v1/tariffs/settings` | PUT | Full replace | 10/min | `useUpdateTariffSettings()` |
-| `/v1/tariffs/settings` | PATCH | Partial update | 10/min | `useUpdateTariffSettings()` |
-| `/v1/tariffs/settings/history` | GET | Version list | None | `useTariffVersionHistory()` |
-| `/v1/tariffs/settings/schedule` | POST | Create future | 10/min | `useScheduleTariffVersion()` |
-| `/v1/tariffs/settings/:id` | DELETE | Delete scheduled | None | `useDeleteTariffVersion()` |
-| `/v1/tariffs/settings/audit` | GET | Audit trail | None | `useTariffAuditLog()` |
+| Endpoint                        | Method | Purpose          | Rate Limit | Hook                         |
+| ------------------------------- | ------ | ---------------- | ---------- | ---------------------------- |
+| `/v1/tariffs/settings`          | GET    | Current settings | None       | `useTariffSettings()`        |
+| `/v1/tariffs/settings`          | PUT    | Full replace     | 10/min     | `useUpdateTariffSettings()`  |
+| `/v1/tariffs/settings`          | PATCH  | Partial update   | 10/min     | `useUpdateTariffSettings()`  |
+| `/v1/tariffs/settings/history`  | GET    | Version list     | None       | `useTariffVersionHistory()`  |
+| `/v1/tariffs/settings/schedule` | POST   | Create future    | 10/min     | `useScheduleTariffVersion()` |
+| `/v1/tariffs/settings/:id`      | DELETE | Delete scheduled | None       | `useDeleteTariffVersion()`   |
+| `/v1/tariffs/settings/audit`    | GET    | Audit trail      | None       | `useTariffAuditLog()`        |
 
 ### TypeScript Types
 
@@ -544,6 +563,7 @@ const tariffSettingsSchema = z.object({
 ### Volume Tiers Validation
 
 Backend requires:
+
 - Tiers sorted by `fromLiters` ascending
 - Non-overlapping ranges
 - Full coverage from 0.001L to 1.000L (for standard tiers)
@@ -563,6 +583,7 @@ if (user?.role !== 'admin') {
 ### Rate Limit Headers
 
 Backend returns:
+
 - `X-RateLimit-Limit: 10`
 - `X-RateLimit-Remaining: 8`
 - `X-RateLimit-Reset: 1705932000` (Unix timestamp)
@@ -643,15 +664,18 @@ src/hooks/
 ### Sprint Planning
 
 **Sprint 1 (9 SP)**:
+
 - Story 52-FE.7 (2 SP) - Foundation
 - Story 52-FE.1 (3 SP) - Version history
 - Story 52-FE.4 (4 SP) - Audit log
 
 **Sprint 2 (10 SP)**:
+
 - Story 52-FE.2 (8 SP) - Edit form
 - Story 52-FE.6 (2 SP) - Rate limit UX
 
 **Sprint 3 (7 SP)**:
+
 - Story 52-FE.3 (5 SP) - Schedule version
 - Story 52-FE.5 (2 SP) - Delete version
 
@@ -659,22 +683,22 @@ src/hooks/
 
 ## Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Complex form validation | Medium | Medium | Reuse existing form patterns, thorough testing |
-| Rate limit UX confusion | Low | Low | Clear indicator and messaging |
-| Admin role misconfiguration | Low | High | Test with non-admin accounts |
-| Volume tiers editor complexity | Medium | Medium | Build as separate component, unit test |
+| Risk                           | Likelihood | Impact | Mitigation                                     |
+| ------------------------------ | ---------- | ------ | ---------------------------------------------- |
+| Complex form validation        | Medium     | Medium | Reuse existing form patterns, thorough testing |
+| Rate limit UX confusion        | Low        | Low    | Clear indicator and messaging                  |
+| Admin role misconfiguration    | Low        | High   | Test with non-admin accounts                   |
+| Volume tiers editor complexity | Medium     | Medium | Build as separate component, unit test         |
 
 ---
 
 ## Success Metrics
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Admin adoption | >80% use UI vs API | Track page views |
-| Error rate | <1% failed saves | Track 400/409 errors |
-| Time to update | <2 minutes | User timing metrics |
+| Metric           | Target               | Measurement          |
+| ---------------- | -------------------- | -------------------- |
+| Admin adoption   | >80% use UI vs API   | Track page views     |
+| Error rate       | <1% failed saves     | Track 400/409 errors |
+| Time to update   | <2 minutes           | User timing metrics  |
 | Audit compliance | 100% changes tracked | Verify audit entries |
 
 ---

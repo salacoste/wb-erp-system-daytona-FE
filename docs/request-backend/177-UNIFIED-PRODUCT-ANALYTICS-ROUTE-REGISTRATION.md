@@ -16,7 +16,7 @@ Marketing Plan §3.3 documents 3 sub-features for the Unified Product Analytics 
 2. **Organic vs Paid Split** — pie chart showing organic/ad views and orders split (uses the `organic-share` endpoint)
 3. **Incremental ROAS** — shows true incremental value of ads via `IncrementalRoasService`
 
-Per Marketing Plan §3.3's explicit statement: *"Backend services exist (`UnifiedProductAnalyticsService`, `AdOrganicCorrelatorService`, `IncrementalRoasService`) but are **NOT yet registered** in the NestJS module. Requires backend Request to register routes."*
+Per Marketing Plan §3.3's explicit statement: _"Backend services exist (`UnifiedProductAnalyticsService`, `AdOrganicCorrelatorService`, `IncrementalRoasService`) but are **NOT yet registered** in the NestJS module. Requires backend Request to register routes."_
 
 ### Backend evidence (service implementations exist per Epic 70-FE)
 
@@ -43,11 +43,11 @@ The frontend is fully blocked on §3.3 until backend exposes the services via HT
 
 Register the following 3 GET routes in `analytics.module.ts` (or whichever controller-bearing module groups analytics routes), each backed by the corresponding existing service:
 
-| Route | Service | Purpose |
-|---|---|---|
-| `GET /v1/analytics/product/:nmId/unified` | `UnifiedProductAnalyticsService` | Combined funnel + advertising + organic + summary data for a product |
-| `GET /v1/analytics/product/:nmId/organic-share` | `AdOrganicCorrelatorService` | Organic/paid views and orders split (powers the §3.3 pie chart) |
-| `GET /v1/analytics/product/:nmId/incremental-roas` | `IncrementalRoasService` | True incremental value of ads (powers §3.3 "Removing ads would reduce orders by X%" insight) |
+| Route                                              | Service                          | Purpose                                                                                      |
+| -------------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------- |
+| `GET /v1/analytics/product/:nmId/unified`          | `UnifiedProductAnalyticsService` | Combined funnel + advertising + organic + summary data for a product                         |
+| `GET /v1/analytics/product/:nmId/organic-share`    | `AdOrganicCorrelatorService`     | Organic/paid views and orders split (powers the §3.3 pie chart)                              |
+| `GET /v1/analytics/product/:nmId/incremental-roas` | `IncrementalRoasService`         | True incremental value of ads (powers §3.3 "Removing ads would reduce orders by X%" insight) |
 
 ### Standard contract
 

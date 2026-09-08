@@ -8,13 +8,14 @@
 
 ## 📋 Active Requests
 
-*Нет активных запросов*
+_Нет активных запросов_
 
 ---
 
 ## ✅ Resolved Requests
 
 ### Request #02: Концепция презентации финансовых данных ✅ РЕАЛИЗОВАНО 2025-12-14
+
 **Реализация**: Воронка продаж от ВАШЕЙ цены до прибыли
 **Backend**: Request #58 реализован
 **Frontend**: FinancialSummaryTable + UnitEconomics
@@ -22,6 +23,7 @@
 ---
 
 ### Request #01: Расхождение "Продажи" между WB Dashboard и нашей аналитикой ✅ РЕШЕНО
+
 **Date**: 2025-12-13
 **Priority**: 🟡 Medium - UX Clarity Issue
 **Status**: ✅ **РЕАЛИЗОВАНО** — 2025-12-13
@@ -38,6 +40,7 @@
 ## ✅ Resolved Requests
 
 ### Request #01: Расхождение "Продажи" — ✅ РЕАЛИЗОВАНО 2025-12-13
+
 **Решение**: Показывать `sale_gross` (чистые продажи) + tooltip с детализацией.
 **PM**: Sarah (Product Owner)
 **Реализация**: `FinancialSummaryTable.tsx` — секция "Доходы" упрощена до одной строки с tooltip
@@ -120,6 +123,7 @@ frontend/docs/request-product-manager/
 ```
 
 **Naming Convention**:
+
 - Requests: `XX-[kebab-case-title].md`
 - PM decisions: `XX-[kebab-case-title]-decision.md`
 
@@ -128,12 +132,15 @@ frontend/docs/request-product-manager/
 ## 🔗 Related Documentation
 
 **Backend Requests**:
+
 - `frontend/docs/request-backend/` - Технические запросы к backend команде
 
 **Frontend Stories**:
+
 - `frontend/docs/stories/` - User stories и требования
 
 **Backend Documentation**:
+
 - `docs/WB-DASHBOARD-METRICS.md` - Справочник метрик WB Dashboard
 
 ---

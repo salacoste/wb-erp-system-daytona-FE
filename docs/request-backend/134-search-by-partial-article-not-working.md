@@ -12,6 +12,7 @@
 User reported that searching for products by partial article number (e.g., "3216") returns "Товары не найдены" (Products not found), even though products with matching articles exist in the catalog.
 
 **Example**:
+
 - Search query: `"3216"`
 - Expected: Products with articles like `321678606`, `321670000`, etc.
 - Actual: No results returned
@@ -41,6 +42,7 @@ if (query.q) {
 ```
 
 **Problem**:
+
 1. Search query was **delegated entirely to WB API** via `textSearch` parameter
 2. WB API `textSearch` appears to:
    - Support product name (sa_name) search ✅
@@ -52,11 +54,13 @@ if (query.q) {
 ### Why WB API textSearch Doesn't Work for Articles
 
 **Hypothesis** (based on observed behavior):
+
 - WB API `textSearch` is designed for **full-text search** in product names and brands
 - Article (nmId) search requires **exact match** or is not supported at all
 - Partial numeric matching is not implemented in WB API search
 
 **Evidence**:
+
 - User search "3216" → 0 results
 - Products with articles "3216xxxxx" exist in catalog
 - Same search in product name works correctly
@@ -74,6 +78,7 @@ if (query.q) {
 #### Change 1: Remove WB API textSearch (lines 83-85)
 
 **Before**:
+
 ```typescript
 // Search query (searches in sa_name, brand, nm_id)
 if (query.q) {
@@ -82,6 +87,7 @@ if (query.q) {
 ```
 
 **After**:
+
 ```typescript
 // Note: Search query (q parameter) is handled client-side in STEP 2
 // WB API textSearch doesn't support partial article (nmId) matching
@@ -91,6 +97,7 @@ if (query.q) {
 #### Change 2: Add Client-Side Search Filter (lines 105-119)
 
 **New Code**:
+
 ```typescript
 // Search query filter (client-side fallback for WB API textSearch)
 // WB API textSearch may not support partial article (nmId) search, so we filter client-side
@@ -112,6 +119,7 @@ if (query.q) {
 ### How It Works Now
 
 **Search Flow**:
+
 1. **Fetch ALL products** from WB API (uses Redis cache, 1 hour TTL)
 2. **Client-side filtering** by search query:
    - **Article (nmId)**: Partial match (case-sensitive for numbers)
@@ -124,6 +132,7 @@ if (query.q) {
 4. **Pagination** and return results
 
 **Example Execution**:
+
 ```
 User searches: "3216"
 ↓
@@ -143,21 +152,25 @@ Returns: 2 matching products
 ## Performance Impact
 
 ### Before Fix (WB API textSearch)
+
 - **API Calls**: 1 call per search query
 - **Cache Hit**: No (each unique search query = new API call)
 - **Article Search**: ❌ Broken (0 results for partial match)
 
 ### After Fix (Client-Side Filter)
+
 - **API Calls**: 1 call to fetch all products (cached for 1 hour)
 - **Cache Hit**: ✅ Yes (Redis cache key: `products:{cabinetId}:all`)
 - **Article Search**: ✅ Works (partial match supported)
 
 **Performance Characteristics**:
+
 - **First search**: ~500ms (fetch all products from WB API)
 - **Subsequent searches**: ~50ms (filter cached products in memory)
 - **Cache lifetime**: 1 hour (3600 seconds)
 
 **Trade-off**:
+
 - ✅ **Pro**: Article search now works correctly
 - ✅ **Pro**: Faster subsequent searches (in-memory filtering)
 - ✅ **Pro**: Consistent search behavior across all fields
@@ -170,6 +183,7 @@ Returns: 2 matching products
 ### Test Case 1: Partial Article Search
 
 **Before Fix**:
+
 ```
 GET /v1/products?q=3216&limit=25
 ↓
@@ -179,6 +193,7 @@ Result: 0 products (WB API doesn't support partial article match)
 ```
 
 **After Fix**:
+
 ```
 GET /v1/products?q=3216&limit=25
 ↓
@@ -192,6 +207,7 @@ Result: 2 products (321678606, 321670000)
 ### Test Case 2: Product Name Search
 
 **Before Fix**:
+
 ```
 GET /v1/products?q=куртка&limit=25
 ↓
@@ -201,6 +217,7 @@ Result: 5 products (works correctly)
 ```
 
 **After Fix**:
+
 ```
 GET /v1/products?q=куртка&limit=25
 ↓
@@ -214,6 +231,7 @@ Result: 5 products (same results, but faster from cache)
 ### Test Case 3: Full Article Search
 
 **Before & After Fix**:
+
 ```
 GET /v1/products?q=321678606&limit=25
 ↓
@@ -229,27 +247,32 @@ Result: 1 product (exact match works)
 ### Supported Search Patterns
 
 **Article (nmId) - Case-Sensitive Numeric**:
+
 - ✅ Partial match: `"3216"` → Finds `"321678606"`
 - ✅ Full match: `"321678606"` → Finds `"321678606"`
 - ✅ Prefix match: `"32167"` → Finds `"321678606"`
 
 **Product Name (sa_name) - Case-Insensitive**:
+
 - ✅ Partial match: `"куртка"` → Finds `"Куртка зимняя Nike"`
 - ✅ Word match: `"зимняя"` → Finds `"Куртка зимняя Nike"`
 - ✅ Case-insensitive: `"NIKE"` → Finds `"Куртка зимняя Nike"`
 
 **Brand - Case-Insensitive**:
+
 - ✅ Partial match: `"nik"` → Finds brand `"Nike"`
 - ✅ Full match: `"nike"` → Finds brand `"Nike"`
 
 ### Search Priority
 
 Search checks **ALL three fields** and returns product if **ANY** field matches:
+
 ```typescript
 matchesNmId OR matchesSaName OR matchesBrand
 ```
 
 **Example**:
+
 - Search `"321"`:
   - Product 1: nmId=`"321678606"` → ✅ MATCH (article contains "321")
   - Product 2: saName=`"Куртка 321"` → ✅ MATCH (name contains "321")
@@ -260,6 +283,7 @@ matchesNmId OR matchesSaName OR matchesBrand
 ## Related Files
 
 **Backend**:
+
 - `src/products/products.service.ts` - Modified search implementation
   - Lines 83-85: Removed WB API textSearch delegation
   - Lines 105-119: Added client-side search filter
@@ -267,6 +291,7 @@ matchesNmId OR matchesSaName OR matchesBrand
 - `src/products/dto/query-products.dto.ts` - No changes (q parameter already defined)
 
 **Frontend**:
+
 - `frontend/src/hooks/useProducts.ts` - No changes (already sends q parameter)
 - `frontend/src/components/custom/ProductList.tsx` - No changes (already uses debounced search)
 
@@ -277,6 +302,7 @@ matchesNmId OR matchesSaName OR matchesBrand
 **Endpoint**: `GET /v1/products`
 
 **Query Parameters**:
+
 ```yaml
 q:
   type: string
@@ -291,6 +317,7 @@ q:
 ```
 
 **Response** (same as before):
+
 ```json
 {
   "products": [
@@ -316,15 +343,18 @@ q:
 ## Known Limitations
 
 ### 1. Cache Dependency
+
 - Search results reflect cached data (up to 1 hour old)
 - Newly added products may not appear in search until cache expires
 - **Mitigation**: Use `skip_cache=true` query parameter to force fresh data
 
 ### 2. Case Sensitivity for Articles
+
 - Article (nmId) search is **case-sensitive** (but articles are always numeric, so not an issue)
 - Product name and brand are case-insensitive
 
 ### 3. No Regex Support
+
 - Search uses simple `includes()` matching
 - No support for wildcards, regex, or advanced patterns
 - **Mitigation**: Frontend can implement regex if needed before sending query
@@ -365,6 +395,7 @@ q:
 ## Prevention for Future
 
 **API Integration Checklist**:
+
 - [ ] Verify external API search capabilities (exact vs partial match)
 - [ ] Test search with real user queries (article numbers, product names, brands)
 - [ ] Document search limitations in API specification

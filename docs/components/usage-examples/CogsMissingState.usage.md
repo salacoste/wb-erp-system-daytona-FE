@@ -65,14 +65,14 @@ import { CogsMissingState } from '@/components/custom/CogsMissingState'
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `productsWithCogs` | `number` | `0` | Number of products with COGS assigned |
-| `totalProducts` | `totalProducts` | `0` | Total number of products |
-| `coverage` | `number` | `0` | Coverage percentage (0-100). If not provided, calculated from productsWithCogs/totalProducts |
-| `isLoading` | `boolean` | `false` | Show loading skeleton |
-| `onAssignCogs` | `() => void` | `undefined` | Callback when action button clicked |
-| `className` | `string` | `undefined` | Additional CSS classes |
+| Prop               | Type            | Default     | Description                                                                                  |
+| ------------------ | --------------- | ----------- | -------------------------------------------------------------------------------------------- |
+| `productsWithCogs` | `number`        | `0`         | Number of products with COGS assigned                                                        |
+| `totalProducts`    | `totalProducts` | `0`         | Total number of products                                                                     |
+| `coverage`         | `number`        | `0`         | Coverage percentage (0-100). If not provided, calculated from productsWithCogs/totalProducts |
+| `isLoading`        | `boolean`       | `false`     | Show loading skeleton                                                                        |
+| `onAssignCogs`     | `() => void`    | `undefined` | Callback when action button clicked                                                          |
+| `className`        | `string`        | `undefined` | Additional CSS classes                                                                       |
 
 ## Integration with MetricCardEnhanced
 
@@ -97,12 +97,12 @@ function MarginDisplay({ margin, cogsCoverage }: { margin: number | null; cogsCo
 
 ## Coverage Levels
 
-| Coverage | Badge | Message | Action |
-|----------|-------|---------|--------|
-| 0% | 🔴 Critical | "Недостаточно данных" | Назначить COGS |
-| 1-49% | 🟠 Warning | "Требуется действие" | Назначить COGS |
-| 50-99% | 🟡 Info | "Почти готово" | Дособрать товары |
-| 100% | ✅ Hidden | Component not rendered | — |
+| Coverage | Badge       | Message                | Action           |
+| -------- | ----------- | ---------------------- | ---------------- |
+| 0%       | 🔴 Critical | "Недостаточно данных"  | Назначить COGS   |
+| 1-49%    | 🟠 Warning  | "Требуется действие"   | Назначить COGS   |
+| 50-99%   | 🟡 Info     | "Почти готово"         | Дособрать товары |
+| 100%     | ✅ Hidden   | Component not rendered | —                |
 
 ## Tooltip Content
 
@@ -128,6 +128,7 @@ The component includes an info icon with tooltip explaining margin calculation:
 ## Styling
 
 The component uses:
+
 - `Card` from shadcn/ui with dashed border
 - `Badge` for status indicator
 - `AlertTriangle` icon from lucide-react
@@ -137,11 +138,13 @@ The component uses:
 ## Testing
 
 All 54 unit tests pass:
+
 ```bash
 npm test -- CogsMissingState.test.tsx
 ```
 
 Test coverage includes:
+
 - Rendering & visibility
 - Coverage levels (critical, warning, info, complete)
 - Action button interactions

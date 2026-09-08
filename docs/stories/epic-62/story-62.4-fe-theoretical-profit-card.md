@@ -116,42 +116,42 @@ Border = Yellow (#F59E0B) for incomplete
 
 ### Colors
 
-| Element | Condition | Hex | Tailwind |
-|---------|-----------|-----|----------|
-| Icon | Default | `#6B7280` | `text-gray-500` |
-| Main value | Positive | `#22C55E` | `text-green-500` |
-| Main value | Negative | `#EF4444` | `text-red-500` |
-| Card border | Positive | `#3B82F6` | `border-blue-500` |
-| Card border | Negative | `#EF4444` | `border-red-500` |
-| Card border | Incomplete | `#F59E0B` | `border-yellow-500` |
-| Card background | Positive | gradient | `from-blue-50 to-white` |
-| Card background | Negative | gradient | `from-red-50 to-white` |
-| Breakdown: Orders | | `#3B82F6` | `text-blue-500` |
-| Breakdown: COGS | | `#6B7280` | `text-gray-500` |
-| Breakdown: Advertising | | `#F59E0B` | `text-yellow-600` |
-| Breakdown: Logistics | | `#EF4444` | `text-red-500` |
-| Breakdown: Storage | | `#7C4DFF` | `text-purple-500` |
+| Element                | Condition  | Hex       | Tailwind                |
+| ---------------------- | ---------- | --------- | ----------------------- |
+| Icon                   | Default    | `#6B7280` | `text-gray-500`         |
+| Main value             | Positive   | `#22C55E` | `text-green-500`        |
+| Main value             | Negative   | `#EF4444` | `text-red-500`          |
+| Card border            | Positive   | `#3B82F6` | `border-blue-500`       |
+| Card border            | Negative   | `#EF4444` | `border-red-500`        |
+| Card border            | Incomplete | `#F59E0B` | `border-yellow-500`     |
+| Card background        | Positive   | gradient  | `from-blue-50 to-white` |
+| Card background        | Negative   | gradient  | `from-red-50 to-white`  |
+| Breakdown: Orders      |            | `#3B82F6` | `text-blue-500`         |
+| Breakdown: COGS        |            | `#6B7280` | `text-gray-500`         |
+| Breakdown: Advertising |            | `#F59E0B` | `text-yellow-600`       |
+| Breakdown: Logistics   |            | `#EF4444` | `text-red-500`          |
+| Breakdown: Storage     |            | `#7C4DFF` | `text-purple-500`       |
 
 ### Typography
 
-| Element | Size | Weight | Line Height |
-|---------|------|--------|-------------|
-| Title | 14px | 500 (medium) | 1.5 |
-| Main value | 48px | 700 (bold) | 1.1 |
-| Comparison badge | 12px | 500 (medium) | 1.5 |
-| Breakdown title | 14px | 600 (semibold) | 1.5 |
-| Breakdown row | 14px | 400 (regular) | 1.5 |
-| Breakdown total | 14px | 700 (bold) | 1.5 |
+| Element          | Size | Weight         | Line Height |
+| ---------------- | ---- | -------------- | ----------- |
+| Title            | 14px | 500 (medium)   | 1.5         |
+| Main value       | 48px | 700 (bold)     | 1.1         |
+| Comparison badge | 12px | 500 (medium)   | 1.5         |
+| Breakdown title  | 14px | 600 (semibold) | 1.5         |
+| Breakdown row    | 14px | 400 (regular)  | 1.5         |
+| Breakdown total  | 14px | 700 (bold)     | 1.5         |
 
 ### Spacing
 
-| Element | Value | Tailwind |
-|---------|-------|----------|
-| Card padding | 16px | `p-4` |
-| Card border | 2px | `border-2` |
-| Popover width | 300px | `w-[300px]` |
-| Popover padding | 16px | `p-4` |
-| Breakdown row gap | 8px | `space-y-2` |
+| Element           | Value | Tailwind    |
+| ----------------- | ----- | ----------- |
+| Card padding      | 16px  | `p-4`       |
+| Card border       | 2px   | `border-2`  |
+| Popover width     | 300px | `w-[300px]` |
+| Popover padding   | 16px  | `p-4`       |
+| Breakdown row gap | 8px   | `space-y-2` |
 
 ---
 
@@ -220,26 +220,26 @@ const breakdownRows: BreakdownRow[] = [
 
 ### Dependencies
 
-| Hook/Utility | Source | Purpose |
-|--------------|--------|---------|
-| `calculateTheoreticalProfit` | Story 61.10-FE | Profit calculation |
-| `formatCurrency` | `src/lib/formatters.ts` | Currency formatting |
-| `ComparisonBadge` | Existing | Comparison indicator |
-| `Popover` | shadcn/ui | Breakdown popover |
-| `Tooltip` | shadcn/ui | Info tooltip |
-| `Calculator` | lucide-react | Card icon |
-| `AlertTriangle` | lucide-react | Warning icon |
-| `ChevronDown` | lucide-react | Expand icon |
+| Hook/Utility                 | Source                  | Purpose              |
+| ---------------------------- | ----------------------- | -------------------- |
+| `calculateTheoreticalProfit` | Story 61.10-FE          | Profit calculation   |
+| `formatCurrency`             | `src/lib/formatters.ts` | Currency formatting  |
+| `ComparisonBadge`            | Existing                | Comparison indicator |
+| `Popover`                    | shadcn/ui               | Breakdown popover    |
+| `Tooltip`                    | shadcn/ui               | Info tooltip         |
+| `Calculator`                 | lucide-react            | Card icon            |
+| `AlertTriangle`              | lucide-react            | Warning icon         |
+| `ChevronDown`                | lucide-react            | Expand icon          |
 
 ---
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/components/custom/dashboard/TheoreticalProfitCard.tsx` | CREATE | Theoretical profit card |
+| File                                                         | Action | Description                 |
+| ------------------------------------------------------------ | ------ | --------------------------- |
+| `src/components/custom/dashboard/TheoreticalProfitCard.tsx`  | CREATE | Theoretical profit card     |
 | `src/components/custom/dashboard/ProfitBreakdownPopover.tsx` | CREATE | Breakdown popover component |
-| `src/components/custom/dashboard/index.ts` | MODIFY | Add exports |
+| `src/components/custom/dashboard/index.ts`                   | MODIFY | Add exports                 |
 
 ---
 
@@ -554,14 +554,14 @@ export function ProfitBreakdownPopover({
 
 ## Edge Cases
 
-| Scenario | Behavior |
-|----------|----------|
-| All components present | Show complete profit, no warning |
-| Some components missing | Show partial profit with warning badge, list missing |
-| Zero profit | Show 0 RUB with neutral styling (blue border) |
-| Very large negative profit | Show in red, ensure formatting handles |
-| All components zero | Show 0 RUB |
-| API error | Show error state with retry |
+| Scenario                   | Behavior                                             |
+| -------------------------- | ---------------------------------------------------- |
+| All components present     | Show complete profit, no warning                     |
+| Some components missing    | Show partial profit with warning badge, list missing |
+| Zero profit                | Show 0 RUB with neutral styling (blue border)        |
+| Very large negative profit | Show in red, ensure formatting handles               |
+| All components zero        | Show 0 RUB                                           |
+| API error                  | Show error state with retry                          |
 
 ---
 

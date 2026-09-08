@@ -64,15 +64,16 @@ export interface DashboardMetricsGridProps {
 
 ### Почему это проблема
 
-| Проверка | `null` | `undefined` | `0` | `""` |
-|----------|--------|-------------|-----|------|
-| `value == null` | ✅ true | ✅ true | false | false |
-| `value === null` | ✅ true | ❌ false | false | false |
-| `value === undefined` | ❌ false | ✅ true | false | false |
-| `!value` | ✅ true | ✅ true | ✅ true | ✅ true |
-| `value ?? default` | ✅ default | ✅ default | 0 | "" |
+| Проверка              | `null`     | `undefined` | `0`     | `""`    |
+| --------------------- | ---------- | ----------- | ------- | ------- |
+| `value == null`       | ✅ true    | ✅ true     | false   | false   |
+| `value === null`      | ✅ true    | ❌ false    | false   | false   |
+| `value === undefined` | ❌ false   | ✅ true     | false   | false   |
+| `!value`              | ✅ true    | ✅ true     | ✅ true | ✅ true |
+| `value ?? default`    | ✅ default | ✅ default  | 0       | ""      |
 
 **Риски:**
+
 1. Разработчики могут использовать `=== null` и пропустить `undefined` значения
 2. TypeScript типы становятся несогласованными (`T | null` vs `T | undefined`)
 3. Разные компоненты могут по-разному обрабатывать отсутствующие данные
@@ -83,6 +84,7 @@ export interface DashboardMetricsGridProps {
 ## Рекомендация: Использовать `null`
 
 **Обоснование:**
+
 1. `null` — явное указание на "отсутствие значения" (intentional absence)
 2. `undefined` — означает "значение не было присвоено" (uninitialized)
 3. JSON не поддерживает `undefined`, API возвращает `null`
@@ -221,44 +223,44 @@ if (value === null) {
 
 ### Critical (Direct Dashboard)
 
-| File | Current Issue | Fix |
-|------|---------------|-----|
-| `src/components/custom/dashboard/DashboardMetricsGrid.tsx` | Props use `\| undefined` | Change to `\| null` |
+| File                                                            | Current Issue            | Fix                 |
+| --------------------------------------------------------------- | ------------------------ | ------------------- |
+| `src/components/custom/dashboard/DashboardMetricsGrid.tsx`      | Props use `\| undefined` | Change to `\| null` |
 | `src/app/(dashboard)/dashboard/components/DashboardContent.tsx` | Mixes null and undefined | Standardize to null |
 
 ### Types
 
-| File | Lines to Check |
-|------|----------------|
-| `src/types/api.ts` | Already uses `\| null` ✅ |
-| `src/types/analytics.ts` | Already uses `\| null` ✅ |
-| `src/types/daily-metrics.ts` | Uses required numbers |
-| `src/types/orders-volume.ts` | Check for consistency |
-| `src/types/orders-cogs.ts` | Check for consistency |
+| File                         | Lines to Check            |
+| ---------------------------- | ------------------------- |
+| `src/types/api.ts`           | Already uses `\| null` ✅ |
+| `src/types/analytics.ts`     | Already uses `\| null` ✅ |
+| `src/types/daily-metrics.ts` | Uses required numbers     |
+| `src/types/orders-volume.ts` | Check for consistency     |
+| `src/types/orders-cogs.ts`   | Check for consistency     |
 
 ### Dashboard Components
 
-| File | Check |
-|------|-------|
-| `src/components/custom/dashboard/OrdersMetricCard.tsx` | Props nullability |
-| `src/components/custom/dashboard/OrdersCogsMetricCard.tsx` | Props nullability |
+| File                                                        | Check             |
+| ----------------------------------------------------------- | ----------------- |
+| `src/components/custom/dashboard/OrdersMetricCard.tsx`      | Props nullability |
+| `src/components/custom/dashboard/OrdersCogsMetricCard.tsx`  | Props nullability |
 | `src/components/custom/dashboard/TheoreticalProfitCard.tsx` | Props nullability |
 | `src/components/custom/dashboard/AdvertisingMetricCard.tsx` | Props nullability |
-| `src/components/custom/dashboard/LogisticsMetricCard.tsx` | Props nullability |
-| `src/components/custom/dashboard/StorageMetricCard.tsx` | Props nullability |
-| `src/components/custom/dashboard/SalesMetricCard.tsx` | Props nullability |
-| `src/components/custom/dashboard/SalesCogsMetricCard.tsx` | Props nullability |
+| `src/components/custom/dashboard/LogisticsMetricCard.tsx`   | Props nullability |
+| `src/components/custom/dashboard/StorageMetricCard.tsx`     | Props nullability |
+| `src/components/custom/dashboard/SalesMetricCard.tsx`       | Props nullability |
+| `src/components/custom/dashboard/SalesCogsMetricCard.tsx`   | Props nullability |
 | `src/components/custom/dashboard/PlaceholderMetricCard.tsx` | Props nullability |
 
 ### Hooks
 
-| File | Check |
-|------|-------|
-| `src/hooks/useOrdersVolume.ts` | Return type nullability |
-| `src/hooks/useOrdersCogs.ts` | Return type nullability |
-| `src/hooks/useFinancialSummary.ts` | Return type nullability |
+| File                                   | Check                   |
+| -------------------------------------- | ----------------------- |
+| `src/hooks/useOrdersVolume.ts`         | Return type nullability |
+| `src/hooks/useOrdersCogs.ts`           | Return type nullability |
+| `src/hooks/useFinancialSummary.ts`     | Return type nullability |
 | `src/hooks/useAdvertisingAnalytics.ts` | Return type nullability |
-| `src/hooks/useDailyMetrics.ts` | Return type nullability |
+| `src/hooks/useDailyMetrics.ts`         | Return type nullability |
 
 ---
 
@@ -288,15 +290,18 @@ if (value === null) {
 ## Impact Analysis
 
 ### Low Risk
+
 - Изменение типов не влияет на runtime поведение
 - `??` оператор работает одинаково для null и undefined
 - Большинство проверок уже используют `== null`
 
 ### Medium Risk
+
 - Компоненты, использующие `=== undefined`, потребуют обновления
 - Возможны TypeScript ошибки после изменения типов
 
 ### Mitigation
+
 - Делать изменения постепенно, файл за файлом
 - Запускать тесты после каждого изменения
 - Использовать TypeScript для обнаружения несовместимостей

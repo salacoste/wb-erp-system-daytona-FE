@@ -19,6 +19,7 @@
 ## 📋 Acceptance Criteria
 
 ### Unit Tests (Jest + React Testing Library)
+
 - [ ] `MergedGroupTable.test.tsx` created with ≥90% code coverage
 - [ ] Tests for rowspan rendering (correct `rowspan` attribute values)
 - [ ] Tests for aggregate metric calculations (6 formulas from Story 37.3)
@@ -27,6 +28,7 @@
 - [ ] Tests for edge cases (zero spend, negative revenue, single-product groups)
 
 ### Integration Tests (Playwright)
+
 - [ ] E2E test: Navigate to analytics page, switch to "По склейкам" mode
 - [ ] E2E test: Verify table structure (rowspan cell, aggregate row, detail rows)
 - [ ] E2E test: Click on product row, verify navigation/interaction
@@ -34,6 +36,7 @@
 - [ ] E2E test: Responsive behavior (desktop → tablet → mobile)
 
 ### Accessibility Tests (axe-core)
+
 - [ ] No WCAG 2.1 AA violations detected
 - [ ] Screen reader announces rowspan cell content correctly
 - [ ] Keyboard navigation works (Tab to focus, Enter to activate)
@@ -41,6 +44,7 @@
 - [ ] Sortable columns indicate sort state with `aria-sort`
 
 ### Documentation
+
 - [ ] User guide section added to frontend README
 - [ ] Screenshot documentation in `docs/stories/epic-37/screenshots/`
 - [ ] API response examples in `docs/stories/epic-37/api-response-sample.json`
@@ -48,6 +52,7 @@
 - [ ] [PO TO FILL] Help tooltip content for "Склейка" column?
 
 ### [PO TO FILL] Additional Requirements
+
 - [ ] [PO TO SPECIFY] Performance test: Table render time with 100 groups?
 - [ ] [PO TO SPECIFY] Visual regression test: Percy/Chromatic screenshots?
 - [ ] [PO TO SPECIFY] User acceptance testing: 3-5 beta users?
@@ -58,6 +63,7 @@
 ## 🧪 Unit Test Suite
 
 ### Test File Structure
+
 ```typescript
 // File: frontend/src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.test.tsx
 
@@ -125,6 +131,7 @@ describe('MergedGroupTable', () => {
 ### Key Test Examples
 
 **Test 1: Rowspan Attribute**
+
 ```typescript
 it('renders rowspan cell spanning aggregate + detail rows', () => {
   const mockGroup = createMockGroup({ productCount: 6 }); // 1 aggregate + 6 details
@@ -136,6 +143,7 @@ it('renders rowspan cell spanning aggregate + detail rows', () => {
 ```
 
 **Test 2: Aggregate Calculation**
+
 ```typescript
 it('calculates totalSales as sum of products', () => {
   const products = [
@@ -151,6 +159,7 @@ it('calculates totalSales as sum of products', () => {
 ```
 
 **Test 3: Crown Icon**
+
 ```typescript
 it('displays crown icon for main product', () => {
   const mockGroup = createMockGroup({ mainProductId: 'ter-09' });
@@ -166,6 +175,7 @@ it('displays crown icon for main product', () => {
 ## 🎭 Integration Test Suite (Playwright)
 
 ### Test File
+
 ```typescript
 // File: frontend/e2e/advertising-analytics-merged-groups.spec.ts
 
@@ -233,6 +243,7 @@ test.describe('Advertising Analytics - Склейки Mode', () => {
 ## ♿ Accessibility Test Suite
 
 ### Axe-Core Integration
+
 ```typescript
 // File: frontend/src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.test.tsx
 
@@ -267,6 +278,7 @@ describe('MergedGroupTable Accessibility', () => {
 ```
 
 ### Manual Screen Reader Testing
+
 - [ ] NVDA (Windows): Navigate through table, verify group boundaries announced
 - [ ] VoiceOver (macOS): Tab through rows, confirm crown icon description
 - [ ] Keyboard-only: Tab to focus rows, Enter to activate clicks
@@ -277,6 +289,7 @@ describe('MergedGroupTable Accessibility', () => {
 ## 📚 Documentation
 
 ### User Guide Section (Frontend README)
+
 ````markdown
 ### Склейки (Merged Product Cards) Analytics
 
@@ -317,6 +330,7 @@ Wildberries groups related products into "склейки" (merged cards) that sh
 ````
 
 ### API Response Example
+
 ```json
 // File: docs/stories/epic-37/api-response-sample.json
 {
@@ -360,6 +374,7 @@ Wildberries groups related products into "склейки" (merged cards) that sh
 ## 📸 Screenshot Documentation
 
 ### Required Screenshots
+
 - [ ] **Desktop view (1400px)**: Full table with 3 groups
 - [ ] **Tablet view (800px)**: Horizontal scroll enabled
 - [ ] **Mobile view (400px)**: [PO TO FILL] Card layout or scroll?
@@ -369,6 +384,7 @@ Wildberries groups related products into "склейки" (merged cards) that sh
 - [ ] **Comparison**: "По склейкам" vs "По артикулам" modes
 
 ### Screenshot Naming Convention
+
 ```
 docs/stories/epic-37/screenshots/
 ├── 01-desktop-full-table.png

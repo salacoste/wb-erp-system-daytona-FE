@@ -13,7 +13,7 @@ chars: 3543
 
 В этой статье:
 
-- 
+-
 - <a href="#podklyuchenie-integratsii" rel="nofollow">Подключение интеграции</a>
 - <a href="#import-tovarov" rel="nofollow">Импорт товаров</a>
 - <a href="#rabota-po-fbs" rel="nofollow">Работа по FBS</a>

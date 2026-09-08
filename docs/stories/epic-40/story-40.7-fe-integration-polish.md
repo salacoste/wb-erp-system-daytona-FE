@@ -17,6 +17,7 @@
 ## Acceptance Criteria
 
 ### AC1: E2E Tests (Playwright)
+
 - [ ] Orders list page loads correctly
 - [ ] Filters and sorting work end-to-end
 - [ ] Order detail modal opens and displays history
@@ -27,24 +28,28 @@
 - [ ] Mobile responsive behavior tested
 
 ### AC2: Error Boundary Implementation
+
 - [ ] ErrorBoundary wraps Orders page
 - [ ] Graceful fallback UI on component crash
 - [ ] Error logging to console (dev mode)
 - [ ] "Retry" button functionality
 
 ### AC3: Lazy Loading
+
 - [ ] Timeline components lazy loaded
 - [ ] Modal content lazy loaded on open
 - [ ] Suspense boundaries with loading skeletons
 - [ ] Performance improvement measured
 
 ### AC4: Documentation Updates
+
 - [ ] CLAUDE.md updated with Orders routes
 - [ ] Component catalog updated
 - [ ] API endpoints documented
 - [ ] Hook catalog updated
 
 ### AC5: Epic 40-FE Completion Criteria
+
 - [ ] All Stories 40.1-40.7 complete
 - [ ] No TypeScript errors
 - [ ] ESLint passes
@@ -54,6 +59,7 @@
 ## Tasks / Subtasks
 
 ### Phase 1: E2E Test Suite
+
 - [ ] Create `e2e/orders.spec.ts`
 - [ ] Test: Orders page navigation and load
 - [ ] Test: Date range filter selection
@@ -73,6 +79,7 @@
 - [ ] Test: Mobile responsive layout
 
 ### Phase 2: Error Boundary
+
 - [ ] Create `src/components/custom/OrdersErrorBoundary.tsx`
 - [ ] Implement error catching logic
 - [ ] Design fallback UI (Russian text)
@@ -81,6 +88,7 @@
 - [ ] Test error recovery
 
 ### Phase 3: Lazy Loading & Performance
+
 - [ ] Lazy import `OrderHistoryTimeline`
 - [ ] Lazy import `WbHistoryTimeline`
 - [ ] Lazy import `LocalHistoryTimeline`
@@ -90,6 +98,7 @@
 - [ ] Verify loading UX smooth
 
 ### Phase 4: Documentation Updates
+
 - [ ] Update `CLAUDE.md` route table
 - [ ] Add `/orders` to Route Structure section
 - [ ] Add Orders hooks to Hook Catalog
@@ -98,6 +107,7 @@
 - [ ] Update Epic Catalog with Epic 40-FE status
 
 ### Phase 5: Final Validation
+
 - [ ] Run full test suite: `npm test`
 - [ ] Run E2E tests: `npm run test:e2e`
 - [ ] Run type check: `npm run type-check`
@@ -330,21 +340,25 @@ export function TimelineSkeleton() {
 ### CLAUDE.md Updates Required
 
 Add to Route Structure:
+
 ```markdown
 | `/orders` | Orders list with analytics |
 ```
 
 Add to Hook Catalog:
+
 ```markdown
 **Orders**: `useOrders`, `useOrderDetails`, `useLocalHistory`, `useWbHistory`, `useFullHistory`, `useSlaMetrics`, `useVelocityMetrics`
 ```
 
 Add to Component Catalog:
+
 ```markdown
 **Orders (Epic 40)**: OrdersListContainer, OrdersTable, OrdersFilters, OrdersPagination, OrderStatusBadge, OrderDetailsModal, OrderHistoryTimeline, WbHistoryTimeline, LocalHistoryTimeline, HistoryEntryCard, HistorySourceBadge, DurationDisplay, SlaComplianceWidget, VelocityMetricsWidget, AtRiskOrdersCard, OrderSyncStatus
 ```
 
 Add to API Endpoint Catalog:
+
 ```markdown
 #### Orders (8)
 - `GET /v1/orders` - List orders with filters
@@ -359,20 +373,21 @@ Add to API Endpoint Catalog:
 
 ## Performance Optimization Checklist
 
-| Optimization | Target | Verification |
-|--------------|--------|--------------|
-| Initial page load | < 2s | Lighthouse audit |
-| Orders list render | < 500ms | React DevTools |
-| Modal open time | < 300ms | Manual timing |
-| History tab switch | < 200ms | Manual timing |
-| Timeline bundle | < 50KB | Bundle analyzer |
-| Analytics widgets | < 1s | Network panel |
+| Optimization       | Target  | Verification     |
+| ------------------ | ------- | ---------------- |
+| Initial page load  | < 2s    | Lighthouse audit |
+| Orders list render | < 500ms | React DevTools   |
+| Modal open time    | < 300ms | Manual timing    |
+| History tab switch | < 200ms | Manual timing    |
+| Timeline bundle    | < 50KB  | Bundle analyzer  |
+| Analytics widgets  | < 1s    | Network panel    |
 
 ## Dev Notes
 
 ### Test Data Requirements
 
 E2E tests require:
+
 - At least 10 orders in test cabinet
 - Orders with various statuses (pending, confirmed, delivered, cancelled)
 - Orders with WB history data populated
@@ -381,9 +396,11 @@ E2E tests require:
 ### Bundle Size Targets
 
 Before lazy loading:
+
 - Orders page chunk: ~150KB (estimated)
 
 After lazy loading:
+
 - Orders page chunk: ~80KB
 - Timeline chunk: ~50KB (loaded on demand)
 - Modal chunk: ~20KB (loaded on demand)
@@ -399,21 +416,21 @@ After lazy loading:
 
 ### E2E Test Cases
 
-| Test | Priority | Automated |
-|------|----------|-----------|
-| Orders page loads | Critical | Yes |
-| Date filter works | High | Yes |
-| Status filter works | High | Yes |
-| Search works | High | Yes |
-| Sorting works | Medium | Yes |
-| Modal opens | Critical | Yes |
-| Tab switching | High | Yes |
-| SLA widget displays | Medium | Yes |
-| Velocity widget displays | Medium | Yes |
-| Sync button works | Medium | Yes |
-| Error state | High | Yes |
-| Empty state | Medium | Yes |
-| Mobile layout | Medium | Yes |
+| Test                     | Priority | Automated |
+| ------------------------ | -------- | --------- |
+| Orders page loads        | Critical | Yes       |
+| Date filter works        | High     | Yes       |
+| Status filter works      | High     | Yes       |
+| Search works             | High     | Yes       |
+| Sorting works            | Medium   | Yes       |
+| Modal opens              | Critical | Yes       |
+| Tab switching            | High     | Yes       |
+| SLA widget displays      | Medium   | Yes       |
+| Velocity widget displays | Medium   | Yes       |
+| Sync button works        | Medium   | Yes       |
+| Error state              | High     | Yes       |
+| Empty state              | Medium   | Yes       |
+| Mobile layout            | Medium   | Yes       |
 
 ### Manual Testing Checklist
 
@@ -440,16 +457,16 @@ After lazy loading:
 
 ## Epic 40-FE Completion Criteria
 
-| Story | Status | Points |
-|-------|--------|--------|
-| 40.1-FE: Types & API Client | - | 3 |
-| 40.2-FE: React Query Hooks | - | 3 |
-| 40.3-FE: Orders List Page | - | 5 |
-| 40.4-FE: Order Details Modal | - | 3 |
-| 40.5-FE: History Timeline Components | - | 5 |
-| 40.6-FE: Orders Analytics Dashboard | - | 5 |
-| 40.7-FE: Integration & Polish | - | 2 |
-| **Total** | - | **26** |
+| Story                                | Status | Points |
+| ------------------------------------ | ------ | ------ |
+| 40.1-FE: Types & API Client          | -      | 3      |
+| 40.2-FE: React Query Hooks           | -      | 3      |
+| 40.3-FE: Orders List Page            | -      | 5      |
+| 40.4-FE: Order Details Modal         | -      | 3      |
+| 40.5-FE: History Timeline Components | -      | 5      |
+| 40.6-FE: Orders Analytics Dashboard  | -      | 5      |
+| 40.7-FE: Integration & Polish        | -      | 2      |
+| **Total**                            | -      | **26** |
 
 ## Dependencies
 
@@ -468,8 +485,8 @@ After lazy loading:
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author   | Change        |
+| ---------- | -------- | ------------- |
 | 2026-01-29 | PM Agent | Initial draft |
 
 ---

@@ -3,6 +3,7 @@
 **Issue**: Dashboard shows "Нет данных за выбранный период" (No data for selected period)
 
 **Context**:
+
 - **Cabinet ID**: `f75836f7-c0bc-4b2c-823c-a1f3508cce8e`
 - **Test Credentials**: `test@test.com` / `<E2E_TEST_PASSWORD>`
 - **Period Shown**: 20-26 Jan 2026 (Week 2026-W04)
@@ -30,10 +31,12 @@ Run the test file `test-api/diagnose-empty-data.http` in order:
 ### Cause 1: Backend Has Not Processed Week 2026-W04
 
 **Symptoms**:
+
 - `GET /v1/analytics/weekly/available-weeks` does NOT include `2026-W04`
 - All finance-summary calls return `null` or empty
 
 **Solution**:
+
 - Wait for backend to process the week (usually within 24 hours)
 - Check a week that IS in the available-weeks list (e.g., 2025-W47)
 - Verify backend processing tasks are running
@@ -43,16 +46,19 @@ Run the test file `test-api/diagnose-empty-data.http` in order:
 ### Cause 2: No Data for Specific Cabinet
 
 **Symptoms**:
+
 - Available weeks includes 2026-W04
 - But `finance-summary?week=2026-W04` returns `null` for YOUR cabinet
 - Other cabinets may have data
 
 **Solution**:
+
 - Verify cabinet ID is correct: `f75836f7-c0bc-4b2c-823c-a1f3508cce8e`
 - Check if weekly_payout_summary table has rows for this cabinet + week
 - Check if weekly_margin_fact table has margin data for this cabinet + week
 
 **SQL Check**:
+
 ```sql
 -- Check payout data
 SELECT * FROM weekly_payout_summary
@@ -70,15 +76,18 @@ AND week = '2026-W04';
 ### Cause 3: Advertising Data Not Synced
 
 **Symptoms**:
+
 - Finance data loads but advertising widget shows empty
 - `sync-status` shows `health_status: "stale"` or old `lastSyncAt`
 
 **Solution**:
+
 - Check advertising sync status endpoint
 - Verify daily advertising sync job is running
 - Check dataAvailableFrom/dataAvailableTo in sync status
 
 **Expected Sync Status**:
+
 ```json
 {
   "status": "healthy",
@@ -93,15 +102,18 @@ AND week = '2026-W04';
 ### Cause 4: Week Date Range Mismatch (Frontend vs Backend)
 
 **Symptoms**:
+
 - Data exists for the week but frontend shows empty
 - Week calculations differ between systems
 
 **Solution**:
+
 - Frontend uses ISO 8601 week definition (Monday-Sunday)
 - Week 2026-W04 = Mon Jan 20 to Sun Jan 26, 2026
 - Verify backend uses same week definition
 
 **Test**:
+
 ```bash
 # Frontend calculation (date-fns)
 startOfISOWeek(new Date(2026, 0, 22))  # → 2026-01-20
@@ -116,16 +128,19 @@ GET /v1/analytics/advertising?from=2026-01-20&to=2026-01-26
 ### Cause 5: COGS Not Assigned (No Margin Calculation)
 
 **Symptoms**:
+
 - Payout data loads (К перечислению shows value)
 - But Маржа % shows null/empty
 - COGS coverage = 0%
 
 **Solution**:
+
 - Assign COGS to products in COGS management page
 - Margin calculation requires COGS data
 - Check products_with_cogs count
 
 **Expected COGS Coverage**:
+
 ```json
 {
   "products_total": 100,
@@ -143,16 +158,19 @@ GET /v1/analytics/advertising?from=2026-01-20&to=2026-01-26
 The frontend uses `DashboardPeriodContext` to manage period selection:
 
 **Week Mode** (default):
+
 - Selected week: `2026-W04` (from `getLastCompletedWeek()`)
 - Date range: Mon Jan 20 to Sun Jan 26, 2026
 - API call: `/v1/analytics/weekly/finance-summary?week=2026-W04`
 
 **Month Mode**:
+
 - Selected month: `2026-01`
 - Date range: Jan 1 to Jan 31, 2026
 - API call: Aggregates weeks 2026-W01 to 2026-W05
 
 **Key Files**:
+
 - `/src/contexts/dashboard-period-context.tsx` - Period state management
 - `/src/lib/date-utils.ts` - Week/month to date range conversion
 - `/src/hooks/useDashboardMetricsWithPeriod.ts` - Data fetching hook
@@ -172,6 +190,7 @@ const advertisingDateRange = useMemo(() => {
 ```
 
 **Widget calls**:
+
 ```typescript
 useAdvertisingAnalytics({
   from: advertisingDateRange.from,  // '2026-01-20'
@@ -223,6 +242,7 @@ X-Cabinet-Id: f75836f7-c0bc-4b2c-823c-a1f3508cce8e
 ```
 
 **Expected Response**:
+
 ```json
 {
   "summary_total": {
@@ -254,6 +274,7 @@ X-Cabinet-Id: f75836f7-c0bc-4b2c-823c-a1f3508cce8e
 ```
 
 **Expected Response**:
+
 ```json
 {
   "summary": {
@@ -299,6 +320,7 @@ X-Cabinet-Id: f75836f7-c0bc-4b2c-823c-a1f3508cce8e
 ### Solution 1: Select Different Week
 
 If 2026-W04 is not processed yet:
+
 1. Use week selector to choose 2025-W47 (first week with COGS)
 2. Or select any week from available-weeks list
 3. Dashboard should load data for that week
@@ -306,6 +328,7 @@ If 2026-W04 is not processed yet:
 ### Solution 2: Assign COGS
 
 If payout data loads but margin is null:
+
 1. Navigate to COGS page (`/cogs`)
 2. Assign COGS to products
 3. Margin calculation will run automatically
@@ -314,6 +337,7 @@ If payout data loads but margin is null:
 ### Solution 3: Trigger Advertising Sync
 
 If advertising data is stale:
+
 1. Navigate to Advertising Analytics page
 2. Check sync status
 3. If stale, contact backend to trigger manual sync
@@ -321,6 +345,7 @@ If advertising data is stale:
 ### Solution 4: Check Cabinet Context
 
 If wrong cabinet is selected:
+
 1. Check localStorage for cabinet selection
 2. Verify X-Cabinet-Id header in API calls
 3. Switch to correct cabinet if multiple exist

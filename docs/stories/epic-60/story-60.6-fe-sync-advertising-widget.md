@@ -295,12 +295,12 @@ export function AdvertisingDashboardWidget({
 
 ## Dependencies
 
-| Dependency | Type | Status |
-|------------|------|--------|
-| Story 60.1-FE | Internal | Required - Provides `useDashboardPeriod` hook |
-| Story 60.4-FE | Internal | Required - Dashboard integration pattern |
-| `date-fns` | Package | Already installed |
-| Backend `/v1/analytics/advertising` | API | Accepts `from` and `to` params |
+| Dependency                          | Type     | Status                                        |
+| ----------------------------------- | -------- | --------------------------------------------- |
+| Story 60.1-FE                       | Internal | Required - Provides `useDashboardPeriod` hook |
+| Story 60.4-FE                       | Internal | Required - Dashboard integration pattern      |
+| `date-fns`                          | Package  | Already installed                             |
+| Backend `/v1/analytics/advertising` | API      | Accepts `from` and `to` params                |
 
 ---
 
@@ -309,6 +309,7 @@ export function AdvertisingDashboardWidget({
 ### Unit Tests
 
 1. **weekToDateRange conversion**
+
    ```typescript
    describe('weekToDateRange', () => {
      it('should convert 2026-W05 to correct date range', () => {
@@ -331,6 +332,7 @@ export function AdvertisingDashboardWidget({
    ```
 
 2. **Widget with external dateRange**
+
    ```typescript
    it('should use provided dateRange instead of internal state', () => {
      const mockFetch = vi.fn()
@@ -351,6 +353,7 @@ export function AdvertisingDashboardWidget({
    ```
 
 3. **Widget hides selector when controlled**
+
    ```typescript
    it('should not show period selector when hideLocalSelector=true', () => {
      render(
@@ -380,6 +383,7 @@ export function AdvertisingDashboardWidget({
 ### Integration Tests
 
 1. **Dashboard period sync**
+
    ```typescript
    it('should sync advertising widget with dashboard period', async () => {
      render(<DashboardPage />)
@@ -413,11 +417,11 @@ export function AdvertisingDashboardWidget({
 
 ### Impact Analysis
 
-| Use Case | Impact | Mitigation |
-|----------|--------|------------|
-| Dashboard widget | Local selector removed | Uses global selector |
-| Analytics page | No change | Widget uses fallback mode |
-| Future embedding | No change | Props provide flexibility |
+| Use Case         | Impact                 | Mitigation                |
+| ---------------- | ---------------------- | ------------------------- |
+| Dashboard widget | Local selector removed | Uses global selector      |
+| Analytics page   | No change              | Widget uses fallback mode |
+| Future embedding | No change              | Props provide flexibility |
 
 ### Migration Checklist
 

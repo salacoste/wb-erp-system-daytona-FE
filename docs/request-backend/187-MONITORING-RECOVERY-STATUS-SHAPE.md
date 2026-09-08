@@ -19,18 +19,19 @@ The FE `apiClient` auto-unwraps the `{ data }` envelope → the hook receives th
 ## Problem B — missing task fields (needs backend)
 
 Each live item has only:
+
 ```json
 { "taskType": "...", "status": "...", "lastAttempt": "...", "totalAttempts": N, "canRetry": bool }
 ```
 
 But `RecoveryPanel` (+ its `Tip` tooltip) renders 4 fields that are NOT in the response:
 
-| FE-rendered field | Where | Current render with missing field |
-|---|---|---|
-| `displayName` | task name cell + confirm dialog | blank task name |
-| `maxRetries` | `{totalAttempts}/{maxRetries}` cell | "N/undefined" |
-| `cooldownMinutes` | Tip tooltip | "пауза: undefined мин" |
-| `maxWindowDays` | Tip tooltip | "Макс. период: undefined дн." |
+| FE-rendered field | Where                               | Current render with missing field |
+| ----------------- | ----------------------------------- | --------------------------------- |
+| `displayName`     | task name cell + confirm dialog     | blank task name                   |
+| `maxRetries`      | `{totalAttempts}/{maxRetries}` cell | "N/undefined"                     |
+| `cooldownMinutes` | Tip tooltip                         | "пауза: undefined мин"            |
+| `maxWindowDays`   | Tip tooltip                         | "Макс. период: undefined дн."     |
 
 ## Requested fix
 
@@ -43,5 +44,6 @@ Add `displayName`, `maxRetries`, `cooldownMinutes`, `maxWindowDays` to each item
 - Gracefully degrade `maxRetries`/`cooldownMinutes`/`maxWindowDays` (render "—" / hide the Tip) instead of "undefined" until this ticket lands.
 
 ## Evidence
+
 - Live: `recovery-status` → `{success, data:[6 items]}`; item keys = `[canRetry, lastAttempt, status, taskType, totalAttempts]`.
 - FE: `src/lib/api/monitoring.ts:64` (getRecoveryStatus, no unwrap handling); `src/app/(dashboard)/monitoring/components/RecoveryPanel.tsx:56,85,95,183-184` (reads `data.tasks`, `displayName`, `maxRetries`, `cooldownMinutes`, `maxWindowDays`).

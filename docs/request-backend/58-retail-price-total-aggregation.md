@@ -18,11 +18,11 @@
 
 ### Текущая ситуация
 
-| Поле | Формула | Описание |
-|------|---------|----------|
-| `sales_gross` | SUM(retail_price_with_discount) | Цена СО скидкой WB |
-| `wb_sales_gross` | SUM(gross) | Выручка после комиссии WB |
-| **??? (нет)** | SUM(retail_price) | **ВАША цена до скидок** |
+| Поле             | Формула                         | Описание                  |
+| ---------------- | ------------------------------- | ------------------------- |
+| `sales_gross`    | SUM(retail_price_with_discount) | Цена СО скидкой WB        |
+| `wb_sales_gross` | SUM(gross)                      | Выручка после комиссии WB |
+| **??? (нет)**    | SUM(retail_price)               | **ВАША цена до скидок**   |
 
 ### Воронка продаж (визуализация)
 
@@ -50,8 +50,8 @@ SUM(CASE WHEN doc_type = 'sale' THEN retail_price ELSE 0 END) as retail_price_to
 
 Поле `retail_price` уже есть в `wb_finance_raw`:
 
-| Колонка Excel | Поле БД | Описание |
-|---------------|---------|----------|
+| Колонка Excel    | Поле БД        | Описание                          |
+| ---------------- | -------------- | --------------------------------- |
 | "Цена розничная" | `retail_price` | Ваша цена до применения скидок WB |
 
 ---
@@ -77,10 +77,10 @@ SUM(CASE WHEN doc_type = 'sale' THEN retail_price ELSE 0 END) as retail_price_to
 
 ### New Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `retail_price_total` | number | Сумма по ВАШИМ ценам (до скидок WB) |
-| `retail_price_total_combined` | number | Consolidated (RUS + EAEU) |
+| Field                         | Type   | Description                         |
+| ----------------------------- | ------ | ----------------------------------- |
+| `retail_price_total`          | number | Сумма по ВАШИМ ценам (до скидок WB) |
+| `retail_price_total_combined` | number | Consolidated (RUS + EAEU)           |
 
 ---
 
@@ -141,9 +141,9 @@ retail_price_total: number;
 retail_price_total > sales_gross > wb_sales_gross
 ```
 
-| Метрика | Формула проверки |
-|---------|------------------|
-| Скидка WB | `retail_price_total - sales_gross` |
+| Метрика     | Формула проверки                                        |
+| ----------- | ------------------------------------------------------- |
+| Скидка WB   | `retail_price_total - sales_gross`                      |
 | Комиссия WB | `sales_gross - wb_sales_gross` (≈ total_commission_rub) |
 
 ---
@@ -169,6 +169,7 @@ const discountLossPct = (wbDiscount / yourPrice) * 100;
 ## Priority Justification
 
 **P2 - MEDIUM** потому что:
+
 - ✅ Основной функционал (payout_total, wb_sales_gross) работает
 - ✅ Данные уже есть в wb_finance_raw
 - ⭐ Полезно для полной картины экономики продаж

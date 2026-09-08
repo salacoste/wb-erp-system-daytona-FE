@@ -11,7 +11,7 @@ chars: 1841
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-neobhodimo-dlya-nachala-raboty-po-fbo" rel="nofollow">Что необходимо для начала работы по FBO</a>
 - <a href="#osnovnye-vozmozhnosti-po-fbo" rel="nofollow">Основные возможности по FBO</a>
 

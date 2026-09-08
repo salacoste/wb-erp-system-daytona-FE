@@ -8,57 +8,57 @@
 
 ### finance-summary (полный набор полей)
 
-| Группа | Поле | Описание | Используется |
-|--------|------|----------|:------------:|
-| **Выручка** | `sale_gross` / `sale_gross_total` | NET продажи (sales - returns) | ✅ |
-| | `sales_gross` / `sales_gross_total` | Только продажи (doc_type='sale') | ✅ |
-| | `returns_gross` / `returns_gross_total` | Только возвраты | ❌ Не на дашборде |
-| | `wb_sales_gross` / `wb_sales_gross_total` | WB Dashboard "Продажа" exact | ✅ SalesNetCard |
-| | `wb_returns_gross` / `wb_returns_gross_total` | WB Dashboard "Возврат" exact | ✅ SalesNetCard |
-| | `to_pay_goods` / `to_pay_goods_total` | К перечислению за товар | ❌ |
-| **Комиссии** | `commission_sales` / `_total` | Комиссия продаж | ✅ WbCommissionsCard |
-| | `acquiring_fee` / `_total` | Эквайринг | ✅ WbCommissionsCard |
-| | `loyalty_fee` / `_total` | Лояльность | ✅ WbCommissionsCard |
-| | `wb_commission_adj` / `_total` | Корректировки (Удержание) | ✅ WbCommissionsCard |
-| | `total_commission_rub` / `_total` | Общая комиссия WB | ❌ Не используется |
-| | `retail_price_total` / `_combined` | Розничная цена итого | ❌ |
-| **Расходы** | `logistics_cost` / `_total` | Логистика итого | ✅ LogisticsCard |
-| | `storage_cost` / `_total` | Хранение | ✅ StorageCard |
-| | `paid_acceptance_cost` / `_total` | Платная приёмка | ✅ StorageCard |
-| | `penalties_total` | Штрафы | ✅ WbCommissionsCard |
-| **WB Сервисы** | `wb_services_cost` / `_total` | Сервисы WB итого | ✅ WbCommissionsCard |
-| | `wb_promotion_cost` / `_total` | Продвижение WB | ❌ Не на дашборде |
-| | `wb_jam_cost` / `_total` | Подписка Джем | ❌ |
-| | `wb_other_services_cost` / `_total` | Прочие сервисы | ❌ |
-| **Прочее** | `other_adjustments_net` / `_total` | Корректировки и сервисы | ❌ |
-| | `seller_delivery_revenue` / `_total` | DBS/EDBS доставка | ❌ |
-| | `loyalty_compensation` / `_total` | Компенсация лояльности | ❌ |
-| | `loyalty_points_withheld` / `_total` | Удержание баллов | ❌ |
-| **COGS** | `cogs_total` | Себестоимость | ✅ CostsCard |
-| | `cogs_coverage_pct` | % покрытия | ✅ CostsCard |
-| | `gross_profit` | Валовая прибыль | ✅ GrossProfitCard |
-| | `margin_pct` | Маржинальность | ✅ MarginCard |
-| **Итого** | `payout_total` | К перечислению | ✅ PayoutCard |
+| Группа         | Поле                                          | Описание                         |     Используется     |
+| -------------- | --------------------------------------------- | -------------------------------- | :------------------: |
+| **Выручка**    | `sale_gross` / `sale_gross_total`             | NET продажи (sales - returns)    |          ✅          |
+|                | `sales_gross` / `sales_gross_total`           | Только продажи (doc_type='sale') |          ✅          |
+|                | `returns_gross` / `returns_gross_total`       | Только возвраты                  |  ❌ Не на дашборде   |
+|                | `wb_sales_gross` / `wb_sales_gross_total`     | WB Dashboard "Продажа" exact     |   ✅ SalesNetCard    |
+|                | `wb_returns_gross` / `wb_returns_gross_total` | WB Dashboard "Возврат" exact     |   ✅ SalesNetCard    |
+|                | `to_pay_goods` / `to_pay_goods_total`         | К перечислению за товар          |          ❌          |
+| **Комиссии**   | `commission_sales` / `_total`                 | Комиссия продаж                  | ✅ WbCommissionsCard |
+|                | `acquiring_fee` / `_total`                    | Эквайринг                        | ✅ WbCommissionsCard |
+|                | `loyalty_fee` / `_total`                      | Лояльность                       | ✅ WbCommissionsCard |
+|                | `wb_commission_adj` / `_total`                | Корректировки (Удержание)        | ✅ WbCommissionsCard |
+|                | `total_commission_rub` / `_total`             | Общая комиссия WB                |  ❌ Не используется  |
+|                | `retail_price_total` / `_combined`            | Розничная цена итого             |          ❌          |
+| **Расходы**    | `logistics_cost` / `_total`                   | Логистика итого                  |   ✅ LogisticsCard   |
+|                | `storage_cost` / `_total`                     | Хранение                         |    ✅ StorageCard    |
+|                | `paid_acceptance_cost` / `_total`             | Платная приёмка                  |    ✅ StorageCard    |
+|                | `penalties_total`                             | Штрафы                           | ✅ WbCommissionsCard |
+| **WB Сервисы** | `wb_services_cost` / `_total`                 | Сервисы WB итого                 | ✅ WbCommissionsCard |
+|                | `wb_promotion_cost` / `_total`                | Продвижение WB                   |  ❌ Не на дашборде   |
+|                | `wb_jam_cost` / `_total`                      | Подписка Джем                    |          ❌          |
+|                | `wb_other_services_cost` / `_total`           | Прочие сервисы                   |          ❌          |
+| **Прочее**     | `other_adjustments_net` / `_total`            | Корректировки и сервисы          |          ❌          |
+|                | `seller_delivery_revenue` / `_total`          | DBS/EDBS доставка                |          ❌          |
+|                | `loyalty_compensation` / `_total`             | Компенсация лояльности           |          ❌          |
+|                | `loyalty_points_withheld` / `_total`          | Удержание баллов                 |          ❌          |
+| **COGS**       | `cogs_total`                                  | Себестоимость                    |     ✅ CostsCard     |
+|                | `cogs_coverage_pct`                           | % покрытия                       |     ✅ CostsCard     |
+|                | `gross_profit`                                | Валовая прибыль                  |  ✅ GrossProfitCard  |
+|                | `margin_pct`                                  | Маржинальность                   |    ✅ MarginCard     |
+| **Итого**      | `payout_total`                                | К перечислению                   |    ✅ PayoutCard     |
 
 ### fulfillment/summary
 
-| Поле | Описание | Используется |
-|------|----------|:------------:|
-| `total.ordersCount` | Заказы (FBO+FBS) | ✅ OrdersCard |
-| `total.ordersRevenue` | Сумма заказов (розничная цена!) | ❌ Убрали |
-| `total.fboShare` / `fbsShare` | Доли FBO/FBS | ❌ |
-| `fbo.salesCount` / `fbs.salesCount` | Выкупы | ❌ Нужно для 65.1 |
-| `fbo.salesRevenue` / `fbs.salesRevenue` | Выручка выкупов | ❌ |
-| `fbo.returnsCount` / `fbs.returnsCount` | Возвраты шт | ❌ Нужно для 65.5 |
-| `fbo.returnsRevenue` / `fbs.returnsRevenue` | Возвраты ₽ | ❌ Нужно для 65.5 |
+| Поле                                        | Описание                        |   Используется    |
+| ------------------------------------------- | ------------------------------- | :---------------: |
+| `total.ordersCount`                         | Заказы (FBO+FBS)                |   ✅ OrdersCard   |
+| `total.ordersRevenue`                       | Сумма заказов (розничная цена!) |     ❌ Убрали     |
+| `total.fboShare` / `fbsShare`               | Доли FBO/FBS                    |        ❌         |
+| `fbo.salesCount` / `fbs.salesCount`         | Выкупы                          | ❌ Нужно для 65.1 |
+| `fbo.salesRevenue` / `fbs.salesRevenue`     | Выручка выкупов                 |        ❌         |
+| `fbo.returnsCount` / `fbs.returnsCount`     | Возвраты шт                     | ❌ Нужно для 65.5 |
+| `fbo.returnsRevenue` / `fbs.returnsRevenue` | Возвраты ₽                      | ❌ Нужно для 65.5 |
 
 ### advertising/analytics
 
-| Поле | Описание | Используется |
-|------|----------|:------------:|
-| `summary.total_spend` | Расходы на рекламу | ✅ AdvertisingCard |
-| `summary.overall_roas` | ROAS | ✅ AdvertisingCard |
-| `summary.total_sales` | Продажи через рекламу | ❌ |
+| Поле                   | Описание              |    Используется    |
+| ---------------------- | --------------------- | :----------------: |
+| `summary.total_spend`  | Расходы на рекламу    | ✅ AdvertisingCard |
+| `summary.overall_roas` | ROAS                  | ✅ AdvertisingCard |
+| `summary.total_sales`  | Продажи через рекламу |         ❌         |
 
 ---
 
@@ -66,36 +66,36 @@
 
 ### Категория A: Данные доступны, нужна агрегация/эндпоинт
 
-| # | Метрика | Источник данных | Что нужно сделать |
-|---|---------|----------------|-------------------|
-| A1 | **Логистика по 4 типам** | `WbFinanceRaw.logistics_delivery`, `logistics_return`, `doc_type` | Агрегация по doc_type в finance-summary |
-| A2 | **Штрафы отдельно** | `WbFinanceRaw.penalties` | Уже агрегируется как `penalties_total = SUM(ABS(penalties))`. Нужно разделить по знаку: штрафы (penalties > 0) vs компенсации штрафов (penalties < 0) |
-| A3 | **Компенсации отдельно** | `WbFinanceRaw.corrections` | Поле `corrections` сейчас суммируется вместе с `other_adjustments` в `other_adjustments_net`. Нужно выделить `corrections` отдельно. **Важно**: `corrections` содержит как удержания WB (Продвижение, Джем), так и компенсации — нужна фильтрация по `reason` |
-| ~~A4~~ | ~~**Реализация (GMV)**~~ | — | **Переклассифицировано → C9**: `sales_gross_total` уже доступно в finance-summary API response (Request #41). Бэкенд-изменения НЕ нужны. |
+| #      | Метрика                  | Источник данных                                                   | Что нужно сделать                                                                                                                                                                                                                                             |
+| ------ | ------------------------ | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A1     | **Логистика по 4 типам** | `WbFinanceRaw.logistics_delivery`, `logistics_return`, `doc_type` | Агрегация по doc_type в finance-summary                                                                                                                                                                                                                       |
+| A2     | **Штрафы отдельно**      | `WbFinanceRaw.penalties`                                          | Уже агрегируется как `penalties_total = SUM(ABS(penalties))`. Нужно разделить по знаку: штрафы (penalties > 0) vs компенсации штрафов (penalties < 0)                                                                                                         |
+| A3     | **Компенсации отдельно** | `WbFinanceRaw.corrections`                                        | Поле `corrections` сейчас суммируется вместе с `other_adjustments` в `other_adjustments_net`. Нужно выделить `corrections` отдельно. **Важно**: `corrections` содержит как удержания WB (Продвижение, Джем), так и компенсации — нужна фильтрация по `reason` |
+| ~~A4~~ | ~~**Реализация (GMV)**~~ | —                                                                 | **Переклассифицировано → C9**: `sales_gross_total` уже доступно в finance-summary API response (Request #41). Бэкенд-изменения НЕ нужны.                                                                                                                      |
 
 ### Категория B: Нужен новый эндпоинт/таблица
 
-| # | Метрика | Что нужно | Сложность |
-|---|---------|-----------|-----------|
-| B1 | **Остатки** | Агрегация `InventorySnapshot` по кабинету | M |
-| B2 | **Капитализация по себес.** | JOIN InventorySnapshot × COGS | M |
-| B3 | **Капитализация по розн.** | JOIN InventorySnapshot × Products (retail_price) | M |
-| B4 | **Налоги** | Настройка налоговой системы в кабинете + расчёт | L |
-| B5 | **Операционные расходы** | Новая таблица + CRUD | L |
+| #   | Метрика                     | Что нужно                                        | Сложность |
+| --- | --------------------------- | ------------------------------------------------ | --------- |
+| B1  | **Остатки**                 | Агрегация `InventorySnapshot` по кабинету        | M         |
+| B2  | **Капитализация по себес.** | JOIN InventorySnapshot × COGS                    | M         |
+| B3  | **Капитализация по розн.**  | JOIN InventorySnapshot × Products (retail_price) | M         |
+| B4  | **Налоги**                  | Настройка налоговой системы в кабинете + расчёт  | L         |
+| B5  | **Операционные расходы**    | Новая таблица + CRUD                             | L         |
 
 ### Категория C: Только фронтенд-расчёты (бэкенд не нужен)
 
-| # | Метрика | Формула | Данные для расчёта |
-|---|---------|---------|-------------------|
-| C1 | **Процент выкупа** | salesCount / ordersCount × 100 | fulfillment.fbo.salesCount + fbs.salesCount, total.ordersCount |
-| C2 | **ROI** | net_profit / (cogs_total + operational_expenses) × 100 | finance-summary + expenses (см. формулу в секции 4). При отсутствии opex: gross_profit / cogs_total × 100 (упрощённый) |
-| C3 | **ДРРз** | adSpend / ordersRevenue × 100 | advertising + fulfillment |
-| C4 | **Ср. цена продажи** | sale_gross / salesCount | finance-summary + fulfillment |
-| C5 | **Ср. логистика/шт** | logistics_cost / salesCount | finance-summary + fulfillment |
-| C6 | **Ср. прибыль/шт** | gross_profit / salesCount | finance-summary + fulfillment |
-| C7 | **Оборачиваемость** | totalStock / (salesCount / days) | inventorySummary + fulfillment |
-| C8 | **Ср. цена до скидок** | retail_price_total / salesCount | finance-summary + fulfillment. **Примечание**: `retail_price_total` = SUM(retail_price) WHERE doc_type='sale', поэтому делить нужно на salesCount (количество выкупов), а не ordersCount |
-| C9 | **Реализация (GMV)** | sales_gross_total | finance-summary. `sales_gross_total` = SUM(retail_price_with_discount) WHERE doc_type='sale' — уже доступно в API (Request #41, API-PATHS-REFERENCE.md строка 33). Бэкенд НЕ нужен |
+| #   | Метрика                | Формула                                                | Данные для расчёта                                                                                                                                                                       |
+| --- | ---------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C1  | **Процент выкупа**     | salesCount / ordersCount × 100                         | fulfillment.fbo.salesCount + fbs.salesCount, total.ordersCount                                                                                                                           |
+| C2  | **ROI**                | net_profit / (cogs_total + operational_expenses) × 100 | finance-summary + expenses (см. формулу в секции 4). При отсутствии opex: gross_profit / cogs_total × 100 (упрощённый)                                                                   |
+| C3  | **ДРРз**               | adSpend / ordersRevenue × 100                          | advertising + fulfillment                                                                                                                                                                |
+| C4  | **Ср. цена продажи**   | sale_gross / salesCount                                | finance-summary + fulfillment                                                                                                                                                            |
+| C5  | **Ср. логистика/шт**   | logistics_cost / salesCount                            | finance-summary + fulfillment                                                                                                                                                            |
+| C6  | **Ср. прибыль/шт**     | gross_profit / salesCount                              | finance-summary + fulfillment                                                                                                                                                            |
+| C7  | **Оборачиваемость**    | totalStock / (salesCount / days)                       | inventorySummary + fulfillment                                                                                                                                                           |
+| C8  | **Ср. цена до скидок** | retail_price_total / salesCount                        | finance-summary + fulfillment. **Примечание**: `retail_price_total` = SUM(retail_price) WHERE doc_type='sale', поэтому делить нужно на salesCount (количество выкупов), а не ordersCount |
+| C9  | **Реализация (GMV)**   | sales_gross_total                                      | finance-summary. `sales_gross_total` = SUM(retail_price_with_discount) WHERE doc_type='sale' — уже доступно в API (Request #41, API-PATHS-REFERENCE.md строка 33). Бэкенд НЕ нужен       |
 
 ---
 
@@ -124,6 +124,7 @@
 ```
 
 **SQL агрегация** (в existing aggregation service):
+
 ```sql
 SUM(CASE WHEN doc_type = 'sale' THEN logistics_delivery ELSE 0 END) as delivery_on_sale,
 SUM(CASE WHEN doc_type IN ('cancel', 'storno') THEN logistics_delivery ELSE 0 END) as delivery_on_cancel,
@@ -140,6 +141,7 @@ SUM(CASE WHEN doc_type = 'return' THEN logistics_return ELSE 0 END) as return_on
 **Цель**: Агрегировать остатки по кабинету из InventorySnapshot.
 
 **Предлагаемое API**:
+
 ```
 GET /v1/inventory/summary
 Headers: Authorization, X-Cabinet-Id
@@ -165,6 +167,7 @@ Response: {
 **Реализация**: Агрегация из `InventorySnapshot` WHERE `cabinetId` = X, latest snapshot per nmId.
 
 **Маппинг полей Prisma → Response**:
+
 - `onWarehouse` = `SUM(InventorySnapshot.totalStock)` — физически на складах WB (Prisma `total_stock`)
 - `inWayToClient` = `SUM(InventorySnapshot.inWayToClient)` — в пути к клиентам (Prisma `in_way_to_client`)
 - `inWayFromClient` = `SUM(InventorySnapshot.inWayFromClient)` — в пути от клиентов (Prisma `in_way_from_client`)
@@ -182,6 +185,7 @@ Response: {
 **Цель**: Хранить налоговую систему кабинета для автоматического расчёта налогов.
 
 **Изменение Prisma schema**:
+
 ```prisma
 model Cabinet {
   // ... existing fields
@@ -191,6 +195,7 @@ model Cabinet {
 ```
 
 **API** (2 варианта, выбрать один):
+
 ```
 # Вариант 1: Расширить существующий PUT (UpdateCabinetDto уже принимает { name?: string })
 PUT /v1/cabinets/:id
@@ -212,16 +217,19 @@ Body: { taxSystem: "usn6" | "usn15" | "manual", taxRate?: number }
 **Цель**: Разделить штрафы и компенсации для отдельного отображения.
 
 **Текущее состояние**:
+
 - `penalties_total = SUM(ABS(penalties))` — агрегируется корректно как штрафы
 - `corrections` поле в WbFinanceRaw суммируется с `other_adjustments` в `other_adjustments_net`
 - WB Services (Продвижение, Джем, Прочие) уже выделены из `corrections` (Request #56)
 - `other_adjustments_net = SUM(other_adjustments + corrections)` — включает как корректировки, так и удержания
 
 **Нужно**:
+
 1. Выделить `corrections` отдельно от `other_adjustments` в response
 2. Разделить `penalties` по знаку: штрафы (>0) vs компенсации штрафов (<0)
 
 **Расширение response**:
+
 ```json
 {
   "summary_rus": {
@@ -245,6 +253,7 @@ Body: { taxSystem: "usn6" | "usn15" | "manual", taxRate?: number }
 **Цель**: CRUD для пользовательских операционных расходов.
 
 **Новая таблица**:
+
 ```prisma
 model OperationalExpense {
   id          String   @id @default(uuid()) @db.Uuid
@@ -264,6 +273,7 @@ model OperationalExpense {
 ```
 
 **API**:
+
 ```
 POST   /v1/expenses          — создать расход
 GET    /v1/expenses?month=YYYY-MM  — список за месяц
@@ -279,6 +289,7 @@ GET    /v1/expenses/summary?from=&to=  — итого за период
 ## 4. Формулы для фронтенд-расчётов
 
 ### Чистая прибыль (Net Profit)
+
 ```
 net_profit = sale_gross_total
            - cogs_total
@@ -294,27 +305,32 @@ net_profit = sale_gross_total
 ```
 
 **Важно о комиссиях**:
+
 - `sale_gross_total` = SUM(net_for_pay) — это выручка ПОСЛЕ вычета комиссий WB (commission_sales, acquiring_fee уже вычтены WB из розничной цены)
 - Поэтому `commission_sales` и `acquiring_fee` НЕ вычитаются отдельно в формуле чистой прибыли
 - `wb_commission_adj_total` — это отдельная корректировка ("Удержание"), НЕ дублирование основной комиссии
 - `other_adjustments_net_total` = SUM(other_adjustments + corrections) — включает WB Services (Продвижение, Джем)
 
 ### Прибыль без операционных
+
 ```
 profit_no_opex = net_profit + operational_expenses
 ```
 
 ### Маржинальность
+
 ```
 net_margin_pct = net_profit / sale_gross_total × 100
 ```
 
 ### ROI
+
 ```
 roi = net_profit / (cogs_total + operational_expenses) × 100
 ```
 
 ### Налоги
+
 ```
 // Налоговая база для УСН = sale_gross_total (NET = sales - returns)
 // Для ОСН = розничная цена (retail_price)
@@ -335,6 +351,7 @@ tax = sale_gross_total × 0.20 / 1.20  // НДС "в том числе" (упр�
 **Примечание**: Налоговый расчёт сильно упрощён. Не учитывает: страховые взносы (вычитаются из УСН 6%), торговый сбор, авансовые платежи, нюансы ОСН (НДС к вычету), патентную систему. Рекомендуется добавить дисклеймер в UI.
 
 ### Оборачиваемость
+
 ```
 days_in_period = periodType === 'week' ? 7 : daysInMonth(month)
 daily_sales = salesCount / days_in_period
@@ -348,13 +365,13 @@ turnover_by_orders = totalStock / daily_orders  // дней
 
 ## 5. Приоритизация Backend Requests
 
-| Приоритет | Request | Блокирует | Сложность |
-|-----------|---------|-----------|-----------|
-| 1 (High) | #140 Inventory Summary | 65.9 + 65.10 (остатки, оборачиваемость) | M |
-| 2 (High) | #139 Logistics Breakdown | 65.6 (логистика тултип) | M |
-| 3 (Medium) | #142 Penalties/Compensations | 65.12 (штрафы отдельно) | S-M |
-| 4 (Medium) | #141 Tax Settings | 65.11 (налоги) | S |
-| 5 (Low) | #143 Operational Expenses | 65.14 (опер. расходы) | L |
+| Приоритет  | Request                      | Блокирует                               | Сложность |
+| ---------- | ---------------------------- | --------------------------------------- | --------- |
+| 1 (High)   | #140 Inventory Summary       | 65.9 + 65.10 (остатки, оборачиваемость) | M         |
+| 2 (High)   | #139 Logistics Breakdown     | 65.6 (логистика тултип)                 | M         |
+| 3 (Medium) | #142 Penalties/Compensations | 65.12 (штрафы отдельно)                 | S-M       |
+| 4 (Medium) | #141 Tax Settings            | 65.11 (налоги)                          | S         |
+| 5 (Low)    | #143 Operational Expenses    | 65.14 (опер. расходы)                   | L         |
 
 ---
 
@@ -380,18 +397,18 @@ turnover_by_orders = totalStock / daily_orders  // дней
 
 ### Corrections Applied
 
-| # | Section | Issue | Fix |
-|---|---------|-------|-----|
-| 1 | 2/A2 | `penalties_total` described as needing separation from something, but it is already a standalone aggregate `SUM(ABS(penalties))` | Clarified: penalties is already separate. Need sign-based split (fines vs compensations) |
-| 2 | 2/A3 | Described `corrections` as "compensations" — oversimplified | Clarified: `corrections` is mixed (WB services + compensations + deductions), needs `reason`-based filtering |
-| 3 | 2/A4 | Formula `salesGross + returnsGross` for Реализация | Fixed: Реализация = `salesGross` only (gross sales before return deduction). `sale_gross = salesGross - returnsGross` is NET |
-| 4 | 2/C2 | ROI formula `gross_profit / cogs_total` contradicts Section 4 formula | Fixed: aligned with Section 4 (`net_profit / (cogs + opex)`), with fallback noted |
-| 5 | 2/C8 | Avg price before discounts divides by `ordersCount` | Fixed: `retail_price_total` is SUM for doc_type='sale' — must divide by `salesCount` |
-| 6 | 3/#140 | `onWarehouse` field not in Prisma schema | Added field mapping clarification: `totalStock` in InventorySnapshot = on-warehouse stock |
-| 7 | 3/#142 | Request described as splitting `penalties_total` | Rewrote: need both sign-based penalty split AND separate `corrections` extraction |
-| 8 | 4/Net Profit | Formula used `sale_gross` without `_total` suffix, no explanation of commission handling | Added `_total` suffixes, added clarification that `sale_gross_total` is post-commission |
-| 9 | 4/Taxes | USN 15% missing minimum tax rule | Added `MAX(tax, 1% of revenue)` minimum tax |
-| 10 | 6/Risks | Only 5 risks listed, missing critical items | Added 4 risks: salesCount not in total, corrections semantics, commission netto mapping, WB Services double-counting |
+| #   | Section      | Issue                                                                                                                            | Fix                                                                                                                          |
+| --- | ------------ | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 1   | 2/A2         | `penalties_total` described as needing separation from something, but it is already a standalone aggregate `SUM(ABS(penalties))` | Clarified: penalties is already separate. Need sign-based split (fines vs compensations)                                     |
+| 2   | 2/A3         | Described `corrections` as "compensations" — oversimplified                                                                      | Clarified: `corrections` is mixed (WB services + compensations + deductions), needs `reason`-based filtering                 |
+| 3   | 2/A4         | Formula `salesGross + returnsGross` for Реализация                                                                               | Fixed: Реализация = `salesGross` only (gross sales before return deduction). `sale_gross = salesGross - returnsGross` is NET |
+| 4   | 2/C2         | ROI formula `gross_profit / cogs_total` contradicts Section 4 formula                                                            | Fixed: aligned with Section 4 (`net_profit / (cogs + opex)`), with fallback noted                                            |
+| 5   | 2/C8         | Avg price before discounts divides by `ordersCount`                                                                              | Fixed: `retail_price_total` is SUM for doc_type='sale' — must divide by `salesCount`                                         |
+| 6   | 3/#140       | `onWarehouse` field not in Prisma schema                                                                                         | Added field mapping clarification: `totalStock` in InventorySnapshot = on-warehouse stock                                    |
+| 7   | 3/#142       | Request described as splitting `penalties_total`                                                                                 | Rewrote: need both sign-based penalty split AND separate `corrections` extraction                                            |
+| 8   | 4/Net Profit | Formula used `sale_gross` without `_total` suffix, no explanation of commission handling                                         | Added `_total` suffixes, added clarification that `sale_gross_total` is post-commission                                      |
+| 9   | 4/Taxes      | USN 15% missing minimum tax rule                                                                                                 | Added `MAX(tax, 1% of revenue)` minimum tax                                                                                  |
+| 10  | 6/Risks      | Only 5 risks listed, missing critical items                                                                                      | Added 4 risks: salesCount not in total, corrections semantics, commission netto mapping, WB Services double-counting         |
 
 ### Verified Correct
 

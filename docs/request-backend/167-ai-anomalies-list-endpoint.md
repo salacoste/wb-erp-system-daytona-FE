@@ -18,11 +18,11 @@ Story 112.3-FE ships a full resolution UI (`/analytics/ai-admin/anomalies`) with
 
 Add `GET /v1/ai/anomalies` to the backend with the following contract:
 
-| Param | Type | Required | Behavior |
-|---|---|---|---|
-| `status` | `'pending' \| 'resolved'` | No | Filter by resolution status. Omit for all anomalies. |
-| `page` | `number` | No | Pagination page (1-indexed, default 1) |
-| `limit` | `number` | No | Items per page (default 20, max 100) |
+| Param    | Type                      | Required | Behavior                                             |
+| -------- | ------------------------- | -------- | ---------------------------------------------------- |
+| `status` | `'pending' \| 'resolved'` | No       | Filter by resolution status. Omit for all anomalies. |
+| `page`   | `number`                  | No       | Pagination page (1-indexed, default 1)               |
+| `limit`  | `number`                  | No       | Items per page (default 20, max 100)                 |
 
 **Access control**: Owner and Manager roles only (mirrors `PATCH /v1/ai/anomalies/{id}/resolve` RBAC). Return 403 for Analyst and Service roles.
 
@@ -52,16 +52,16 @@ Add `GET /v1/ai/anomalies` to the backend with the following contract:
 
 ### Per-entry shape
 
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| `id` | `string` (UUID) | Yes | Anomaly record ID — used in `PATCH /v1/ai/anomalies/{id}/resolve` |
-| `nmId` | `number` | Yes | WB product article (номенклатурный ID) |
-| `forecastId` | `string` (UUID) | No | Associated forecast ID if available |
-| `anomalyType` | `string` | Yes | Type label (e.g. `demand_spike`, `demand_drop`, `data_gap`) |
-| `triggeredAt` | `string` (ISO 8601) | Yes | Timestamp when anomaly was detected |
-| `status` | `'pending' \| 'resolved'` | Yes | Current resolution status |
-| `cabinetId` | `string` | Yes | Cabinet that owns this anomaly (for audit) |
-| `modelId` | `string` (UUID) | No | Model that triggered the anomaly if traceable |
+| Field         | Type                      | Required | Notes                                                             |
+| ------------- | ------------------------- | -------- | ----------------------------------------------------------------- |
+| `id`          | `string` (UUID)           | Yes      | Anomaly record ID — used in `PATCH /v1/ai/anomalies/{id}/resolve` |
+| `nmId`        | `number`                  | Yes      | WB product article (номенклатурный ID)                            |
+| `forecastId`  | `string` (UUID)           | No       | Associated forecast ID if available                               |
+| `anomalyType` | `string`                  | Yes      | Type label (e.g. `demand_spike`, `demand_drop`, `data_gap`)       |
+| `triggeredAt` | `string` (ISO 8601)       | Yes      | Timestamp when anomaly was detected                               |
+| `status`      | `'pending' \| 'resolved'` | Yes      | Current resolution status                                         |
+| `cabinetId`   | `string`                  | Yes      | Cabinet that owns this anomaly (for audit)                        |
+| `modelId`     | `string` (UUID)           | No       | Model that triggered the anomaly if traceable                     |
 
 ---
 

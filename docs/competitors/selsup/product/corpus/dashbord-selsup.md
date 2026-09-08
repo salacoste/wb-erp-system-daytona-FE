@@ -15,7 +15,7 @@ chars: 17997
 
 В этой статье:
 
-- 
+-
 - <a href="#polza-dashborda" rel="nofollow">Польза Дашборда</a>
 - <a href="#kak-otkryt-dashbord" rel="nofollow">Как открыть Дашборд</a>
 - <a href="#filtry-i-nastrojki-dashborda" rel="nofollow">Фильтры и настройки Дашборда</a>
@@ -185,7 +185,7 @@ chars: 17997
 </tbody>
 </table>
 
-------------------------------------------------------------------------
+---
 
 **Основные источники данных Дашборда:** [Отчёт о прибылях и убытках](https://selsup.ru/application/analytics/) и [Товарная аналитика](https://selsup.ru/application/productAnalytics/).
 

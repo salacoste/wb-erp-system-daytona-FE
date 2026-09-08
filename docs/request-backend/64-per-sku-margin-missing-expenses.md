@@ -1,9 +1,11 @@
 # Request #64: Per-SKU Margin Calculation - Missing Expense Components
 
 ## Дата
+
 2025-12-18
 
 ## Статус
+
 📋 **PENDING** - Требует реализации на backend
 
 ## Контекст
@@ -28,6 +30,7 @@ nm_id: 148190182 (m61-5)
 ### Данные которые ЕСТЬ в источниках
 
 **1. Storage (из `paid_storage_daily` - Epic 24)**
+
 ```sql
 SELECT nm_id, SUM(warehouse_price) as storage_cost
 FROM paid_storage_daily
@@ -41,6 +44,7 @@ GROUP BY nm_id;
 ```
 
 **2. Commission (из `wb_finance_raw`)**
+
 ```sql
 SELECT
   nm_id,
@@ -58,6 +62,7 @@ GROUP BY nm_id;
 ```
 
 **3. Acquiring Fee (из `wb_finance_raw`)**
+
 ```sql
 SELECT nm_id, SUM(ABS(acquiring_fee)) as acquiring_fee
 FROM wb_finance_raw
@@ -125,11 +130,13 @@ GROUP BY nm_id
 ### 4. Обновить формулу `totalExpensesRub`
 
 **Текущая формула (НЕВЕРНАЯ)**:
+
 ```
 totalExpensesRub = logisticsCostRub
 ```
 
 **Правильная формула**:
+
 ```
 totalExpensesRub = logisticsCostRub
                  + storageCostRub
@@ -150,15 +157,15 @@ operatingMarginPercent = (operatingProfitRub / revenueNetRub) × 100
 
 **SKU 148190182 (m61-5) после исправления:**
 
-| Поле | Было | Должно быть |
-|------|------|-------------|
-| logisticsCostRub | 3790.23 | 3790.23 ✅ |
-| storageCostRub | 0 | 6.44 |
-| commissionRub | 0 | 2525.77 |
-| acquiringFeeRub | 0 | 505.12 |
-| totalExpensesRub | 3790.23 | 6827.56 |
-| operatingProfitRub | 14234.76 | 11197.43 |
-| operatingMarginPercent | 49.63% | 39.04% |
+| Поле                   | Было     | Должно быть |
+| ---------------------- | -------- | ----------- |
+| logisticsCostRub       | 3790.23  | 3790.23 ✅  |
+| storageCostRub         | 0        | 6.44        |
+| commissionRub          | 0        | 2525.77     |
+| acquiringFeeRub        | 0        | 505.12      |
+| totalExpensesRub       | 3790.23  | 6827.56     |
+| operatingProfitRub     | 14234.76 | 11197.43    |
+| operatingMarginPercent | 49.63%   | 39.04%      |
 
 ## Валидация
 
@@ -189,6 +196,7 @@ SUM(commissionRub) ≈ weekly_payout_summary.total_commission_rub
 ## Дополнительно: Отображение комиссии WB на фронте
 
 После реализации backend, на странице `/analytics/sku` нужно:
+
 1. Добавить колонку "Комиссия WB" (опционально, через columnVisibility)
 2. Показывать breakdown расходов в tooltip или expandable row
 3. Использовать `operating_margin_pct` вместо `margin_pct` как основной показатель
@@ -196,10 +204,12 @@ SUM(commissionRub) ≈ weekly_payout_summary.total_commission_rub
 ## Примечание о комиссии
 
 **Важно**: Комиссия (`commission_sales + commission_other`) уже учтена в разнице между `gross` и `net_for_pay`. Однако:
+
 - Для **by-sku endpoint** важно показывать её как отдельную статью расходов для аналитики
 - Для **итогового payout_total** она уже вычтена и не должна вычитаться повторно
 
 Формула проверки:
+
 ```
 gross - commission_sales - commission_other - acquiring_fee ≈ net_for_pay (с погрешностью ≤1%)
 ```

@@ -16,12 +16,14 @@ When users clicked the "Month" button on the dashboard to switch from weekly to 
 The code was using the **currently selected week** (which could be the incomplete current week) to derive the month, instead of using the **last completed week**.
 
 **Scenario:**
+
 - Current date: 2026-01-30 (Friday)
 - Current week: 2026-W05 (incomplete, no data yet)
 - Last completed week: 2026-W04 (has data)
 - Backend data available: Weeks 2025-W47 through 2026-W04
 
 **User flow:**
+
 1. User navigates to dashboard
 2. Current week (2026-W05) is selected by default
 3. User clicks "Month" button to switch to monthly view
@@ -29,6 +31,7 @@ The code was using the **currently selected week** (which could be the incomplet
 5. Backend has no data for 2026-02 → 404 error
 
 **Expected behavior:**
+
 1. User navigates to dashboard
 2. Current week (2026-W05) is selected by default
 3. User clicks "Month" button
@@ -48,6 +51,7 @@ Modified the `setPeriodType` callback in `dashboard-period-context.tsx` to deriv
 #### Change 1: Fix setPeriodType callback
 
 **Before:**
+
 ```typescript
 const setPeriodType = useCallback(
   (type: PeriodType) => {
@@ -66,6 +70,7 @@ const setPeriodType = useCallback(
 ```
 
 **After:**
+
 ```typescript
 const setPeriodType = useCallback(
   (type: PeriodType) => {
@@ -88,6 +93,7 @@ const setPeriodType = useCallback(
 #### Change 2: Fix initial month initialization
 
 **Before:**
+
 ```typescript
 // Initialize selected month: URL > derived from week
 const [selectedMonth, setSelectedMonthState] = useState<string>(() => {
@@ -97,6 +103,7 @@ const [selectedMonth, setSelectedMonthState] = useState<string>(() => {
 ```
 
 **After:**
+
 ```typescript
 // Initialize selected month: URL > derived from last completed week
 const [selectedMonth, setSelectedMonthState] = useState<string>(() => {
@@ -113,6 +120,7 @@ const [selectedMonth, setSelectedMonthState] = useState<string>(() => {
 ### Key Functions
 
 **`getLastCompletedWeek()`** (from `src/lib/margin-helpers.ts`)
+
 - Calculates the last completed week based on day of week and time
 - **Monday**: W-2 (2 weeks ago, data not ready)
 - **Tuesday before 12:00**: W-2 (conservative, data may not be ready)
@@ -120,6 +128,7 @@ const [selectedMonth, setSelectedMonthState] = useState<string>(() => {
 - **Wednesday-Sunday**: W-1 (past week, data should be ready)
 
 **`getMonthFromWeek()`** (from `src/lib/period-helpers.ts`)
+
 - Derives the month containing a week based on the **Thursday/midpoint rule**
 - ISO weeks belong to the month where Thursday falls
 - Example: 2026-W04 (Jan 19-25) has Thursday on Jan 23 → month is 2026-01
@@ -128,14 +137,15 @@ const [selectedMonth, setSelectedMonthState] = useState<string>(() => {
 
 The backend and frontend both follow the same logic for determining week completeness:
 
-| Day of Week | Time | Last Completed Week | Example (2026-01-30) |
-|-------------|------|---------------------|---------------------|
-| Monday | Any | W-2 | 2026-W03 |
-| Tuesday | Before 12:00 | W-2 | 2026-W03 |
-| Tuesday | After 12:00 | W-1 | 2026-W04 |
-| Wednesday - Sunday | Any | W-1 | 2026-W04 |
+| Day of Week        | Time         | Last Completed Week | Example (2026-01-30) |
+| ------------------ | ------------ | ------------------- | -------------------- |
+| Monday             | Any          | W-2                 | 2026-W03             |
+| Tuesday            | Before 12:00 | W-2                 | 2026-W03             |
+| Tuesday            | After 12:00  | W-1                 | 2026-W04             |
+| Wednesday - Sunday | Any          | W-1                 | 2026-W04             |
 
 **Current date: 2026-01-30 (Friday)**
+
 - Current week: 2026-W05 (Jan 26 - Feb 1)
 - Last completed week: **2026-W04** (Jan 19 - Jan 25)
 - Month derived from 2026-W04: **2026-01**
@@ -192,10 +202,12 @@ To verify the fix works correctly:
 ## Related Files
 
 ### Modified Files
+
 - `src/contexts/dashboard-period-context.tsx` - Period state management context
 - `src/contexts/__tests__/dashboard-period-context.bug-fix.test.tsx` - Bug fix tests
 
 ### Related Files (not modified)
+
 - `src/hooks/useDashboardPeriod.ts` - Consumer hook (re-exports from context)
 - `src/lib/margin-helpers.ts` - `getLastCompletedWeek()` function
 - `src/lib/period-helpers.ts` - `getMonthFromWeek()` function
@@ -206,14 +218,17 @@ To verify the fix works correctly:
 ## Impact Assessment
 
 ### User Impact
+
 - **Before**: Users clicking "Month" button would encounter 404 errors
 - **After**: Users can successfully switch to monthly view using last completed week's month
 
 ### Performance Impact
+
 - **Negligible**: Only adds one function call (`getLastCompletedWeek()`) when switching to month view
 - No additional API calls or data fetching
 
 ### Breaking Changes
+
 - **None**: The fix is backward compatible
 - Only affects the derived month when switching to month period type
 - Does not affect week period type or manual month selection
@@ -223,11 +238,13 @@ To verify the fix works correctly:
 ## Future Considerations
 
 ### Potential Enhancements
+
 1. **Warning indicator**: Show warning when current incomplete week is selected
 2. **Auto-refresh**: Automatically refresh when week completes
 3. **Data availability indicator**: Visual cue showing which periods have data
 
 ### Related Work
+
 - Epic 60, Story 60.3-FE: Period Comparison Visualization
 - Epic 60, Story 60.4-FE: Period Persistence and URL Sync
 
@@ -245,6 +262,7 @@ To verify the fix works correctly:
 ## Changelog
 
 ### 2026-01-30
+
 - **Fixed**: Critical bug causing 404 errors when switching to month period
 - **Added**: Comprehensive test coverage for the bug fix
 - **Documented**: Root cause analysis and solution

@@ -13,6 +13,7 @@
 Epic 37 реализует **3-tier rowspan table** для отображения склеек товаров в advertising analytics. План учитывает, что backend API (Story 37.0) находится в разработке, поэтому мы начинаем с **mock данных** и переключаемся на реальный API после готовности.
 
 **Ключевые решения**:
+
 - ✅ Начинаем разработку с mock данных (параллельно с backend)
 - ✅ Используем feature flag для переключения mock ↔ API
 - ✅ Валидация API через Story 37.1 ПОСЛЕ готовности backend
@@ -27,6 +28,7 @@ Epic 37 реализует **3-tier rowspan table** для отображени�
 **Goal**: Подготовить mock данные и инфраструктуру для разработки
 
 **Tasks**:
+
 1. **Create Mock Data Structure** (30 min)
    - File: `frontend/src/mocks/data/epic-37-merged-groups.ts`
    - Data: 3 test groups matching Request #88 structure
@@ -43,6 +45,7 @@ Epic 37 реализует **3-tier rowspan table** для отображени�
    - Match: Request #88 expected structure
 
 **Deliverables**:
+
 - ✅ Mock data file with 3 test groups
 - ✅ Feature flags configured
 - ✅ TypeScript types updated
@@ -62,6 +65,7 @@ Epic 37 реализует **3-tier rowspan table** для отображени�
 **Effort**: 1-2 hours
 
 **Tasks**:
+
 1. **Execute API Request** (20 min)
    - Open DevTools Network tab
    - Test endpoint: `GET /v1/analytics/advertising?group_by=imtId&from=2025-12-01&to=2025-12-21`
@@ -86,6 +90,7 @@ Epic 37 реализует **3-tier rowspan table** для отображени�
 **Acceptance Criteria**: All 15 ACs pass ✅
 
 **Deliverables**:
+
 - ✅ Production API response sample
 - ✅ Validation report (PASS/FAIL)
 - ✅ Story 37.1 marked COMPLETE
@@ -105,6 +110,7 @@ Epic 37 реализует **3-tier rowspan table** для отображени�
 **Tasks**:
 
 **Task 1: Create Component Structure** (1 hour)
+
 ```typescript
 // File: frontend/src/components/advertising/MergedGroupTable.tsx
 
@@ -131,6 +137,7 @@ export function MergedGroupTable({ groups, onSort, onProductClick }: MergedGroup
 ```
 
 **Task 2: Implement Rowspan Logic** (1 hour)
+
 ```typescript
 // File: frontend/src/components/advertising/MergedGroupRows.tsx
 
@@ -168,6 +175,7 @@ function MergedGroupRows({ group }: { group: AdvertisingGroup }) {
 ```
 
 **Task 3: Handle Standalone Products** (30 min)
+
 ```typescript
 // Special case: imtId=null (no group)
 if (group.imtId === null) {
@@ -183,6 +191,7 @@ if (group.imtId === null) {
 ```
 
 **Task 4: Unit Tests** (30 min)
+
 ```typescript
 // File: frontend/src/components/advertising/__tests__/MergedGroupTable.test.tsx
 
@@ -211,6 +220,7 @@ describe('MergedGroupTable', () => {
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Rowspan cell spans correct number of rows (productCount + 1)
 - ✅ Aggregate row displays ГРУППА #imtId
 - ✅ Individual products rendered below aggregate
@@ -219,6 +229,7 @@ describe('MergedGroupTable', () => {
 - ✅ Unit tests pass
 
 **Deliverables**:
+
 - ✅ `MergedGroupTable.tsx` component
 - ✅ `MergedGroupRows.tsx` helper component
 - ✅ Unit tests with ≥90% coverage
@@ -238,6 +249,7 @@ describe('MergedGroupTable', () => {
 **Tasks**:
 
 **Task 1: Implement Calculation Functions** (1 hour)
+
 ```typescript
 // File: frontend/src/utils/advertising-calculations.ts
 
@@ -262,6 +274,7 @@ export function calculateAggregateMetrics(products: MergedGroupProduct[]): Aggre
 ```
 
 **Task 2: Format Percentage Displays** (30 min)
+
 ```typescript
 // File: frontend/src/components/advertising/MetricsCell.tsx
 
@@ -286,6 +299,7 @@ export function MetricsCell({ value, percentage, format }: MetricsCellProps) {
 ```
 
 **Task 3: Handle Edge Cases** (30 min)
+
 ```typescript
 // Edge case 1: spend = 0 → ROAS = null → display "—"
 const roasDisplay = roas !== null ? roas.toFixed(2) : '—';
@@ -298,6 +312,7 @@ const safeValue = value ?? '—';
 ```
 
 **Task 4: Add Tooltips** (30 min)
+
 ```typescript
 // Aggregate row tooltip
 <Tooltip content="Сумма всех товаров в склейке">
@@ -311,6 +326,7 @@ const safeValue = value ?? '—';
 ```
 
 **Task 5: Unit Tests** (30 min)
+
 ```typescript
 describe('calculateAggregateMetrics', () => {
   it('sums totalSales correctly', () => {
@@ -331,6 +347,7 @@ describe('calculateAggregateMetrics', () => {
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Aggregate metrics calculated correctly (totalSales, revenue, organicSales)
 - ✅ Percentage displays work (e.g., "10,234₽ (29%)")
 - ✅ ROAS calculation handles spend=0 → null
@@ -339,6 +356,7 @@ describe('calculateAggregateMetrics', () => {
 - ✅ Unit tests pass
 
 **Deliverables**:
+
 - ✅ `advertising-calculations.ts` utility
 - ✅ `MetricsCell.tsx` component
 - ✅ Unit tests with ≥90% coverage
@@ -354,6 +372,7 @@ describe('calculateAggregateMetrics', () => {
 **Tasks**:
 
 **Task 1: Implement CSS Design Tokens** (1 hour)
+
 ```css
 /* File: frontend/src/components/advertising/MergedGroupTable.module.css */
 
@@ -394,6 +413,7 @@ describe('calculateAggregateMetrics', () => {
 ```
 
 **Task 2: Implement Responsive Design** (1 hour)
+
 ```css
 /* Mobile: Horizontal scroll with sticky columns */
 @media (max-width: 768px) {
@@ -423,6 +443,7 @@ describe('calculateAggregateMetrics', () => {
 ```
 
 **Task 3: Accessibility Improvements** (30 min)
+
 ```typescript
 // Add ARIA labels for screen readers
 <td rowSpan={rowCount}
@@ -442,12 +463,14 @@ describe('calculateAggregateMetrics', () => {
 ```
 
 **Task 4: Visual Testing** (30 min)
+
 - Test in Chrome, Firefox, Safari
 - Test responsive breakpoints (320px, 768px, 1024px, 1920px)
 - Test dark mode (defer to Story 37.6 post-MVP)
 - Screenshot documentation
 
 **Acceptance Criteria**:
+
 - ✅ Rowspan cell styling matches design (background, border, centering)
 - ✅ Aggregate row styling matches design (bold, gray background, 0.95rem)
 - ✅ Detail row styling matches design (normal, white, 0.875rem, hover effect)
@@ -457,6 +480,7 @@ describe('calculateAggregateMetrics', () => {
 - ✅ WCAG 2.1 AA compliant (contrast ratios, keyboard navigation)
 
 **Deliverables**:
+
 - ✅ `MergedGroupTable.module.css` styles
 - ✅ Responsive CSS for mobile
 - ✅ ARIA labels for accessibility
@@ -475,6 +499,7 @@ describe('calculateAggregateMetrics', () => {
 **Tasks**:
 
 **Task 1: Unit Tests** (30 min)
+
 ```typescript
 // Already done in Stories 37.2-37.3
 // Verify coverage ≥90%
@@ -482,6 +507,7 @@ npm run test:coverage -- --testPathPattern=MergedGroup
 ```
 
 **Task 2: Integration Tests** (30 min)
+
 ```typescript
 // File: frontend/src/app/(dashboard)/analytics/advertising/__tests__/page.integration.test.tsx
 
@@ -514,6 +540,7 @@ describe('Advertising Analytics - Epic 37 Integration', () => {
 ```
 
 **Task 3: Performance Testing** (30 min)
+
 ```typescript
 // Test render performance with 50 groups
 const largeDataset = generateMockGroups(50); // 50 groups × 5 products = 250 rows
@@ -526,6 +553,7 @@ expect(endTime - startTime).toBeLessThan(200); // <200ms target
 ```
 
 **Task 4: User Guide** (30 min)
+
 ```markdown
 <!-- File: docs/user-guides/advertising-merged-groups.md -->
 
@@ -576,6 +604,7 @@ Wildberries объединяет несколько артикулов в одн
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Unit test coverage ≥90%
 - ✅ Integration tests pass
 - ✅ Performance test passes (<200ms for 50 groups)
@@ -584,6 +613,7 @@ Wildberries объединяет несколько артикулов в одн
 - ✅ UAT with 3 internal users (≥90% satisfaction, <5 questions)
 
 **Deliverables**:
+
 - ✅ Test coverage report
 - ✅ Performance benchmark results
 - ✅ User guide documentation
@@ -598,6 +628,7 @@ Wildberries объединяет несколько артикулов в одн
 ### Transition Plan: Mock → Production API
 
 **Current State** (Development Phase):
+
 ```typescript
 // frontend/src/app/(dashboard)/analytics/advertising/page.tsx
 
@@ -618,6 +649,7 @@ async function fetchAdvertisingData(groupBy: GroupByMode) {
 ```
 
 **After Story 37.0 Complete** (Backend Ready):
+
 1. Backend team notifies frontend: "Story 37.0 COMPLETE"
 2. Frontend executes **Story 37.1** (API Validation)
 3. If validation PASS:
@@ -696,19 +728,20 @@ Day 7 (2026-01-06):
 
 ### Dependency Matrix
 
-| Story | Blocked By | Can Start | Uses Mock Data |
-|-------|-----------|-----------|----------------|
-| **37.1** | Story 37.0 (Backend) | After 2026-01-02 | ❌ No (real API) |
-| **37.2** | None | ✅ Immediately | ✅ Yes |
-| **37.3** | Story 37.2 | Day 2 | ✅ Yes |
-| **37.4** | Story 37.3 | Day 3 | ✅ Yes |
-| **37.5** | Stories 37.2-37.4 | Day 4 | ⚠️ Both (mock + real) |
+| Story    | Blocked By           | Can Start        | Uses Mock Data        |
+| -------- | -------------------- | ---------------- | --------------------- |
+| **37.1** | Story 37.0 (Backend) | After 2026-01-02 | ❌ No (real API)      |
+| **37.2** | None                 | ✅ Immediately   | ✅ Yes                |
+| **37.3** | Story 37.2           | Day 2            | ✅ Yes                |
+| **37.4** | Story 37.3           | Day 3            | ✅ Yes                |
+| **37.5** | Stories 37.2-37.4    | Day 4            | ⚠️ Both (mock + real) |
 
 ---
 
 ## 🎯 Success Criteria
 
 ### Technical Success
+
 - ✅ All 5 stories pass Definition of Done
 - ✅ Unit test coverage ≥90%
 - ✅ Integration tests pass
@@ -718,12 +751,14 @@ Day 7 (2026-01-06):
 - ✅ Zero ESLint warnings
 
 ### User Success
+
 - ✅ 3 internal users complete UAT
 - ✅ ≥90% satisfaction score
 - ✅ <5 interpretation questions during UAT
 - ✅ Zero critical bugs in first week production
 
 ### Business Success
+
 - ✅ Feature flag enabled in production
 - ✅ Mixpanel events tracking operational
 - ✅ PO sign-off received
@@ -734,33 +769,41 @@ Day 7 (2026-01-06):
 ## 🚨 Risk Mitigation
 
 ### Risk 1: Backend API Delay
+
 **Probability**: Medium
 **Impact**: High (blocks Story 37.1)
 **Mitigation**:
+
 - ✅ Use mock data for Stories 37.2-37.5 (no blocker)
 - ✅ Feature flag allows parallel development
 - ✅ Daily sync with backend team on Story 37.0 progress
 
 ### Risk 2: API Structure Mismatch
+
 **Probability**: Low (already validated in Request #88)
 **Impact**: High (requires rework)
 **Mitigation**:
+
 - ✅ TypeScript types match Request #88 exactly
 - ✅ Story 37.1 validation BEFORE integration
 - ✅ Mock data matches expected structure
 
 ### Risk 3: Performance Issues
+
 **Probability**: Low
 **Impact**: Medium
 **Mitigation**:
+
 - ✅ Performance testing in Story 37.5
 - ✅ Lazy loading for large groups (post-MVP)
 - ✅ Virtual scrolling if needed (Story 37.6)
 
 ### Risk 4: UX Confusion
+
 **Probability**: Medium
 **Impact**: Medium
 **Mitigation**:
+
 - ✅ User guide in Story 37.5
 - ✅ Tooltips on aggregate row
 - ✅ UAT with 3 internal users
@@ -813,10 +856,12 @@ Day 7 (2026-01-06):
 ## 📚 References
 
 ### Epic Documentation
+
 - **Epic 37 Main**: `docs/epics/epic-37-merged-group-table-display.md`
 - **Request #88**: `frontend/docs/request-backend/88-epic-37-individual-product-metrics.md`
 
 ### Story Files
+
 - **Story 37.1**: `docs/stories/epic-37/story-37.1-backend-api-validation.BMAD.md`
 - **Story 37.2**: `docs/stories/epic-37/story-37.2-merged-group-table-component.BMAD.md`
 - **Story 37.3**: `docs/stories/epic-37/story-37.3-aggregate-metrics-display.BMAD.md`
@@ -824,6 +869,7 @@ Day 7 (2026-01-06):
 - **Story 37.5**: `docs/stories/epic-37/story-37.5-testing-documentation.BMAD.md`
 
 ### Implementation Context
+
 - **Integration Point**: `frontend/src/app/(dashboard)/analytics/advertising/page.tsx`
 - **Mock Data**: `frontend/src/mocks/data/epic-37-merged-groups.ts`
 - **Types**: `frontend/src/types/advertising-analytics.ts`

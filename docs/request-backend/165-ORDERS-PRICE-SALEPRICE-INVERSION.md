@@ -21,10 +21,10 @@ On the FBS orders endpoint `GET /v1/cabinets/:id/orders`, a small number of orde
 
 ### Observed Data
 
-| Order ID    | `price` (Цена) | `salePrice` (Цена продажи) | Ratio    |
-|-------------|----------------|----------------------------|----------|
-| 4909080943  | 56,08 ₽        | 1 510,94 ₽                 | **~27x** |
-| 4906470022  | 56,24 ₽        | 1 515,25 ₽                 | **~27x** |
+| Order ID   | `price` (Цена) | `salePrice` (Цена продажи) | Ratio    |
+| ---------- | -------------- | -------------------------- | -------- |
+| 4909080943 | 56,08 ₽        | 1 510,94 ₽                 | **~27x** |
+| 4906470022 | 56,24 ₽        | 1 515,25 ₽                 | **~27x** |
 
 Both rows are for product `nmId=395996251` (hoop_2). Other orders for the same product render identical `price === salePrice` (e.g., `1 462 ₽ / 1 462 ₽`).
 

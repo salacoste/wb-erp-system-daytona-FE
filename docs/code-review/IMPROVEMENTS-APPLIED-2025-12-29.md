@@ -14,10 +14,12 @@ Successfully applied **all critical and important improvements** to ProductList.
 ### Overall Impact
 
 **Before**:
+
 - ProductList.tsx: **6.8/10** (good, needs improvements)
 - Epic 37 Components: **8.5/10** (excellent, minor issues)
 
 **After**:
+
 - ProductList.tsx: **8.5/10** 🏆 (excellent, production-ready)
 - Epic 37 Components: **9.2/10** 🏆 (exceptional, production-ready)
 
@@ -32,6 +34,7 @@ Successfully applied **all critical and important improvements** to ProductList.
 **Lines**: 94-131
 
 **Before**:
+
 ```typescript
 const handleSearchChange = (value: string) => {
   setSearchInput(value)
@@ -41,6 +44,7 @@ const handleSearchChange = (value: string) => {
 ```
 
 **After**:
+
 ```typescript
 const handleSearchChange = useCallback((value: string) => {
   setSearchInput(value)
@@ -50,6 +54,7 @@ const handleSearchChange = useCallback((value: string) => {
 ```
 
 **Handlers Optimized**:
+
 1. `handleSearchChange` - Search input changes
 2. `handleFilterToggle` - COGS filter toggle (refactored to use functional setState)
 3. `handleProductClick` - Product selection
@@ -65,6 +70,7 @@ const handleSearchChange = useCallback((value: string) => {
 **Lines**: 181-184
 
 **Before**:
+
 ```typescript
 <Table className="table-fixed">
   <TableHeader>
@@ -74,6 +80,7 @@ const handleSearchChange = useCallback((value: string) => {
 ```
 
 **After**:
+
 ```typescript
 <Table className="table-fixed" aria-label="Список товаров">
   <caption className="sr-only">
@@ -94,6 +101,7 @@ const handleSearchChange = useCallback((value: string) => {
 **New File**: `src/components/custom/__tests__/ProductList.test.tsx`
 
 **Test Suites Created**:
+
 1. **Rendering States** (4 tests)
    - Loading skeleton
    - Error state with retry button
@@ -138,15 +146,15 @@ const handleSearchChange = useCallback((value: string) => {
 
 ### ProductList.tsx Score Update
 
-| Category | Before | After | Change |
-|----------|--------|-------|--------|
-| TypeScript Safety | 10/10 | 10/10 | ✅ Maintained |
-| Performance | 7/10 | 9/10 | ⬆️ +2 (useCallback) |
-| Accessibility | 6/10 | 9/10 | ⬆️ +3 (ARIA + caption) |
-| Error Handling | 9/10 | 9/10 | ✅ Maintained |
-| Test Coverage | 0/10 | 9/10 | ⬆️ +9 (25 tests) |
-| Code Organization | 9/10 | 9/10 | ✅ Maintained |
-| **Overall** | **6.8/10** | **8.5/10** | **⬆️ +1.7** 🏆 |
+| Category          | Before     | After      | Change                 |
+| ----------------- | ---------- | ---------- | ---------------------- |
+| TypeScript Safety | 10/10      | 10/10      | ✅ Maintained          |
+| Performance       | 7/10       | 9/10       | ⬆️ +2 (useCallback)    |
+| Accessibility     | 6/10       | 9/10       | ⬆️ +3 (ARIA + caption) |
+| Error Handling    | 9/10       | 9/10       | ✅ Maintained          |
+| Test Coverage     | 0/10       | 9/10       | ⬆️ +9 (25 tests)       |
+| Code Organization | 9/10       | 9/10       | ✅ Maintained          |
+| **Overall**       | **6.8/10** | **8.5/10** | **⬆️ +1.7** 🏆         |
 
 ---
 
@@ -159,6 +167,7 @@ const handleSearchChange = useCallback((value: string) => {
 **Lines**: 92-96
 
 **Before**:
+
 ```typescript
 <th
   className={`${headerClass} ${sortableClass} text-right`}
@@ -169,6 +178,7 @@ const handleSearchChange = useCallback((value: string) => {
 ```
 
 **After**:
+
 ```typescript
 const handleSortTotalSales = useCallback(() => onSort?.('totalSales'), [onSort]);
 
@@ -181,6 +191,7 @@ const handleSortTotalSales = useCallback(() => onSort?.('totalSales'), [onSort])
 ```
 
 **Handlers Optimized**:
+
 1. `handleSortTotalSales`
 2. `handleSortRevenue`
 3. `handleSortOrganic`
@@ -196,6 +207,7 @@ const handleSortTotalSales = useCallback(() => onSort?.('totalSales'), [onSort])
 **Lines**: 166-194
 
 **Before**:
+
 ```typescript
 const totalSales = group.aggregateMetrics?.totalSales ?? calculateTotalSales(group.products);
 const revenue = group.aggregateMetrics?.totalRevenue ?? calculateRevenue(group.products);
@@ -206,6 +218,7 @@ const roas = group.aggregateMetrics?.roas ?? calculateROAS(revenue, spend);
 ```
 
 **After**:
+
 ```typescript
 const totalSales = useMemo(
   () => group.aggregateMetrics?.totalSales ?? calculateTotalSales(group.products),
@@ -247,6 +260,7 @@ const roas = useMemo(
 **Lines**: 328-330
 
 **Before**:
+
 ```typescript
 <table className="min-w-full border-collapse bg-white shadow-sm rounded-lg text-sm md:text-base">
   <TableHeader sortConfig={sortConfig} onSort={onSort} />
@@ -255,6 +269,7 @@ const roas = useMemo(
 ```
 
 **After**:
+
 ```typescript
 <table className="min-w-full border-collapse bg-white shadow-sm rounded-lg text-sm md:text-base">
   <caption className="sr-only">
@@ -274,6 +289,7 @@ const roas = useMemo(
 **New File**: `components/__tests__/MergedGroupTable.test.tsx`
 
 **Test Suites Created**:
+
 1. **Rendering** (3 tests)
    - Empty table
    - Merged group with 3-tier structure
@@ -316,6 +332,7 @@ const roas = useMemo(
 **Existing File**: `components/__tests__/GroupByToggle.test.tsx`
 
 **Comprehensive Test Coverage** (284 lines):
+
 - Rendering (4 tests)
 - Aria Attributes (4 tests)
 - Click Interactions (3 tests)
@@ -338,6 +355,7 @@ const roas = useMemo(
 **Lines**: 10-17
 
 **Before**:
+
 ```typescript
 export function formatCurrency(value: number): string {
   return new Intl.NumberFormat('ru-RU', {  // ❌ New instance every call
@@ -350,6 +368,7 @@ export function formatCurrency(value: number): string {
 ```
 
 **After**:
+
 ```typescript
 // Memoized Intl.NumberFormat instance for currency formatting
 // Creating once and reusing provides ~5-10% performance improvement
@@ -371,13 +390,13 @@ export function formatCurrency(value: number): string {
 
 ### Epic 37 Score Update
 
-| Component | Before | After | Change |
-|-----------|--------|-------|--------|
-| **MergedGroupTable.tsx** | 8.3/10 | 9.2/10 | ⬆️ +0.9 🏆 |
-| **GroupByToggle.tsx** | 9.5/10 | 9.5/10 | ✅ Perfect |
-| **metrics-calculator.ts** | 9.8/10 | 9.8/10 | ✅ Perfect |
-| **formatters.ts** | 9.7/10 | 9.9/10 | ⬆️ +0.2 |
-| **Overall Epic 37** | **8.5/10** | **9.2/10** | **⬆️ +0.7** 🏆 |
+| Component                 | Before     | After      | Change         |
+| ------------------------- | ---------- | ---------- | -------------- |
+| **MergedGroupTable.tsx**  | 8.3/10     | 9.2/10     | ⬆️ +0.9 🏆     |
+| **GroupByToggle.tsx**     | 9.5/10     | 9.5/10     | ✅ Perfect     |
+| **metrics-calculator.ts** | 9.8/10     | 9.8/10     | ✅ Perfect     |
+| **formatters.ts**         | 9.7/10     | 9.9/10     | ⬆️ +0.2        |
+| **Overall Epic 37**       | **8.5/10** | **9.2/10** | **⬆️ +0.7** 🏆 |
 
 ---
 
@@ -404,6 +423,7 @@ export function formatCurrency(value: number): string {
 5. ✅ `components/__tests__/MergedGroupTable.test.tsx` (17 tests)
 
 ### Total Test Cases Added: **42 test cases**
+
 - ProductList.tsx: 25 tests
 - MergedGroupTable.tsx: 17 tests
 - GroupByToggle.tsx: Already had 19 tests ✅
@@ -414,20 +434,20 @@ export function formatCurrency(value: number): string {
 
 ### Before Improvements
 
-| Metric | ProductList | Epic 37 |
-|--------|-------------|---------|
-| Performance | 7/10 | 8/10 |
-| Accessibility | 6/10 | 9/10 |
-| Test Coverage | 0% | 50% |
-| Overall Score | 6.8/10 | 8.5/10 |
+| Metric        | ProductList | Epic 37 |
+| ------------- | ----------- | ------- |
+| Performance   | 7/10        | 8/10    |
+| Accessibility | 6/10        | 9/10    |
+| Test Coverage | 0%          | 50%     |
+| Overall Score | 6.8/10      | 8.5/10  |
 
 ### After Improvements
 
-| Metric | ProductList | Epic 37 |
-|--------|-------------|---------|
-| Performance | 9/10 ⬆️ | 9/10 ⬆️ |
-| Accessibility | 9/10 ⬆️ | 10/10 ⬆️ |
-| Test Coverage | 85%+ ⬆️ | 85%+ ⬆️ |
+| Metric            | ProductList   | Epic 37       |
+| ----------------- | ------------- | ------------- |
+| Performance       | 9/10 ⬆️       | 9/10 ⬆️       |
+| Accessibility     | 9/10 ⬆️       | 10/10 ⬆️      |
+| Test Coverage     | 85%+ ⬆️       | 85%+ ⬆️       |
 | **Overall Score** | **8.5/10** 🏆 | **9.2/10** 🏆 |
 
 ---
@@ -437,14 +457,17 @@ export function formatCurrency(value: number): string {
 ### Estimated Performance Improvements
 
 **ProductList.tsx**:
+
 - ~25-50 unnecessary re-renders prevented (useCallback)
 - Better user experience with stable function references
 
 **MergedGroupTable.tsx**:
+
 - ~5-10 unnecessary re-renders prevented per sort action (useCallback)
 - ~15-20% faster rendering for groups with many products (useMemo)
 
 **formatters.ts**:
+
 - ~5-10% faster currency formatting (memoized Intl.NumberFormat)
 
 ---
@@ -454,10 +477,12 @@ export function formatCurrency(value: number): string {
 ### WCAG 2.1 AA Compliance
 
 **ProductList.tsx**:
+
 - Before: 90% compliant (missing table caption, ARIA labels)
 - After: 98% compliant ✅
 
 **MergedGroupTable.tsx**:
+
 - Before: 95% compliant (missing table caption)
 - After: 100% compliant ✅
 
@@ -494,10 +519,12 @@ The following improvements are **optional** and can be deferred:
 **Estimated**: 2-3 hours
 
 #### ProductList.tsx
+
 - `useCursorPagination` hook (lines 57-58, 112-126)
 - `useProductFilters` hook (lines 54-56, 100-107)
 
 #### MergedGroupTable.tsx
+
 - `useTableStickyColumns` hook (lines 195-235)
 
 **Benefit**: Improved code reusability and readability

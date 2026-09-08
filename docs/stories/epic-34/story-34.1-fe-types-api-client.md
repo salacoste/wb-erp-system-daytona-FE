@@ -26,6 +26,7 @@ Create TypeScript types, API client functions, and React Query hooks for Telegra
 ## ✅ Acceptance Criteria
 
 ### 1. TypeScript Types
+
 - [x] All DTOs from Request #73 defined in `src/types/notifications.ts`
 - [x] Zero `any` types used
 - [x] Strict TypeScript mode compliance
@@ -33,12 +34,14 @@ Create TypeScript types, API client functions, and React Query hooks for Telegra
 - [x] Export all types for use across components
 
 ### 2. API Client Functions
+
 - [x] All 6 API endpoints implemented in `src/lib/api/notifications.ts`
 - [x] Proper error handling with typed error responses
 - [x] Authorization headers included (Bearer JWT + X-Cabinet-Id)
 - [ ] Request/response validation using Zod schemas (optional)
 
 ### 3. React Query Hooks
+
 - [x] `useTelegramBinding` hook for binding flow
 - [x] `useNotificationPreferences` hook for preferences management
 - [x] `useQuietHours` hook for quiet hours configuration
@@ -46,6 +49,7 @@ Create TypeScript types, API client functions, and React Query hooks for Telegra
 - [x] Optimistic updates where appropriate
 
 ### 4. Testing
+
 - [x] Unit tests for API client functions (>80% coverage)
 - [ ] React Query hook tests with MSW (Mock Service Worker)
 - [x] Error handling test cases
@@ -56,14 +60,14 @@ Create TypeScript types, API client functions, and React Query hooks for Telegra
 
 ### Backend API (Request #73)
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/v1/notifications/telegram/bind` | POST | Generate binding code |
-| `/v1/notifications/telegram/status` | GET | Poll binding status |
-| `/v1/notifications/telegram/unbind` | DELETE | Remove binding |
-| `/v1/notifications/preferences` | GET | Get preferences |
-| `/v1/notifications/preferences` | PUT | Update preferences (partial) |
-| `/v1/notifications/test` | POST | Send test notification |
+| Endpoint                            | Method | Purpose                      |
+| ----------------------------------- | ------ | ---------------------------- |
+| `/v1/notifications/telegram/bind`   | POST   | Generate binding code        |
+| `/v1/notifications/telegram/status` | GET    | Poll binding status          |
+| `/v1/notifications/telegram/unbind` | DELETE | Remove binding               |
+| `/v1/notifications/preferences`     | GET    | Get preferences              |
+| `/v1/notifications/preferences`     | PUT    | Update preferences (partial) |
+| `/v1/notifications/test`            | POST   | Send test notification       |
 
 📖 **Full API Spec**: `frontend/docs/request-backend/73-telegram-notifications-epic-34.md`
 
@@ -800,37 +804,45 @@ npm install -D msw
 ## 🤖 Dev Agent Record
 
 ### Agent Model Used
+
 Claude Sonnet 4.5 (Tech Lead Mode - James)
 
 ### Tasks Completed
+
 - [x] Phase 1: TypeScript Types (148 lines)
 - [x] Phase 2: API Client (165 lines)
 - [x] Phase 3: React Query Hooks (3 files)
 - [x] Phase 4: Testing (API client tests - 7 tests passing)
 
 ### Debug Log References
+
 None - implementation completed without issues
 
 ### Code Review (2025-12-29 15:53)
+
 **Reviewer**: Tech Lead (James)
 **Status**: ✅ APPROVED with fixes applied
 
 **Issues Found & Fixed:**
+
 1. ❌ **localStorage SSR Issue** → ✅ Fixed: Now uses `useAuthStore.getState()`
 2. ❌ **Error handling incomplete** → ✅ Fixed: Added JSON/text parsing safety + content-type checks
 3. ❌ **SSR compatibility** → ✅ Fixed: Zustand store is SSR-safe by default
 
 **Changes Applied:**
+
 - `src/lib/api/notifications.ts:17` - Added `import { useAuthStore }`
 - `src/lib/api/notifications.ts:29-37` - Replaced localStorage with authStore
 - `src/lib/api/notifications.ts:44-68` - Improved error handling (robust JSON/text parsing)
 
 **Post-Fix Validation:**
+
 - ✅ TypeScript: Zero compilation errors
 - ✅ Tests: 7/7 passing (100% success rate)
 - ✅ SSR-safe: useAuthStore.getState() works client & server
 
 ### Completion Notes
+
 - ✅ All TypeScript types created with zero `any` usage
 - ✅ All 6 API endpoints implemented with proper error handling
 - ✅ All 3 React Query hooks created with optimistic updates
@@ -841,7 +853,9 @@ None - implementation completed without issues
 - ⚠️ Zod schema validation marked as optional (not implemented)
 
 ### File List
+
 **Created Files:**
+
 - `src/types/notifications.ts` (148 lines)
 - `src/lib/api/notifications.ts` (165 lines)
 - `src/hooks/useTelegramBinding.ts` (92 lines)
@@ -852,6 +866,7 @@ None - implementation completed without issues
 **Total:** 6 files, 757 lines of code
 
 ### Change Log
+
 - 2025-12-29 15:45 - Created TypeScript types (Story 34.1-FE)
 - 2025-12-29 15:46 - Implemented API client functions
 - 2025-12-29 15:47 - Created React Query hooks

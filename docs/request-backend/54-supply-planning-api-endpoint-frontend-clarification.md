@@ -22,6 +22,7 @@
 **Frontend Answer**: **Daily snapshot preferred** для MVP
 
 **Reasoning**:
+
 - Real-time не критичен для планирования поставок (данные меняются медленно)
 - Snapshot проще и надёжнее (не зависит от WB API availability)
 - Достаточно обновлять 1 раз в день (06:00 MSK)
@@ -30,6 +31,7 @@
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: Frontend clarification on supply planning API preferences (daily snapshot over real-time, skip in-transit for MVP, use last 4 weeks for velocity). Backend incorporated these preferences into the final implementation.
 **Frontend Action**: No further action needed unless noted above.
@@ -45,11 +47,13 @@
 **Frontend Answer**: **MVP: Skip in-transit** (set `in_transit_qty = 0`)
 
 **Reasoning**:
+
 - Усложняет MVP без критической ценности
 - Пользователи могут вручную учитывать в Excel
 - Phase 2: Добавить когда будет WB Supplies API интеграция
 
 **MVP Response Format** (без in-transit):
+
 ```json
 {
   "stock_qty": 15,
@@ -67,6 +71,7 @@
 **Frontend Answer**: **Use `wb_finance_raw`**
 
 **Required Query**:
+
 ```sql
 SELECT
   nm_id,
@@ -91,13 +96,15 @@ GROUP BY nm_id;
 **Frontend Answer**: **Параметр `velocity_weeks`** (как в Request)
 
 **Values**:
-| Parameter | Default | Options |
-|-----------|---------|---------|
-| `velocity_weeks` | 4 | 1, 2, 4, 8 |
+
+| Parameter        | Default | Options    |
+| ---------------- | ------- | ---------- |
+| `velocity_weeks` | 4       | 1, 2, 4, 8 |
 
 **Frontend UI**: Dropdown selector "Период расчёта скорости: 1/2/4/8 недель"
 
 **Why weeks not days**:
+
 - Проще для пользователя
 - Убирает weekday variations (выходные vs будни)
 - 4 недели = стандарт для планирования
@@ -111,11 +118,13 @@ GROUP BY nm_id;
 **Frontend Answer**: **Include with status `out_of_stock`**
 
 **Reasoning**:
+
 - Пользователи хотят видеть "что уже закончилось"
 - Важно для отчётности и принятия решений
 - Легко фильтровать на фронте если не нужно
 
 **Add New Status**:
+
 ```javascript
 function getStockoutStatus(days_until_stockout, stock_qty) {
   if (stock_qty === 0) return 'out_of_stock';  // NEW
@@ -183,23 +192,23 @@ function getStockoutStatus(days_until_stockout, stock_qty) {
 
 ### Fields Explanation
 
-| Field | Source | Required | Notes |
-|-------|--------|----------|-------|
-| `sku_id` | `nm_id` | Yes | WB article |
-| `product_name` | Product cache | Yes | From WB products |
-| `brand` | Product cache | Yes | |
-| `category` | Product cache | No | Nice to have |
-| `stock_qty` | WB Stocks API/snapshot | **CRITICAL** | Main blocker |
-| `effective_stock` | stock_qty + in_transit | Yes | MVP: same as stock_qty |
-| `velocity_per_day` | Calculated | Yes | net_qty / (velocity_weeks * 7) |
-| `velocity_total` | Calculated | Yes | Sum of net_qty |
-| `days_until_stockout` | Calculated | Yes | effective_stock / velocity_per_day |
-| `stockout_date` | Calculated | Yes | today + days_until_stockout |
-| `stockout_status` | Calculated | Yes | critical/warning/monitor/safe/out_of_stock |
-| `recommended_qty` | Calculated | Yes | Formula from Request #54 |
-| `recommended_value` | recommended_qty * cogs | Yes | |
-| `cogs_per_unit` | COGS table | Yes | Null if not assigned |
-| `has_cogs` | Boolean | Yes | For filtering |
+| Field                 | Source                 | Required     | Notes                                      |
+| --------------------- | ---------------------- | ------------ | ------------------------------------------ |
+| `sku_id`              | `nm_id`                | Yes          | WB article                                 |
+| `product_name`        | Product cache          | Yes          | From WB products                           |
+| `brand`               | Product cache          | Yes          |                                            |
+| `category`            | Product cache          | No           | Nice to have                               |
+| `stock_qty`           | WB Stocks API/snapshot | **CRITICAL** | Main blocker                               |
+| `effective_stock`     | stock_qty + in_transit | Yes          | MVP: same as stock_qty                     |
+| `velocity_per_day`    | Calculated             | Yes          | net_qty / (velocity_weeks * 7)             |
+| `velocity_total`      | Calculated             | Yes          | Sum of net_qty                             |
+| `days_until_stockout` | Calculated             | Yes          | effective_stock / velocity_per_day         |
+| `stockout_date`       | Calculated             | Yes          | today + days_until_stockout                |
+| `stockout_status`     | Calculated             | Yes          | critical/warning/monitor/safe/out_of_stock |
+| `recommended_qty`     | Calculated             | Yes          | Formula from Request #54                   |
+| `recommended_value`   | recommended_qty * cogs | Yes          |                                            |
+| `cogs_per_unit`       | COGS table             | Yes          | Null if not assigned                       |
+| `has_cogs`            | Boolean                | Yes          | For filtering                              |
 
 ---
 
@@ -208,6 +217,7 @@ function getStockoutStatus(days_until_stockout, stock_qty) {
 While backend develops infrastructure, frontend will build:
 
 ### Story 6.1: Types & Hooks
+
 ```typescript
 // Types matching above response
 interface SupplyPlanningResponse { ... }
@@ -222,16 +232,19 @@ const { data, isLoading } = useSupplyPlanning({
 ```
 
 ### Story 6.2: Page Structure
+
 - Risk distribution chart (donut: critical/warning/monitor/safe)
 - Summary cards (total SKUs, at risk value, etc.)
 - Filter controls
 
 ### Story 6.3: Stockout Table
+
 - Sortable columns (days_until_stockout, stock_qty, velocity)
 - Status badges with colors
 - Recommended order amounts
 
 ### Story 6.4: Integration Testing
+
 - MSW handlers for all scenarios
 - E2E tests ready for real API
 
@@ -240,29 +253,32 @@ const { data, isLoading } = useSupplyPlanning({
 ## Phased Delivery Suggestion
 
 ### Phase 1 (MVP) - 2 weeks
-| Feature | Included |
-|---------|----------|
-| Stock data | Daily snapshot from WB API |
-| Velocity | 7-day calculation from wb_finance_raw |
-| In-transit | Hardcoded 0 |
-| Supplier info | Excluded |
-| Recommendations | Basic formula |
+
+| Feature         | Included                              |
+| --------------- | ------------------------------------- |
+| Stock data      | Daily snapshot from WB API            |
+| Velocity        | 7-day calculation from wb_finance_raw |
+| In-transit      | Hardcoded 0                           |
+| Supplier info   | Excluded                              |
+| Recommendations | Basic formula                         |
 
 ### Phase 2 (Enhanced) - +2 weeks
-| Feature | Included |
-|---------|----------|
-| In-transit | Manual entry table |
-| Lead time | Per-SKU settings |
-| Supplier info | Contacts table |
-| Export | CSV/Excel |
+
+| Feature       | Included           |
+| ------------- | ------------------ |
+| In-transit    | Manual entry table |
+| Lead time     | Per-SKU settings   |
+| Supplier info | Contacts table     |
+| Export        | CSV/Excel          |
 
 ### Phase 3 (Advanced) - +2 weeks
-| Feature | Included |
-|---------|----------|
+
+| Feature         | Included                |
+| --------------- | ----------------------- |
 | WB Supplies API | Auto in-transit from WB |
-| Velocity trends | Accelerating/declining |
-| Seasonality | Adjustment factors |
-| Notifications | Email alerts |
+| Velocity trends | Accelerating/declining  |
+| Seasonality     | Adjustment factors      |
+| Notifications   | Email alerts            |
 
 ---
 
@@ -278,6 +294,7 @@ Basic /supply-planning   →     Full integration
 ```
 
 **Minimum to unblock frontend**:
+
 1. `inventory_snapshot` table with daily WB stocks sync
 2. Velocity calculation from `wb_finance_raw`
 3. Basic endpoint returning above MVP format
@@ -292,6 +309,6 @@ Questions? Ping frontend team in #wb-repricer-dev
 
 ## Change Log
 
-| Date | Description |
-|------|-------------|
+| Date       | Description                    |
+| ---------- | ------------------------------ |
 | 2025-12-12 | Initial clarification document |

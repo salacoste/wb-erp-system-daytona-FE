@@ -9,7 +9,7 @@ chars: 5549
 
 В этой статье:
 
-- 
+-
 - <a href="#finansovyj-uchet" rel="nofollow">Финансовый учет</a>
 - <a href="#vnutrennyaya-skvoznaya-analitika" rel="nofollow">Внутренняя сквозная аналитика</a>
 

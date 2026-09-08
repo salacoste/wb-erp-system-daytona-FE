@@ -17,22 +17,26 @@
 ## Acceptance Criteria
 
 ### AC1: Alert Display
+
 - [ ] Show alert badge/banner for products with ratio > 20%
 - [ ] Red indicator for critical ratio
 - [ ] Tooltip explaining the metric
 
 ### AC2: Alert Locations
+
 - [ ] Top Consumers widget (highlight row)
 - [ ] Storage by SKU table (badge in row)
 - [ ] Product card storage info (warning icon)
 
 ### AC3: Summary Alert
+
 - [ ] Show count of high-ratio products in page header
 - [ ] Example: "⚠️ 5 товаров с высокими расходами на хранение"
 
 ## Design
 
 ### In Top Consumers Table
+
 ```
 ┌─────┬────────────────┬──────────┬─────────┬─────────────────┐
 │ #   │ Товар          │ Хранение │ % общих │ Хран/Выручка %  │
@@ -43,6 +47,7 @@
 ```
 
 ### Page Header Alert
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ 📦 Аналитика расходов на хранение                           │
@@ -51,6 +56,7 @@
 ```
 
 ### In Product Card
+
 ```
 │ 📦 Хранение: 160 ₽/день (~4,800 ₽/мес) ⚠️                  │
 │    Высокое соотношение к выручке: 23.3%                     │
@@ -159,11 +165,13 @@ const highRatioCount = data?.top_consumers.filter(
 ## QA Results
 
 ### Review Date: 2025-11-29
+
 ### Reviewed By: Quinn (Test Architect)
 
 **Gate: PASS** | **Score: 92/100** → `docs/qa/gates/24.8-fe-high-ratio-alert.yml`
 
 **Strengths:**
+
 - Clean alert component (96 lines)
 - Russian pluralization helper (товар/товара/товаров)
 - Color-coded threshold tooltip with recommendations

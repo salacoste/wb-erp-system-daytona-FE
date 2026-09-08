@@ -13,7 +13,7 @@ chars: 3705
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojka-integratsii" rel="nofollow">Настройка интеграции</a>
 - <a href="#sopostavlenie-statusov-zakazov" rel="nofollow">Сопоставление статусов заказов</a>
 - <a href="#udalenie-integratsii" rel="nofollow">Удаление интеграции</a>

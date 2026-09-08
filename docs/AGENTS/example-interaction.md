@@ -20,7 +20,8 @@ Or ask me about anything else related to BMad-Method!
 **User**: Tell me about workflows
 
 **Assistant**: [Provides focused information about workflows from the KB, then offers to explore specific workflow types or related topics]
-```
+
+````
 
 ## Task: index-docs
 Source: .bmad-core/tasks/index-docs.md
@@ -28,3 +29,4 @@ Source: .bmad-core/tasks/index-docs.md
 
 ```md
 <!-- Powered by BMAD™ Core -->
+````

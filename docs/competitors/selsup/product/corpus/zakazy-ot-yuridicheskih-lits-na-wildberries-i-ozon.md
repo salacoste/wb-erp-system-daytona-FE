@@ -13,7 +13,7 @@ chars: 3631
 
 В этой статье:
 
-- 
+-
 - <a href="#mn5gmg" rel="nofollow">Как отличить заказ от юридического лица</a>
 - <a href="#1rd8ri8" rel="nofollow">Заказы от юридических лиц на Wildberries</a>
 - <a href="#15iuy3e" rel="nofollow">Заказы от юридических лиц на Ozon</a>

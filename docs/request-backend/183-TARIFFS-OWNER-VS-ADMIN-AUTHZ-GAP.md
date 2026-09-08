@@ -9,6 +9,7 @@
 ## Problem
 
 `/settings/tariffs` admits only cabinet **Owner** users (page redirects all non-Owner roles). But two of its tabs call endpoints that require a backend `UserRole.Admin`:
+
 - `GET /v1/tariffs/settings/history` (История версий)
 - `GET /v1/tariffs/settings/audit` (Журнал изменений)
 
@@ -21,12 +22,14 @@ The two tabs now detect the 403 and render a permission message ("Доступн
 ## Decision needed
 
 One of:
+
 1. **Owner SHOULD see tariff history/audit** → relax the backend guard on `/tariffs/settings/{history,audit}` to allow `Owner` (then the FE tabs work; the F-21 permission message becomes dead/never-shown).
 2. **It's system-admin-only by design** → confirm; then the FE should ideally HIDE these tabs from non-admin (requires adding `'Admin'` to the FE role model + tab-gating), and the F-21 message is the correct interim until then.
 
 Please confirm the intended access for cabinet Owners. If (1), F-21's graceful message is currently masking a backend authz bug.
 
 ## Evidence
+
 - `GET /v1/tariffs/settings` → 200 for Owner (tab 1 works).
 - `GET /v1/tariffs/settings/history` + `/audit` → 403 for Owner ("Required roles: admin. User role: owner").
 - FE role model: `frontend/src/types/auth.ts:9` (no Admin).

@@ -11,7 +11,7 @@ chars: 4600
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-perejti-v-razdel" rel="nofollow">Как перейти в раздел</a>
 - <a href="#interfejs-razdela" rel="nofollow">Интерфейс раздела</a>
 - <a href="#knopka-razmestit-tovar-na-sklade" rel="nofollow">Кнопка «Разместить товар на складе»</a>
@@ -19,12 +19,13 @@ chars: 4600
 ## Как перейти в раздел
 
 **Чтобы перейти в раздел:**\
+
 1. Перейдите на страницу [Заказы на отгрузку - Со своего склада (FBS)](https://selsup.ru/application/fbsOrders/), выберите интересующий заказ и кликните на значок склада, расположенный под названием товара.\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/07/sklad.png.webp)\
+   ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/07/sklad.png.webp)\
 2. Перейдите в раздел [Товары](https://selsup.ru/application/products), выберите необходимую карточку товара и в синем меню нажмите на значок склада.\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2021/12/screenshot_138-1.png.webp)\
+   ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2021/12/screenshot_138-1.png.webp)\
 3. Перейдите в раздел [Склад - Остатки на складе](https://selsup.ru/application/stocks/), на открывшейся странице найдите нужный товар и нажмите на значок склада в столбце "Действия".\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2021/12/screenshot_141.png.webp)
+   ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2021/12/screenshot_141.png.webp)
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 

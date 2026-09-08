@@ -17,6 +17,7 @@
 **Estimated Effort**: 3-4 hours (critical fixes only)
 
 **Current Implementation Status**:
+
 - ✅ **Issue #2 (Save Feedback)**: ALREADY IMPLEMENTED - spinner + toast working
 - ✅ **Issue #3 (Unbind Confirmation)**: ALREADY IMPLEMENTED - AlertDialog with warnings
 - ❌ **Issue #1 (Empty State Hero Banner)**: CRITICAL - NOT IMPLEMENTED (2-3h)
@@ -25,6 +26,7 @@
 ### Expected Impact
 
 **Without Hero Banner (Current)**:
+
 ```
 100% users land on page
  40% click "Подключить Telegram" (low visibility)
@@ -33,6 +35,7 @@
 ```
 
 **With Hero Banner (After Fix)**:
+
 ```
 100% users land on page
  80% click "Подключить Telegram" (hero banner)
@@ -51,6 +54,7 @@
 **Effort**: 2-3 hours
 **Impact**: 2.4x conversion improvement
 **Files to Modify**:
+
 - `src/components/notifications/TelegramBindingCard.tsx`
 - (optional) New component: `src/components/notifications/TelegramHeroBanner.tsx`
 
@@ -84,6 +88,7 @@
 #### Required Implementation - Hero Banner
 
 **UX Expert Specification**:
+
 ```
 ╔═════════════════════════════════════════╗
 ║  🚀 Получайте уведомления в Telegram     ║
@@ -194,6 +199,7 @@ export default {
 #### Testing Checklist
 
 **Visual Testing**:
+
 - [ ] Hero banner displays correctly on desktop (1680px+)
 - [ ] Hero banner displays correctly on tablet (768px-1024px)
 - [ ] Hero banner displays correctly on mobile (375px-767px)
@@ -202,11 +208,13 @@ export default {
 - [ ] CTA button has proper hover/focus states
 
 **Functional Testing**:
+
 - [ ] Clicking CTA button opens `TelegramBindingModal`
 - [ ] Hero banner disappears after successful binding
 - [ ] Bound state shows correctly (green badge + username)
 
 **Accessibility Testing**:
+
 - [ ] All icons have proper `aria-label` attributes
 - [ ] Button has clear `aria-label`
 - [ ] Color contrast meets WCAG 2.1 AA (≥4.5:1)
@@ -215,12 +223,14 @@ export default {
 #### Expected Results
 
 **Before (Current)**:
+
 - Simple alert with text
 - Small button
 - No visual motivation
 - **40% click rate**
 
 **After (Hero Banner)**:
+
 - Eye-catching gradient background
 - Large rocket icon
 - 3 clear benefits with checkmarks
@@ -234,6 +244,7 @@ export default {
 **Effort**: 30 minutes
 **Impact**: Better UX polish, reduces "When did I connect?" support tickets
 **Files to Modify**:
+
 - `src/components/notifications/TelegramBindingCard.tsx`
 - `src/types/notifications.ts` (if backend doesn't provide `bound_at`)
 
@@ -345,6 +356,7 @@ export interface BindingStatusResponseDto {
 ```
 
 **If Backend Does NOT Provide `bound_at`**:
+
 - Coordinate with backend team to add this field
 - OR use `binding_expires_at` as proxy (approximate binding time)
 - OR skip this enhancement (LOW priority)
@@ -352,17 +364,20 @@ export interface BindingStatusResponseDto {
 #### Testing Checklist
 
 **Visual Testing**:
+
 - [ ] Timestamp displays below username
 - [ ] Font size is smaller than username (12px vs 14px)
 - [ ] Gray color (#6B7280 or similar) maintains readability
 - [ ] No layout shift when timestamp appears
 
 **Functional Testing**:
+
 - [ ] Date formatter handles various timezones correctly
 - [ ] Invalid timestamps don't crash component
 - [ ] Timestamp updates if user unbinds and rebinds
 
 **Accessibility Testing**:
+
 - [ ] Timestamp text has sufficient contrast (≥4.5:1)
 - [ ] Screen reader announces timestamp correctly
 
@@ -370,12 +385,12 @@ export interface BindingStatusResponseDto {
 
 ## 📊 Implementation Priority Matrix
 
-| Issue | Priority | Effort | Impact | Status |
-|-------|----------|--------|--------|--------|
-| **#1: Empty State Hero Banner** | 🔴 CRITICAL | 2-3h | 2.4x conversion | ❌ TODO |
-| **#2: Save Feedback** | 🟢 LOW | 1h | High (UX certainty) | ✅ DONE |
-| **#3: Unbind Confirmation** | 🟢 LOW | 1-2h | Medium (prevent accidents) | ✅ DONE |
-| **#4: Binding Timestamp** | 🔵 NICE-TO-HAVE | 30min | Low (polish) | ❌ TODO |
+| Issue                           | Priority        | Effort | Impact                     | Status  |
+| ------------------------------- | --------------- | ------ | -------------------------- | ------- |
+| **#1: Empty State Hero Banner** | 🔴 CRITICAL     | 2-3h   | 2.4x conversion            | ❌ TODO |
+| **#2: Save Feedback**           | 🟢 LOW          | 1h     | High (UX certainty)        | ✅ DONE |
+| **#3: Unbind Confirmation**     | 🟢 LOW          | 1-2h   | Medium (prevent accidents) | ✅ DONE |
+| **#4: Binding Timestamp**       | 🔵 NICE-TO-HAVE | 30min  | Low (polish)               | ❌ TODO |
 
 **Total Remaining Effort**: **2.5-3.5 hours** (Hero Banner + Timestamp)
 
@@ -386,6 +401,7 @@ export interface BindingStatusResponseDto {
 ### Immediate (Before Production Launch)
 
 **Sprint 1: Critical Fix (2-3 hours)**:
+
 1. ✅ Create hero banner component (1.5-2h)
    - Gradient background
    - Rocket icon
@@ -400,6 +416,7 @@ export interface BindingStatusResponseDto {
 ### Short-Term (1 Week Post-Launch)
 
 **Sprint 2: Polish (30 minutes)**:
+
 1. ✅ Add binding timestamp display (20min)
 2. ✅ Test timestamp formatting (10min)
 
@@ -412,6 +429,7 @@ export interface BindingStatusResponseDto {
 ### Automated Testing
 
 **Component Tests** (`TelegramBindingCard.test.tsx`):
+
 ```typescript
 describe('TelegramBindingCard', () => {
   describe('Empty State Hero Banner', () => {
@@ -459,12 +477,14 @@ describe('TelegramBindingCard', () => {
 ### Manual Testing Checklist
 
 **Visual Regression Testing**:
+
 - [ ] Take screenshot of empty state (before hero banner)
 - [ ] Take screenshot of new hero banner
 - [ ] Compare gradient rendering across browsers (Chrome, Safari, Firefox)
 - [ ] Verify mobile responsiveness (375px, 768px, 1024px, 1680px)
 
 **User Journey Testing**:
+
 ```
 Scenario 1: First-time user binding
 1. Navigate to /settings/notifications
@@ -487,6 +507,7 @@ Scenario 2: Returning user (already bound)
 ```
 
 **Accessibility Audit**:
+
 - [ ] Run axe DevTools scan (0 violations)
 - [ ] Test keyboard navigation (Tab through all interactive elements)
 - [ ] Test screen reader (VoiceOver/NVDA)
@@ -494,6 +515,7 @@ Scenario 2: Returning user (already bound)
 - [ ] Test with 200% browser zoom
 
 **Browser Compatibility**:
+
 - [ ] Chrome 120+ (primary)
 - [ ] Safari 17+ (macOS/iOS)
 - [ ] Firefox 121+
@@ -506,6 +528,7 @@ Scenario 2: Returning user (already bound)
 ### Pre-Launch (Before Hero Banner)
 
 **Current Metrics** (from UX Expert analysis):
+
 ```
 Landing Page Load: 100 users
 Click "Подключить Telegram": 40 users (40%)
@@ -519,6 +542,7 @@ Overall Completion: 20% ⚠️
 ### Post-Launch (With Hero Banner)
 
 **Target Metrics**:
+
 ```
 Landing Page Load: 100 users
 Click "Подключить Telegram": 80 users (80%) ⬆️ +100%
@@ -532,12 +556,14 @@ Overall Completion: 48% ✅ ⬆️ +140%
 ### Monitoring Plan
 
 **Week 1 Post-Launch**:
+
 - Track binding conversion rate (Mixpanel/Google Analytics)
 - Monitor click-through rate on CTA button
 - Collect user feedback (support tickets, surveys)
 - Run A/B test if possible (50% hero banner, 50% old design)
 
 **Week 2-4 Post-Launch**:
+
 - Analyze support ticket volume ("How do I connect Telegram?")
 - Review user session recordings (Hotjar/FullStory)
 - Conduct usability testing with 3-5 users
@@ -550,6 +576,7 @@ Overall Completion: 48% ✅ ⬆️ +140%
 ### Pre-Deployment Checklist
 
 **Code Quality**:
+
 - [ ] All TypeScript types updated
 - [ ] ESLint errors resolved (0 errors)
 - [ ] Prettier formatting applied
@@ -557,12 +584,14 @@ Overall Completion: 48% ✅ ⬆️ +140%
 - [ ] E2E tests passing (Playwright)
 
 **Documentation**:
+
 - [ ] Update story docs (`story-34.2-fe-telegram-binding-flow.md`)
 - [ ] Add hero banner screenshots
 - [ ] Update component JSDoc comments
 - [ ] Create PR description with before/after screenshots
 
 **Review**:
+
 - [ ] Code review by senior developer
 - [ ] UX review by design team (optional)
 - [ ] QA approval (manual testing)
@@ -571,18 +600,21 @@ Overall Completion: 48% ✅ ⬆️ +140%
 ### Deployment Phases
 
 **Phase 1: Staging Deployment** (1 day):
+
 1. Deploy to staging environment
 2. Smoke test all flows
 3. Run full E2E test suite
 4. Get stakeholder approval
 
 **Phase 2: Production Deployment** (1 day):
+
 1. Deploy to production during low-traffic window
 2. Monitor error rates (Sentry/Rollbar)
 3. Check analytics for conversion rate
 4. Rollback plan ready (git revert)
 
 **Phase 3: Post-Deployment Monitoring** (1 week):
+
 1. Daily check of binding metrics
 2. Monitor support ticket volume
 3. Collect user feedback
@@ -593,19 +625,23 @@ Overall Completion: 48% ✅ ⬆️ +140%
 ## 📚 References
 
 **Epic Documentation**:
+
 - Epic 34-FE: `docs/epics/epic-34-fe-telegram-notifications-ui.md`
 - Story 34.2-FE: `docs/stories/epic-34/story-34.2-fe-telegram-binding-flow.md`
 - Dev Handoff: `docs/DEV-HANDOFF-EPIC-34-FE.md`
 
 **UX Analysis**:
+
 - UX Expert Review: `docs/code-review/UX-LIVE-REVIEW-EPIC-34-FE-2025-12-30.md`
 
 **Component Files**:
+
 - TelegramBindingCard: `src/components/notifications/TelegramBindingCard.tsx`
 - Types: `src/types/notifications.ts`
 - Tailwind Config: `tailwind.config.ts`
 
 **Backend API**:
+
 - Notification Endpoints: `/v1/notifications/*`
 - Binding Status: `GET /v1/notifications/telegram/status`
 
@@ -614,6 +650,7 @@ Overall Completion: 48% ✅ ⬆️ +140%
 ## ✅ Definition of Done
 
 **Epic 34-FE UX Improvements are complete when**:
+
 1. ✅ Empty state hero banner implemented and tested
 2. ✅ Binding timestamp displayed (if backend provides `bound_at`)
 3. ✅ All automated tests passing (component + E2E)

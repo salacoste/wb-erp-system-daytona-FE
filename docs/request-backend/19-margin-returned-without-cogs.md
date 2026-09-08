@@ -15,6 +15,7 @@ Frontend observes that `GET /v1/products?include_cogs=true` returns `current_mar
 **Example Product**: `nm_id: "412096139"` (Жидкая изолента герметик для проводов термостойкая)
 
 **Observed API Response**:
+
 ```json
 {
   "nm_id": "412096139",
@@ -38,6 +39,7 @@ Frontend observes that `GET /v1/products?include_cogs=true` returns `current_mar
 ### Current Behavior
 
 When fetching product list with `include_cogs=true`, some products return:
+
 - `has_cogs: false` (or `cogs: null`)
 - `current_margin_pct: 100.0` (or other numeric value)
 - `missing_data_reason: null`
@@ -85,6 +87,7 @@ When fetching product list with `include_cogs=true`, some products return:
 ### Frontend Current Handling
 
 Frontend currently implements defensive check:
+
 ```typescript
 // Only show margin if COGS is assigned AND margin is calculated
 {product.has_cogs && product.cogs && typeof product.current_margin_pct === 'number' && Number.isFinite(product.current_margin_pct) ? (
@@ -115,11 +118,13 @@ This prevents displaying invalid margin, but it's a workaround. The root cause s
 **Product to Investigate**: `nm_id: "412096139"`
 
 **API Call**:
+
 ```bash
 GET /v1/products?include_cogs=true&search=412096139
 ```
 
 **Expected Investigation**:
+
 1. Check if product has any COGS records in `cogs` table
 2. Check if `weekly_margin_fact` has records for this product
 3. Check if margin calculation service validates COGS existence before returning margin
@@ -132,6 +137,7 @@ GET /v1/products?include_cogs=true&search=412096139
 If this is confirmed as a bug, backend should:
 
 1. **Validate COGS existence** before returning margin data:
+
    ```typescript
    if (!hasCogs || !cogs) {
      current_margin_pct = null;
@@ -148,14 +154,17 @@ If this is confirmed as a bug, backend should:
 ## Frontend Action Plan (Pending Backend Response)
 
 **Option A: If Backend Confirms Bug**
+
 - Wait for backend fix
 - Remove defensive check once backend ensures data consistency
 
 **Option B: If Backend Confirms Expected Behavior**
+
 - Keep defensive check in frontend
 - Document this as expected behavior
 
 **Option C: If Backend Needs Time to Fix**
+
 - Keep defensive check as temporary workaround
 - Add logging to track frequency of this issue
 - Revisit after backend fix
@@ -178,4 +187,3 @@ If this is confirmed as a bug, backend should:
 - **Resolution date**: 2025-01-26
 - **Summary**: Bug confirmed and fixed. The API layer now guarantees that `current_margin_pct` is never non-null when `has_cogs: false`. A data consistency check was added to the products service. Frontend can safely remove the defensive check. See the companion `-backend.md` file for full details.
 - **Remaining frontend action**: Remove the defensive `if (margin_pct && !has_cogs)` check from `ProductList.tsx` -- backend now guarantees data consistency.
-

@@ -11,6 +11,7 @@
 ## Purpose
 
 This document provides frontend developers with comprehensive guidance on:
+
 1. Where to get base storage/logistics rates
 2. How to calculate costs using coefficients
 3. What's currently implemented vs. planned
@@ -19,12 +20,12 @@ This document provides frontend developers with comprehensive guidance on:
 
 ## Quick Reference
 
-| Data Type | Endpoint | Use Case |
-|-----------|----------|----------|
-| Global settings (fallback rates) | `GET /v1/tariffs/settings` | Default rates when warehouse-specific unavailable |
-| Per-warehouse rates + coefficients | `GET /v1/tariffs/acceptance/coefficients` | Warehouse-specific calculations |
-| Warehouse list with tariffs | `GET /v1/tariffs/warehouses-with-tariffs` | Warehouse selector with embedded rates |
-| Simple warehouse list | `GET /v1/tariffs/warehouses` | Warehouse dropdown (no tariffs) |
+| Data Type                          | Endpoint                                  | Use Case                                          |
+| ---------------------------------- | ----------------------------------------- | ------------------------------------------------- |
+| Global settings (fallback rates)   | `GET /v1/tariffs/settings`                | Default rates when warehouse-specific unavailable |
+| Per-warehouse rates + coefficients | `GET /v1/tariffs/acceptance/coefficients` | Warehouse-specific calculations                   |
+| Warehouse list with tariffs        | `GET /v1/tariffs/warehouses-with-tariffs` | Warehouse selector with embedded rates            |
+| Simple warehouse list              | `GET /v1/tariffs/warehouses`              | Warehouse dropdown (no tariffs)                   |
 
 ---
 
@@ -35,6 +36,7 @@ This document provides frontend developers with comprehensive guidance on:
 **Purpose**: Global tariff settings including base rates for logistics and storage.
 
 **Response**:
+
 ```json
 {
   "default_commission_fbo_pct": 25.0,
@@ -66,14 +68,14 @@ This document provides frontend developers with comprehensive guidance on:
 
 **Key Fields Explained**:
 
-| Field | Value | Description |
-|-------|-------|-------------|
-| `logistics_large_first_liter_rate` | 46 ₽ | Base rate for first liter (items >1L) |
-| `logistics_large_additional_liter_rate` | 14 ₽ | Rate per additional liter (items >1L) |
-| `logistics_volume_tiers` | Array | Fixed rates for small items (≤1L) |
-| `acceptance_box_rate_per_liter` | 1.7 ₽ | Box acceptance rate per liter |
-| `acceptance_pallet_rate` | 500 ₽ | Pallet acceptance rate per pallet |
-| `storage_free_days` | 60 | Free storage period (days) |
+| Field                                   | Value | Description                           |
+| --------------------------------------- | ----- | ------------------------------------- |
+| `logistics_large_first_liter_rate`      | 46 ₽  | Base rate for first liter (items >1L) |
+| `logistics_large_additional_liter_rate` | 14 ₽  | Rate per additional liter (items >1L) |
+| `logistics_volume_tiers`                | Array | Fixed rates for small items (≤1L)     |
+| `acceptance_box_rate_per_liter`         | 1.7 ₽ | Box acceptance rate per liter         |
+| `acceptance_pallet_rate`                | 500 ₽ | Pallet acceptance rate per pallet     |
+| `storage_free_days`                     | 60    | Free storage period (days)            |
 
 ---
 
@@ -82,10 +84,12 @@ This document provides frontend developers with comprehensive guidance on:
 **Purpose**: Per-warehouse coefficients WITH embedded base rates for delivery and storage.
 
 **Query Parameters**:
+
 - `warehouseId` (optional): Single warehouse ID
 - `warehouseIds` (optional): Comma-separated list of IDs
 
 **Response**:
+
 ```json
 {
   "coefficients": [
@@ -127,15 +131,15 @@ This document provides frontend developers with comprehensive guidance on:
 
 **Key Fields Explained**:
 
-| Field | Description |
-|-------|-------------|
-| `delivery.baseLiterRub` | First liter delivery rate (₽) |
-| `delivery.additionalLiterRub` | Per additional liter delivery rate (₽) |
-| `delivery.coefficient` | Delivery multiplier for this warehouse |
-| `storage.baseLiterRub` | First liter storage rate per day (₽) |
-| `storage.additionalLiterRub` | Per additional liter storage rate per day (₽) |
-| `storage.coefficient` | Storage multiplier for this warehouse |
-| `coefficient` | Acceptance coefficient (-1=unavailable, 0=free, 1=standard, >1=increased) |
+| Field                         | Description                                                               |
+| ----------------------------- | ------------------------------------------------------------------------- |
+| `delivery.baseLiterRub`       | First liter delivery rate (₽)                                             |
+| `delivery.additionalLiterRub` | Per additional liter delivery rate (₽)                                    |
+| `delivery.coefficient`        | Delivery multiplier for this warehouse                                    |
+| `storage.baseLiterRub`        | First liter storage rate per day (₽)                                      |
+| `storage.additionalLiterRub`  | Per additional liter storage rate per day (₽)                             |
+| `storage.coefficient`         | Storage multiplier for this warehouse                                     |
+| `coefficient`                 | Acceptance coefficient (-1=unavailable, 0=free, 1=standard, >1=increased) |
 
 ---
 
@@ -144,6 +148,7 @@ This document provides frontend developers with comprehensive guidance on:
 **Purpose**: Aggregated warehouse data with embedded tariffs.
 
 **Response**:
+
 ```json
 {
   "warehouses": [
@@ -332,11 +337,13 @@ function calculatePalletAcceptanceCost(
 **Missing Field**: `mono_pallet_storage_rate_per_day` (23 ₽/day per pallet)
 
 **Formula (from WB PDF)**:
+
 ```
 mono_pallet_storage_cost = 23 ₽/day × storage_coefficient × pallet_count × storage_days
 ```
 
 **Workaround**: Currently not calculable via API. Frontend should:
+
 1. Show "Mono-pallet storage calculation coming soon" message
 2. Or allow manual entry of storage cost
 
@@ -347,12 +354,14 @@ mono_pallet_storage_cost = 23 ₽/day × storage_coefficient × pallet_count × 
 **Status**: Draft (NOT IMPLEMENTED)
 
 **Missing Fields**:
+
 - `storage_box_base_per_day` (0.11 ₽/day for first liter)
 - `storage_box_liter_per_day` (0.11 ₽/day per additional liter)
 
 **Purpose**: Fallback when warehouse-specific rates are unavailable from WB API.
 
 **Workaround**: If `acceptance/coefficients` returns null for storage rates, use hardcoded defaults:
+
 ```typescript
 const FALLBACK_STORAGE_RATES = {
   baseLiterRub: 0.11,
@@ -696,13 +705,13 @@ export interface AcceptanceCoefficientsResponse {
 
 ## Section F: Summary Table
 
-| Cost Type | Formula | Data Source | Fallback |
-|-----------|---------|-------------|----------|
-| Logistics (≤1L) | `tier_rate × coefficient` | `/settings` tiers + `/acceptance/coefficients` | Global tiers, coefficient=1.0 |
-| Logistics (>1L) | `(first_liter + (vol-1) × add_liter) × coef` | `/acceptance/coefficients` delivery | `/settings` rates, coefficient=1.0 |
-| Storage (box) | `(base + (vol-1) × add) × coef × days` | `/acceptance/coefficients` storage | 0.11 ₽/L/day (hardcoded) |
-| Acceptance (box) | `volume × 1.7 × coef` | `/settings` + `/acceptance/coefficients` | 1.7 ₽/L, coefficient=1.0 |
-| Acceptance (pallet) | `count × 500 × coef` | `/settings` + `/acceptance/coefficients` | 500 ₽/pallet, coefficient=1.0 |
+| Cost Type           | Formula                                      | Data Source                                    | Fallback                           |
+| ------------------- | -------------------------------------------- | ---------------------------------------------- | ---------------------------------- |
+| Logistics (≤1L)     | `tier_rate × coefficient`                    | `/settings` tiers + `/acceptance/coefficients` | Global tiers, coefficient=1.0      |
+| Logistics (>1L)     | `(first_liter + (vol-1) × add_liter) × coef` | `/acceptance/coefficients` delivery            | `/settings` rates, coefficient=1.0 |
+| Storage (box)       | `(base + (vol-1) × add) × coef × days`       | `/acceptance/coefficients` storage             | 0.11 ₽/L/day (hardcoded)           |
+| Acceptance (box)    | `volume × 1.7 × coef`                        | `/settings` + `/acceptance/coefficients`       | 1.7 ₽/L, coefficient=1.0           |
+| Acceptance (pallet) | `count × 500 × coef`                         | `/settings` + `/acceptance/coefficients`       | 500 ₽/pallet, coefficient=1.0      |
 
 ---
 

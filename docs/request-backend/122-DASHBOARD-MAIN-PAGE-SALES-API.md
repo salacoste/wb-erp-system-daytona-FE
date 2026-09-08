@@ -25,11 +25,11 @@
 
 ### Что показывает дашборд
 
-| Метрика | Описание | Источник данных |
-|---------|----------|-----------------|
+| Метрика              | Описание                                | Источник данных  |
+| -------------------- | --------------------------------------- | ---------------- |
 | **Выкупы (Продажи)** | Фактические продажи с разбивкой по дням | `wb_sales_gross` |
-| **COGS по выкупам** | Себестоимость проданных товаров | `cogs_total` |
-| **К перечислению** | Итоговая сумма от WB | `payout_total` |
+| **COGS по выкупам**  | Себестоимость проданных товаров         | `cogs_total`     |
+| **К перечислению**   | Итоговая сумма от WB                    | `payout_total`   |
 
 ---
 
@@ -52,30 +52,30 @@
 
 ### Выкупы vs Заказы (КРИТИЧНО!)
 
-| Термин | Что это | API поле | Когда фиксируется |
-|--------|---------|----------|-------------------|
-| **Заказы (Orders)** | Товар заказан покупателем | `orders_fbs` | При создании заказа |
-| **Выкупы (Sales)** | Товар фактически выкуплен | `wb_sales_gross` | При получении покупателем |
-| **Возвраты (Returns)** | Товар возвращён | `wb_returns_gross` | При оформлении возврата |
+| Термин                 | Что это                   | API поле           | Когда фиксируется         |
+| ---------------------- | ------------------------- | ------------------ | ------------------------- |
+| **Заказы (Orders)**    | Товар заказан покупателем | `orders_fbs`       | При создании заказа       |
+| **Выкупы (Sales)**     | Товар фактически выкуплен | `wb_sales_gross`   | При получении покупателем |
+| **Возвраты (Returns)** | Товар возвращён           | `wb_returns_gross` | При оформлении возврата   |
 
 **ВАЖНО**: Для финансовой аналитики используются ВЫКУПЫ (`sales`), а не заказы!
 
 ### Соответствие WB Dashboard
 
-| WB Dashboard | Наше поле | SQL формула |
-|--------------|-----------|-------------|
-| "Продажа" | `wb_sales_gross` | `SUM(gross) WHERE doc_type='sale'` |
-| "Возврат" | `wb_returns_gross` | `SUM(gross) WHERE doc_type='return'` |
-| "Комиссия WB" | `total_commission_rub` | `retail_price - gross` |
-| "Итого" | `payout_total` | Формула ниже |
+| WB Dashboard  | Наше поле              | SQL формула                          |
+| ------------- | ---------------------- | ------------------------------------ |
+| "Продажа"     | `wb_sales_gross`       | `SUM(gross) WHERE doc_type='sale'`   |
+| "Возврат"     | `wb_returns_gross`     | `SUM(gross) WHERE doc_type='return'` |
+| "Комиссия WB" | `total_commission_rub` | `retail_price - gross`               |
+| "Итого"       | `payout_total`         | Формула ниже                         |
 
 ### Разница sales_gross vs wb_sales_gross
 
-| Поле | Значение | Что означает |
-|------|----------|--------------|
-| `sales_gross` | 197,083₽ | Цена для покупателя (retail_price_with_discount) |
-| `wb_sales_gross` | 131,134₽ | Выручка продавца после комиссии WB |
-| Разница | 65,949₽ | = `total_commission_rub` (комиссия WB) |
+| Поле             | Значение | Что означает                                     |
+| ---------------- | -------- | ------------------------------------------------ |
+| `sales_gross`    | 197,083₽ | Цена для покупателя (retail_price_with_discount) |
+| `wb_sales_gross` | 131,134₽ | Выручка продавца после комиссии WB               |
+| Разница          | 65,949₽  | = `total_commission_rub` (комиссия WB)           |
 
 **Для WB Dashboard используйте `wb_sales_gross`!**
 
@@ -92,15 +92,17 @@ GET /v1/analytics/weekly/finance-summary?week=2025-W47
 **Назначение**: Агрегированные финансовые показатели за неделю
 
 **Headers**:
+
 ```
 Authorization: Bearer <token>
 X-Cabinet-Id: <cabinet-uuid>
 ```
 
 **Query Parameters**:
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `week` | string | Да | ISO неделя: `2025-W47` |
+
+| Параметр | Тип    | Обязательный | Описание               |
+| -------- | ------ | ------------ | ---------------------- |
+| `week`   | string | Да           | ISO неделя: `2025-W47` |
 
 ---
 
@@ -113,13 +115,14 @@ GET /v1/analytics/weekly/trends?from=2025-W44&to=2025-W47
 **Назначение**: Данные для графиков с разбивкой по неделям
 
 **Query Parameters**:
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `from` | string | Да | Начальная неделя: `2025-W44` |
-| `to` | string | Да | Конечная неделя: `2025-W47` |
-| `metrics` | string | Нет | Фильтр метрик: `payout_total,sale_gross,logistics_cost` |
-| `report_type` | string | Нет | `rus`, `eaeu`, `total` (default: total) |
-| `include_summary` | boolean | Нет | Включить сводку (default: true) |
+
+| Параметр          | Тип     | Обязательный | Описание                                                |
+| ----------------- | ------- | ------------ | ------------------------------------------------------- |
+| `from`            | string  | Да           | Начальная неделя: `2025-W44`                            |
+| `to`              | string  | Да           | Конечная неделя: `2025-W47`                             |
+| `metrics`         | string  | Нет          | Фильтр метрик: `payout_total,sale_gross,logistics_cost` |
+| `report_type`     | string  | Нет          | `rus`, `eaeu`, `total` (default: total)                 |
+| `include_summary` | boolean | Нет          | Включить сводку (default: true)                         |
 
 ---
 
@@ -132,11 +135,12 @@ GET /v1/analytics/cabinet-summary?weeks=4
 **Назначение**: KPI кабинета за период с трендами
 
 **Query Parameters**:
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `weeks` | number | Нет* | Последние N недель (default: 4, max: 52) |
-| `weekStart` | string | Нет* | Начало диапазона: `2025-W40` |
-| `weekEnd` | string | Нет* | Конец диапазона: `2025-W47` |
+
+| Параметр    | Тип    | Обязательный | Описание                                 |
+| ----------- | ------ | ------------ | ---------------------------------------- |
+| `weeks`     | number | Нет*         | Последние N недель (default: 4, max: 52) |
+| `weekStart` | string | Нет*         | Начало диапазона: `2025-W40`             |
+| `weekEnd`   | string | Нет*         | Конец диапазона: `2025-W47`              |
 
 *Используйте либо `weeks`, либо `weekStart`+`weekEnd`
 
@@ -151,14 +155,15 @@ GET /v1/analytics/weekly/by-sku?week=2025-W47&includeCogs=true
 **Назначение**: Финансовые показатели по каждому SKU
 
 **Query Parameters**:
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `week` | string | Да* | Одна неделя: `2025-W47` |
-| `weekStart` | string | Нет* | Начало диапазона |
-| `weekEnd` | string | Нет* | Конец диапазона |
-| `includeCogs` | boolean | Нет | Включить COGS и маржу (default: false) |
-| `limit` | number | Нет | Лимит (default: 100, max: 500) |
-| `report_type` | string | Нет | Фильтр по типу отчёта |
+
+| Параметр      | Тип     | Обязательный | Описание                               |
+| ------------- | ------- | ------------ | -------------------------------------- |
+| `week`        | string  | Да*          | Одна неделя: `2025-W47`                |
+| `weekStart`   | string  | Нет*         | Начало диапазона                       |
+| `weekEnd`     | string  | Нет*         | Конец диапазона                        |
+| `includeCogs` | boolean | Нет          | Включить COGS и маржу (default: false) |
+| `limit`       | number  | Нет          | Лимит (default: 100, max: 500)         |
+| `report_type` | string  | Нет          | Фильтр по типу отчёта                  |
 
 ---
 
@@ -171,15 +176,16 @@ GET /v1/analytics/sku-financials?week=2025-W50
 **Назначение**: Полная финансовая разбивка по SKU (Epic 31)
 
 **Query Parameters**:
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `week` | string | Да | ISO неделя: `2025-W50` |
-| `nm_ids` | string | Нет | Фильтр по SKU: `148190182,148190095` |
-| `sort_by` | string | Нет | Сортировка: `operating_profit`, `storage_cost`, `revenue` |
-| `sort_order` | string | Нет | `asc` или `desc` (default: desc) |
-| `include_visibility` | boolean | Нет | Включить комиссию/эквайринг (default: true) |
-| `limit` | number | Нет | Лимит (default: 50, max: 500) |
-| `offset` | number | Нет | Смещение для пагинации |
+
+| Параметр             | Тип     | Обязательный | Описание                                                  |
+| -------------------- | ------- | ------------ | --------------------------------------------------------- |
+| `week`               | string  | Да           | ISO неделя: `2025-W50`                                    |
+| `nm_ids`             | string  | Нет          | Фильтр по SKU: `148190182,148190095`                      |
+| `sort_by`            | string  | Нет          | Сортировка: `operating_profit`, `storage_cost`, `revenue` |
+| `sort_order`         | string  | Нет          | `asc` или `desc` (default: desc)                          |
+| `include_visibility` | boolean | Нет          | Включить комиссию/эквайринг (default: true)               |
+| `limit`              | number  | Нет          | Лимит (default: 50, max: 500)                             |
+| `offset`             | number  | Нет          | Смещение для пагинации                                    |
 
 ---
 
@@ -192,13 +198,14 @@ GET /v1/analytics/weekly/comparison?period1=2025-W46&period2=2025-W45
 **Назначение**: Сравнение двух периодов (WoW, MoM, YoY)
 
 **Query Parameters**:
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `period1` | string | Да | Первый период: `2025-W46` или `2025-W40:W47` |
-| `period2` | string | Да | Второй период: `2025-W45` или `2025-W32:W39` |
-| `groupBy` | string | Нет | Группировка: `sku`, `brand`, `category` |
-| `includeCogs` | boolean | Нет | Включить COGS (default: true) |
-| `limit` | number | Нет | Лимит при группировке |
+
+| Параметр      | Тип     | Обязательный | Описание                                     |
+| ------------- | ------- | ------------ | -------------------------------------------- |
+| `period1`     | string  | Да           | Первый период: `2025-W46` или `2025-W40:W47` |
+| `period2`     | string  | Да           | Второй период: `2025-W45` или `2025-W32:W39` |
+| `groupBy`     | string  | Нет          | Группировка: `sku`, `brand`, `category`      |
+| `includeCogs` | boolean | Нет          | Включить COGS (default: true)                |
+| `limit`       | number  | Нет          | Лимит при группировке                        |
 
 ---
 
@@ -495,14 +502,14 @@ profit_per_unit = profit / total_units
 
 ### 6.5. Profitability Status
 
-| Статус | Operating Margin % | Цвет |
-|--------|-------------------|------|
-| `excellent` | > 25% | Green (#22C55E) |
-| `good` | 15-25% | Light Green (#84CC16) |
-| `warning` | 5-15% | Yellow (#EAB308) |
-| `critical` | 0-5% | Orange (#F97316) |
-| `loss` | < 0% | Red (#EF4444) |
-| `unknown` | N/A (нет COGS) | Gray (#9CA3AF) |
+| Статус      | Operating Margin % | Цвет                  |
+| ----------- | ------------------ | --------------------- |
+| `excellent` | > 25%              | Green (#22C55E)       |
+| `good`      | 15-25%             | Light Green (#84CC16) |
+| `warning`   | 5-15%              | Yellow (#EAB308)      |
+| `critical`  | 0-5%               | Orange (#F97316)      |
+| `loss`      | < 0%               | Red (#EF4444)         |
+| `unknown`   | N/A (нет COGS)     | Gray (#9CA3AF)        |
 
 ---
 
@@ -565,23 +572,23 @@ const wbNet = wbSales - wbReturns;                    // 130,325.76₽
 
 ### 7.5. Кэширование
 
-| Endpoint | Cache TTL | Invalidation Events |
-|----------|-----------|---------------------|
-| `/finance-summary` | 30 min | import.completed |
-| `/trends` | 30 min | import.completed |
-| `/cabinet-summary` | 30 min | import.completed, cogs.updated |
-| `/by-sku` | 30 min | import.completed, cogs.updated |
-| `/sku-financials` | 30 min | import.completed, cogs.updated, storage.imported |
+| Endpoint           | Cache TTL | Invalidation Events                              |
+| ------------------ | --------- | ------------------------------------------------ |
+| `/finance-summary` | 30 min    | import.completed                                 |
+| `/trends`          | 30 min    | import.completed                                 |
+| `/cabinet-summary` | 30 min    | import.completed, cogs.updated                   |
+| `/by-sku`          | 30 min    | import.completed, cogs.updated                   |
+| `/sku-financials`  | 30 min    | import.completed, cogs.updated, storage.imported |
 
 ### 7.6. Обработка ошибок
 
-| HTTP Code | Причина | Действие |
-|-----------|---------|----------|
-| 400 | Неверный формат параметров | Показать сообщение пользователю |
-| 401 | Невалидный токен | Redirect на login |
-| 403 | Нет доступа к кабинету | Показать ошибку доступа |
-| 404 | Данные не найдены | Показать "Нет данных за период" |
-| 500 | Ошибка сервера | Retry + показать техническую ошибку |
+| HTTP Code | Причина                    | Действие                            |
+| --------- | -------------------------- | ----------------------------------- |
+| 400       | Неверный формат параметров | Показать сообщение пользователю     |
+| 401       | Невалидный токен           | Redirect на login                   |
+| 403       | Нет доступа к кабинету     | Показать ошибку доступа             |
+| 404       | Данные не найдены          | Показать "Нет данных за период"     |
+| 500       | Ошибка сервера             | Retry + показать техническую ошибку |
 
 ---
 

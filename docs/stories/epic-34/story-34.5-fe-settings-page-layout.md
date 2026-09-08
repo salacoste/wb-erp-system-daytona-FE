@@ -26,6 +26,7 @@ Integrate all notification components into complete `/settings/notifications` pa
 ## ✅ Acceptance Criteria
 
 ### 1. Card Layout (Q16 - Vertical Stack) ⭐ CRITICAL
+
 - [ ] Vertical stack layout (one card below another)
 - [ ] Three main cards: TelegramBindingCard, NotificationPreferencesPanel, QuietHoursConfiguration
 - [ ] Max-width: 1024px, centered on large screens
@@ -33,12 +34,14 @@ Integrate all notification components into complete `/settings/notifications` pa
 - [ ] Consistent card styling (border, shadow, padding)
 
 ### 2. Spacing (Q17 - Design System)
+
 - [ ] Page padding: 24px (desktop), 16px (mobile)
 - [ ] Card spacing: 24px (desktop), 20px (tablet), 16px (mobile)
 - [ ] Section spacing: 32px before action bar
 - [ ] Element spacing: 8px (small gaps), 16px (form fields)
 
 ### 3. Mobile Layout (Q18 - Expanded Cards)
+
 - [ ] All cards full-width on mobile (<640px)
 - [ ] Vertical scroll (no accordion/collapse)
 - [ ] Reduced padding: 24px → 16px
@@ -46,6 +49,7 @@ Integrate all notification components into complete `/settings/notifications` pa
 - [ ] Back link: "← Настройки" (instead of full breadcrumbs)
 
 ### 4. Empty State (Q19 - Hero Banner) ⭐ CRITICAL
+
 - [ ] Hero banner when Telegram not bound
 - [ ] Light Blue gradient background (#E3F2FD → #BBDEFB)
 - [ ] Feature list: 3 bullet points with icons
@@ -53,6 +57,7 @@ Integrate all notification components into complete `/settings/notifications` pa
 - [ ] Disabled preferences card with lock icon hint
 
 ### 5. Status Indicator (Q20 - Header Bell Icon) ⭐ CRITICAL
+
 - [ ] Bell icon 🔔 in header/navbar (24x24px)
 - [ ] Bound state: Telegram Blue (#0088CC) + Green badge
 - [ ] Not bound state: Gray 400 (#BDBDBD) + Gray badge
@@ -60,6 +65,7 @@ Integrate all notification components into complete `/settings/notifications` pa
 - [ ] Click navigates to `/settings/notifications`
 
 ### 6. Accessibility (WCAG 2.1 AA)
+
 - [ ] Logical heading hierarchy (H1 → H2 → H3)
 - [ ] Landmark regions: `<main>` for page content
 - [ ] Skip link for keyboard users
@@ -76,6 +82,7 @@ Integrate all notification components into complete `/settings/notifications` pa
 **Purpose**: Main settings page integrating all notification components
 
 #### Visual Mockup (Desktop - Bound State)
+
 ```
 ┌────────────────────────────────────────────────────────────────┐
 │  Header: [Logo] [Dashboard] [Analytics] [Settings] [🔔●] [@user]│ ← Status indicator
@@ -118,6 +125,7 @@ Integrate all notification components into complete `/settings/notifications` pa
 ```
 
 #### Visual Mockup (Empty State - Not Bound)
+
 ```
 ┌────────────────────────────────────────────────────────────────┐
 │  Главная > Настройки > Уведомления                              │
@@ -150,6 +158,7 @@ Integrate all notification components into complete `/settings/notifications` pa
 ```
 
 #### Code Structure
+
 ```typescript
 export default function NotificationsSettingsPage() {
   const { status, isBound } = useTelegramBinding();
@@ -243,6 +252,7 @@ export default function NotificationsSettingsPage() {
 **Purpose**: Empty state hero banner with value proposition
 
 #### Props
+
 ```typescript
 interface HeroBannerProps {
   onConnect: () => void;
@@ -250,6 +260,7 @@ interface HeroBannerProps {
 ```
 
 #### Code Structure
+
 ```typescript
 function HeroBanner({ onConnect }: Props) {
   return (
@@ -320,6 +331,7 @@ function HeroBanner({ onConnect }: Props) {
 **Purpose**: Status indicator in header/navbar
 
 #### Props
+
 ```typescript
 interface TelegramStatusIndicatorProps {
   className?: string;
@@ -327,6 +339,7 @@ interface TelegramStatusIndicatorProps {
 ```
 
 #### Code Structure
+
 ```typescript
 function TelegramStatusIndicator({ className }: Props) {
   const { isBound, status } = useTelegramBinding();
@@ -402,6 +415,7 @@ function TelegramStatusIndicator({ className }: Props) {
 **Purpose**: Send test notification button
 
 #### Code Structure
+
 ```typescript
 function TestNotificationButton() {
   const [isSending, setIsSending] = useState(false);
@@ -446,6 +460,7 @@ function TestNotificationButton() {
 ## 🎨 Design Specifications
 
 ### Page Layout
+
 ```typescript
 const pageLayout = {
   maxWidth: '1024px',
@@ -459,6 +474,7 @@ const pageLayout = {
 ```
 
 ### Card Spacing
+
 ```typescript
 const cardSpacing = {
   gap: {
@@ -474,6 +490,7 @@ const cardSpacing = {
 ```
 
 ### Typography Scaling
+
 ```typescript
 const typography = {
   h1: {
@@ -494,6 +511,7 @@ const typography = {
 ```
 
 ### Hero Banner Styles
+
 ```typescript
 const heroBannerStyles = {
   background: 'linear-gradient(to bottom right, #E3F2FD, #BBDEFB)',
@@ -508,6 +526,7 @@ const heroBannerStyles = {
 ```
 
 ### Status Indicator Styles
+
 ```typescript
 const statusIndicatorStyles = {
   iconSize: '24px',
@@ -530,6 +549,7 @@ const statusIndicatorStyles = {
 ## 🧪 Testing Requirements
 
 ### Unit Tests
+
 ```typescript
 describe('NotificationsSettingsPage', () => {
   it('shows hero banner when not bound', () => {
@@ -581,6 +601,7 @@ describe('TelegramStatusIndicator', () => {
 ```
 
 ### E2E Tests
+
 ```typescript
 test('complete settings page flow', async ({ page }) => {
   await page.goto('/settings/notifications');
@@ -613,6 +634,7 @@ test('complete settings page flow', async ({ page }) => {
 **No new dependencies** - uses components from Stories 34.1-34.4
 
 **Required Components**:
+
 - `TelegramBindingCard` (Story 34.2)
 - `NotificationPreferencesPanel` (Story 34.3)
 - `QuietHoursConfiguration` (Story 34.4)

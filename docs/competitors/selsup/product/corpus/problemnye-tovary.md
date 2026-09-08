@@ -16,7 +16,7 @@ chars: 4502
 
 В этой статье:
 
-- 
+-
 - <a href="#filtry-i-poisk" rel="nofollow">Фильтры и поиск</a>
 - <a href="#interfejs-otcheta" rel="nofollow">Интерфейс отчета</a>
 - <a href="#vygruzka-otcheta-v-excel" rel="nofollow">Выгрузка отчета в Excel</a>
@@ -68,7 +68,7 @@ chars: 4502
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/06/screenshot_168.png.webp)
 
-- Затем в разделе  [«‎Цены и акции - Цены»](https://selsup.ru/application/prices/)‎ нажмите ***«*****Импорт‎*****»*** и ‎загрузите файл с изменёнными ценами.
+- Затем в разделе  [«‎Цены и акции - Цены»](https://selsup.ru/application/prices/)‎ нажмите _**«*****Импорт‎*****»**_ и ‎загрузите файл с изменёнными ценами.
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/06/screenshot_169.png.webp)\
 Загруженные цены будут отправлены на маркетплейсы.

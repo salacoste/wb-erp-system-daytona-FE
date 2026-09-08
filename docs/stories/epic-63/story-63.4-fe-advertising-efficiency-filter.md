@@ -20,6 +20,7 @@
 **Фильтр эффективности рекламы в UI**
 
 Реализация фильтрации рекламных данных по категориям эффективности. Бэкенд поддерживает параметр `efficiency_filter` со значениями:
+
 - `excellent` - Отличная эффективность (ROAS > 5, ROI > 100%)
 - `good` - Хорошая эффективность (ROAS 3-5, ROI 50-100%)
 - `moderate` - Умеренная эффективность (ROAS 2-3, ROI 20-50%)
@@ -27,6 +28,7 @@
 - `loss` - Убыточная реклама (ROAS < 1, ROI < 0%)
 
 UI включает:
+
 - Чипы/фильтры с количеством элементов в каждой категории
 - Применение фильтра к таблице кампаний/SKU
 - Цветовая индикация категорий
@@ -34,6 +36,7 @@ UI включает:
 ## Acceptance Criteria
 
 ### AC1: Efficiency Filter Chips
+
 - [ ] Display 5 filter chips: excellent, good, moderate, poor, loss
 - [ ] Each chip shows count of items in that category
 - [ ] Chips are color-coded per efficiency status
@@ -41,6 +44,7 @@ UI включает:
 - [ ] "Все" (All) option clears filter
 
 ### AC2: Filter Chip Colors
+
 - [ ] `excellent` - Green (#22C55E)
 - [ ] `good` - Light Green (#84CC16)
 - [ ] `moderate` - Yellow (#EAB308)
@@ -48,29 +52,34 @@ UI включает:
 - [ ] `loss` - Red (#EF4444)
 
 ### AC3: Filter Application
+
 - [ ] Clicking chip applies `efficiency_filter` param to API request
 - [ ] Table data updates to show only matching items
 - [ ] URL updates with filter query param (`?efficiency=loss`)
 - [ ] Filter persists on page refresh
 
 ### AC4: Count Display
+
 - [ ] Counts fetched from summary endpoint or calculated from data
 - [ ] Loading skeleton shown while fetching counts
 - [ ] Zero-count chips remain visible but muted
 - [ ] Total count shown next to "Все" chip
 
 ### AC5: Multi-Select Support (Optional)
+
 - [ ] Allow selecting multiple efficiency categories (ctrl/cmd+click)
 - [ ] OR: Single-select with toggle behavior (click again to deselect)
 - [ ] Clear all filters button when filter active
 
 ### AC6: Integration Points
+
 - [ ] Filter works in advertising table (campaign view)
 - [ ] Filter works in SKU advertising view
 - [ ] Filter syncs with URL search params
 - [ ] Filter resets when switching view_by mode
 
 ### AC7: Accessibility
+
 - [ ] Filter group has `role="group"` with aria-label
 - [ ] Individual chips are keyboard navigable
 - [ ] Active state announced to screen readers
@@ -420,15 +429,16 @@ export function useAdvertisingAnalytics(options: UseAdvertisingAnalyticsOptions)
 
 ### Filter Chip Colors
 
-| Status | Background | Active BG | Text Color | Hex |
-|--------|------------|-----------|------------|-----|
-| `excellent` | `bg-green-50` | `bg-green-100` | `text-green-700` | #22C55E |
-| `good` | `bg-lime-50` | `bg-lime-100` | `text-lime-700` | #84CC16 |
-| `moderate` | `bg-yellow-50` | `bg-yellow-100` | `text-yellow-700` | #EAB308 |
-| `poor` | `bg-orange-50` | `bg-orange-100` | `text-orange-700` | #F97316 |
-| `loss` | `bg-red-50` | `bg-red-100` | `text-red-700` | #EF4444 |
+| Status      | Background     | Active BG       | Text Color        | Hex     |
+| ----------- | -------------- | --------------- | ----------------- | ------- |
+| `excellent` | `bg-green-50`  | `bg-green-100`  | `text-green-700`  | #22C55E |
+| `good`      | `bg-lime-50`   | `bg-lime-100`   | `text-lime-700`   | #84CC16 |
+| `moderate`  | `bg-yellow-50` | `bg-yellow-100` | `text-yellow-700` | #EAB308 |
+| `poor`      | `bg-orange-50` | `bg-orange-100` | `text-orange-700` | #F97316 |
+| `loss`      | `bg-red-50`    | `bg-red-100`    | `text-red-700`    | #EF4444 |
 
 ### Chip Dimensions
+
 - Height: 28px (py-1)
 - Padding: 12px horizontal (px-3)
 - Border radius: full (rounded-full)
@@ -437,12 +447,14 @@ export function useAdvertisingAnalytics(options: UseAdvertisingAnalyticsOptions)
 - Border: 2px solid (active state)
 
 ### Count Badge
+
 - Inside chip, right side
 - Semi-transparent background
 - Small text (text-xs)
 - Rounded pill shape
 
 ### Layout
+
 - Horizontal scroll on mobile if chips overflow
 - Sticky position when scrolling table (optional)
 - Responsive: Full width on mobile, inline on desktop
@@ -461,12 +473,12 @@ src/
 
 ## Files to Modify
 
-| File | Changes |
-|------|---------|
-| `src/types/advertising-analytics.ts` | Add `EfficiencyCountsSummary` interface |
-| `src/hooks/use-advertising-analytics.ts` | Add `efficiencyFilter` option support |
-| `src/lib/api/advertising.ts` | Ensure `efficiency_filter` param passed to API |
-| Advertising table page | Integrate filter chips component |
+| File                                     | Changes                                        |
+| ---------------------------------------- | ---------------------------------------------- |
+| `src/types/advertising-analytics.ts`     | Add `EfficiencyCountsSummary` interface        |
+| `src/hooks/use-advertising-analytics.ts` | Add `efficiencyFilter` option support          |
+| `src/lib/api/advertising.ts`             | Ensure `efficiency_filter` param passed to API |
+| Advertising table page                   | Integrate filter chips component               |
 
 ## Dependencies
 
@@ -477,6 +489,7 @@ src/
 ## Testing Requirements
 
 ### Unit Tests
+
 - [ ] Filter chips render with correct counts
 - [ ] Click handler updates URL params correctly
 - [ ] Active filter visually highlighted
@@ -484,17 +497,20 @@ src/
 - [ ] Toggle behavior works (click active to deselect)
 
 ### Integration Tests
+
 - [ ] Filter param passed to API request
 - [ ] Table data updates when filter applied
 - [ ] URL persists filter on refresh
 - [ ] Filter resets when changing view_by
 
 ### E2E Tests
+
 - [ ] User can filter by efficiency status
 - [ ] Counts update dynamically
 - [ ] Navigation preserves filter state
 
 ### Accessibility Tests
+
 - [ ] Chips keyboard navigable
 - [ ] Screen reader announces active state
 - [ ] Focus indicators visible
@@ -518,8 +534,8 @@ src/
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author   | Change                                  |
+| ---------- | -------- | --------------------------------------- |
 | 2026-01-31 | PM Agent | Initial draft based on backend docs 123 |
 
 ---
@@ -527,30 +543,36 @@ src/
 ## Notes
 
 ### Backend API Reference
+
 - Endpoint: `GET /v1/analytics/advertising`
 - Parameter: `efficiency_filter` = `excellent` | `good` | `moderate` | `poor` | `loss` | `all`
 - Documentation: `docs/request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md`
 
 ### Efficiency Classification Rules
+
 From backend documentation:
 
-| Status | ROAS Condition | ROI Condition | Recommendation |
-|--------|----------------|---------------|----------------|
-| `excellent` | ROAS > 5 | ROI > 1 | Scale budget |
-| `good` | ROAS 3-5 | ROI 0.5-1 | Maintain strategy |
-| `moderate` | ROAS 2-3 | ROI 0.2-0.5 | Optimize targeting |
-| `poor` | ROAS 1-2 | ROI 0-0.2 | Review bids |
-| `loss` | ROAS < 1 | ROI < 0 | Stop/restructure |
+| Status      | ROAS Condition | ROI Condition | Recommendation     |
+| ----------- | -------------- | ------------- | ------------------ |
+| `excellent` | ROAS > 5       | ROI > 1       | Scale budget       |
+| `good`      | ROAS 3-5       | ROI 0.5-1     | Maintain strategy  |
+| `moderate`  | ROAS 2-3       | ROI 0.2-0.5   | Optimize targeting |
+| `poor`      | ROAS 1-2       | ROI 0-0.2     | Review bids        |
+| `loss`      | ROAS < 1       | ROI < 0       | Stop/restructure   |
 
 ### Relation to Story 33.4-FE
+
 This story builds upon Story 33.4-FE (Efficiency Status Indicators) by:
+
 - Adding filterable chips (not just display badges)
 - Showing counts per category
 - URL-based filter persistence
 - Integration with API query params
 
 ### Alternative: Dropdown Filter
+
 If horizontal space is limited, consider dropdown menu:
+
 ```tsx
 <Select value={filter} onValueChange={setFilter}>
   <SelectTrigger className="w-[180px]">
@@ -573,6 +595,7 @@ If horizontal space is limited, consider dropdown menu:
 **Hook**: `src/hooks/useEfficiencyFilter.ts`
 **Lines**: 157
 **Key Features**:
+
 - 5 color-coded filter chips (excellent, good, moderate, poor, loss)
 - Count badge showing items per category
 - URL param sync for shareable filtered views

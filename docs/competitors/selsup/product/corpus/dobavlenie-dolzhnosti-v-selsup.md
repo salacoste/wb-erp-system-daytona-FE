@@ -15,7 +15,7 @@ chars: 2400
 
 В этой статье:
 
-- 
+-
 - <a href="#dobavlenie-dolzhnosti" rel="nofollow">Добавление должности</a>
 - <a href="#udalenie-i-izmenenie-dolzhnosti" rel="nofollow">Удаление и изменение должности</a>
 
@@ -45,6 +45,6 @@ chars: 2400
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/izmenit-dolznost.png.webp)\
 На открывшейся странице редактирования должности внесите необходимые изменения и нажмите "Сохранить".
 
-------------------------------------------------------------------------
+---
 
 Как добавить пользователя и разграничить права доступа читайте [тут](../sotrudniki/index.html).

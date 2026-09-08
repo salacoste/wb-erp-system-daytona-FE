@@ -11,7 +11,7 @@ chars: 3034
 
 В этой статье:
 
-- 
+-
 - <a href="#1c5aju" rel="nofollow">Подключение интеграции</a>
 - <a href="#kcu0g8" rel="nofollow">Связь товаров SelSup с товарами Детского мира</a>
 - <a href="#jp5m72" rel="nofollow">Работа по FBS</a>

@@ -15,6 +15,7 @@ Backend Epic 72 implements income tax calculations (USN 6%, USN 15%, manual rate
 For sellers on ОСН (Общая система налогообложения) or sellers with revenue exceeding 60M RUB on УСН, НДС is a separate obligation that applies **on top of** income tax. It directly affects the final net profit calculation.
 
 Current tax system options: `usn6`, `usn15`, `manual` — none of these model НДС correctly because:
+
 1. НДС applies to the **sale price**, not profit
 2. НДС is calculated separately from income tax
 3. НДС has specific legally-mandated rates (0%, 5%, 20%, 22%)
@@ -27,7 +28,7 @@ Current tax system options: `usn6`, `usn15`, `manual` — none of these model Н
 ### Who Needs НДС
 
 | Scenario | НДС Required | Common Rates |
-|----------|-------------|--------------|
+| -------- | ------------ | ------------ |
 
 ---
 
@@ -45,12 +46,12 @@ Current tax system options: `usn6`, `usn15`, `manual` — none of these model Н
 
 ### НДС Rates (Russian Tax Code)
 
-| Rate | Usage |
-|------|-------|
-| 0% | Export sales, certain categories |
-| 5% | УСН sellers exceeding revenue threshold (simplified НДС from 2025) |
-| 20% | Standard rate (ОСН) |
-| 22% | New rate effective 2025 for certain categories |
+| Rate | Usage                                                              |
+| ---- | ------------------------------------------------------------------ |
+| 0%   | Export sales, certain categories                                   |
+| 5%   | УСН sellers exceeding revenue threshold (simplified НДС from 2025) |
+| 20%  | Standard rate (ОСН)                                                |
+| 22%  | New rate effective 2025 for certain categories                     |
 
 ### Tax Interaction Model
 
@@ -64,6 +65,7 @@ Seller Revenue (with НДС)
 ```
 
 **Critical**: НДС reduces the effective revenue BEFORE income tax calculation. The order matters:
+
 1. Extract НДС from gross revenue
 2. Calculate income tax on revenue-without-НДС
 3. Net profit = revenue − expenses − income_tax − nds_payable
@@ -89,6 +91,7 @@ model Cabinet {
 ### 2. API Changes
 
 **PUT /v1/cabinets/:id** — extend with VAT fields:
+
 ```json
 {
   "taxSystem": "usn6",
@@ -99,6 +102,7 @@ model Cabinet {
 ```
 
 Validation:
+
 - `vatPayer: false` → `vatRate` auto-cleared to null
 - `vatPayer: true` → `vatRate` required, must be one of: 0, 5, 20, 22
 - `vatPayer: true` AND `taxSystem: null` → allowed (VAT without income tax settings)
@@ -160,6 +164,7 @@ Once backend implements this, the frontend (Epic 66-FE) would need:
 5. **New story**: НДС breakdown popover showing output/input/payable
 
 **UI mockup for settings**:
+
 ```
 Система налогообложения
   ○ Не настроена
@@ -182,14 +187,14 @@ Once backend implements this, the frontend (Epic 66-FE) would need:
 
 ## Impact Assessment
 
-| Area | Impact | Effort |
-|------|--------|--------|
-| Cabinet model | Add 2 fields | Low |
-| Tax calculation service | New VAT logic + interaction with income tax | Medium |
-| Finance-summary aggregation | Extend tax object with 6 new fields | Medium |
-| Frontend settings | Add toggle + rate selector | Low |
-| Frontend dashboard | Update profit displays | Low |
-| Migration | Add columns, backfill existing cabinets as vatPayer=false | Low |
+| Area                        | Impact                                                    | Effort |
+| --------------------------- | --------------------------------------------------------- | ------ |
+| Cabinet model               | Add 2 fields                                              | Low    |
+| Tax calculation service     | New VAT logic + interaction with income tax               | Medium |
+| Finance-summary aggregation | Extend tax object with 6 new fields                       | Medium |
+| Frontend settings           | Add toggle + rate selector                                | Low    |
+| Frontend dashboard          | Update profit displays                                    | Low    |
+| Migration                   | Add columns, backfill existing cabinets as vatPayer=false | Low    |
 
 **Estimated Backend Effort**: 3-5 SP (extend existing Epic 72 infrastructure)
 
@@ -209,6 +214,7 @@ Once backend implements this, the frontend (Epic 66-FE) would need:
 **Status**: ✅ Resolved
 
 Backend implemented in full (Task-50: НДС/VAT Integration):
+
 - Migration `20260222_task50_vat_integration` — added `vat_payer`, `vat_rate` to cabinets; `vat_output`, `vat_payable`, `revenue_excl_vat`, `net_profit_after_all_tax` to `weekly_payout_total` and `weekly_financial_facts`
 - `CabinetResponseDto` — exposes `vatPayer` + `vatRate` (serialized as number)
 - `UpdateCabinetDto` — accepts `vatPayer: boolean` + `vatRate: number`
@@ -220,7 +226,7 @@ Backend implemented in full (Task-50: НДС/VAT Integration):
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-02-22 | Frontend Team (BMad Master) | Initial request created |
-| 2026-02-23 | Frontend Team (Claude) | Verified backend implementation, migrations applied, all tests passing |
+| Date       | Author                      | Change                                                                 |
+| ---------- | --------------------------- | ---------------------------------------------------------------------- |
+| 2026-02-22 | Frontend Team (BMad Master) | Initial request created                                                |
+| 2026-02-23 | Frontend Team (Claude)      | Verified backend implementation, migrations applied, all tests passing |

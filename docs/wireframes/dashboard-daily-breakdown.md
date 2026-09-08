@@ -13,16 +13,16 @@ This document specifies the Daily Breakdown charts for the main Dashboard page. 
 
 ### Metrics to Display (8 total)
 
-| # | Metric (RU) | Metric (EN) | Color | Hex |
-|---|-------------|-------------|-------|-----|
-| 1 | Заказы | Orders | Blue | `#3B82F6` |
-| 2 | COGS по заказам | Orders COGS | Orange | `#F97316` |
-| 3 | Выкупы | Buyouts | Green | `#22C55E` |
-| 4 | COGS по выкупам | Buyouts COGS | Orange Light | `#FB923C` |
-| 5 | Реклама | Advertising | Purple | `#7C3AED` |
-| 6 | Логистика | Logistics | Cyan | `#06B6D4` |
-| 7 | Хранение | Storage | Pink | `#EC4899` |
-| 8 | Теор. прибыль | Theoretical Profit | Primary Red | `#E53935` |
+| #   | Metric (RU)     | Metric (EN)        | Color        | Hex       |
+| --- | --------------- | ------------------ | ------------ | --------- |
+| 1   | Заказы          | Orders             | Blue         | `#3B82F6` |
+| 2   | COGS по заказам | Orders COGS        | Orange       | `#F97316` |
+| 3   | Выкупы          | Buyouts            | Green        | `#22C55E` |
+| 4   | COGS по выкупам | Buyouts COGS       | Orange Light | `#FB923C` |
+| 5   | Реклама         | Advertising        | Purple       | `#7C3AED` |
+| 6   | Логистика       | Logistics          | Cyan         | `#06B6D4` |
+| 7   | Хранение        | Storage            | Pink         | `#EC4899` |
+| 8   | Теор. прибыль   | Theoretical Profit | Primary Red  | `#E53935` |
 
 ### Formula
 
@@ -213,14 +213,14 @@ Hover: border-color #E53935, shadow-sm
 
 ### 2. Main Line Chart
 
-| Property | Desktop | Tablet | Mobile |
-|----------|---------|--------|--------|
-| Width | 100% | 100% | 100% |
-| Height | 320px | 280px | 240px |
-| Margin Top | 20px | 16px | 12px |
-| Margin Right | 30px | 20px | 10px |
-| Margin Bottom | 60px | 50px | 40px |
-| Margin Left | 60px | 50px | 40px |
+| Property      | Desktop | Tablet | Mobile |
+| ------------- | ------- | ------ | ------ |
+| Width         | 100%    | 100%   | 100%   |
+| Height        | 320px   | 280px  | 240px  |
+| Margin Top    | 20px    | 16px   | 12px   |
+| Margin Right  | 30px    | 20px   | 10px   |
+| Margin Bottom | 60px    | 50px   | 40px   |
+| Margin Left   | 60px    | 50px   | 40px   |
 
 ### 3. X-Axis Configuration
 
@@ -336,28 +336,28 @@ Scroll indicators: gradient fade on edges
 
 ### Metric Card States
 
-| State | Visual |
-|-------|--------|
-| Default | Border #EEEEEE, bg white |
-| Hover | Border #E53935, shadow-sm |
+| State    | Visual                              |
+| -------- | ----------------------------------- |
+| Default  | Border #EEEEEE, bg white            |
+| Hover    | Border #E53935, shadow-sm           |
 | Selected | Border #E53935, bg #FEF2F2 (red-50) |
-| Disabled | Opacity 0.5, cursor not-allowed |
+| Disabled | Opacity 0.5, cursor not-allowed     |
 
 ### Chart Line States
 
-| State | Visual |
-|-------|--------|
-| Default | Full opacity, strokeWidth 2 |
-| Hover (other lines) | Other lines opacity 0.3 |
-| Hidden | Not rendered |
+| State               | Visual                      |
+| ------------------- | --------------------------- |
+| Default             | Full opacity, strokeWidth 2 |
+| Hover (other lines) | Other lines opacity 0.3     |
+| Hidden              | Not rendered                |
 
 ### Data Point States
 
-| State | Visual |
-|-------|--------|
+| State   | Visual                              |
+| ------- | ----------------------------------- |
 | Default | dot r=4, white fill, colored stroke |
-| Hover | dot r=6, colored fill, white stroke |
-| Active | pulse animation |
+| Hover   | dot r=6, colored fill, white stroke |
+| Active  | pulse animation                     |
 
 ---
 
@@ -434,13 +434,13 @@ Dismissible: Yes (session only)
 
 ### WCAG 2.1 AA Compliance
 
-| Requirement | Implementation |
-|-------------|----------------|
-| Color contrast | All text >=4.5:1, large text >=3:1 |
-| Keyboard navigation | Tab through cards, Enter to toggle |
-| Focus indicators | 2px red outline on focus |
-| Screen reader | aria-label on chart, live regions for updates |
-| Reduced motion | Respect prefers-reduced-motion |
+| Requirement         | Implementation                                |
+| ------------------- | --------------------------------------------- |
+| Color contrast      | All text >=4.5:1, large text >=3:1            |
+| Keyboard navigation | Tab through cards, Enter to toggle            |
+| Focus indicators    | 2px red outline on focus                      |
+| Screen reader       | aria-label on chart, live regions for updates |
+| Reduced motion      | Respect prefers-reduced-motion                |
 
 ### ARIA Labels
 
@@ -471,12 +471,12 @@ Dismissible: Yes (session only)
 
 ### Keyboard Navigation
 
-| Key | Action |
-|-----|--------|
-| Tab | Move between metric cards |
-| Space/Enter | Toggle metric visibility |
+| Key              | Action                                    |
+| ---------------- | ----------------------------------------- |
+| Tab              | Move between metric cards                 |
+| Space/Enter      | Toggle metric visibility                  |
 | Arrow Left/Right | Navigate chart data points (when focused) |
-| Escape | Close tooltip |
+| Escape           | Close tooltip                             |
 
 ---
 

@@ -28,6 +28,7 @@
 ### Purpose
 
 Automated Telegram notification system that sends real-time updates about:
+
 - Task completions (products sync, advertising sync, storage import, etc.)
 - Task failures with error details
 - Task stalls (worker health issues)
@@ -52,9 +53,11 @@ Automated Telegram notification system that sends real-time updates about:
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
 **Backend owns ALL notification content:**
+
 1. **Event Detection**: Listens to BullMQ task events (completed, failed, stalled)
 2. **Context Extraction**: Extracts task-specific metrics from job results
 3. **Template Rendering**: Renders message templates with Handlebars-like syntax
@@ -64,6 +67,7 @@ Automated Telegram notification system that sends real-time updates about:
 7. **Logging**: Records all notification attempts in database
 
 **Key Services**:
+
 - `NotificationService` - Core orchestration
 - `NotificationTemplateService` - Message rendering
 - `TelegramBotService` - Telegram API integration
@@ -74,12 +78,14 @@ Automated Telegram notification system that sends real-time updates about:
 ### Frontend Responsibilities (Preferences Only)
 
 **Frontend manages ONLY user preferences:**
+
 1. **Telegram Binding UI**: Help user connect Telegram account
 2. **Preferences UI**: Enable/disable notifications, set quiet hours, choose language
 3. **Event Filters**: Allow user to enable/disable specific event types
 4. **Status Display**: Show binding status, last notification time
 
 **Frontend does NOT:**
+
 - ❌ Format notification messages
 - ❌ Decide when to send notifications
 - ❌ Apply business logic to notifications
@@ -91,12 +97,12 @@ Automated Telegram notification system that sends real-time updates about:
 
 ### Event Types
 
-| Event Type | Description | When Triggered | User Control |
-|------------|-------------|----------------|--------------|
-| `task.completed` | Task finished successfully | BullMQ job completed | ✅ Can disable |
-| `task.failed` | Task failed after all retries | BullMQ job failed | ✅ Can disable |
-| `task.stalled` | Worker stopped responding | BullMQ job stalled | ✅ Can disable |
-| `daily_digest` | Daily summary | Planned (not yet implemented) | ✅ Can disable |
+| Event Type       | Description                   | When Triggered                | User Control   |
+| ---------------- | ----------------------------- | ----------------------------- | -------------- |
+| `task.completed` | Task finished successfully    | BullMQ job completed          | ✅ Can disable |
+| `task.failed`    | Task failed after all retries | BullMQ job failed             | ✅ Can disable |
+| `task.stalled`   | Worker stopped responding     | BullMQ job stalled            | ✅ Can disable |
+| `daily_digest`   | Daily summary                 | Planned (not yet implemented) | ✅ Can disable |
 
 ### Event Flow
 
@@ -202,6 +208,7 @@ Each task type now includes **detailed metrics** instead of just generic "rows p
 #### 1. `products_sync` - Синхронизация товаров
 
 **Backend Fields** (from worker result):
+
 ```typescript
 {
   products_fetched: number,  // Total products loaded from WB API
@@ -211,6 +218,7 @@ Each task type now includes **detailed metrics** instead of just generic "rows p
 ```
 
 **Notification Output**:
+
 ```
 📦 Загружено товаров: 55
 ➕ Добавлено новых: 2
@@ -220,6 +228,7 @@ Each task type now includes **detailed metrics** instead of just generic "rows p
 #### 2. `adv_sync` - Синхронизация рекламы
 
 **Backend Fields**:
+
 ```typescript
 {
   campaigns_synced: number,   // Total campaigns synced
@@ -229,6 +238,7 @@ Each task type now includes **detailed metrics** instead of just generic "rows p
 ```
 
 **Notification Output**:
+
 ```
 📢 Синхронизировано кампаний: 259
 📊 Обработано статистики: 55 кампаний
@@ -238,6 +248,7 @@ Each task type now includes **detailed metrics** instead of just generic "rows p
 #### 3. `paid_storage_import` - Импорт платного хранения
 
 **Backend Fields**:
+
 ```typescript
 {
   records_imported: number    // Storage records imported
@@ -245,6 +256,7 @@ Each task type now includes **detailed metrics** instead of just generic "rows p
 ```
 
 **Notification Output**:
+
 ```
 📊 Импортировано записей: 1,312
 ```
@@ -252,6 +264,7 @@ Each task type now includes **detailed metrics** instead of just generic "rows p
 #### 4. `product_imt_sync` - Синхронизация склеек (imtId)
 
 **Backend Fields**:
+
 ```typescript
 {
   products_updated: number,   // Products with imtId updated
@@ -260,6 +273,7 @@ Each task type now includes **detailed metrics** instead of just generic "rows p
 ```
 
 **Notification Output**:
+
 ```
 🔗 Обновлено товаров: 47
 📦 Создано групп склеек: 27
@@ -268,6 +282,7 @@ Each task type now includes **detailed metrics** instead of just generic "rows p
 #### 5. Generic Tasks (Fallback)
 
 **Backend Fields**:
+
 ```typescript
 {
   rowsCount?: number,         // Generic rows processed
@@ -276,29 +291,30 @@ Each task type now includes **detailed metrics** instead of just generic "rows p
 ```
 
 **Notification Output**:
+
 ```
 📊 Обработано: 1,234 строк
 ```
 
 ### Complete Task Type List
 
-| Task Type | Icon | Russian Label | English Label |
-|-----------|------|---------------|---------------|
-| `products_sync` | 📦 | Синхронизация товаров | Products sync |
-| `adv_sync` | 📢 | Синхронизация рекламы | Advertising sync |
-| `paid_storage_import` | 📊 | Импорт платного хранения | Paid storage import |
-| `product_imt_sync` | 🔗 | Синхронизация склеек (imtId) | Product card linking (imtId) |
-| `finances_weekly_ingest` | 💰 | Импорт финансового отчёта | Financial report import |
-| `margin_calculation` | 📈 | Расчёт маржи | Margin calculation |
-| `recalculate_weekly_margin` | 🔄 | Пересчёт маржи | Margin recalculation |
-| `weekly_sanity_check` | ✅ | Проверка данных | Data validation |
-| `publish_weekly_views` | 📤 | Публикация витрин | Views publishing |
-| `enrich_cogs` | 💵 | Обогащение себестоимостью | COGS enrichment |
-| `weekly_margin_aggregate` | 📊 | Агрегация маржи | Margin aggregation |
-| `stocks_sync` | 📦 | Синхронизация остатков | Stocks sync |
-| `orders_sync` | 🛒 | Синхронизация заказов | Orders sync |
-| `prices_sync` | 💲 | Синхронизация цен | Prices sync |
-| `daily_sales_sync` | 📈 | Синхронизация продаж | Sales sync |
+| Task Type                   | Icon | Russian Label                | English Label                |
+| --------------------------- | ---- | ---------------------------- | ---------------------------- |
+| `products_sync`             | 📦   | Синхронизация товаров        | Products sync                |
+| `adv_sync`                  | 📢   | Синхронизация рекламы        | Advertising sync             |
+| `paid_storage_import`       | 📊   | Импорт платного хранения     | Paid storage import          |
+| `product_imt_sync`          | 🔗   | Синхронизация склеек (imtId) | Product card linking (imtId) |
+| `finances_weekly_ingest`    | 💰   | Импорт финансового отчёта    | Financial report import      |
+| `margin_calculation`        | 📈   | Расчёт маржи                 | Margin calculation           |
+| `recalculate_weekly_margin` | 🔄   | Пересчёт маржи               | Margin recalculation         |
+| `weekly_sanity_check`       | ✅   | Проверка данных              | Data validation              |
+| `publish_weekly_views`      | 📤   | Публикация витрин            | Views publishing             |
+| `enrich_cogs`               | 💵   | Обогащение себестоимостью    | COGS enrichment              |
+| `weekly_margin_aggregate`   | 📊   | Агрегация маржи              | Margin aggregation           |
+| `stocks_sync`               | 📦   | Синхронизация остатков       | Stocks sync                  |
+| `orders_sync`               | 🛒   | Синхронизация заказов        | Orders sync                  |
+| `prices_sync`               | 💲   | Синхронизация цен            | Prices sync                  |
+| `daily_sales_sync`          | 📈   | Синхронизация продаж         | Sales sync                   |
 
 ---
 
@@ -319,6 +335,7 @@ Backend uses **Handlebars-like syntax** for templates:
 ```
 
 **Syntax Elements**:
+
 - `{{variable}}` - Simple variable substitution
 - `{{#if variable}}...{{/if}}` - Conditional block (only shown if value is truthy)
 - `{{#each array}}...{{/each}}` - Loop over array (used in daily_digest)
@@ -378,6 +395,7 @@ Authorization: Bearer {jwt}
 ```
 
 **Response**:
+
 ```json
 {
   "preferences": {
@@ -433,6 +451,7 @@ Content-Type: application/json
 ```
 
 **Default Values**:
+
 - `language`: "ru"
 - `telegramEnabled`: false (must be enabled manually)
 - All events: true
@@ -489,6 +508,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
   "binding": {
@@ -509,6 +529,7 @@ Authorization: Bearer {jwt}
 ```
 
 **Response (Not Verified)**:
+
 ```json
 {
   "binding": {
@@ -520,6 +541,7 @@ Authorization: Bearer {jwt}
 ```
 
 **Response (Verified)**:
+
 ```json
 {
   "binding": {
@@ -565,6 +587,7 @@ LIMIT 10;
 ```
 
 **Status Values**:
+
 - `sent` - Successfully sent to Telegram
 - `failed` - Failed to send (Telegram API error)
 - `skipped` - Skipped due to preferences
@@ -579,6 +602,7 @@ Authorization: Bearer {jwt}
 ```
 
 **Response**:
+
 ```json
 {
   "notifications": [
@@ -611,6 +635,7 @@ Authorization: Bearer {jwt}
 **Scenario**: User has enabled all notifications, products_sync completes at 06:05 MSK
 
 **Backend Flow**:
+
 1. BullMQ job completes with result: `{ products_fetched: 55, products_added: 2, products_removed: 0 }`
 2. TaskEventListener catches `completed` event
 3. NotificationService extracts context with task-specific fields
@@ -621,6 +646,7 @@ Authorization: Bearer {jwt}
 8. Log success in `notification_log`
 
 **User Receives**:
+
 ```
 ✅ Задача выполнена успешно
 
@@ -636,6 +662,7 @@ Authorization: Bearer {jwt}
 **Scenario**: adv_sync fails at 23:30 MSK, user has quiet hours 22:00-08:00
 
 **Backend Flow**:
+
 1. BullMQ job fails after 5 retries
 2. TaskEventListener catches `failed` event
 3. NotificationService checks preferences
@@ -645,6 +672,7 @@ Authorization: Bearer {jwt}
 **User Receives**: Nothing (skipped)
 
 **Log Entry**:
+
 ```json
 {
   "status": "quiet_hours",
@@ -658,6 +686,7 @@ Authorization: Bearer {jwt}
 **Scenario**: Many tasks complete in short period, exceeding 60 messages/hour
 
 **Backend Flow**:
+
 1. First 60 messages sent successfully
 2. 61st message: Rate limiter blocks
 3. Notification skipped, logged as `rate_limited`
@@ -675,6 +704,7 @@ Authorization: Bearer {jwt}
 **Diagnosis Checklist**:
 
 1. **Check Telegram Binding**:
+
    ```http
    GET /v1/telegram/binding/status?cabinetId={id}
    ```
@@ -682,6 +712,7 @@ Authorization: Bearer {jwt}
    - ✅ `chatId` present?
 
 2. **Check Preferences**:
+
    ```http
    GET /v1/notifications/preferences?cabinetId={id}
    ```
@@ -693,6 +724,7 @@ Authorization: Bearer {jwt}
    - Convert user's quiet hours from UTC to local time
 
 4. **Check Recent Logs**:
+
    ```http
    GET /v1/notifications/history?cabinetId={id}
    ```
@@ -719,6 +751,7 @@ Authorization: Bearer {jwt}
 ### Issue 3: Wrong Language
 
 **Diagnosis**:
+
 1. Check user preferences: `GET /v1/notifications/preferences`
 2. Verify `language` field is "ru" or "en"
 3. Update if needed: `PATCH /v1/notifications/preferences`
@@ -767,6 +800,7 @@ Authorization: Bearer {jwt}
 ### Required API Calls
 
 1. **On Page Load**:
+
    ```typescript
    // Check binding status
    const binding = await api.get('/v1/telegram/binding/status', {
@@ -780,6 +814,7 @@ Authorization: Bearer {jwt}
    ```
 
 2. **Connect Telegram**:
+
    ```typescript
    const { binding, botUrl } = await api.post('/v1/telegram/binding/init', {
      cabinetId
@@ -864,6 +899,7 @@ interface NotificationPreferences {
 ### 2025-12-30 - Task-Specific Metrics Enhancement
 
 **Added**:
+
 - Detailed metrics for `products_sync` (fetched/added/removed)
 - Detailed metrics for `adv_sync` (campaigns/stats/costs)
 - Detailed metrics for `paid_storage_import` (records imported)
@@ -872,11 +908,13 @@ interface NotificationPreferences {
 - Number formatting with thousands separators
 
 **Changed**:
+
 - Template structure to include conditional metric blocks
 - `extractContext()` to use switch-case logic for task-specific fields
 - All task type labels to include emojis
 
 **Impact on Frontend**:
+
 - ✅ No changes required (backend-only enhancement)
 - ✅ Notifications automatically show richer data
 - ℹ️ Users will see more detailed notifications starting 2025-12-30

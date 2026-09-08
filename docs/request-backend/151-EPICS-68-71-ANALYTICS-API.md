@@ -10,16 +10,16 @@
 
 ## Обзор: 8 новых эндпоинтов
 
-| Метод | Эндпоинт | Epic | Cache TTL | Описание |
-|-------|----------|------|-----------|----------|
-| GET | `/v1/analytics/funnel` | 68 | 5 мин | Per-SKU маркетинговая воронка |
-| GET | `/v1/analytics/funnel/sync-status` | 68 | — | Статус синхронизации воронки |
-| GET | `/v1/analytics/buyout/by-sku` | 69 | 30 мин | Per-SKU % выкупа |
-| GET | `/v1/analytics/buyout/summary` | 69 | 30 мин | Сводка выкупа по кабинету |
-| GET | `/v1/analytics/returns/reasons` | 71 | 5 мин | Агрегированная аналитика возвратов |
-| GET | `/v1/analytics/returns/reasons/by-sku` | 71 | 5 мин | Per-SKU разбивка возвратов |
-| GET | `/v1/analytics/product/:nmId/unified` | 70 | — | Объединённая аналитика товара* |
-| GET | `/v1/analytics/product/:nmId/organic-share` | 70 | — | Доля органического трафика* |
+| Метод | Эндпоинт                                    | Epic | Cache TTL | Описание                           |
+| ----- | ------------------------------------------- | ---- | --------- | ---------------------------------- |
+| GET   | `/v1/analytics/funnel`                      | 68   | 5 мин     | Per-SKU маркетинговая воронка      |
+| GET   | `/v1/analytics/funnel/sync-status`          | 68   | —         | Статус синхронизации воронки       |
+| GET   | `/v1/analytics/buyout/by-sku`               | 69   | 30 мин    | Per-SKU % выкупа                   |
+| GET   | `/v1/analytics/buyout/summary`              | 69   | 30 мин    | Сводка выкупа по кабинету          |
+| GET   | `/v1/analytics/returns/reasons`             | 71   | 5 мин     | Агрегированная аналитика возвратов |
+| GET   | `/v1/analytics/returns/reasons/by-sku`      | 71   | 5 мин     | Per-SKU разбивка возвратов         |
+| GET   | `/v1/analytics/product/:nmId/unified`       | 70   | —         | Объединённая аналитика товара*     |
+| GET   | `/v1/analytics/product/:nmId/organic-share` | 70   | —         | Доля органического трафика*        |
 
 > \* Epic 70 — внутренние сервисы, маршруты могут быть не подключены к контроллеру. Данные доступны через другие эндпоинты.
 
@@ -37,6 +37,7 @@
 **Resolution date**: 2026-02-18
 **Summary**: Epics 68-71 complete with 560+ unit tests. 8 new endpoints: funnel analytics (2), buyout analytics (2), returns analytics (2), unified product analytics (2). Funnel buyout enrichment uses query-time pattern with 30-min cache. See CLAUDE.md MEMORY for buyout data source details.
 **Remaining frontend action**: Integrate funnel, buyout, and returns pages using provided endpoint documentation.
+
 ```typescript
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
@@ -150,16 +151,16 @@ GET /v1/analytics/returns/reasons?cabinetId={{cabinetId}}&from=2026-02-01&to=202
 
 #### Query Parameters
 
-| Параметр | Тип | Обязательный | Default | Описание |
-|----------|-----|:---:|---------|----------|
-| `from` | string (YYYY-MM-DD) | ✅ | — | Начало периода |
-| `to` | string (YYYY-MM-DD) | ✅ | — | Конец периода |
-| `nmIds` | number[] | — | все | Фильтр по артикулам (через запятую) |
-| `groupBy` | `product` \| `day` | — | `product` | Группировка: по товару или по дням |
-| `sort` | `openCardCount` \| `ordersCount` \| `buyoutCount` \| `totalConversion` \| `cancelRate` | — | `openCardCount` | Поле сортировки |
-| `order` | `asc` \| `desc` | — | `desc` | Направление сортировки |
-| `limit` | number (1-500) | — | 50 | Размер страницы |
-| `offset` | number (≥0) | — | 0 | Смещение для пагинации |
+| Параметр  | Тип                                                                                    | Обязательный | Default         | Описание                            |
+| --------- | -------------------------------------------------------------------------------------- | :----------: | --------------- | ----------------------------------- |
+| `from`    | string (YYYY-MM-DD)                                                                    |      ✅      | —               | Начало периода                      |
+| `to`      | string (YYYY-MM-DD)                                                                    |      ✅      | —               | Конец периода                       |
+| `nmIds`   | number[]                                                                               |      —       | все             | Фильтр по артикулам (через запятую) |
+| `groupBy` | `product` \| `day`                                                                     |      —       | `product`       | Группировка: по товару или по дням  |
+| `sort`    | `openCardCount` \| `ordersCount` \| `buyoutCount` \| `totalConversion` \| `cancelRate` |      —       | `openCardCount` | Поле сортировки                     |
+| `order`   | `asc` \| `desc`                                                                        |      —       | `desc`          | Направление сортировки              |
+| `limit`   | number (1-500)                                                                         |      —       | 50              | Размер страницы                     |
+| `offset`  | number (≥0)                                                                            |      —       | 0               | Смещение для пагинации              |
 
 #### Response: `groupBy=product` (по умолчанию)
 
@@ -250,26 +251,26 @@ Per-SKU процент выкупа с тремя источниками дан�
 
 #### Query Parameters
 
-| Параметр | Тип | Обязательный | Default | Описание |
-|----------|-----|:---:|---------|----------|
-| `from` | string (YYYY-MM-DD) | ✅ | — | Начало периода |
-| `to` | string (YYYY-MM-DD) | ✅ | — | Конец периода |
-| `source` | `weekly` \| `realtime` \| `blended` | — | `blended` | Источник данных |
-| `trend` | boolean | — | `false` | Включить сравнение с предыдущим периодом |
-| `nmId` | number | — | все | Фильтр по одному артикулу |
-| `minSales` | number | — | 0 | Мин. кол-во продаж для включения |
-| `sort` | `buyoutRate` \| `salesCount` \| `returnRate` \| `trend` | — | `buyoutRate` | Поле сортировки |
-| `sortOrder` | `asc` \| `desc` | — | `asc` | Направление |
-| `limit` | number (1-500) | — | 50 | Размер страницы |
-| `offset` | number (≥0) | — | 0 | Смещение |
+| Параметр    | Тип                                                     | Обязательный | Default      | Описание                                 |
+| ----------- | ------------------------------------------------------- | :----------: | ------------ | ---------------------------------------- |
+| `from`      | string (YYYY-MM-DD)                                     |      ✅      | —            | Начало периода                           |
+| `to`        | string (YYYY-MM-DD)                                     |      ✅      | —            | Конец периода                            |
+| `source`    | `weekly` \| `realtime` \| `blended`                     |      —       | `blended`    | Источник данных                          |
+| `trend`     | boolean                                                 |      —       | `false`      | Включить сравнение с предыдущим периодом |
+| `nmId`      | number                                                  |      —       | все          | Фильтр по одному артикулу                |
+| `minSales`  | number                                                  |      —       | 0            | Мин. кол-во продаж для включения         |
+| `sort`      | `buyoutRate` \| `salesCount` \| `returnRate` \| `trend` |      —       | `buyoutRate` | Поле сортировки                          |
+| `sortOrder` | `asc` \| `desc`                                         |      —       | `asc`        | Направление                              |
+| `limit`     | number (1-500)                                          |      —       | 50           | Размер страницы                          |
+| `offset`    | number (≥0)                                             |      —       | 0            | Смещение                                 |
 
 #### Источники данных (`source`)
 
-| Значение | Источник | Задержка | Когда использовать |
-|----------|----------|----------|---------------------|
-| `weekly` | `wb_finance_raw` | 1-2 дня | Точные финансовые данные |
-| `realtime` | `orders_fbs` (статусы) | ~15 мин | Оперативный мониторинг |
-| `blended` | Средневзвешенное | — | По умолчанию, баланс точности и актуальности |
+| Значение   | Источник               | Задержка | Когда использовать                           |
+| ---------- | ---------------------- | -------- | -------------------------------------------- |
+| `weekly`   | `wb_finance_raw`       | 1-2 дня  | Точные финансовые данные                     |
+| `realtime` | `orders_fbs` (статусы) | ~15 мин  | Оперативный мониторинг                       |
+| `blended`  | Средневзвешенное       | —        | По умолчанию, баланс точности и актуальности |
 
 #### Response
 
@@ -314,11 +315,11 @@ interface BySkuBuyoutItem {
 
 #### Query Parameters
 
-| Параметр | Тип | Обязательный | Default | Описание |
-|----------|-----|:---:|---------|----------|
-| `from` | string (YYYY-MM-DD) | ✅ | — | Начало периода |
-| `to` | string (YYYY-MM-DD) | ✅ | — | Конец периода |
-| `source` | `weekly` \| `realtime` \| `blended` | — | `weekly` | Источник данных |
+| Параметр | Тип                                 | Обязательный | Default  | Описание        |
+| -------- | ----------------------------------- | :----------: | -------- | --------------- |
+| `from`   | string (YYYY-MM-DD)                 |      ✅      | —        | Начало периода  |
+| `to`     | string (YYYY-MM-DD)                 |      ✅      | —        | Конец периода   |
+| `source` | `weekly` \| `realtime` \| `blended` |      —       | `weekly` | Источник данных |
 
 #### Response
 
@@ -367,12 +368,12 @@ interface BuyoutDecliner {
 
 #### Query Parameters
 
-| Параметр | Тип | Обязательный | Default | Описание |
-|----------|-----|:---:|---------|----------|
-| `cabinetId` | string (UUID) | ✅ | — | ID кабинета (**в query, не в header!**) |
-| `from` | string (YYYY-MM-DD) | — | −30 дней | Начало периода |
-| `to` | string (YYYY-MM-DD) | — | сегодня | Конец периода |
-| `locale` | `ru` \| `en` | — | `ru` | Язык отображаемых названий |
+| Параметр    | Тип                 | Обязательный | Default  | Описание                                |
+| ----------- | ------------------- | :----------: | -------- | --------------------------------------- |
+| `cabinetId` | string (UUID)       |      ✅      | —        | ID кабинета (**в query, не в header!**) |
+| `from`      | string (YYYY-MM-DD) |      —       | −30 дней | Начало периода                          |
+| `to`        | string (YYYY-MM-DD) |      —       | сегодня  | Конец периода                           |
+| `locale`    | `ru` \| `en`        |      —       | `ru`     | Язык отображаемых названий              |
 
 #### Response
 
@@ -402,11 +403,11 @@ interface ReturnCategoryItem {
 
 #### Локализация `displayName`
 
-| category | locale=ru | locale=en |
-|----------|-----------|-----------|
-| `cancel_before_shipment` | Отмена до отправки | Cancelled before shipment |
-| `refusal_at_pvz` | Отказ на ПВЗ | Refused at pickup point |
-| `return_after_receipt` | Возврат после получения | Returned after receipt |
+| category                 | locale=ru               | locale=en                 |
+| ------------------------ | ----------------------- | ------------------------- |
+| `cancel_before_shipment` | Отмена до отправки      | Cancelled before shipment |
+| `refusal_at_pvz`         | Отказ на ПВЗ            | Refused at pickup point   |
+| `return_after_receipt`   | Возврат после получения | Returned after receipt    |
 
 #### Рекомендация UI: Круговая диаграмма
 
@@ -438,17 +439,17 @@ interface ReturnCategoryItem {
 
 #### Query Parameters
 
-| Параметр | Тип | Обязательный | Default | Описание |
-|----------|-----|:---:|---------|----------|
-| `cabinetId` | string (UUID) | ✅ | — | ID кабинета (**в query, не в header!**) |
-| `from` | string (YYYY-MM-DD) | — | −30 дней | Начало периода |
-| `to` | string (YYYY-MM-DD) | — | сегодня | Конец периода |
-| `nmId` | number | — | все | Фильтр по одному артикулу |
-| `anomalyOnly` | boolean | — | `false` | Только аномальные SKU |
-| `sortBy` | string | — | — | Поле сортировки (напр. `returnRate`) |
-| `sortOrder` | `asc` \| `desc` | — | `desc` | Направление сортировки |
-| `limit` | number (1-500) | — | 100 | Размер страницы |
-| `cursor` | string | — | — | Курсор для пагинации (nmId последнего элемента) |
+| Параметр      | Тип                 | Обязательный | Default  | Описание                                        |
+| ------------- | ------------------- | :----------: | -------- | ----------------------------------------------- |
+| `cabinetId`   | string (UUID)       |      ✅      | —        | ID кабинета (**в query, не в header!**)         |
+| `from`        | string (YYYY-MM-DD) |      —       | −30 дней | Начало периода                                  |
+| `to`          | string (YYYY-MM-DD) |      —       | сегодня  | Конец периода                                   |
+| `nmId`        | number              |      —       | все      | Фильтр по одному артикулу                       |
+| `anomalyOnly` | boolean             |      —       | `false`  | Только аномальные SKU                           |
+| `sortBy`      | string              |      —       | —        | Поле сортировки (напр. `returnRate`)            |
+| `sortOrder`   | `asc` \| `desc`     |      —       | `desc`   | Направление сортировки                          |
+| `limit`       | number (1-500)      |      —       | 100      | Размер страницы                                 |
+| `cursor`      | string              |      —       | —        | Курсор для пагинации (nmId последнего элемента) |
 
 #### Response
 
@@ -519,11 +520,11 @@ returnRate = 100 - buyoutRate
 
 ### Уровень уверенности (confidence)
 
-| salesCount | confidence | UI |
-|-----------|------------|-----|
-| ≥ 50 | `high` | Без пометок |
-| 10-49 | `medium` | Серый бейдж "Мало данных" |
-| < 10 | `low` | Жёлтый бейдж "Недостаточно данных" |
+| salesCount | confidence | UI                                 |
+| ---------- | ---------- | ---------------------------------- |
+| ≥ 50       | `high`     | Без пометок                        |
+| 10-49      | `medium`   | Серый бейдж "Мало данных"          |
+| < 10       | `low`      | Жёлтый бейдж "Недостаточно данных" |
 
 ### Конверсии воронки (Epic 68)
 
@@ -545,12 +546,12 @@ anomalyFlag = true если returnRate > (средний returnRate по каб�
 
 ## Обработка ошибок
 
-| Код | Причина | Действие на фронте |
-|-----|---------|---------------------|
-| `400` | Невалидные параметры (from/to, limit, etc.) | Показать validation error |
-| `401` | Нет/невалидный JWT | Redirect на /login |
-| `403` | Нет доступа к кабинету | Показать "Нет доступа" |
-| `200` + пустой `data[]` | Нет данных за период | Показать empty state "Нет данных за выбранный период" |
+| Код                     | Причина                                     | Действие на фронте                                    |
+| ----------------------- | ------------------------------------------- | ----------------------------------------------------- |
+| `400`                   | Невалидные параметры (from/to, limit, etc.) | Показать validation error                             |
+| `401`                   | Нет/невалидный JWT                          | Redirect на /login                                    |
+| `403`                   | Нет доступа к кабинету                      | Показать "Нет доступа"                                |
+| `200` + пустой `data[]` | Нет данных за период                        | Показать empty state "Нет данных за выбранный период" |
 
 ### Типичные ошибки
 
@@ -727,19 +728,19 @@ export interface BySkuReturnResponse {
 
 ## Связанные файлы
 
-| Ресурс | Путь |
-|--------|------|
-| **Funnel Controller** | `src/analytics/controllers/funnel-analytics.controller.ts` |
-| **Buyout Controller** | `src/analytics/controllers/buyout-analytics.controller.ts` |
-| **Returns Controller** | `src/analytics/controllers/return-analytics.controller.ts` |
-| **Funnel Query DTO** | `src/analytics/dto/query/funnel-query.dto.ts` |
-| **Funnel Response DTO** | `src/analytics/dto/response/funnel-response.dto.ts` |
-| **Buyout DTOs** | `src/analytics/dto/buyout-rate.dto.ts` |
-| **Return Query DTO** | `src/analytics/dto/return-analytics-query.dto.ts` |
-| **Return Response DTO** | `src/analytics/dto/return-analytics-response.dto.ts` |
-| **Buyout Formula** | `src/analytics/utils/buyout-formula.ts` |
-| **WB Status Classifier** | `src/analytics/utils/wb-status-classifier.ts` |
-| **Test API: Funnel** | `test-api/29-funnel-analytics.http` |
-| **Test API: Buyout** | `test-api/32-buyout-analytics.http` |
-| **Test API: Returns** | `test-api/33-return-analytics.http` |
-| **Swagger UI** | `http://localhost:3000/api` |
+| Ресурс                   | Путь                                                       |
+| ------------------------ | ---------------------------------------------------------- |
+| **Funnel Controller**    | `src/analytics/controllers/funnel-analytics.controller.ts` |
+| **Buyout Controller**    | `src/analytics/controllers/buyout-analytics.controller.ts` |
+| **Returns Controller**   | `src/analytics/controllers/return-analytics.controller.ts` |
+| **Funnel Query DTO**     | `src/analytics/dto/query/funnel-query.dto.ts`              |
+| **Funnel Response DTO**  | `src/analytics/dto/response/funnel-response.dto.ts`        |
+| **Buyout DTOs**          | `src/analytics/dto/buyout-rate.dto.ts`                     |
+| **Return Query DTO**     | `src/analytics/dto/return-analytics-query.dto.ts`          |
+| **Return Response DTO**  | `src/analytics/dto/return-analytics-response.dto.ts`       |
+| **Buyout Formula**       | `src/analytics/utils/buyout-formula.ts`                    |
+| **WB Status Classifier** | `src/analytics/utils/wb-status-classifier.ts`              |
+| **Test API: Funnel**     | `test-api/29-funnel-analytics.http`                        |
+| **Test API: Buyout**     | `test-api/32-buyout-analytics.http`                        |
+| **Test API: Returns**    | `test-api/33-return-analytics.http`                        |
+| **Swagger UI**           | `http://localhost:3000/api`                                |

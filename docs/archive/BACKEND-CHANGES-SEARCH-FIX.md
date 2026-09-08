@@ -17,6 +17,7 @@ Product search by partial article number (e.g., "3216") was not working - return
 **File**: `src/products/products.service.ts`
 
 ### Before:
+
 ```typescript
 // Search delegated to WB API (doesn't support partial article search)
 if (query.q) {
@@ -25,6 +26,7 @@ if (query.q) {
 ```
 
 ### After:
+
 ```typescript
 // Client-side filtering for partial article matching
 if (query.q) {
@@ -44,12 +46,14 @@ if (query.q) {
 ## How It Works Now
 
 **Search Flow**:
+
 1. Fetch all products from WB API (cached in Redis for 1 hour)
 2. **Filter in memory** by search query (article, name, or brand)
 3. Apply other filters (category, has_cogs)
 4. Return paginated results
 
 **Search Capabilities**:
+
 - ✅ **Article (nmId)**: Partial match (case-sensitive for numbers)
   - `"3216"` → Finds `"321678606"`
 - ✅ **Product Name**: Partial match (case-insensitive)
@@ -62,10 +66,12 @@ if (query.q) {
 ## Performance
 
 **Before Fix**:
+
 - API call per search query
 - Partial article search: ❌ Broken
 
 **After Fix**:
+
 - First search: ~500ms (fetch from WB API)
 - Subsequent searches: ~50ms (filter cached data)
 - Partial article search: ✅ Works correctly
@@ -79,11 +85,13 @@ if (query.q) {
 **No Changes Required** ✅
 
 Frontend already:
+
 - ✅ Sends `q` parameter correctly (after parameter name fix)
 - ✅ Uses debounced input (500ms delay)
 - ✅ Shows search results immediately
 
 **User Experience**:
+
 - Search now works for partial article numbers
 - Faster subsequent searches (in-memory filtering)
 - Consistent behavior across all search types
@@ -95,12 +103,14 @@ Frontend already:
 **Test Case**: Search "3216"
 
 **Before**:
+
 ```
 GET /v1/products?q=3216
 → 0 results (WB API doesn't support partial article)
 ```
 
 **After**:
+
 ```
 GET /v1/products?q=3216
 → 2 results (321678606, 321670000) ✅

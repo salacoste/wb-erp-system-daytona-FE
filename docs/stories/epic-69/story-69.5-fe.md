@@ -1,11 +1,11 @@
 # Story 69.5-FE: Page Scaffold & Routing
 
-| Field | Value |
-|-------|-------|
-| Epic | 69-FE Buyout Analytics |
-| Priority | P1 |
-| SP | 3 |
-| Status | ✅ Complete |
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Epic     | 69-FE Buyout Analytics |
+| Priority | P1                     |
+| SP       | 3                      |
+| Status   | ✅ Complete            |
 
 ## Description
 
@@ -23,14 +23,16 @@
 
 ## Files
 
-| File | Action | Lines |
-|------|--------|-------|
-| `src/app/(dashboard)/analytics/buyout/page.tsx` | Created | 10 |
-| `src/app/(dashboard)/analytics/buyout/components/BuyoutPageContent.tsx` | Created | 89 |
-| `src/lib/routes.ts` | Edited (line 42) | — |
+| File                                                                    | Action           | Lines |
+| ----------------------------------------------------------------------- | ---------------- | ----- |
+| `src/app/(dashboard)/analytics/buyout/page.tsx`                         | Created          | 10    |
+| `src/app/(dashboard)/analytics/buyout/components/BuyoutPageContent.tsx` | Created          | 89    |
+| `src/lib/routes.ts`                                                     | Edited (line 42) | —     |
 
 ## Known Issues
+
 - Uses native `<select>` instead of shadcn `Select` component — design system inconsistency
 
 ## Dependencies
+
 - Blocked by: 69.2

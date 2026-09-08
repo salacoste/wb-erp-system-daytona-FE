@@ -76,8 +76,8 @@ Authorization: Bearer <admin-jwt>
 
 ### Components
 
-| Component | File | Purpose |
-|-----------|------|---------|
+| Component             | File                      | Purpose             |
+| --------------------- | ------------------------- | ------------------- |
 | `DeleteVersionDialog` | `DeleteVersionDialog.tsx` | Confirmation dialog |
 
 ### Hook
@@ -184,11 +184,11 @@ function VersionHistoryTable() {
 
 ### Button States
 
-| State | Cancel | Confirm |
-|-------|--------|---------|
-| Default | Enabled | Enabled, red variant |
-| Deleting | Disabled | Loading spinner |
-| Error | Enabled | Enabled |
+| State    | Cancel   | Confirm              |
+| -------- | -------- | -------------------- |
+| Default  | Enabled  | Enabled, red variant |
+| Deleting | Disabled | Loading spinner      |
+| Error    | Enabled  | Enabled              |
 
 ### Dialog Props
 
@@ -265,11 +265,13 @@ src/components/custom/tariffs-admin/VersionHistoryTable.tsx (add delete button a
 **Status:** ✅ Complete
 
 ### Implemented Components
+
 - `DeleteVersionDialog.tsx` (136 lines) - AlertDialog-based confirmation with loading state
 - `useDeleteTariffVersion.ts` - Delete mutation hook with cache invalidation
 - `__tests__/DeleteVersionDialog.test.tsx` - Comprehensive test coverage
 
 ### Notes
+
 Dialog prevents closing during deletion (loading state). Uses AlertDialog from shadcn/ui with proper ARIA labels. Integrated into VersionHistoryTable via state management.
 
 ---

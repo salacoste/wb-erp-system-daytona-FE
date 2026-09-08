@@ -15,7 +15,7 @@ chars: 3871
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojka-integratsii" rel="nofollow">Настройка интеграции</a>
 - <a href="#import-kartochek" rel="nofollow">Импорт карточек</a>
 - <a href="#sozdanie-kartochek-tovarov-cherez-selsup" rel="nofollow">Создание карточек товаров через Selsup</a>

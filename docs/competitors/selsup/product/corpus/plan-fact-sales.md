@@ -16,7 +16,7 @@ chars: 4328
 
 В этой статье:
 
-- 
+-
 - <a href="#zachem-nuzhen-dannyj-otchet" rel="nofollow">Зачем нужен данный отчет</a>
 - <a href="#filtry-i-poisk" rel="nofollow">Фильтры и поиск</a>
 - <a href="#plan-prodazh" rel="nofollow">План продаж</a>

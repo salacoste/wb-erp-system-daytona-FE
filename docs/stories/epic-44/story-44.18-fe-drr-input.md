@@ -18,6 +18,7 @@
 **So that** I can factor in my planned advertising costs when calculating the recommended price.
 
 **Non-goals**:
+
 - Actual advertising campaign management
 - DRR calculation from historical data
 - Multiple DRR values for different channels
@@ -30,11 +31,13 @@
 **DRR** = Доля Рекламных Расходов (Share of Advertising Expenses)
 
 ### Definition
+
 - Percentage of selling price allocated to advertising
 - Variable cost (unlike COGS, logistics - fixed costs)
 - Affects final margin calculation
 
 ### Formula Impact
+
 ```typescript
 // DRR is subtracted from margin as % of price
 advertising_cost = recommended_price * (drr_pct / 100)
@@ -45,18 +48,20 @@ advertising_cost = recommended_price * (drr_pct / 100)
 ```
 
 ### Common Values
-| Seller Type | Typical DRR |
-|-------------|-------------|
-| Новый продавец | 5-10% |
-| Средний продавец | 3-7% |
-| Топ-продавец | 2-5% |
-| Без рекламы | 0% |
+
+| Seller Type      | Typical DRR |
+| ---------------- | ----------- |
+| Новый продавец   | 5-10%       |
+| Средний продавец | 3-7%        |
+| Топ-продавец     | 2-5%        |
+| Без рекламы      | 0%          |
 
 ---
 
 ## Acceptance Criteria
 
 ### AC1: DRR Input Field
+
 - [x] Input field for "DRR" (Доля рекламных расходов)
 - [x] Numeric input with % suffix
 - [x] Range: 0-30%
@@ -65,6 +70,7 @@ advertising_cost = recommended_price * (drr_pct / 100)
 - [x] Slider + input combo (like margin slider)
 
 ### AC2: Field Label and Tooltip
+
 - [x] Label: "DRR (Доля рекламных расходов)"
 - [x] Tooltip explaining:
   - What DRR means
@@ -72,19 +78,22 @@ advertising_cost = recommended_price * (drr_pct / 100)
   - Typical values for different seller types
 
 ### AC3: Visual Feedback
+
 - [x] Color indicator based on DRR level:
   - 0-3%: Green (low advertising spend)
   - 3-7%: Yellow (moderate)
   - 7-15%: Orange (high)
-  - >15%: Red (very high)
+  - > 15%: Red (very high)
 - [x] Warning message if DRR > 15%
 
 ### AC4: Advertising Cost Preview
+
 - [ ] Show calculated advertising cost in ₽ (when price available)
 - [ ] Format: "Расходы на рекламу: X ₽"
 - [ ] Update in real-time as DRR or price changes
 
 ### AC5: Form State Integration
+
 - [ ] Store `drr_pct` in form state
 - [ ] Include in calculation request
 - [ ] Reset to default (5%) on form reset
@@ -103,6 +112,7 @@ advertising_cost = recommended_price * (drr_pct / 100)
 ### Relationship to Existing Fields
 
 The existing form has `advertising_pct` field. This story:
+
 1. **Enhances** the existing `advertising_pct` field with slider + preview UI
 2. **Keeps** the backend field name as `advertising_pct` (for API compatibility)
 3. **Labels** it as "DRR" in the UI for seller familiarity
@@ -114,6 +124,7 @@ The existing form has `advertising_pct` field. This story:
 ### Backend Integration
 
 **Price Calculator Request** (`POST /v1/products/price-calculator`):
+
 ```json
 {
   "advertising_pct": 5.0,        // DRR: 0-100% (typically 0-30%)
@@ -124,6 +135,7 @@ The existing form has `advertising_pct` field. This story:
 ```
 
 **Response includes advertising in breakdown:**
+
 ```json
 {
   "result": {
@@ -141,6 +153,7 @@ The existing form has `advertising_pct` field. This story:
 ```
 
 **Important Notes:**
+
 - `advertising_pct` is a **variable cost** (percentage of selling price)
 - NOT included in **minimum price** calculation (only fixed costs)
 - Included in **recommended price** calculation
@@ -368,26 +381,26 @@ When DRR > 15%:
 
 ### Invariants & Edge Cases
 
-| Scenario | Handling |
-|----------|----------|
-| DRR = 0% | Valid - no advertising, hide cost preview |
-| DRR = 30% | Maximum recommended value (soft limit) |
-| DRR > 30% | Allow up to 100%, show strong warning above 15% |
-| DRR negative | Validation error: "DRR не может быть отрицательным" |
-| No price calculated | Don't show advertising cost preview |
-| Form reset | Reset to 5% (default) |
-| Slider + input desync | Input always takes priority, slider follows |
+| Scenario                   | Handling                                             |
+| -------------------------- | ---------------------------------------------------- |
+| DRR = 0%                   | Valid - no advertising, hide cost preview            |
+| DRR = 30%                  | Maximum recommended value (soft limit)               |
+| DRR > 30%                  | Allow up to 100%, show strong warning above 15%      |
+| DRR negative               | Validation error: "DRR не может быть отрицательным"  |
+| No price calculated        | Don't show advertising cost preview                  |
+| Form reset                 | Reset to 5% (default)                                |
+| Slider + input desync      | Input always takes priority, slider follows          |
 | DRR causes negative margin | Show error: "DRR слишком высокий для заданной маржи" |
-| Mobile viewport | Full-width slider, input below |
+| Mobile viewport            | Full-width slider, input below                       |
 
 ### DRR Level Classification
 
-| Range | Level | Color | Description |
-|-------|-------|-------|-------------|
-| 0-3% | Низкий | Green | Low ad spend, organic sales |
-| 3-7% | Умеренный | Yellow | Moderate spend, typical for established sellers |
-| 7-15% | Высокий | Orange | High spend, growth focus |
-| >15% | Очень высокий | Red | Very high, potential profitability risk |
+| Range | Level         | Color  | Description                                     |
+| ----- | ------------- | ------ | ----------------------------------------------- |
+| 0-3%  | Низкий        | Green  | Low ad spend, organic sales                     |
+| 3-7%  | Умеренный     | Yellow | Moderate spend, typical for established sellers |
+| 7-15% | Высокий       | Orange | High spend, growth focus                        |
+| >15%  | Очень высокий | Red    | Very high, potential profitability risk         |
 
 ---
 
@@ -421,6 +434,7 @@ When DRR > 15%:
 ## Testing Requirements
 
 ### Unit Tests
+
 - [x] DrrSlider renders with default value
 - [x] Slider and input sync correctly
 - [x] Level badge changes based on value
@@ -428,6 +442,7 @@ When DRR > 15%:
 - [x] Advertising cost preview displays
 
 ### Integration Tests
+
 - [x] DRR affects calculation results (via PercentageCostsFormSection)
 - [x] Form reset clears to default
 - [x] Two-level pricing reflects DRR
@@ -437,12 +452,14 @@ When DRR > 15%:
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/DrrSlider.tsx` | UPDATED | 202 | Enhanced with accessibility (aria-labels, role="alert") |
-| `src/components/custom/price-calculator/__tests__/DrrSlider.test.tsx` | UPDATED | +50 | Added accessibility tests |
+
+| File                                                                  | Change Type | Lines (Est.) | Description                                             |
+| --------------------------------------------------------------------- | ----------- | ------------ | ------------------------------------------------------- |
+| `src/components/custom/price-calculator/DrrSlider.tsx`                | UPDATED     | 202          | Enhanced with accessibility (aria-labels, role="alert") |
+| `src/components/custom/price-calculator/__tests__/DrrSlider.test.tsx` | UPDATED     | +50          | Added accessibility tests                               |
 
 ### Change Log
+
 - 2026-01-21: Enhanced DrrSlider with WCAG 2.1 AA accessibility
   - Added aria-label, aria-valuenow, aria-valuemin, aria-valuemax, aria-valuetext to Slider
   - Added aria-label to Input
@@ -460,13 +477,14 @@ When DRR > 15%:
 **Gate Decision**: PASS
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | DRR Input Field | ✅ | Slider + Input combo, 0-30% range, 0.5% step, default 5% |
-| AC2 | Label and Tooltip | ✅ | Label with FieldTooltip explaining DRR for seller types |
-| AC3 | Visual Feedback | ✅ | Color-coded badge (green/yellow/orange/red) with level labels |
-| AC4 | Advertising Cost Preview | ✅ | Shows formatted cost in ₽ when advertisingCost prop provided |
-| AC5 | Form State Integration | ✅ | Integrated via PercentageCostsFormSection in PriceCalculatorForm |
+
+| AC  | Requirement              | Status | Evidence                                                         |
+| --- | ------------------------ | ------ | ---------------------------------------------------------------- |
+| AC1 | DRR Input Field          | ✅     | Slider + Input combo, 0-30% range, 0.5% step, default 5%         |
+| AC2 | Label and Tooltip        | ✅     | Label with FieldTooltip explaining DRR for seller types          |
+| AC3 | Visual Feedback          | ✅     | Color-coded badge (green/yellow/orange/red) with level labels    |
+| AC4 | Advertising Cost Preview | ✅     | Shows formatted cost in ₽ when advertisingCost prop provided     |
+| AC5 | Form State Integration   | ✅     | Integrated via PercentageCostsFormSection in PriceCalculatorForm |
 
 ---
 

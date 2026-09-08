@@ -9,6 +9,7 @@
 ## Problem
 
 The codebase renders percentages two ways:
+
 - **Canonical**: `formatPercentage` (`src/lib/utils.ts`) → `"15,5 %"` (comma decimal + NBSP), per the
   documented rule (`frontend/CLAUDE.md` § Formatters).
 - **Dot-locale (wrong)**: inline `` `${value.toFixed(N)}%` `` / `value.toFixed(N) + '%'` → `"15.5%"`

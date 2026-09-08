@@ -17,7 +17,7 @@ chars: 4467
 
 В этой статье:
 
-- 
+-
 - <a href="#klyuchevye-preimushhestva" rel="nofollow">Ключевые преимущества</a>
 - <a href="#vyberite-kategoriyu-marketplejsa" rel="nofollow">Выберите категорию маркетплейса</a>
 - <a href="#kak-eto-rabotaet" rel="nofollow">Как это работает?</a>

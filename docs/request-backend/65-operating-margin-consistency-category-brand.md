@@ -8,6 +8,7 @@
 ## Problem Description
 
 ### Symptom
+
 Category page (`/analytics/category`) showed **66.52%** margin while SKU page (`/analytics/sku`) showed **46.8%** for the same week (W50). Both pages displayed "операционная маржа" label, but values were drastically different.
 
 ### Root Cause Analysis
@@ -35,6 +36,7 @@ Category page (`/analytics/category`) showed **66.52%** margin while SKU page (`
 ##### 1. Method `aggregateByCategoryForRange` (lines 2731-2838)
 
 **Added to SQL query type definition:**
+
 ```typescript
 // Epic 26: Operating expenses
 storage_cost_rub: Decimal;
@@ -53,9 +55,11 @@ operating_margin_pct: Decimal | null;
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: Fixed operating margin inconsistency between SKU and Category/Brand pages. The `aggregateByCategoryForRange` and `aggregateByBrandForRange` methods were updated to include all operating expense fields (storage, penalties, paid_acceptance, acquiring, loyalty, commission, other_adjustments) and calculate true `operating_margin_pct` consistently across all views.
 **Frontend Action**: No further action needed unless noted above.
+
 ```sql
 -- Epic 26: Operating expenses aggregates
 COALESCE(SUM(storage_cost_rub), 0) as storage_cost_rub,
@@ -76,6 +80,7 @@ END as operating_margin_pct
 ```
 
 **Added to response mapping:**
+
 ```typescript
 // Epic 26: Operating expenses
 storage_cost_rub: row.storage_cost_rub.toString(),
@@ -111,6 +116,7 @@ operating_margin_pct: Decimal | null;
 ```
 
 **Response mapping:**
+
 ```typescript
 // Epic 26: Operating expenses
 storage_cost: Number(row.storage_cost),
@@ -133,6 +139,7 @@ operating_margin_pct: row.operating_margin_pct ? Number(row.operating_margin_pct
 ##### 1. Hook `useMarginAnalyticsByCategory` (lines 409-441)
 
 **Added field mapping in transformation:**
+
 ```typescript
 // Epic 26: Operating expenses and profit
 storage_cost: item.storage_cost_rub ? parseFloat(item.storage_cost_rub) : undefined,
@@ -156,6 +163,7 @@ skus_with_expenses_only: item.skus_with_expenses_only,
 #### File: `frontend/src/app/(dashboard)/analytics/category/page.tsx`
 
 **Added fallback logic for margin calculation:**
+
 ```typescript
 avgMargin: (() => {
   // Epic 31 fix: Use operating_margin_pct for consistency with SKU page
@@ -190,6 +198,7 @@ avgMargin: (() => {
 ## Data Flow
 
 ### Before Fix
+
 ```
 Frontend (category page)
     ↓ weekStart=2024-W50&weekEnd=2024-W50
@@ -203,6 +212,7 @@ Display: "операционная маржа: 66.52%" ❌ WRONG
 ```
 
 ### After Fix
+
 ```
 Frontend (category page)
     ↓ weekStart=2024-W50&weekEnd=2024-W50
@@ -219,35 +229,36 @@ Display: "операционная маржа: 46.8%" ✅ CORRECT
 
 All expense data comes from `weekly_margin_fact` table which contains:
 
-| Column | Description |
-|--------|-------------|
-| `revenue_net_rub` | Net revenue (К перечислению) |
-| `cogs_rub` | Cost of Goods Sold |
-| `gross_profit_rub` | Gross Profit = revenue - COGS |
-| `logistics_cost_rub` | Logistics (delivery + return) |
-| `storage_cost_rub` | Storage costs |
-| `penalties_rub` | Penalties |
-| `paid_acceptance_cost_rub` | Paid acceptance |
-| `acquiring_fee_rub` | Acquiring fee |
-| `loyalty_fee_rub` | Loyalty program fee |
-| `loyalty_compensation_rub` | Loyalty compensation |
-| `commission_rub` | WB Commission |
-| `other_adjustments_rub` | Other adjustments |
-| `total_expenses_rub` | Sum of all expenses |
-| `operating_profit_rub` | Operating Profit = gross_profit - total_expenses |
+| Column                     | Description                                             |
+| -------------------------- | ------------------------------------------------------- |
+| `revenue_net_rub`          | Net revenue (К перечислению)                            |
+| `cogs_rub`                 | Cost of Goods Sold                                      |
+| `gross_profit_rub`         | Gross Profit = revenue - COGS                           |
+| `logistics_cost_rub`       | Logistics (delivery + return)                           |
+| `storage_cost_rub`         | Storage costs                                           |
+| `penalties_rub`            | Penalties                                               |
+| `paid_acceptance_cost_rub` | Paid acceptance                                         |
+| `acquiring_fee_rub`        | Acquiring fee                                           |
+| `loyalty_fee_rub`          | Loyalty program fee                                     |
+| `loyalty_compensation_rub` | Loyalty compensation                                    |
+| `commission_rub`           | WB Commission                                           |
+| `other_adjustments_rub`    | Other adjustments                                       |
+| `total_expenses_rub`       | Sum of all expenses                                     |
+| `operating_profit_rub`     | Operating Profit = gross_profit - total_expenses        |
 | `operating_margin_percent` | Operating Margin % = (operating_profit / revenue) × 100 |
 
 ## Verification
 
 After fix, all three pages should show consistent margin values:
 
-| Page | Week | Margin Type | Expected Value |
-|------|------|-------------|----------------|
-| `/analytics/sku` | W50 | Operating | ~46-47% |
-| `/analytics/category` | W50 | Operating | ~46-47% |
-| `/analytics/brand` | W50 | Operating | ~46-47% |
+| Page                  | Week | Margin Type | Expected Value |
+| --------------------- | ---- | ----------- | -------------- |
+| `/analytics/sku`      | W50  | Operating   | ~46-47%        |
+| `/analytics/category` | W50  | Operating   | ~46-47%        |
+| `/analytics/brand`    | W50  | Operating   | ~46-47%        |
 
 Note: Slight variations are possible due to:
+
 - Rounding during aggregation
 - Different averaging methods (simple average vs weighted average)
 

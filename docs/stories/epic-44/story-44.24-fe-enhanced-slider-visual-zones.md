@@ -16,6 +16,7 @@
 **So that** I can immediately understand if my target margin is healthy without calculating.
 
 **Non-goals**:
+
 - Slider functionality changes
 - New slider types
 - Validation logic changes
@@ -25,12 +26,14 @@
 ## Background: Current State
 
 The current `MarginSlider.tsx` component is a basic slider without visual guidance:
+
 - Plain Radix slider with default styling
 - No indication of healthy vs risky margin zones
 - User must mentally calculate if 20% is good or bad
 - No color coding or labels for value ranges
 
 ### UX Audit Finding #6
+
 > "Нет визуальных зон (low/med/high)" - Users can't quickly assess if their margin choice is optimal
 
 ---
@@ -38,6 +41,7 @@ The current `MarginSlider.tsx` component is a basic slider without visual guidan
 ## Acceptance Criteria
 
 ### AC1: Visual Zone Overlay
+
 - [ ] Add zone indicators behind slider track:
   - Low (0-10%): Red zone - `bg-red-100`
   - Medium (10-25%): Yellow zone - `bg-yellow-100`
@@ -46,6 +50,7 @@ The current `MarginSlider.tsx` component is a basic slider without visual guidan
 - [ ] Zones visible but don't overwhelm slider
 
 ### AC2: Dynamic Track Color
+
 - [ ] Slider fill color changes based on current value:
   - Low (0-10%): `bg-red-500`
   - Medium (10-25%): `bg-yellow-500`
@@ -53,6 +58,7 @@ The current `MarginSlider.tsx` component is a basic slider without visual guidan
 - [ ] Smooth color transition as user drags
 
 ### AC3: Value Badge Enhancement
+
 - [ ] Current value displayed in colored badge:
   - Low: `bg-red-100 text-red-700 border-red-200`
   - Medium: `bg-yellow-100 text-yellow-700 border-yellow-200`
@@ -60,6 +66,7 @@ The current `MarginSlider.tsx` component is a basic slider without visual guidan
 - [ ] Badge has subtle shadow for depth
 
 ### AC4: Zone Labels
+
 - [ ] Add labels below slider:
   - "Низкая" at 5%
   - "Средняя" at 17.5%
@@ -68,6 +75,7 @@ The current `MarginSlider.tsx` component is a basic slider without visual guidan
 - [ ] Labels are small and unobtrusive (`text-xs`)
 
 ### AC5: Tooltip on Hover
+
 - [ ] Show tooltip on thumb hover with current value
 - [ ] Tooltip includes zone label: "20% (Средняя маржа)"
 - [ ] Tooltip follows thumb position
@@ -78,10 +86,10 @@ The current `MarginSlider.tsx` component is a basic slider without visual guidan
 
 ### Files to Modify
 
-| File | Change | Lines Est. |
-|------|--------|------------|
-| `src/components/custom/price-calculator/MarginSlider.tsx` | Major visual upgrade | ~50 |
-| `src/components/ui/slider.tsx` | May need custom variant (optional) | ~10 |
+| File                                                      | Change                             | Lines Est. |
+| --------------------------------------------------------- | ---------------------------------- | ---------- |
+| `src/components/custom/price-calculator/MarginSlider.tsx` | Major visual upgrade               | ~50        |
+| `src/components/ui/slider.tsx`                            | May need custom variant (optional) | ~10        |
 
 ### New Component: EnhancedMarginSlider
 
@@ -134,20 +142,21 @@ const getValueBadgeClasses = (zone: string) => cn(
 
 ### Design Tokens
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `red-100` | `#fee2e2` | Low zone bg |
-| `red-500` | `#ef4444` | Low zone track |
-| `yellow-100` | `#fef9c3` | Medium zone bg |
+| Token        | Value     | Usage             |
+| ------------ | --------- | ----------------- |
+| `red-100`    | `#fee2e2` | Low zone bg       |
+| `red-500`    | `#ef4444` | Low zone track    |
+| `yellow-100` | `#fef9c3` | Medium zone bg    |
 | `yellow-500` | `#eab308` | Medium zone track |
-| `green-100` | `#dcfce7` | High zone bg |
-| `green-500` | `#22c55e` | High zone track |
+| `green-100`  | `#dcfce7` | High zone bg      |
+| `green-500`  | `#22c55e` | High zone track   |
 
 ---
 
 ## Design Specifications
 
 ### Before (Current Slider)
+
 ```
 [================●=============================]
                  ↑
@@ -155,6 +164,7 @@ const getValueBadgeClasses = (zone: string) => cn(
 ```
 
 ### After (Enhanced Slider with Zones)
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                                                             │
@@ -178,6 +188,7 @@ const getValueBadgeClasses = (zone: string) => cn(
 ```
 
 ### Visual Mockup (Slider States)
+
 ```
 Value = 5%:
 [▓▓▓▓▓●░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
@@ -344,16 +355,16 @@ export function EnhancedMarginSlider({
 
 ### Test Cases
 
-| # | Test | Expected Result |
-|---|------|-----------------|
-| 1 | Set value to 5% | Red track fill, "Низкая" badge |
-| 2 | Set value to 15% | Yellow track fill, "Средняя" badge |
-| 3 | Set value to 35% | Green track fill, "Высокая" badge |
-| 4 | View zone overlay | Three colored zones visible behind track |
-| 5 | View zone labels | Labels aligned with zone positions |
-| 6 | Drag slider across zones | Track color transitions smoothly |
-| 7 | Use keyboard arrows | Value changes, zone updates |
-| 8 | View on mobile | Zones and labels still visible |
+| #   | Test                     | Expected Result                          |
+| --- | ------------------------ | ---------------------------------------- |
+| 1   | Set value to 5%          | Red track fill, "Низкая" badge           |
+| 2   | Set value to 15%         | Yellow track fill, "Средняя" badge       |
+| 3   | Set value to 35%         | Green track fill, "Высокая" badge        |
+| 4   | View zone overlay        | Three colored zones visible behind track |
+| 5   | View zone labels         | Labels aligned with zone positions       |
+| 6   | Drag slider across zones | Track color transitions smoothly         |
+| 7   | Use keyboard arrows      | Value changes, zone updates              |
+| 8   | View on mobile           | Zones and labels still visible           |
 
 ---
 
@@ -386,6 +397,7 @@ export function EnhancedMarginSlider({
 ## Existing Slider Files Reference
 
 The current slider uses the shadcn/ui Slider component:
+
 - Base component: `src/components/ui/slider.tsx`
 - Current usage: `src/components/custom/price-calculator/MarginSlider.tsx`
 
@@ -396,12 +408,14 @@ The enhancement adds a wrapper around the existing Slider without modifying the 
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/MarginSlider.tsx` | MAJOR UPDATE | ~80 | Add zones, colors, labels |
-| `src/components/custom/price-calculator/TargetMarginSection.tsx` | UPDATE | ~5 | Use enhanced slider |
+
+| File                                                             | Change Type  | Lines (Est.) | Description               |
+| ---------------------------------------------------------------- | ------------ | ------------ | ------------------------- |
+| `src/components/custom/price-calculator/MarginSlider.tsx`        | MAJOR UPDATE | ~80          | Add zones, colors, labels |
+| `src/components/custom/price-calculator/TargetMarginSection.tsx` | UPDATE       | ~5           | Use enhanced slider       |
 
 ### Change Log
+
 _(To be filled by Dev Agent during implementation)_
 
 ---
@@ -413,13 +427,14 @@ _(To be filled by Dev Agent during implementation)_
 **Gate Decision**: ✅ PASSED
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Visual zone overlay | ✅ PASSED | MarginSlider.tsx:99-103 - Zone overlay with `bg-red-100 w-[20%]`, `bg-yellow-100 w-[30%]`, `bg-green-100 flex-1` |
-| AC2 | Dynamic track color | ✅ PASSED | MarginSlider.tsx:24-28 - getMarginZone() function determines zone (low/medium/high) based on value thresholds |
-| AC3 | Value badge enhancement | ✅ PASSED | MarginSlider.tsx:33-37 - badgeStyles with colored backgrounds (red-100/yellow-100/green-100), text colors, and borders; line 125-132 badge with shadow-sm |
-| AC4 | Zone labels | ✅ PASSED | MarginSlider.tsx:117-121 - Labels "Низкая" (red), "Средняя" (yellow), "Высокая" (green) with flex justify-between and text-xs styling |
-| AC5 | Tooltip on hover | ⚠️ PARTIAL | Native input number behavior provides value feedback; tooltip not implemented but zone badge displays current zone label clearly |
+
+| AC  | Requirement             | Status     | Evidence                                                                                                                                                  |
+| --- | ----------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AC1 | Visual zone overlay     | ✅ PASSED  | MarginSlider.tsx:99-103 - Zone overlay with `bg-red-100 w-[20%]`, `bg-yellow-100 w-[30%]`, `bg-green-100 flex-1`                                          |
+| AC2 | Dynamic track color     | ✅ PASSED  | MarginSlider.tsx:24-28 - getMarginZone() function determines zone (low/medium/high) based on value thresholds                                             |
+| AC3 | Value badge enhancement | ✅ PASSED  | MarginSlider.tsx:33-37 - badgeStyles with colored backgrounds (red-100/yellow-100/green-100), text colors, and borders; line 125-132 badge with shadow-sm |
+| AC4 | Zone labels             | ✅ PASSED  | MarginSlider.tsx:117-121 - Labels "Низкая" (red), "Средняя" (yellow), "Высокая" (green) with flex justify-between and text-xs styling                     |
+| AC5 | Tooltip on hover        | ⚠️ PARTIAL | Native input number behavior provides value feedback; tooltip not implemented but zone badge displays current zone label clearly                          |
 
 ---
 

@@ -5,7 +5,8 @@ Documents within the `another-folder/` directory:
 ## [Nested Document](./another-folder/document.md)
 
 Description of nested document.
-```
+
+````
 
 ## Index Entry Format
 
@@ -15,7 +16,7 @@ Each entry should follow this format:
 ## [Document Title](relative/path/to/file.md)
 
 Brief description of the document's purpose and contents.
-```
+````
 
 ## Rules of Operation
 

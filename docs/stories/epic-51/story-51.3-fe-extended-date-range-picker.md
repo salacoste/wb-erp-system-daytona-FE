@@ -18,6 +18,7 @@
 **So that** I can quickly access common analysis periods and receive smart aggregation suggestions.
 
 **Non-goals**:
+
 - Week-based selection (existing `DateRangePicker` handles ISO weeks)
 - Backend API integration (handled by parent components)
 
@@ -128,10 +129,10 @@
 
 ### Main Component
 
-| File | Lines (Est.) | Description |
-|------|--------------|-------------|
-| `src/components/custom/date-range-picker-extended.tsx` | ~180 | Main date range picker component |
-| `src/components/custom/date-range-picker-extended.test.tsx` | ~120 | Unit tests |
+| File                                                        | Lines (Est.) | Description                      |
+| ----------------------------------------------------------- | ------------ | -------------------------------- |
+| `src/components/custom/date-range-picker-extended.tsx`      | ~180         | Main date range picker component |
+| `src/components/custom/date-range-picker-extended.test.tsx` | ~120         | Unit tests                       |
 
 ---
 
@@ -520,20 +521,20 @@ describe('Utility Functions', () => {
 
 ### Required (Blocking)
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
+| Dependency                       | Status | Notes                                 |
+| -------------------------------- | ------ | ------------------------------------- |
 | `src/components/ui/calendar.tsx` | Exists | shadcn/ui Calendar (react-day-picker) |
-| `src/components/ui/popover.tsx` | Exists | shadcn/ui Popover |
-| `src/components/ui/button.tsx` | Exists | shadcn/ui Button |
-| `date-fns` | Exists | Date manipulation library |
-| `date-fns/locale/ru` | Exists | Russian locale for date-fns |
+| `src/components/ui/popover.tsx`  | Exists | shadcn/ui Popover                     |
+| `src/components/ui/button.tsx`   | Exists | shadcn/ui Button                      |
+| `date-fns`                       | Exists | Date manipulation library             |
+| `date-fns/locale/ru`             | Exists | Russian locale for date-fns           |
 
 ### Non-Blocking
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
+| Dependency    | Status  | Notes                                               |
+| ------------- | ------- | --------------------------------------------------- |
 | Story 51.8-FE | Pending | FBS Orders Analytics Page (consumes this component) |
-| Story 51.7-FE | Pending | Period Comparison UI (may reuse) |
+| Story 51.7-FE | Pending | Period Comparison UI (may reuse)                    |
 
 ---
 
@@ -582,6 +583,7 @@ The shadcn/ui Calendar uses `react-day-picker` v9. Key configurations:
 ### Reusability
 
 This component is designed to be reusable across:
+
 - Epic 51-FE: FBS Historical Analytics
 - Future analytics features requiring date range selection
 - Any feature needing 365-day date selection
@@ -589,6 +591,7 @@ This component is designed to be reusable across:
 ### Mobile Considerations
 
 On mobile (< md breakpoint):
+
 - Stack calendars vertically
 - Use full-width trigger button
 - Consider Sheet instead of Popover for better UX
@@ -605,8 +608,8 @@ On mobile (< md breakpoint):
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author                 | Change                 |
+| ---------- | ---------------------- | ---------------------- |
 | 2026-01-29 | Claude Code (PM Agent) | Initial story creation |
 
 ---

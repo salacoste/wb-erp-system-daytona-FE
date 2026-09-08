@@ -5,7 +5,8 @@
 - Tests validate behavior and close gaps
 - Strict adherence to allowed story update areas
 - Gate ownership remains with QA; Dev signals readiness via Status
-```
+
+````
 
 ## Task: advanced-elicitation
 Source: .bmad-core/tasks/advanced-elicitation.md
@@ -13,3 +14,4 @@ Source: .bmad-core/tasks/advanced-elicitation.md
 
 ```md
 <!-- Powered by BMAD™ Core -->
+````

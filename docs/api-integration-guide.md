@@ -23,12 +23,14 @@
 This guide provides a comprehensive mapping between frontend API clients and backend documentation. It serves as the single source of truth for understanding which backend endpoints are used by which frontend components, and where to find authoritative specifications.
 
 **Purpose:**
+
 - Map all frontend API usage to backend HTTP test files
 - Cross-reference frontend specs with backend implementation docs
 - Provide quick navigation between frontend and backend code
 - Enable efficient API testing and validation
 
 **Target Audience:**
+
 - Frontend developers implementing API integration
 - Backend developers verifying API contracts
 - QA engineers testing API endpoints
@@ -45,7 +47,9 @@ This guide provides a comprehensive mapping between frontend API clients and bac
 These files contain **authoritative API specifications** with working examples for all endpoints. They are maintained by the backend team and serve as the single source of truth for API contracts.
 
 **How to Access:**
+
 1. **From Frontend Repository:**
+
    ```bash
    cd /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new
    ls test-api/*.http
@@ -82,16 +86,17 @@ These documents contain frontend-specific requirements, integration notes, and i
 
 ### Storage Analytics (Epic 24) - 100% Mapped
 
-| Frontend Client | Endpoint | Backend HTTP File | Frontend Spec Docs | Status |
-|----------------|----------|-------------------|-------------------|--------|
-| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/by-sku` | `12-storage.http` | `request-backend/36-epic-24-paid-storage-analytics-api.md` | ✅ Complete |
-| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/top-consumers` | `12-storage.http` | `request-backend/36-epic-24-paid-storage-analytics-api.md` | ✅ Complete |
-| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/trends` | `12-storage.http` | `request-backend/36-epic-24-paid-storage-analytics-api.md` | ✅ Complete |
-| `lib/api/storage-analytics.ts` | POST `/v1/imports/paid-storage` | `12-storage.http` | `request-backend/51-paid-storage-import-methods.md` | ✅ Complete |
-| `lib/api/storage-analytics.ts` | GET `/v1/imports/{id}` | `04-imports.http` | `request-backend/39-epic-24-storage-import-json-fix.md` | ✅ Complete |
-| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/summary` | `12-storage.http` | `request-backend/52-storage-sku-breakdown-for-weekly-reports.md` | ✅ Complete |
+| Frontend Client                | Endpoint                                  | Backend HTTP File | Frontend Spec Docs                                               | Status      |
+| ------------------------------ | ----------------------------------------- | ----------------- | ---------------------------------------------------------------- | ----------- |
+| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/by-sku`        | `12-storage.http` | `request-backend/36-epic-24-paid-storage-analytics-api.md`       | ✅ Complete |
+| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/top-consumers` | `12-storage.http` | `request-backend/36-epic-24-paid-storage-analytics-api.md`       | ✅ Complete |
+| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/trends`        | `12-storage.http` | `request-backend/36-epic-24-paid-storage-analytics-api.md`       | ✅ Complete |
+| `lib/api/storage-analytics.ts` | POST `/v1/imports/paid-storage`           | `12-storage.http` | `request-backend/51-paid-storage-import-methods.md`              | ✅ Complete |
+| `lib/api/storage-analytics.ts` | GET `/v1/imports/{id}`                    | `04-imports.http` | `request-backend/39-epic-24-storage-import-json-fix.md`          | ✅ Complete |
+| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/summary`       | `12-storage.http` | `request-backend/52-storage-sku-breakdown-for-weekly-reports.md` | ✅ Complete |
 
 **Key Features:**
+
 - Per-SKU storage costs with filtering and pagination
 - Top consumers ranking with optional revenue ratio
 - Time-series trends with multi-metric support
@@ -103,11 +108,12 @@ These documents contain frontend-specific requirements, integration notes, and i
 
 ### Price Calculator (Epic 43/44) - 100% Mapped
 
-| Frontend Client | Endpoint | Backend HTTP File | Frontend Spec Docs | Status |
-|----------------|----------|-------------------|-------------------|--------|
+| Frontend Client               | Endpoint                             | Backend HTTP File          | Frontend Spec Docs                                   | Status      |
+| ----------------------------- | ------------------------------------ | -------------------------- | ---------------------------------------------------- | ----------- |
 | `lib/api/price-calculator.ts` | POST `/v1/products/price-calculator` | `15-price-calculator.http` | `request-backend/95-epic-43-price-calculator-api.md` | ✅ Complete |
 
 **Key Features:**
+
 - Target margin-based price calculation
 - Comprehensive cost breakdown (COGS, logistics, buyback, advertising, storage)
 - Recommended price with actual margin percentage
@@ -115,6 +121,7 @@ These documents contain frontend-specific requirements, integration notes, and i
 - Real-time calculation support
 
 **Request Example:**
+
 ```typescript
 const result = await calculatePrice({
   target_margin_pct: 20.0,
@@ -132,16 +139,17 @@ const result = await calculatePrice({
 
 ### Telegram Notifications (Epic 34) - 100% Mapped
 
-| Frontend Client | Endpoint | Backend HTTP File | Frontend Spec Docs | Status |
-|----------------|----------|-------------------|-------------------|--------|
-| `lib/api/notifications.ts` | POST `/v1/notifications/telegram/bind` | `13-notifications.http` | `request-backend/89-epic-34-analytics-endpoint.md` | ✅ Complete |
-| `lib/api/notifications.ts` | GET `/v1/notifications/telegram/status` | `13-notifications.http` | `request-backend/89-telegram-notifications-integration.md` | ✅ Complete |
-| `lib/api/notifications.ts` | DELETE `/v1/notifications/telegram/unbind` | `13-notifications.http` | `request-backend/89-epic-34-analytics-endpoint.md` | ✅ Complete |
-| `lib/api/notifications.ts` | GET `/v1/notifications/preferences` | `13-notifications.http` | `request-backend/89-epic-34-analytics-endpoint.md` | ✅ Complete |
-| `lib/api/notifications.ts` | PUT `/v1/notifications/preferences` | `13-notifications.http` | `request-backend/89-epic-34-analytics-endpoint.md` | ✅ Complete |
-| `lib/api/notifications.ts` | POST `/v1/notifications/test` | `13-notifications.http` | `request-backend/89-epic-34-analytics-endpoint.md` | ✅ Complete |
+| Frontend Client            | Endpoint                                   | Backend HTTP File       | Frontend Spec Docs                                         | Status      |
+| -------------------------- | ------------------------------------------ | ----------------------- | ---------------------------------------------------------- | ----------- |
+| `lib/api/notifications.ts` | POST `/v1/notifications/telegram/bind`     | `13-notifications.http` | `request-backend/89-epic-34-analytics-endpoint.md`         | ✅ Complete |
+| `lib/api/notifications.ts` | GET `/v1/notifications/telegram/status`    | `13-notifications.http` | `request-backend/89-telegram-notifications-integration.md` | ✅ Complete |
+| `lib/api/notifications.ts` | DELETE `/v1/notifications/telegram/unbind` | `13-notifications.http` | `request-backend/89-epic-34-analytics-endpoint.md`         | ✅ Complete |
+| `lib/api/notifications.ts` | GET `/v1/notifications/preferences`        | `13-notifications.http` | `request-backend/89-epic-34-analytics-endpoint.md`         | ✅ Complete |
+| `lib/api/notifications.ts` | PUT `/v1/notifications/preferences`        | `13-notifications.http` | `request-backend/89-epic-34-analytics-endpoint.md`         | ✅ Complete |
+| `lib/api/notifications.ts` | POST `/v1/notifications/test`              | `13-notifications.http` | `request-backend/89-epic-34-analytics-endpoint.md`         | ✅ Complete |
 
 **Key Features:**
+
 - Telegram bot binding with verification code
 - Real-time binding status polling
 - Notification preferences management (margin alerts, system events)
@@ -149,6 +157,7 @@ const result = await calculatePrice({
 - Per-cabinet notification settings
 
 **Integration Flow:**
+
 1. User clicks "Connect Telegram"
 2. Frontend calls `POST /v1/notifications/telegram/bind`
 3. Backend generates 6-digit code and deep link
@@ -160,13 +169,14 @@ const result = await calculatePrice({
 
 ### Advertising Analytics (Epic 33/36) - 100% Mapped
 
-| Frontend Client | Endpoint | Backend HTTP File | Frontend Spec Docs | Status |
-|----------------|----------|-------------------|-------------------|--------|
-| `lib/api/advertising-analytics.ts` | GET `/v1/analytics/advertising` | `07-advertising-analytics.http` | `request-backend/71-advertising-analytics-epic-33.md` | ✅ Complete |
-| `lib/api/advertising-analytics.ts` | GET `/v1/analytics/advertising/campaigns` | `07-advertising-analytics.http` | - | ✅ Complete |
+| Frontend Client                    | Endpoint                                    | Backend HTTP File               | Frontend Spec Docs                                        | Status      |
+| ---------------------------------- | ------------------------------------------- | ------------------------------- | --------------------------------------------------------- | ----------- |
+| `lib/api/advertising-analytics.ts` | GET `/v1/analytics/advertising`             | `07-advertising-analytics.http` | `request-backend/71-advertising-analytics-epic-33.md`     | ✅ Complete |
+| `lib/api/advertising-analytics.ts` | GET `/v1/analytics/advertising/campaigns`   | `07-advertising-analytics.http` | -                                                         | ✅ Complete |
 | `lib/api/advertising-analytics.ts` | GET `/v1/analytics/advertising/sync-status` | `07-advertising-analytics.http` | `request-backend/72-advertising-sync-status-404-error.md` | ✅ Complete |
 
 **Key Features:**
+
 - Multi-dimensional analytics (SKU, campaign, daily)
 - ROAS/ROI calculations with profit metrics
 - Efficiency classification (excellent/good/poor)
@@ -175,11 +185,13 @@ const result = await calculatePrice({
 - Campaign management with placement info (Request #79)
 
 **View Modes:**
+
 - `sku` - Per-product metrics with product card linking
 - `campaign` - Campaign-level aggregation
 - `daily` - Time-series performance data
 
 **Epic 36 Enhancements:**
+
 - `type` field: `merged_group` | `individual` | `undefined`
 - `imtId` field for product card linking
 - `mergedProducts` array for merged groups
@@ -189,11 +201,12 @@ const result = await calculatePrice({
 
 ### Liquidity (Epic 29) - 100% Mapped
 
-| Frontend Client | Endpoint | Backend HTTP File | Frontend Spec Docs | Status |
-|----------------|----------|-------------------|-------------------|--------|
+| Frontend Client        | Endpoint                      | Backend HTTP File            | Frontend Spec Docs                             | Status      |
+| ---------------------- | ----------------------------- | ---------------------------- | ---------------------------------------------- | ----------- |
 | `lib/api/liquidity.ts` | GET `/v1/analytics/liquidity` | `06-analytics-advanced.http` | `request-backend/55-liquidity-api-endpoint.md` | ✅ Complete |
 
 **Key Features:**
+
 - Cash position analysis (current, forecast, min required)
 - Cash gap alerts with timeline
 - Weekly burn rate analysis
@@ -204,11 +217,12 @@ const result = await calculatePrice({
 
 ### Supply Planning (Epic 28) - 100% Mapped
 
-| Frontend Client | Endpoint | Backend HTTP File | Frontend Spec Docs | Status |
-|----------------|----------|-------------------|-------------------|--------|
+| Frontend Client              | Endpoint                            | Backend HTTP File            | Frontend Spec Docs                                   | Status      |
+| ---------------------------- | ----------------------------------- | ---------------------------- | ---------------------------------------------------- | ----------- |
 | `lib/api/supply-planning.ts` | GET `/v1/analytics/supply-planning` | `06-analytics-advanced.http` | `request-backend/54-supply-planning-api-endpoint.md` | ✅ Complete |
 
 **Key Features:**
+
 - Reorder point calculations by SKU
 - Days of stock remaining (DOS)
 - Recommended order quantities
@@ -219,24 +233,24 @@ const result = await calculatePrice({
 
 ### Core Analytics (Legacy) - Mapped
 
-| Frontend Client | Endpoint | Backend HTTP File | Frontend Spec Docs | Status |
-|----------------|----------|-------------------|-------------------|--------|
+| Frontend Client       | Endpoint                                   | Backend HTTP File         | Frontend Spec Docs                                                | Status      |
+| --------------------- | ------------------------------------------ | ------------------------- | ----------------------------------------------------------------- | ----------- |
 | `lib/api.ts` (legacy) | GET `/v1/analytics/weekly/finance-summary` | `05-analytics-basic.http` | `request-backend/06-missing-expense-fields-in-finance-summary.md` | ✅ Complete |
-| `lib/api.ts` (legacy) | GET `/v1/analytics/weekly/by-sku` | `05-analytics-basic.http` | `request-backend/10-margin-analysis-time-series-endpoint.md` | ✅ Complete |
-| `lib/api.ts` (legacy) | GET `/v1/analytics/weekly/by-brand` | `05-analytics-basic.http` | - | ✅ Complete |
-| `lib/api.ts` (legacy) | GET `/v1/analytics/weekly/by-category` | `05-analytics-basic.http` | - | ✅ Complete |
-| `lib/api.ts` (legacy) | GET `/v1/analytics/cabinet-summary` | `05-analytics-basic.http` | - | ✅ Complete |
+| `lib/api.ts` (legacy) | GET `/v1/analytics/weekly/by-sku`          | `05-analytics-basic.http` | `request-backend/10-margin-analysis-time-series-endpoint.md`      | ✅ Complete |
+| `lib/api.ts` (legacy) | GET `/v1/analytics/weekly/by-brand`        | `05-analytics-basic.http` | -                                                                 | ✅ Complete |
+| `lib/api.ts` (legacy) | GET `/v1/analytics/weekly/by-category`     | `05-analytics-basic.http` | -                                                                 | ✅ Complete |
+| `lib/api.ts` (legacy) | GET `/v1/analytics/cabinet-summary`        | `05-analytics-basic.http` | -                                                                 | ✅ Complete |
 
 ---
 
 ### Product Management - Mapped
 
-| Frontend Client | Endpoint | Backend HTTP File | Frontend Spec Docs | Status |
-|----------------|----------|-------------------|-------------------|--------|
-| `lib/api.ts` (legacy) | GET `/v1/products` | `08-products.http` | `request-backend/13-products-pagination-wb-sdk-issue.md` | ✅ Complete |
-| `lib/api.ts` (legacy) | GET `/v1/products/{nmId}` | `08-products.http` | - | ✅ Complete |
-| `lib/api.ts` (legacy) | POST `/v1/products/{nmId}/cogs` | `07-cogs.http` | `request-backend/12-cogs-update-conflict-409-error.md` | ✅ Complete |
-| `lib/api.ts` (legacy) | POST `/v1/products/cogs/bulk` | `07-cogs.http` | - | ✅ Complete |
+| Frontend Client       | Endpoint                        | Backend HTTP File  | Frontend Spec Docs                                       | Status      |
+| --------------------- | ------------------------------- | ------------------ | -------------------------------------------------------- | ----------- |
+| `lib/api.ts` (legacy) | GET `/v1/products`              | `08-products.http` | `request-backend/13-products-pagination-wb-sdk-issue.md` | ✅ Complete |
+| `lib/api.ts` (legacy) | GET `/v1/products/{nmId}`       | `08-products.http` | -                                                        | ✅ Complete |
+| `lib/api.ts` (legacy) | POST `/v1/products/{nmId}/cogs` | `07-cogs.http`     | `request-backend/12-cogs-update-conflict-409-error.md`   | ✅ Complete |
+| `lib/api.ts` (legacy) | POST `/v1/products/cogs/bulk`   | `07-cogs.http`     | -                                                        | ✅ Complete |
 
 ---
 
@@ -244,43 +258,43 @@ const result = await calculatePrice({
 
 ### Core Files
 
-| File | Purpose | Endpoint Categories |
-|------|---------|---------------------|
-| `00-variables.http` | Environment setup | Variables, authentication |
-| `01-auth.http` | Authentication | `POST /v1/auth/login`, `POST /v1/auth/register` |
-| `02-health.http` | Health checks | `GET /v1/health` |
-| `03-cabinets.http` | Cabinet management | `GET/POST/PUT /v1/cabinets`, `POST /v1/cabinets/{id}/keys` |
-| `04-imports.http` | Import operations | `POST /v1/imports/*`, `GET /v1/imports/{id}` |
+| File                | Purpose            | Endpoint Categories                                        |
+| ------------------- | ------------------ | ---------------------------------------------------------- |
+| `00-variables.http` | Environment setup  | Variables, authentication                                  |
+| `01-auth.http`      | Authentication     | `POST /v1/auth/login`, `POST /v1/auth/register`            |
+| `02-health.http`    | Health checks      | `GET /v1/health`                                           |
+| `03-cabinets.http`  | Cabinet management | `GET/POST/PUT /v1/cabinets`, `POST /v1/cabinets/{id}/keys` |
+| `04-imports.http`   | Import operations  | `POST /v1/imports/*`, `GET /v1/imports/{id}`               |
 
 ### Analytics Files
 
-| File | Purpose | Endpoint Categories |
-|------|---------|---------------------|
-| `05-analytics-basic.http` | Basic analytics | `GET /v1/analytics/weekly/*` |
-| `06-analytics-advanced.http` | Advanced analytics | `GET /v1/analytics/liquidity`, `GET /v1/analytics/supply-planning` |
-| `07-advertising-analytics.http` | Advertising analytics | `GET /v1/analytics/advertising/*` |
-| `12-storage.http` | Storage analytics | `GET /v1/analytics/storage/*`, `POST /v1/imports/paid-storage` |
+| File                            | Purpose               | Endpoint Categories                                                |
+| ------------------------------- | --------------------- | ------------------------------------------------------------------ |
+| `05-analytics-basic.http`       | Basic analytics       | `GET /v1/analytics/weekly/*`                                       |
+| `06-analytics-advanced.http`    | Advanced analytics    | `GET /v1/analytics/liquidity`, `GET /v1/analytics/supply-planning` |
+| `07-advertising-analytics.http` | Advertising analytics | `GET /v1/analytics/advertising/*`                                  |
+| `12-storage.http`               | Storage analytics     | `GET /v1/analytics/storage/*`, `POST /v1/imports/paid-storage`     |
 
 ### Feature-Specific Files
 
-| File | Purpose | Epic | Endpoint Categories |
-|------|---------|------|---------------------|
-| `07-cogs.http` | COGS management | Epic 10 | `POST /v1/products/*/cogs` |
-| `08-products.http` | Product management | Epic 12 | `GET /v1/products`, `GET /v1/products/{id}` |
-| `09-tasks.http` | Task management | Epic 23 | `GET /v1/tasks`, `GET /v1/tasks/{id}` |
-| `10-exports.http` | Export operations | Epic 6 | `POST /v1/exports/*`, `GET /v1/exports/{id}` |
-| `11-schedules.http` | Scheduled tasks | Epic 23 | `GET/POST/PUT/DELETE /v1/schedules/*` |
-| `13-notifications.http` | Telegram notifications | Epic 34 | `POST/GET/DELETE /v1/notifications/telegram/*` |
-| `14-orders.http` | Orders sync | Epic 36 | `GET /v1/orders/*` |
-| `15-price-calculator.http` | Price calculator | Epic 43/44 | `POST /v1/products/price-calculator` |
+| File                       | Purpose                | Epic       | Endpoint Categories                            |
+| -------------------------- | ---------------------- | ---------- | ---------------------------------------------- |
+| `07-cogs.http`             | COGS management        | Epic 10    | `POST /v1/products/*/cogs`                     |
+| `08-products.http`         | Product management     | Epic 12    | `GET /v1/products`, `GET /v1/products/{id}`    |
+| `09-tasks.http`            | Task management        | Epic 23    | `GET /v1/tasks`, `GET /v1/tasks/{id}`          |
+| `10-exports.http`          | Export operations      | Epic 6     | `POST /v1/exports/*`, `GET /v1/exports/{id}`   |
+| `11-schedules.http`        | Scheduled tasks        | Epic 23    | `GET/POST/PUT/DELETE /v1/schedules/*`          |
+| `13-notifications.http`    | Telegram notifications | Epic 34    | `POST/GET/DELETE /v1/notifications/telegram/*` |
+| `14-orders.http`           | Orders sync            | Epic 36    | `GET /v1/orders/*`                             |
+| `15-price-calculator.http` | Price calculator       | Epic 43/44 | `POST /v1/products/price-calculator`           |
 
 ### Testing Files
 
-| File | Purpose |
-|------|---------|
+| File                             | Purpose                                 |
+| -------------------------------- | --------------------------------------- |
 | `40.7-orders-notifications.http` | E2E validation for orders/notifications |
-| `epic-24-e2e-validation.http` | E2E validation for storage analytics |
-| `99-errors.http` | Error response testing |
+| `epic-24-e2e-validation.http`    | E2E validation for storage analytics    |
+| `99-errors.http`                 | Error response testing                  |
 
 ---
 
@@ -289,6 +303,7 @@ const result = await calculatePrice({
 ### Prerequisites
 
 1. **Backend Server Running:**
+
    ```bash
    cd /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new
    npm run start:dev
@@ -361,6 +376,7 @@ Content-Type: application/json
 ### Common Testing Scenarios
 
 **1. Authentication Flow:**
+
 ```bash
 # 00-variables.http
 POST {{baseUrl}}/v1/auth/register
@@ -369,6 +385,7 @@ POST {{baseUrl}}/v1/auth/logout
 ```
 
 **2. Complete Storage Analytics Workflow:**
+
 ```bash
 # 12-storage.http
 # 1. Trigger import
@@ -385,6 +402,7 @@ GET {{baseUrl}}/v1/analytics/storage/summary
 ```
 
 **3. Telegram Notifications Integration:**
+
 ```bash
 # 13-notifications.http
 # 1. Start binding
@@ -639,17 +657,20 @@ function ImportStatusPage({ importId }: Props) {
 ## Quick Reference
 
 ### Backend API Base URL
+
 ```bash
 Development: http://localhost:3000
 Production: https://api.wb-repricer.system
 ```
 
 ### Swagger UI
+
 ```
 Development: http://localhost:3000/api
 ```
 
 ### Key Directories
+
 ```
 Backend HTTP Files: /test-api/*.http
 Frontend API Clients: /frontend/src/lib/api/*.ts
@@ -657,6 +678,7 @@ Frontend Specs: /frontend/docs/request-backend/*.md
 ```
 
 ### Common Headers
+
 ```typescript
 {
   'Authorization': `Bearer ${token}`,
@@ -693,20 +715,20 @@ Frontend Specs: /frontend/docs/request-backend/*.md
 
 ## Appendix: Epic Status Summary
 
-| Epic | Feature | Frontend Status | Backend Status | Documentation |
-|------|---------|-----------------|----------------|---------------|
-| 24 | Storage Analytics | ✅ Complete | ✅ Complete | 100% Mapped |
-| 28 | Supply Planning | ✅ Complete | ✅ Complete | 100% Mapped |
-| 29 | Liquidity Analytics | ✅ Complete | ✅ Complete | 100% Mapped |
-| 33 | Advertising Analytics | ✅ Complete | ✅ Complete | 100% Mapped |
-| 34 | Telegram Notifications | ✅ Complete | ✅ Complete | 100% Mapped |
-| 36 | Product Card Linking | ✅ Complete | ✅ Complete | 100% Mapped |
-| 43/44 | Price Calculator | ✅ Complete | ✅ Complete | 100% Mapped |
-| 6 | Date Range & Comparison | ✅ Complete | ✅ Complete | 100% Mapped |
-| 10 | COGS & Margin | ✅ Complete | ✅ Complete | 100% Mapped |
-| 61-FE | Dashboard Data Integration | ✅ Complete | ✅ Complete | 100% Mapped |
-| 62-FE | Dashboard UI/UX | ✅ Complete | ✅ Complete | 100% Mapped |
-| 63-FE | Dashboard Business Logic | 📋 Ready | ✅ Complete | 100% Mapped |
+| Epic  | Feature                    | Frontend Status | Backend Status | Documentation |
+| ----- | -------------------------- | --------------- | -------------- | ------------- |
+| 24    | Storage Analytics          | ✅ Complete     | ✅ Complete    | 100% Mapped   |
+| 28    | Supply Planning            | ✅ Complete     | ✅ Complete    | 100% Mapped   |
+| 29    | Liquidity Analytics        | ✅ Complete     | ✅ Complete    | 100% Mapped   |
+| 33    | Advertising Analytics      | ✅ Complete     | ✅ Complete    | 100% Mapped   |
+| 34    | Telegram Notifications     | ✅ Complete     | ✅ Complete    | 100% Mapped   |
+| 36    | Product Card Linking       | ✅ Complete     | ✅ Complete    | 100% Mapped   |
+| 43/44 | Price Calculator           | ✅ Complete     | ✅ Complete    | 100% Mapped   |
+| 6     | Date Range & Comparison    | ✅ Complete     | ✅ Complete    | 100% Mapped   |
+| 10    | COGS & Margin              | ✅ Complete     | ✅ Complete    | 100% Mapped   |
+| 61-FE | Dashboard Data Integration | ✅ Complete     | ✅ Complete    | 100% Mapped   |
+| 62-FE | Dashboard UI/UX            | ✅ Complete     | ✅ Complete    | 100% Mapped   |
+| 63-FE | Dashboard Business Logic   | 📋 Ready        | ✅ Complete    | 100% Mapped   |
 
 **Overall Integration Status:** ✅ 100% Mapped (Epic 63-FE ready for dev)
 
@@ -735,11 +757,11 @@ X-Cabinet-Id: {cabinet_id}
 
 ### Task Types
 
-| Task Type | Payload | Description |
-|-----------|---------|-------------|
-| `recalculate_weekly_margin` | `{ weeks: string[], nm_ids?: string[] }` | Recalculate margins |
-| `weekly_sanity_check` | `{ week?: string }` | Validate data quality |
-| `weekly_margin_aggregate` | `{ week?: string }` | Re-aggregate data |
+| Task Type                   | Payload                                  | Description           |
+| --------------------------- | ---------------------------------------- | --------------------- |
+| `recalculate_weekly_margin` | `{ weeks: string[], nm_ids?: string[] }` | Recalculate margins   |
+| `weekly_sanity_check`       | `{ week?: string }`                      | Validate data quality |
+| `weekly_margin_aggregate`   | `{ week?: string }`                      | Re-aggregate data     |
 
 ### Deprecated Tasks
 
@@ -755,18 +777,19 @@ See [Request #94](request-backend/94-epic-42-tech-debt-task-handlers.md) for det
 **Backend Specs**: `docs/request-backend/121-125-DASHBOARD-*.md`
 **Stories**: 12 (Story 63.1-FE through 63.12-FE)
 
-| Frontend Client | Endpoint | Backend HTTP File | Frontend Spec Docs | Status |
-|----------------|----------|-------------------|-------------------|--------|
-| `lib/api/dashboard.ts` | GET `/v1/advertising/sync/status` | `07-advertising-analytics.http` | `request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md` | 📋 Ready |
-| `lib/api/dashboard.ts` | GET `/v1/advertising/efficiency-filter` | `07-advertising-analytics.http` | `request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md` | 📋 Ready |
-| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/top-consumers` | `12-storage.http` | `request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md` | ✅ Complete |
-| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/trends` | `12-storage.http` | `request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md` | ✅ Complete |
-| `lib/api/orders.ts` | GET `/v1/orders/fbs/status-breakdown` | `14-orders.http` | `request-backend/121-DASHBOARD-MAIN-PAGE-ORDERS-API.md` | 📋 Ready |
-| `lib/api/orders.ts` | GET `/v1/orders/fbs/seasonal-patterns` | `14-orders.http` | `request-backend/121-DASHBOARD-MAIN-PAGE-ORDERS-API.md` | 📋 Ready |
-| `lib/api/analytics.ts` | GET `/v1/analytics/weekly/comparison` | `05-analytics-basic.http` | `request-backend/124-DASHBOARD-MAIN-PAGE-PERIODS-API.md` | 📋 Ready |
-| `lib/api/analytics.ts` | GET `/v1/analytics/weekly/trends` | `05-analytics-basic.http` | `request-backend/124-DASHBOARD-MAIN-PAGE-PERIODS-API.md` | 📋 Ready |
+| Frontend Client                | Endpoint                                  | Backend HTTP File               | Frontend Spec Docs                                        | Status      |
+| ------------------------------ | ----------------------------------------- | ------------------------------- | --------------------------------------------------------- | ----------- |
+| `lib/api/dashboard.ts`         | GET `/v1/advertising/sync/status`         | `07-advertising-analytics.http` | `request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md` | 📋 Ready    |
+| `lib/api/dashboard.ts`         | GET `/v1/advertising/efficiency-filter`   | `07-advertising-analytics.http` | `request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md` | 📋 Ready    |
+| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/top-consumers` | `12-storage.http`               | `request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md` | ✅ Complete |
+| `lib/api/storage-analytics.ts` | GET `/v1/analytics/storage/trends`        | `12-storage.http`               | `request-backend/123-DASHBOARD-MAIN-PAGE-EXPENSES-API.md` | ✅ Complete |
+| `lib/api/orders.ts`            | GET `/v1/orders/fbs/status-breakdown`     | `14-orders.http`                | `request-backend/121-DASHBOARD-MAIN-PAGE-ORDERS-API.md`   | 📋 Ready    |
+| `lib/api/orders.ts`            | GET `/v1/orders/fbs/seasonal-patterns`    | `14-orders.http`                | `request-backend/121-DASHBOARD-MAIN-PAGE-ORDERS-API.md`   | 📋 Ready    |
+| `lib/api/analytics.ts`         | GET `/v1/analytics/weekly/comparison`     | `05-analytics-basic.http`       | `request-backend/124-DASHBOARD-MAIN-PAGE-PERIODS-API.md`  | 📋 Ready    |
+| `lib/api/analytics.ts`         | GET `/v1/analytics/weekly/trends`         | `05-analytics-basic.http`       | `request-backend/124-DASHBOARD-MAIN-PAGE-PERIODS-API.md`  | 📋 Ready    |
 
 **Key Features (Epic 63-FE)**:
+
 - Sales Metric Cards (`wb_sales_gross`, `cogs_sales`)
 - Advertising sync status indicator (fresh/stale/outdated)
 - Advertising efficiency filter (ROAS tiers: excellent/good/poor)
@@ -780,6 +803,7 @@ See [Request #94](request-backend/94-epic-42-tech-debt-task-handlers.md) for det
 - Historical trends section (4W/8W/12W/YTD)
 
 **Usage Example - Period Comparison**:
+
 ```typescript
 // Get WoW comparison
 const comparison = await apiClient.get<ComparisonResponse>(
@@ -800,6 +824,7 @@ interface ComparisonResponse {
 ```
 
 **Usage Example - Advertising Sync Status**:
+
 ```typescript
 // Check data freshness
 const syncStatus = await apiClient.get<SyncStatusResponse>(

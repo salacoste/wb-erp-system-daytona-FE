@@ -13,7 +13,7 @@ Excel-файл помогает массово редактировать кар
 
 В этой статье:
 
-- 
+-
 - <a href="#6hcqil" rel="nofollow">Как устроен Excel-файл товаров</a>
 - <a href="#2amhvn" rel="nofollow">Создание и обновление карточек через Excel-файл</a>
 - <a href="#dyym0a" rel="nofollow">Столбцы менеджеров</a>

@@ -11,6 +11,7 @@
 ## 🎯 Test Scope
 
 **Stories to Test**:
+
 - Story 34.1-FE: API client & hooks (7 unit tests already passing)
 - Story 34.2-FE: Telegram Binding Flow
 - Story 34.3-FE: Notification Preferences Panel
@@ -50,10 +51,12 @@
 **Objective**: Verify `/settings/notifications` page loads correctly when Telegram NOT bound
 
 **Steps**:
+
 1. Navigate to `http://localhost:3100/settings/notifications`
 2. Observe initial page load
 
 **Expected Results**:
+
 - [ ] ✅ Page loads without errors
 - [ ] ✅ Hero banner visible with:
   - Light blue gradient background (#E3F2FD → #BBDEFB)
@@ -80,10 +83,12 @@
 **Objective**: Verify binding modal opens when "Подключить Telegram" clicked
 
 **Steps**:
+
 1. From TC-001, click "Подключить Telegram" button (hero banner or card)
 2. Observe modal appearance
 
 **Expected Results**:
+
 - [ ] ✅ Modal opens with centered overlay
 - [ ] ✅ Backdrop: blurred background (`backdrop-blur-sm`)
 - [ ] ✅ Modal width: 480-560px on desktop
@@ -109,10 +114,12 @@
 **Objective**: Verify binding code is displayed correctly with copy functionality
 
 **Steps**:
+
 1. With modal open (from TC-002)
 2. Observe verification code section
 
 **Expected Results**:
+
 - [ ] ✅ Verification code format: `/start ABC123XY` (8-char alphanumeric)
 - [ ] ✅ Code displayed in monospace font (`font-mono`)
 - [ ] ✅ Code container: Light gray background (`bg-gray-100`)
@@ -121,6 +128,7 @@
 - [ ] ✅ Toast notification: "Код скопирован" (optional)
 
 **Test Copy Functionality**:
+
 1. Click "📋 Копировать" button
 2. Open text editor and paste (Cmd+V / Ctrl+V)
 3. Verify pasted text matches: `/start ABC123XY`
@@ -137,11 +145,13 @@
 **Objective**: Verify Telegram deep link button opens correctly
 
 **Steps**:
+
 1. With modal open (from TC-002)
 2. Observe deep link button
 3. Click button (or inspect URL)
 
 **Expected Results**:
+
 - [ ] ✅ Button text: "📱 Открыть в Telegram"
 - [ ] ✅ Button color: Telegram Blue (#0088CC)
 - [ ] ✅ Button full-width on mobile
@@ -163,11 +173,13 @@
 **Objective**: Verify countdown timer displays and updates correctly
 
 **Steps**:
+
 1. With modal open (from TC-002)
 2. Observe countdown timer for 10-15 seconds
 3. Note color changes
 
 **Expected Results**:
+
 - [ ] ✅ Initial text: "Код действителен ещё: 9:59" (or similar)
 - [ ] ✅ Timer counts down every second (9:59 → 9:58 → 9:57)
 - [ ] ✅ Progress bar animates smoothly (width decreases)
@@ -179,6 +191,7 @@
 - [ ] ✅ Progress bar shows 0% when expired
 
 **Test Color Transitions** (optional):
+
 1. Wait until timer reaches 2:00 → Verify color changes to Orange
 2. Wait until timer reaches 0:30 → Verify color changes to Red
 
@@ -194,18 +207,20 @@
 **Objective**: Verify polling spinner and dynamic text updates
 
 **Steps**:
+
 1. With modal open (from TC-002)
 2. Observe polling indicator below countdown timer
 3. Wait for text changes (if dynamic text implemented)
 
 **Expected Results**:
+
 - [ ] ✅ Spinner visible (24x24px spinning animation)
 - [ ] ✅ Initial text: "Ожидаем подтверждения..."
 - [ ] ✅ Spinner animates continuously
 - [ ] ✅ Dynamic text updates (optional):
   - 0-5s: "Ожидаем подтверждения..."
   - 5-60s: "Всё ещё ожидаем... Проверьте Telegram."
-  - >60s: "Подтверждение занимает дольше обычного..."
+  - > 60s: "Подтверждение занимает дольше обычного..."
 
 **Actual Results**:
 [To be filled by tester]
@@ -219,11 +234,13 @@
 **Objective**: Verify modal can be closed and state resets
 
 **Steps**:
+
 1. With modal open (from TC-002)
 2. Click close button (X) in top-right
 3. Re-open modal
 
 **Expected Results**:
+
 - [ ] ✅ Click X button → Modal closes smoothly
 - [ ] ✅ ESC key → Modal closes (keyboard accessible)
 - [ ] ✅ Click outside modal (backdrop) → Modal closes
@@ -242,10 +259,12 @@
 **Objective**: Verify preferences panel shows when Telegram NOT bound (locked state)
 
 **Steps**:
+
 1. Navigate to `/settings/notifications` (not bound state)
 2. Scroll to "⚙️ Настройки уведомлений" card
 
 **Expected Results**:
+
 - [ ] ✅ Card visible but disabled
 - [ ] ✅ Lock overlay visible with text: "🔒 Подключите Telegram, чтобы настроить уведомления"
 - [ ] ✅ Overlay semi-transparent (allows seeing content below)
@@ -270,10 +289,12 @@
 **Prerequisite**: Mock state where `telegram_bound: true` (or complete binding flow)
 
 **Steps**:
+
 1. Set mock state or complete binding
 2. Observe event type cards in preferences panel
 
 **Expected Results**:
+
 - [ ] ✅ Lock overlay removed
 - [ ] ✅ 4 event type cards interactive
 - [ ] ✅ **Enabled card** (task_completed, daily_digest):
@@ -306,12 +327,14 @@
 **Prerequisite**: Telegram bound state (from TC-009)
 
 **Steps**:
+
 1. Click on "Задача завершилась с ошибкой" card (anywhere on card)
 2. Observe state change
 3. Click toggle switch directly
 4. Click card again to toggle off
 
 **Expected Results**:
+
 - [ ] ✅ Click card → Toggle switch flips ON
 - [ ] ✅ Border changes: Gray → Telegram Blue (2px)
 - [ ] ✅ Checkbox icon changes: ☐ → ☑️
@@ -332,10 +355,12 @@
 **Objective**: Verify descriptions are always visible (not hidden in tooltips)
 
 **Steps**:
+
 1. Observe all 4 event type cards
 2. Read descriptions under each title
 
 **Expected Results**:
+
 - [ ] ✅ Each card shows description text immediately (no hover required)
 - [ ] ✅ Descriptions visible:
   - **task_completed**: "Уведомления при завершении импорта, синхронизации, расчёта маржи"
@@ -359,11 +384,13 @@
 **Prerequisite**: Telegram bound state
 
 **Steps**:
+
 1. Locate "Язык уведомлений:" section
 2. Observe radio buttons
 3. Click between 🇷🇺 Русский and 🇬🇧 English
 
 **Expected Results**:
+
 - [ ] ✅ Two radio buttons visible: 🇷🇺 Русский | 🇬🇧 English
 - [ ] ✅ Horizontal layout (side-by-side)
 - [ ] ✅ Default selected: 🇷🇺 Русский (or based on preferences)
@@ -393,12 +420,14 @@
 **Prerequisite**: Telegram bound state
 
 **Steps**:
+
 1. Ensure "Ежедневный дайджест" is OFF
 2. Observe card (no time picker visible)
 3. Toggle "Ежедневный дайджест" ON
 4. Observe time picker appears
 
 **Expected Results**:
+
 - [ ] ✅ When digest OFF: No time picker visible
 - [ ] ✅ Toggle digest ON → Time picker slides down (200ms animation)
 - [ ] ✅ Time picker label: "🕐 Время отправки:"
@@ -421,6 +450,7 @@
 **Prerequisite**: Telegram bound state
 
 **Steps**:
+
 1. Load preferences panel (no changes made)
 2. Observe "Сохранить настройки" button state
 3. Make a change (toggle any event type)
@@ -429,6 +459,7 @@
 6. Observe state after save
 
 **Expected Results**:
+
 - [ ] ✅ **Initial state**: "Сохранить настройки" button DISABLED (gray)
 - [ ] ✅ Make change → Button becomes ENABLED (Primary Red #E53935)
 - [ ] ✅ Warning banner appears: "⚠️ У вас есть несохранённые изменения"
@@ -439,6 +470,7 @@
 - [ ] ✅ All changes persisted (verify by refreshing page)
 
 **Test Navigation Prevention**:
+
 1. Make changes without saving
 2. Attempt to navigate away (click browser back or another link)
 3. **Expected**: Browser shows confirmation dialog: "You have unsaved changes. Leave page?"
@@ -457,12 +489,14 @@
 **Prerequisite**: Telegram bound state
 
 **Steps**:
+
 1. Make changes to preferences (toggle 2-3 event types)
 2. Observe dirty state
 3. Click "Отменить" button
 4. Observe state reset
 
 **Expected Results**:
+
 - [ ] ✅ "Отменить" button visible next to "Сохранить настройки"
 - [ ] ✅ Button secondary style (not primary)
 - [ ] ✅ Click "Отменить" → All changes revert to last saved state
@@ -482,10 +516,12 @@
 **Objective**: Verify quiet hours panel shows when Telegram NOT bound (locked state)
 
 **Steps**:
+
 1. Navigate to `/settings/notifications` (not bound state)
 2. Scroll to "🌙 Тихие часы" card
 
 **Expected Results**:
+
 - [ ] ✅ Card visible but disabled
 - [ ] ✅ Lock overlay visible: "🔒 Подключите Telegram, чтобы настроить тихие часы"
 - [ ] ✅ All controls disabled (toggle, time pickers, timezone dropdown)
@@ -505,12 +541,14 @@
 **Prerequisite**: Telegram bound state
 
 **Steps**:
+
 1. Locate "🌙 Тихие часы" card
 2. Observe initial state (quiet hours OFF)
 3. Toggle "Включить тихие часы" ON
 4. Observe time pickers appear
 
 **Expected Results**:
+
 - [ ] ✅ Initial toggle OFF
 - [ ] ✅ Time pickers hidden when OFF
 - [ ] ✅ Toggle ON → Time pickers slide down (animation)
@@ -535,12 +573,14 @@
 **Prerequisite**: Quiet hours enabled (from TC-017)
 
 **Steps**:
+
 1. Click "С:" time picker
 2. Change time to 22:00
 3. Click "До:" time picker
 4. Change time to 08:00
 
 **Expected Results**:
+
 - [ ] ✅ Time picker opens native browser picker (desktop) or spinner (mobile)
 - [ ] ✅ 24-hour format (HH:MM, not 12-hour AM/PM)
 - [ ] ✅ 15-minute step intervals (00, 15, 30, 45)
@@ -562,11 +602,13 @@
 **Prerequisite**: Quiet hours enabled
 
 **Steps**:
+
 1. Locate timezone dropdown below time pickers
 2. Click to open dropdown
 3. Observe grouped structure
 
 **Expected Results**:
+
 - [ ] ✅ Label: "Часовой пояс:"
 - [ ] ✅ Dropdown uses shadcn/ui Select component
 - [ ] ✅ Width: 240px on desktop, full-width on mobile
@@ -593,11 +635,13 @@
 **Prerequisite**: Quiet hours enabled
 
 **Steps**:
+
 1. Observe text below timezone dropdown
 2. Wait 60 seconds
 3. Verify time updates
 
 **Expected Results**:
+
 - [ ] ✅ Text format: "ℹ️ Сейчас в Europe/Moscow: 14:32"
 - [ ] ✅ Font: 14px, Gray 600
 - [ ] ✅ Time accurate for selected timezone
@@ -618,12 +662,14 @@
 **Prerequisite**: Quiet hours enabled
 
 **Steps**:
+
 1. Set time range: С: 23:00, До: 07:00 (overnight period)
 2. Observe hint banner
 3. Change to non-overnight: С: 08:00, До: 18:00
 4. Verify hint disappears
 
 **Expected Results**:
+
 - [ ] ✅ **Overnight period (from > to)**: Hint visible
 - [ ] ✅ Hint text: "💡 Тихие часы: 23:00 - 07:00 (период через полночь)"
 - [ ] ✅ Light Orange background (#FFF3E0)
@@ -648,11 +694,13 @@
 **Setup**: Set quiet hours to include current time (e.g., if current time is 15:00, set 14:00 - 16:00)
 
 **Steps**:
+
 1. Configure quiet hours to include current time
 2. Save preferences
 3. Observe active badge
 
 **Expected Results**:
+
 - [ ] ✅ Badge visible: "🌙 Сейчас активны тихие часы"
 - [ ] ✅ Light Blue background (#E3F2FD)
 - [ ] ✅ Blue border (1px)
@@ -673,10 +721,12 @@
 **Objective**: Verify page uses vertical stack, NOT grid layout
 
 **Steps**:
+
 1. View `/settings/notifications` page
 2. Resize browser window (1920px → 1024px → 768px)
 
 **Expected Results**:
+
 - [ ] ✅ **Desktop (>1024px)**:
   - Cards arranged vertically (one below another)
   - NOT side-by-side grid
@@ -704,11 +754,13 @@
 **Objective**: Verify mobile layout changes (viewport <640px)
 
 **Steps**:
+
 1. Open DevTools → Toggle device toolbar (Cmd+Shift+M / Ctrl+Shift+M)
 2. Select iPhone 12 Pro (390x844) or custom (375x667)
 3. Observe layout changes
 
 **Expected Results**:
+
 - [ ] ✅ H1 title: 36px → 28px (smaller on mobile)
 - [ ] ✅ Cards: Full-width (no max-width constraint)
 - [ ] ✅ Card padding: 24px → 16px
@@ -730,11 +782,13 @@
 **Objective**: Verify all interactive elements are keyboard accessible
 
 **Steps**:
+
 1. Load page
 2. Press TAB repeatedly to navigate through all elements
 3. Use SPACE/ENTER to activate elements
 
 **Expected Results**:
+
 - [ ] ✅ TAB key moves focus through all interactive elements in logical order:
   1. "Подключить Telegram" button
   2. Event type toggles (4)
@@ -764,11 +818,13 @@
 **Tools**: Chrome DevTools → Accessibility tab, or actual screen reader (NVDA/JAWS)
 
 **Steps**:
+
 1. Open Accessibility tab in DevTools
 2. Inspect each component
 3. Verify aria-labels and roles
 
 **Expected Results**:
+
 - [ ] ✅ All buttons have aria-labels or descriptive text
 - [ ] ✅ Toggle switches: `role="switch"`, `aria-checked="true|false"`
 - [ ] ✅ Event type cards: `aria-describedby` linking title to description
@@ -792,10 +848,12 @@
 **Tools**: Chrome DevTools → Inspect element → Contrast ratio
 
 **Steps**:
+
 1. Inspect text elements
 2. Check contrast ratios in DevTools
 
 **Expected Results**:
+
 - [ ] ✅ **Normal text** (16px): Contrast ratio ≥ 4.5:1
 - [ ] ✅ **Large text** (24px+): Contrast ratio ≥ 3:1
 - [ ] ✅ **UI components**: Contrast ratio ≥ 3:1 (borders, icons)
@@ -815,12 +873,14 @@
 **Objective**: Verify zero errors and warnings in browser console
 
 **Steps**:
+
 1. Open DevTools → Console tab
 2. Navigate to `/settings/notifications`
 3. Perform all interactions (open modal, toggle settings, save)
 4. Observe console output
 
 **Expected Results**:
+
 - [ ] ✅ Zero JavaScript errors
 - [ ] ✅ Zero React errors (hydration, rendering)
 - [ ] ✅ Zero TypeScript errors
@@ -829,6 +889,7 @@
 - [ ] ✅ All API calls return expected status codes
 
 **Acceptable Warnings**:
+
 - [ ] ⚠️ Development mode warnings (e.g., "Download the React DevTools")
 - [ ] ⚠️ Third-party library warnings (if any, document)
 
@@ -844,11 +905,13 @@
 **Objective**: Verify page loads within acceptable time
 
 **Steps**:
+
 1. Open DevTools → Network tab
 2. Refresh page (Cmd+R / Ctrl+R)
 3. Observe load times
 
 **Expected Results**:
+
 - [ ] ✅ **Time to First Byte (TTFB)**: <500ms
 - [ ] ✅ **First Contentful Paint (FCP)**: <1.5s
 - [ ] ✅ **Largest Contentful Paint (LCP)**: <2.5s
@@ -870,12 +933,14 @@
 **Objective**: Verify functionality in multiple browsers
 
 **Browsers to Test**:
+
 - Chrome (primary)
 - Firefox (optional)
 - Safari (optional)
 - Edge (optional)
 
 **Steps**:
+
 1. Open `/settings/notifications` in each browser
 2. Perform key flows:
    - Open binding modal
@@ -883,6 +948,7 @@
    - Save settings
 
 **Expected Results**:
+
 - [ ] ✅ All browsers: Page loads correctly
 - [ ] ✅ All browsers: Modal opens and closes
 - [ ] ✅ All browsers: Toggles work
@@ -909,10 +975,12 @@
 ## 🐛 Bugs Found
 
 ### Bug #1: [Title]
+
 **Severity**: Critical / Major / Minor
 **Test Case**: TC-XXX
 **Description**: [What went wrong]
 **Steps to Reproduce**:
+
 1. [Step 1]
 2. [Step 2]
 
@@ -929,6 +997,7 @@
 **Time**: ___________________
 
 **Overall Assessment**:
+
 - [ ] ✅ PASS - Ready for E2E testing
 - [ ] ⚠️ CONDITIONAL PASS - Minor issues (document)
 - [ ] ❌ FAIL - Critical issues found, requires fixes

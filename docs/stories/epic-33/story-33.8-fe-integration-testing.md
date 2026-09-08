@@ -16,16 +16,19 @@
 ## Acceptance Criteria
 
 ### AC1: Unit Tests
+
 - [ ] Hook tests with mocked API
 - [ ] Component render tests
 - [ ] Utility function tests
 
 ### AC2: Integration Tests
+
 - [ ] Page renders with mock data
 - [ ] Filtering works end-to-end
 - [ ] Sorting works end-to-end
 
 ### AC3: Coverage Target
+
 - [ ] Hooks: >80% coverage
 - [ ] Components: >70% coverage
 - [ ] Utilities: >90% coverage
@@ -33,23 +36,27 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Hook Tests
+
 - [ ] Create `src/hooks/__tests__/useAdvertisingAnalytics.test.ts`
 - [ ] Test `useAdvertisingAnalytics` hook
 - [ ] Test `useAdvertisingCampaigns` hook
 - [ ] Test `useAdvertisingSyncStatus` hook
 
 ### Phase 2: Utility Tests
+
 - [ ] Create `src/lib/__tests__/efficiency-utils.test.ts`
 - [ ] Create `src/lib/__tests__/campaign-utils.test.ts`
 - [ ] Test all utility functions
 
 ### Phase 3: Component Tests
+
 - [ ] Test `EfficiencyBadge` component
 - [ ] Test `SyncStatusIndicator` component
 - [ ] Test `CampaignSelector` component
 - [ ] Test `PerformanceMetricsTable` component
 
 ### Phase 4: Page Tests
+
 - [ ] Test page renders
 - [ ] Test filter interactions
 - [ ] Test error states
@@ -272,16 +279,16 @@ export const mockAdvertisingData = {
 
 ### Test Cases Summary
 
-| Category | Test Cases | Priority |
-|----------|------------|----------|
-| Hooks | 6 tests | High |
-| Efficiency Utils | 8 tests | High |
-| Campaign Utils | 4 tests | Medium |
-| EfficiencyBadge | 5 tests | Medium |
-| SyncStatusIndicator | 4 tests | Low |
-| CampaignSelector | 5 tests | Medium |
-| PerformanceTable | 6 tests | High |
-| Page Integration | 4 tests | Medium |
+| Category            | Test Cases | Priority |
+| ------------------- | ---------- | -------- |
+| Hooks               | 6 tests    | High     |
+| Efficiency Utils    | 8 tests    | High     |
+| Campaign Utils      | 4 tests    | Medium   |
+| EfficiencyBadge     | 5 tests    | Medium   |
+| SyncStatusIndicator | 4 tests    | Low      |
+| CampaignSelector    | 5 tests    | Medium   |
+| PerformanceTable    | 6 tests    | High     |
+| Page Integration    | 4 tests    | Medium   |
 
 **Total: ~42 tests**
 
@@ -303,8 +310,8 @@ export const mockAdvertisingData = {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author            | Change        |
+| ---------- | ----------------- | ------------- |
 | 2025-12-22 | James (Dev Agent) | Initial draft |
 
 ---
@@ -356,7 +363,7 @@ None required - test quality is excellent.
 ### Compliance Check
 
 - Coding Standards: ✓ Test files follow project conventions
-- Project Structure: ✓ Tests correctly placed in __tests__ directories
+- Project Structure: ✓ Tests correctly placed in **tests** directories
 - Testing Strategy: ✓ 102 tests covering all required areas
 - All ACs Met: ✓ All 3 acceptance criteria fully met
 
@@ -371,12 +378,12 @@ None required - test quality is excellent.
 
 ### Test Coverage Summary
 
-| Category | Tests | Target | Status |
-|----------|-------|--------|--------|
-| Hooks (useAdvertisingAnalytics) | 14 | >80% | ✓ Met |
-| Components (Badge, Indicator, Selector) | 38 | >70% | ✓ Met |
-| Utilities (efficiency, campaign) | 50 | >90% | ✓ Met |
-| **Total** | **102** | - | **All Pass** |
+| Category                                | Tests   | Target | Status       |
+| --------------------------------------- | ------- | ------ | ------------ |
+| Hooks (useAdvertisingAnalytics)         | 14      | >80%   | ✓ Met        |
+| Components (Badge, Indicator, Selector) | 38      | >70%   | ✓ Met        |
+| Utilities (efficiency, campaign)        | 50      | >90%   | ✓ Met        |
+| **Total**                               | **102** | -      | **All Pass** |
 
 ### Security Review
 

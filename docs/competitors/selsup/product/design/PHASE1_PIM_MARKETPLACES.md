@@ -55,21 +55,21 @@
    → загрузка с отправкой на МП) `[MVP_PRD FR-P8]`, `[product-cards §cap 43]`.
 7. **Единая очередь синхронизации** `sync_jobs` с retry/backoff — ключевой
    риск №1 продукта `[MVP_PRD §1 цель 4, §10.1 риск 1]`, `[DATA_MODEL §6
-   Background Task]`.
+Background Task]`.
 
 ### 1.2. Что НЕ входит (явные границы)
 
-| Что | Куда | Обоснование |
-|---|---|---|
-| Заказы, импорт/сборка FBS | Фаза 3 | `[MVP_PRD §8 Фаза 3]`; в Фазе 1 — только карточки |
-| Склад FBS, остатки, синхронизация остатков | Фаза 2 | `[MVP_PRD §8 Фаза 2]`; `product_skus` готов как точка привязки `StockItem` |
-| Цены, мин. цена, скидка WB целым числом | Фаза 2 | `[MVP_PRD FR-C1-C5]`; цена хранится в карточке (`price_*`), но отправка цен — Фаза 2 |
-| Этикетки (заказа/товарные), маркировка, Честный Знак | Фазы 4 / post-MVP | `[MVP_PRD §8 Фаза 4]`, `[MVP_PRD §10.3]`; в схеме — `category.flag_marked`, `tnved`, `gtin` как готовность |
-| FBO-поставки на склады МП | post-MVP | `[MVP_PRD §3.2]`; только чтение FBO-остатков — Фаза 2 |
-| AI-Формализатор, SEO, фото/видео-AI | post-MVP | `[MVP_PRD §3.2]`; UI-хуки оставляем, логику нет |
-| Браузерное расширение, копирование конкурента | post-MVP | `[product-cards §cap 11]` |
-| Групповые карточки, конкуренты, rich-контент-редактор | post-MVP | `[product-cards §открытые вопросы 4,5]` |
-| Другие МП (Яндекс, МегаМаркет, AliExpress…) | post-MVP | `[MVP_PRD §3.2]`; адаптер-интерфейс расширяем |
+| Что                                                   | Куда              | Обоснование                                                                                                |
+| ----------------------------------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------- |
+| Заказы, импорт/сборка FBS                             | Фаза 3            | `[MVP_PRD §8 Фаза 3]`; в Фазе 1 — только карточки                                                          |
+| Склад FBS, остатки, синхронизация остатков            | Фаза 2            | `[MVP_PRD §8 Фаза 2]`; `product_skus` готов как точка привязки `StockItem`                                 |
+| Цены, мин. цена, скидка WB целым числом               | Фаза 2            | `[MVP_PRD FR-C1-C5]`; цена хранится в карточке (`price_*`), но отправка цен — Фаза 2                       |
+| Этикетки (заказа/товарные), маркировка, Честный Знак  | Фазы 4 / post-MVP | `[MVP_PRD §8 Фаза 4]`, `[MVP_PRD §10.3]`; в схеме — `category.flag_marked`, `tnved`, `gtin` как готовность |
+| FBO-поставки на склады МП                             | post-MVP          | `[MVP_PRD §3.2]`; только чтение FBO-остатков — Фаза 2                                                      |
+| AI-Формализатор, SEO, фото/видео-AI                   | post-MVP          | `[MVP_PRD §3.2]`; UI-хуки оставляем, логику нет                                                            |
+| Браузерное расширение, копирование конкурента         | post-MVP          | `[product-cards §cap 11]`                                                                                  |
+| Групповые карточки, конкуренты, rich-контент-редактор | post-MVP          | `[product-cards §открытые вопросы 4,5]`                                                                    |
+| Другие МП (Яндекс, МегаМаркет, AliExpress…)           | post-MVP          | `[MVP_PRD §3.2]`; адаптер-интерфейс расширяем                                                              |
 
 ### 1.3. Exit criteria Фазы 1 (из `[MVP_PRD §8 Фаза 1]`)
 
@@ -203,26 +203,26 @@ PostgreSQL 15+. Multi-tenant: `organization_id` (→ `account_id`) на табл
 
 ### 3.1. Перечень таблиц Фазы 1
 
-| Таблица | Назначение | Источник |
-|---|---|---|
-| `organizations` | Tenant-контейнер (юрлицо/ИП) + тумблеры синхр. | `[DATA_MODEL §Organization]`, `[MVP_PRD §6]` |
-| `integrations` | Подключение WB/Ozon: учётные данные (AES-256), статус, scheme | `[DATA_MODEL §Integration]`, `[FR-I1,I2]` |
-| `notifications` | Уведомления (невалидный токен и др.) | `[DATA_MODEL §InvalidTokenNotification]` |
-| `products` | Карточка-модель (верхний уровень PIM) | `[DATA_MODEL §Product]`, `[product-cards §сущность Карточка]` |
-| `product_variants` | Цвет (вариация уровня цвета) | `[DATA_MODEL §ProductColor]` |
-| `product_skus` | Размер = конечный SKU (учёт остатков) | `[DATA_MODEL §ProductSize]`, `[DATA_MODEL §Sku]` |
-| `product_media` | Фото/видео/rich, привязка к цвету, «значки» МП | `[DATA_MODEL §Media]` |
-| `product_attributes` | Параметры 3 уровней (модель/цвет/SKU) + параметры МП | `[DATA_MODEL §Parameter/ParameterValue]` |
-| `barcodes` | Штрихкоды (несколько на SKU, пометка МП, gtin) | `[DATA_MODEL §Barcode]` |
-| `categories` | Внутренний каталог категорий + ТНВЭД/флаги | `[DATA_MODEL §Category]` |
-| `marketplace_category_mappings` | Связь категории SelSup↔категория WB/Ozon | `[DATA_MODEL §CategoryMarketplaceMapping]` |
-| `brands` | Бренды, `ozon_id` (числовой), лого | `[DATA_MODEL §Brand]`, `[product-cards §cap 22]` |
-| `manufacturers` | Производители (ИНН, страна) | `[DATA_MODEL §Manufacturer]` |
-| `marketplace_mappings` | **Тумблеры** SKU→{WB,Ozon}: enabled, status, remote_id, last_sync | новый (объединяет `MarketplaceLink` + состояние) |
-| `sync_jobs` | Единая очередь синхронизации (publish/import/…) | `[DATA_MODEL §BackgroundTask]`, `[MVP_PRD §10.1]` |
-| `import_jobs` | Задача импорта (WB/Ozon/Excel) + статистика | `[DATA_MODEL §ImportExportJob]` |
-| `import_errors` | Журнал «Ошибки импорта» | `[DATA_MODEL §ImportErrorLog]` |
-| `audit_log` | Аудит «кто/когда/что» | `[DATA_MODEL §AuditLog]`, `[FR-O5]` |
+| Таблица                         | Назначение                                                        | Источник                                                      |
+| ------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- |
+| `organizations`                 | Tenant-контейнер (юрлицо/ИП) + тумблеры синхр.                    | `[DATA_MODEL §Organization]`, `[MVP_PRD §6]`                  |
+| `integrations`                  | Подключение WB/Ozon: учётные данные (AES-256), статус, scheme     | `[DATA_MODEL §Integration]`, `[FR-I1,I2]`                     |
+| `notifications`                 | Уведомления (невалидный токен и др.)                              | `[DATA_MODEL §InvalidTokenNotification]`                      |
+| `products`                      | Карточка-модель (верхний уровень PIM)                             | `[DATA_MODEL §Product]`, `[product-cards §сущность Карточка]` |
+| `product_variants`              | Цвет (вариация уровня цвета)                                      | `[DATA_MODEL §ProductColor]`                                  |
+| `product_skus`                  | Размер = конечный SKU (учёт остатков)                             | `[DATA_MODEL §ProductSize]`, `[DATA_MODEL §Sku]`              |
+| `product_media`                 | Фото/видео/rich, привязка к цвету, «значки» МП                    | `[DATA_MODEL §Media]`                                         |
+| `product_attributes`            | Параметры 3 уровней (модель/цвет/SKU) + параметры МП              | `[DATA_MODEL §Parameter/ParameterValue]`                      |
+| `barcodes`                      | Штрихкоды (несколько на SKU, пометка МП, gtin)                    | `[DATA_MODEL §Barcode]`                                       |
+| `categories`                    | Внутренний каталог категорий + ТНВЭД/флаги                        | `[DATA_MODEL §Category]`                                      |
+| `marketplace_category_mappings` | Связь категории SelSup↔категория WB/Ozon                          | `[DATA_MODEL §CategoryMarketplaceMapping]`                    |
+| `brands`                        | Бренды, `ozon_id` (числовой), лого                                | `[DATA_MODEL §Brand]`, `[product-cards §cap 22]`              |
+| `manufacturers`                 | Производители (ИНН, страна)                                       | `[DATA_MODEL §Manufacturer]`                                  |
+| `marketplace_mappings`          | **Тумблеры** SKU→{WB,Ozon}: enabled, status, remote_id, last_sync | новый (объединяет `MarketplaceLink` + состояние)              |
+| `sync_jobs`                     | Единая очередь синхронизации (publish/import/…)                   | `[DATA_MODEL §BackgroundTask]`, `[MVP_PRD §10.1]`             |
+| `import_jobs`                   | Задача импорта (WB/Ozon/Excel) + статистика                       | `[DATA_MODEL §ImportExportJob]`                               |
+| `import_errors`                 | Журнал «Ошибки импорта»                                           | `[DATA_MODEL §ImportErrorLog]`                                |
+| `audit_log`                     | Аудит «кто/когда/что»                                             | `[DATA_MODEL §AuditLog]`, `[FR-O5]`                           |
 
 > `users`, `roles`, `accounts`, `sessions` — Фаза 0 (созданы ранее). Здесь на
 > них ссылаемся. `stock_items`, `prices`, `orders` — Фазы 2/3, но `product_skus`
@@ -626,7 +626,7 @@ CREATE INDEX idx_audit_entity ON audit_log(account_id, entity_type, entity_id, t
 - `sync_jobs.idempotency_key` UNIQUE → повторное создание той же публикации не
   порождает дубль задачи `[DATA_MODEL §примечания 15]`.
 - `cost_price` — generated (`purchase_price + extra_costs`) `[product-cards
-  §сущность Product]`.
+§сущность Product]`.
 - `integrations UNIQUE(organization_id, service)` → правило
   «1 организация = 1 ключ API МП» `[FR-O3]`.
 - **Точки интеграции с будущими фазами:** `product_skus.id` ← `stock_items`
@@ -647,6 +647,7 @@ CREATE INDEX idx_audit_entity ON audit_log(account_id, entity_type, entity_id, t
 
 **Ключ унификации** (в порядке убывания силы) `[DATA_MODEL §примечания 5-6]`,
 `[import-export §бизправила]`:
+
 1. **Штрихкод** (`barcodes.value`) — первичный ключ матчинга; при совпадении ШК
    товары считаются одним SKU `[import-export §бизправила, "Матчинг приоритет"]`.
 2. **`(organization_id, unification_article, color_article, size)`** —
@@ -656,7 +657,7 @@ CREATE INDEX idx_audit_entity ON audit_log(account_id, entity_type, entity_id, t
 > артикула МП по правилам, специфичным для площадки: WB — IMT (артикул модели),
 > «Артикул WB» — цвет; Ozon — параметр «Объединять на одной карточке» → артикул
 > модели, цвет/размер извлекаются из параметров `[import-export §сущности,
-> §интеграции Ozon]`.
+§интеграции Ozon]`.
 
 ### 4.2. Разрешение конфликтов при импорте с двух МП
 
@@ -743,7 +744,7 @@ function ingestRemoteCard(org, mp, remoteCard):
 - `UNIQUE(organization_id, unification_article)` на `products` +
   `UNIQUE(variant_id, size)` на `product_skus` + `UNIQUE(account_id, value)` на
   `barcodes` гарантируют отсутствие дублей на уровне БД `[import-export
-  §бизправила "Уникальность комбинации"]`.
+§бизправила "Уникальность комбинации"]`.
 - При попытке вставить дубль (нарушение UNIQUE) — catch, маршрутизация в
   `import_errors` (reason=`duplicate_article` / `Товар уже создан`), продолжение
   импорта `[import-export §сущность "Журнал ошибок"]`.
@@ -788,6 +789,7 @@ interface MarketplaceAdapter:
 ```
 
 **Типы:**
+
 ```text
 CanonicalSku     = { product, variant, sku, barcodes[], media[], attributes{selsup,wb,ozon}, categoryMapping }
 MpPayload        = JSON, сформированный MpFieldTranslator из CanonicalSku + rules [product-cards §Назначение]
@@ -797,6 +799,7 @@ RateLimitState   = { rps_remaining?, daily_new_cards_remaining?, retry_after_ms?
 ```
 
 **Контракт ошибок** (единообразно для всех адаптеров → `sync_jobs.last_error`):
+
 ```text
 MpError = {
   http_status: int,          # 401/403/422/429/5xx
@@ -814,6 +817,7 @@ MpError = {
 
 **Аутентификация** `[MVP_PRD §7.2]`, `[integrations-marketplaces §cap 1]`,
 `[DATA_MODEL §примечания 14]`:
+
 - Заголовок `Authorization: <API-токен>`. Токен из ЛК продавца; тип **не**
   «Только чтение» (нужны права на создание/редактирование карточек)
   `[product-cards §интеграции WB]`.
@@ -826,13 +830,13 @@ MpError = {
 в комплекте не приведены — `[MVP_PRD §10.4.1]`, `[integrations-marketplaces
 §открытые вопросы 1]`]**. Используемые методы по практике WB OpenAPI:
 
-| Операция | Метод WB (контрактно) | Назначение | Примечание |
-|---|---|---|---|
-| Создание/ред. карточки | `POST /content/v2/cards/upload` (пакет) | массовое создание/обновление nomenclatures | **лимит 1000 новых карточек/сутки** `[product-cards §бизправила 15]` |
-| Получение карточек | `GET /content/v2/cards/list` (или `/filter`) | импорт ассортимента продавца | `[import-export §интеграции WB]` |
-| Ошибки создания | `GET /content/v2/cards/upload/maintenance`/`errors` | детальные ошибки по полю `[§cap 61]` | poll после upload |
-| Загрузка медиа | `POST /content/v3/media/save` (или через `chars`+URL) | фото/видео | **отдельная очередь; видео — вместе с фото** `[product-cards §интеграции WB, §бизправила 15]` |
-| Статус карточки | `GET /content/v2/cards/{nmId}/info` | фактический статус/параметры | для `getCardStatus` |
+| Операция               | Метод WB (контрактно)                                 | Назначение                                 | Примечание                                                                                    |
+| ---------------------- | ----------------------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| Создание/ред. карточки | `POST /content/v2/cards/upload` (пакет)               | массовое создание/обновление nomenclatures | **лимит 1000 новых карточек/сутки** `[product-cards §бизправила 15]`                          |
+| Получение карточек     | `GET /content/v2/cards/list` (или `/filter`)          | импорт ассортимента продавца               | `[import-export §интеграции WB]`                                                              |
+| Ошибки создания        | `GET /content/v2/cards/upload/maintenance`/`errors`   | детальные ошибки по полю `[§cap 61]`       | poll после upload                                                                             |
+| Загрузка медиа         | `POST /content/v3/media/save` (или через `chars`+URL) | фото/видео                                 | **отдельная очередь; видео — вместе с фото** `[product-cards §интеграции WB, §бизправила 15]` |
+| Статус карточки        | `GET /content/v2/cards/{nmId}/info`                   | фактический статус/параметры               | для `getCardStatus`                                                                           |
 
 > Все имена методов — **контрактные**, подлежат верификации в спайке
 > (§12). Контракт адаптера (`publishCard`/`fetchCards`/`uploadMedia`)
@@ -840,15 +844,17 @@ MpError = {
 > `WildberriesAdapter`.
 
 **Направления и частоты** `[MVP_PRD §7.2, §7.4]`:
+
 - Карточки: **по событию** (тумблер/«Сохранить») — публикация; **по кнопке/ночам**
   — импорт.
 - Медиа: отдельная подочередь `sync_jobs(op=upload_media)`, запускается после
   успешного `publish_card` (нужен `remote_id`) `[product-cards §бизправила 15,
-  §интеграции WB]`.
+§интеграции WB]`.
 - Цены/остатки/заказы — **Фазы 2/3** (не Фаза 1); точка интеграции — `sync_jobs.op`.
 
 **Лимиты и особенности WB** `[product-cards §бизправила 15]`, `[DATA_MODEL
 §примечания 16,20]`:
+
 - **≤ 1000 новых карточек/сутки** (редактирование существующих — без лимита).
   Sync Orchestrator держит дневной счётчик и переводит «лишние» `publish_card`
   в `queued` до следующего дня (или `failed` с retryable) `[MVP_PRD FR-P5]`.
@@ -863,6 +869,7 @@ MpError = {
 ### 5.3. Адаптер Ozon
 
 **Аутентификация** `[MVP_PRD §7.3]`, `[integrations-marketplaces §cap 1]`:
+
 - Заголовки `Client-Id: <client_id>` + `Api-Key: <api_key>`. Тип ключа
   **«Admin»** `[MVP_PRD FR-I2]`, `[INTEGRATIONS §Ozon]`.
 - `credentials_enc` = AES-256(jsonb`{client_id, api_key}`).
@@ -872,22 +879,24 @@ MpError = {
 **Эндпоинты Ozon API** **[SPIKE — верификация у Ozon; в комплекте не приведены]**
 (контрактно по практике Ozon Seller API `/v1/...`):
 
-| Операция | Метод Ozon (контрактно) | Назначение | Примечание |
-|---|---|---|---|
-| Создание карточки | `POST /v1/product/import` (или `/v2/...`) | создание/обновление товаров | обязателен артикул (ID Ozon) + связь `[product-cards §интеграции Ozon]` |
-| Обновление карточки | `POST /v1/product/update` / `/v1/product/info` | редактирование | описание через «Аннотацию», можно на уровне размера `[§бизправила 16]` |
-| Список товаров | `POST /v1/product/list` | импорт ассортимента | `visible_only`, `warehouse_id` `[import-export §cap 18,19]` |
-| Детали товара | `POST /v1/product/info` | параметры/статус | для `getCardStatus` |
-| Категории/характерки | `POST /v1/category/...` , `/v1/description-category/...` | справочники категорий и атрибутов | для маппинга категорий §8 |
-| Бренды | `POST /v1/brand/list` (поиск) | числовой ID бренда | **бренд привязывается по ID, не создаётся** `[§бизправила 16, §cap 22]` |
-| Rich-контент | `POST /v1/product/import-rich-content` | rich JSON | **post-MVP углублённо**; в Фазе 1 — заглушка |
+| Операция             | Метод Ozon (контрактно)                                  | Назначение                        | Примечание                                                              |
+| -------------------- | -------------------------------------------------------- | --------------------------------- | ----------------------------------------------------------------------- |
+| Создание карточки    | `POST /v1/product/import` (или `/v2/...`)                | создание/обновление товаров       | обязателен артикул (ID Ozon) + связь `[product-cards §интеграции Ozon]` |
+| Обновление карточки  | `POST /v1/product/update` / `/v1/product/info`           | редактирование                    | описание через «Аннотацию», можно на уровне размера `[§бизправила 16]`  |
+| Список товаров       | `POST /v1/product/list`                                  | импорт ассортимента               | `visible_only`, `warehouse_id` `[import-export §cap 18,19]`             |
+| Детали товара        | `POST /v1/product/info`                                  | параметры/статус                  | для `getCardStatus`                                                     |
+| Категории/характерки | `POST /v1/category/...` , `/v1/description-category/...` | справочники категорий и атрибутов | для маппинга категорий §8                                               |
+| Бренды               | `POST /v1/brand/list` (поиск)                            | числовой ID бренда                | **бренд привязывается по ID, не создаётся** `[§бизправила 16, §cap 22]` |
+| Rich-контент         | `POST /v1/product/import-rich-content`                   | rich JSON                         | **post-MVP углублённо**; в Фазе 1 — заглушка                            |
 
 **Направления и частоты** `[MVP_PRD §7.3, §7.4]`:
+
 - Карточки: публикация по событию; импорт по кнопке/ночам.
 - Заказы/цены/остатки — Фазы 2/3.
 
 **Лимиты и особенности Ozon** `[product-cards §бизправила 16]`, `[DATA_MODEL
 §примечания 15]`:
+
 - **«Тип Ozon» = последний уровень категории** — определяется категорией, не
   редактируется отдельно `[§бизправила 16]`.
 - **Бренд по числовому ID** — берётся из `brands.ozon_id`; если пусто — ошибка
@@ -919,72 +928,72 @@ MpError = {
 
 ### 6.1. Карточки (CRUD + модификации + валидация)
 
-| Метод | Путь | Тело/Ответ | Описание / ошибки |
-|---|---|---|---|
-| `POST` | `/products` | body: `{unification_article, name, brand_id, category_id, production_country, price_with_discount, price_without_discount, weight, dimensions?, manufacturer_id?, variants:[{color_article, color_name, sizes:[{size, barcode?}]}], attributes?[]}` → `201 {product}` | Создание карточки (3-ур. или упрощённая) `[WF-02]`. **400** если нет обязательных (brand/category/country/prices/weight) `[§бизправила 3-7]`; **409** если `unification_article` занят в org. |
-| `GET` | `/products` | query: `q, category_id, brand_id, status, mp_status, mp, page, size` → `200 {items, total, page}` | Список + фильтры (включая статусы публикации на МП через JOIN `marketplace_mappings`) `[FR-P7]`. SLA ≤ 2с при 10k SKU `[MVP_PRD §9.2]`. |
-| `GET` | `/products/{id}` | → `200 {product, variants[], skus[], media[], attributes[], mappings{wb,ozon}}` | Полная карточка с тумблерами/статусами МП и remote_id. |
-| `PATCH` | `/products/{id}` | body: поля продукта → `200 {product}` | Частичное обновление модели. **409** при смене category_id после создания — запрещено `[§бизправила 8]`. |
-| `DELETE` | `/products/{id}` | → `204` | Удаление **только при отсутствии связей** (заказы/закупки/приёмки); иначе — архив `[§бизправила 2, WF-8]`. Фаза 1: запретить hard-delete (только → `Archived`), т.к. заказы появятся в Фазе 3. |
-| `POST` | `/products/{id}/variants` | body: `{color_article, color_name, description?}` → `201 {variant}` | Добавить цвет. |
-| `POST` | `/products/{id}/variants/{vid}/skus` | body: `{size, russian_size?, manufacturer_size?, wb_size?, barcode?}` → `201 {sku}` | Добавить размер; ШК автогенерируется, если не указан `[§cap 59]`. |
-| `PATCH` | `/products/{id}/skus/{skuId}` | body: поля SKU → `200 {sku}` | Обновление размера. |
-| `POST` | `/products/{id}/skus/{skuId}/barcodes` | body: `{value?, generation_source?}` → `201 {barcode}` | Добавить/сгенерировать ШК `[§cap 59]`. |
-| `PUT` | `/products/{id}/attributes` | body: `[{entity_type, entity_id, namespace, param_code, value, is_visible?}]` → `200 {attributes[]}` | Параметры 3 уровней + параметры WB/Ozon (включая видимость «глазик») `[§cap 15-17]`. |
-| `POST` | `/products/validate` | body: черновик карточки → `200 {valid, errors:[{mp, field, code, message}]}` | Превалидация перед публикацией (обяз. поля по каждому МП, §9). Без вызова API МП. |
+| Метод    | Путь                                   | Тело/Ответ                                                                                                                                                                                                                                                            | Описание / ошибки                                                                                                                                                                              |
+| -------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST`   | `/products`                            | body: `{unification_article, name, brand_id, category_id, production_country, price_with_discount, price_without_discount, weight, dimensions?, manufacturer_id?, variants:[{color_article, color_name, sizes:[{size, barcode?}]}], attributes?[]}` → `201 {product}` | Создание карточки (3-ур. или упрощённая) `[WF-02]`. **400** если нет обязательных (brand/category/country/prices/weight) `[§бизправила 3-7]`; **409** если `unification_article` занят в org.  |
+| `GET`    | `/products`                            | query: `q, category_id, brand_id, status, mp_status, mp, page, size` → `200 {items, total, page}`                                                                                                                                                                     | Список + фильтры (включая статусы публикации на МП через JOIN `marketplace_mappings`) `[FR-P7]`. SLA ≤ 2с при 10k SKU `[MVP_PRD §9.2]`.                                                        |
+| `GET`    | `/products/{id}`                       | → `200 {product, variants[], skus[], media[], attributes[], mappings{wb,ozon}}`                                                                                                                                                                                       | Полная карточка с тумблерами/статусами МП и remote_id.                                                                                                                                         |
+| `PATCH`  | `/products/{id}`                       | body: поля продукта → `200 {product}`                                                                                                                                                                                                                                 | Частичное обновление модели. **409** при смене category_id после создания — запрещено `[§бизправила 8]`.                                                                                       |
+| `DELETE` | `/products/{id}`                       | → `204`                                                                                                                                                                                                                                                               | Удаление **только при отсутствии связей** (заказы/закупки/приёмки); иначе — архив `[§бизправила 2, WF-8]`. Фаза 1: запретить hard-delete (только → `Archived`), т.к. заказы появятся в Фазе 3. |
+| `POST`   | `/products/{id}/variants`              | body: `{color_article, color_name, description?}` → `201 {variant}`                                                                                                                                                                                                   | Добавить цвет.                                                                                                                                                                                 |
+| `POST`   | `/products/{id}/variants/{vid}/skus`   | body: `{size, russian_size?, manufacturer_size?, wb_size?, barcode?}` → `201 {sku}`                                                                                                                                                                                   | Добавить размер; ШК автогенерируется, если не указан `[§cap 59]`.                                                                                                                              |
+| `PATCH`  | `/products/{id}/skus/{skuId}`          | body: поля SKU → `200 {sku}`                                                                                                                                                                                                                                          | Обновление размера.                                                                                                                                                                            |
+| `POST`   | `/products/{id}/skus/{skuId}/barcodes` | body: `{value?, generation_source?}` → `201 {barcode}`                                                                                                                                                                                                                | Добавить/сгенерировать ШК `[§cap 59]`.                                                                                                                                                         |
+| `PUT`    | `/products/{id}/attributes`            | body: `[{entity_type, entity_id, namespace, param_code, value, is_visible?}]` → `200 {attributes[]}`                                                                                                                                                                  | Параметры 3 уровней + параметры WB/Ozon (включая видимость «глазик») `[§cap 15-17]`.                                                                                                           |
+| `POST`   | `/products/validate`                   | body: черновик карточки → `200 {valid, errors:[{mp, field, code, message}]}`                                                                                                                                                                                          | Превалидация перед публикацией (обяз. поля по каждому МП, §9). Без вызова API МП.                                                                                                              |
 
 ### 6.2. Медиа
 
-| Метод | Путь | Тело/Ответ | Описание |
-|---|---|---|---|
-| `POST` | `/products/{id}/media` | multipart: file + `{variant_id?, marketplace_marks?, is_main?, angle?}` → `201 {media}` | Загрузка фото drag&drop, привязка к цвету, «значки» МП, выбор главного `[§cap 34]`. |
-| `PATCH` | `/products/{id}/media/{mid}` | body: `{is_main?, marketplace_marks?, position?}` → `200 {media}` | Смена главного/«значков»/порядка. |
-| `DELETE` | `/products/{id}/media/{mid}` | → `204` | Удаление медиа. |
+| Метод    | Путь                         | Тело/Ответ                                                                              | Описание                                                                            |
+| -------- | ---------------------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `POST`   | `/products/{id}/media`       | multipart: file + `{variant_id?, marketplace_marks?, is_main?, angle?}` → `201 {media}` | Загрузка фото drag&drop, привязка к цвету, «значки» МП, выбор главного `[§cap 34]`. |
+| `PATCH`  | `/products/{id}/media/{mid}` | body: `{is_main?, marketplace_marks?, position?}` → `200 {media}`                       | Смена главного/«значков»/порядка.                                                   |
+| `DELETE` | `/products/{id}/media/{mid}` | → `204`                                                                                 | Удаление медиа.                                                                     |
 
 ### 6.3. Публикация (тумблеры WB/Ozon) — ключевое `[FR-P5]`
 
-| Метод | Путь | Тело/Ответ | Описание / ошибки |
-|---|---|---|---|
-| `PUT` | `/products/{id}/skus/{skuId}/publish` | body: `{marketplace: 'wildberries'\|'ozon', enabled: bool}` → `202 {mapping: {status}}` | Переключение тумблера. `enabled=true` → валидация (§9) → `mapping.status='ready'` + создаётся `sync_job(op=publish_card)`. `enabled=false` → `status='draft'` + `sync_job(op=unpublish_card)` (если поддерживается). `[WF-02]`. **400** если интеграция `not_configured`/`invalid_token`. **422** `validation_failed` с деталями по полям МП. |
-| `POST` | `/products/{id}/publish` | body: `{marketplace, sku_ids:[]}` → `202 {accepted, rejected:[{sku_id, errors[]}]}` | Массовая/«на все размеры» публикация; объединённая карточка отправляется целиком `[§бизправила 12]`. |
-| `GET` | `/products/{id}/publish-status` | → `200 {wb: {status, remote_id?, last_error?}, ozon: {...}}` | Статус публикации по МП (для UI-индикаторов). |
-| `GET` | `/products/{id}/sync-jobs` | query: `marketplace?` → `200 {items:[{id, op, status, last_error?, created_at}]}` | История задач синхронизации карточки. |
+| Метод  | Путь                                  | Тело/Ответ                                                                              | Описание / ошибки                                                                                                                                                                                                                                                                                                                             |
+| ------ | ------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PUT`  | `/products/{id}/skus/{skuId}/publish` | body: `{marketplace: 'wildberries'\|'ozon', enabled: bool}` → `202 {mapping: {status}}` | Переключение тумблера. `enabled=true` → валидация (§9) → `mapping.status='ready'` + создаётся `sync_job(op=publish_card)`. `enabled=false` → `status='draft'` + `sync_job(op=unpublish_card)` (если поддерживается). `[WF-02]`. **400** если интеграция `not_configured`/`invalid_token`. **422** `validation_failed` с деталями по полям МП. |
+| `POST` | `/products/{id}/publish`              | body: `{marketplace, sku_ids:[]}` → `202 {accepted, rejected:[{sku_id, errors[]}]}`     | Массовая/«на все размеры» публикация; объединённая карточка отправляется целиком `[§бизправила 12]`.                                                                                                                                                                                                                                          |
+| `GET`  | `/products/{id}/publish-status`       | → `200 {wb: {status, remote_id?, last_error?}, ozon: {...}}`                            | Статус публикации по МП (для UI-индикаторов).                                                                                                                                                                                                                                                                                                 |
+| `GET`  | `/products/{id}/sync-jobs`            | query: `marketplace?` → `200 {items:[{id, op, status, last_error?, created_at}]}`       | История задач синхронизации карточки.                                                                                                                                                                                                                                                                                                         |
 
 ### 6.4. Импорт
 
-| Метод | Путь | Тело/Ответ | Описание |
-|---|---|---|---|
-| `POST` | `/imports` | body: `{source: 'wildberries'\|'ozon', mode:'quick'\|'full', params:{brand?, visible_only?, warehouse_id?}}` → `202 {import_job}` | Запуск импорта из МП `[import-export WF-1/2]`. Создаёт `sync_job(op=import_cards)`. |
-| `POST` | `/imports/excel` | multipart: file + `{send_to?: 'wildberries'\|'ozon', delete_empty_cells?: bool}` → `202 {import_job}` | Массовое редактирование через Excel `[FR-P8, §cap 43]`. |
-| `GET` | `/imports/{jobId}` | → `200 {import_job: {status, stats, sync_job_id}}` | Статус задачи импорта. |
-| `GET` | `/imports/{jobId}/errors` | query: `page,size` → `200 {items:[{product_identifier, reason, raw_payload?}], total}` | Журнал «Ошибки импорта» `[§cap 23]`. |
-| `GET` | `/imports/excel/template` | query: `category_id?` → `200 (xlsx file)` | Скачать Excel-шаблон `[WF-3]`. |
+| Метод  | Путь                      | Тело/Ответ                                                                                                                        | Описание                                                                            |
+| ------ | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `POST` | `/imports`                | body: `{source: 'wildberries'\|'ozon', mode:'quick'\|'full', params:{brand?, visible_only?, warehouse_id?}}` → `202 {import_job}` | Запуск импорта из МП `[import-export WF-1/2]`. Создаёт `sync_job(op=import_cards)`. |
+| `POST` | `/imports/excel`          | multipart: file + `{send_to?: 'wildberries'\|'ozon', delete_empty_cells?: bool}` → `202 {import_job}`                             | Массовое редактирование через Excel `[FR-P8, §cap 43]`.                             |
+| `GET`  | `/imports/{jobId}`        | → `200 {import_job: {status, stats, sync_job_id}}`                                                                                | Статус задачи импорта.                                                              |
+| `GET`  | `/imports/{jobId}/errors` | query: `page,size` → `200 {items:[{product_identifier, reason, raw_payload?}], total}`                                            | Журнал «Ошибки импорта» `[§cap 23]`.                                                |
+| `GET`  | `/imports/excel/template` | query: `category_id?` → `200 (xlsx file)`                                                                                         | Скачать Excel-шаблон `[WF-3]`.                                                      |
 
 ### 6.5. Справочники
 
-| Метод | Путь | Тело/Ответ | Описание |
-|---|---|---|---|
-| `GET/POST/PATCH/DELETE` | `/brands` | CRUD брендов; POST body `{name, ozon_name?, ozon_id?, logo_media_id?}` | `[§cap 22]`. Ozon ID — числовой. |
-| `GET/POST/PATCH/DELETE` | `/manufacturers` | CRUD; POST body `{name, inn?, production_country?}` | `[§cap 24]`. |
-| `GET/POST/PATCH` | `/categories` | CRUD + иерархия; POST body `{name, parent_id?, tnved?, flag_split_color_size?, ...}` | `[§cap 25-31]`. |
-| `PUT` | `/categories/{id}/mappings` | body: `[{marketplace, external_category_id, external_category_name?, matched_by?}]` | Связь категории с категорией WB/Ozon `[§cap 26]`. |
-| `GET` | `/marketplaces/{mp}/categories` | query: `q, parent_id?` → `200 {items}` | Прокси к справочнику категорий МП (через адаптер) для выбора в UI маппинга. |
+| Метод                   | Путь                            | Тело/Ответ                                                                           | Описание                                                                    |
+| ----------------------- | ------------------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| `GET/POST/PATCH/DELETE` | `/brands`                       | CRUD брендов; POST body `{name, ozon_name?, ozon_id?, logo_media_id?}`               | `[§cap 22]`. Ozon ID — числовой.                                            |
+| `GET/POST/PATCH/DELETE` | `/manufacturers`                | CRUD; POST body `{name, inn?, production_country?}`                                  | `[§cap 24]`.                                                                |
+| `GET/POST/PATCH`        | `/categories`                   | CRUD + иерархия; POST body `{name, parent_id?, tnved?, flag_split_color_size?, ...}` | `[§cap 25-31]`.                                                             |
+| `PUT`                   | `/categories/{id}/mappings`     | body: `[{marketplace, external_category_id, external_category_name?, matched_by?}]`  | Связь категории с категорией WB/Ozon `[§cap 26]`.                           |
+| `GET`                   | `/marketplaces/{mp}/categories` | query: `q, parent_id?` → `200 {items}`                                               | Прокси к справочнику категорий МП (через адаптер) для выбора в UI маппинга. |
 
 ### 6.6. Интеграции и статусы
 
-| Метод | Путь | Тело/Ответ | Описание |
-|---|---|---|---|
-| `GET` | `/integrations` | → `200 {items:[{organization_id, service, status, scheme}]}` | Статусы интеграций WB/Ozon по организациям `[§cap 3]`. |
-| `PUT` | `/integrations/{orgId}/{service}` | body: `{api_token? \| {client_id, api_key}, scheme?}` → `200 {integration: {status}}` | Сохранение учётных данных (AES-256) + `probeToken()` → статус. `[FR-I1,I2]`. |
-| `POST` | `/integrations/{orgId}/{service}/probe` | → `200 {valid, reason?}` | Принудительная проверка токена. |
-| `GET` | `/notifications` | query: `unread_only?` → `200 {items}` | Уведомления (невалидный токен) `[FR-I3]`. |
-| `PATCH` | `/notifications/{id}/read` | → `204` | Пометить прочитанным. |
-| `GET` | `/sync-jobs` | query: `organization_id, marketplace, status, op, page` → `200 {items}` | Мониторинг очереди (для админа/отладки). |
+| Метод   | Путь                                    | Тело/Ответ                                                                            | Описание                                                                     |
+| ------- | --------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `GET`   | `/integrations`                         | → `200 {items:[{organization_id, service, status, scheme}]}`                          | Статусы интеграций WB/Ozon по организациям `[§cap 3]`.                       |
+| `PUT`   | `/integrations/{orgId}/{service}`       | body: `{api_token? \| {client_id, api_key}, scheme?}` → `200 {integration: {status}}` | Сохранение учётных данных (AES-256) + `probeToken()` → статус. `[FR-I1,I2]`. |
+| `POST`  | `/integrations/{orgId}/{service}/probe` | → `200 {valid, reason?}`                                                              | Принудительная проверка токена.                                              |
+| `GET`   | `/notifications`                        | query: `unread_only?` → `200 {items}`                                                 | Уведомления (невалидный токен) `[FR-I3]`.                                    |
+| `PATCH` | `/notifications/{id}/read`              | → `204`                                                                               | Пометить прочитанным.                                                        |
+| `GET`   | `/sync-jobs`                            | query: `organization_id, marketplace, status, op, page` → `200 {items}`               | Мониторинг очереди (для админа/отладки).                                     |
 
 ### 6.7. Аудит
 
-| Метод | Путь | Описание |
-|---|---|---|
+| Метод | Путь     | Описание                                                               |
+| ----- | -------- | ---------------------------------------------------------------------- |
 | `GET` | `/audit` | query: `entity_type, entity_id, action, from, to` → история `[FR-O5]`. |
 
 ---
@@ -1099,6 +1108,7 @@ MpError = {
 (3) Цвета/размеры (для одежды) → (4) Фото → (5) Параметры МП + тумблеры.
 
 **Ключевые элементы:**
+
 - Выбор категории с автоподстановкой mapping WB/Ozon и габаритов по умолчанию
   `[§cap 26,30]`.
 - Служебные параметры: артикул объединения, название, бренд (обяз., для Ozon —
@@ -1106,7 +1116,7 @@ MpError = {
   страна, цены со/без скидки (обяз.), габариты/вес (обяз.) `[WF-02 шаг 2-3]`.
 - Таблица цветов/размеров: артикул цвета + цвет; размер + рос. размер (WB) +
   размер производителя; ШК автогенерируется, редактируем `[§cap 14, WF-02
-  шаг 4]`.
+шаг 4]`.
 - Фото: drag&drop, привязка к цвету, «значки» МП (чекбоксы wb/ozon на каждое
   фото), выбор главного `[§cap 34]`.
 - Параметры МП: отдельные секции WB/Ozon, видимость «глазиком», выделение
@@ -1123,6 +1133,7 @@ MpError = {
 ### 8.2. Каталог (список товаров) `[FR-P7]`, `[product-cards §cap 50-54]`
 
 **Ключевые элементы:**
+
 - Таблица: артикул, название, категория, бренд, цены, **колонки статусов WB и
   Ozon** (иконки: черновик/готов/публикуется/опубликовано/ошибка), «дата
   изменения фото» `[§cap 38]`.
@@ -1141,6 +1152,7 @@ MpError = {
 (3) Запуск → (4) Результаты.
 
 **Состояния:**
+
 - `queued` → `running` (прогресс: добавлено/обновлено/ошибки) → `completed`/
   `failed`.
 - По завершении: статистика `{added, updated, errors}` + таблица «Ошибки
@@ -1190,93 +1202,93 @@ MpError = {
 > Источник: `[product-cards §бизправила, §интеграции]`, `[MVP_PRD §7.2, §7.3]`,
 > `[import-export §бизправила]`. Серверная превалидация (в `PublishSvc` /
 > `MpFieldTranslator`) ДО создания `sync_job`, чтобы не тратить квоты МП на
- заведомо невалидные payload.
+> заведомо невалидные payload.
 
 ### 9.1. Общие обязательные поля (оба МП) `[product-cards §бизправила 3-7]`
 
-| Поле | Правило | Источник |
-|---|---|---|
-| Бренд | обязателен; `brand_id` not null | `[§бизправила 3]` |
-| Страна производства | обязательна; по умолчанию из производителя | `[§бизправила 4]` |
-| Цена со скидкой / без скидки | обязательны; `>= 0` | `[§бизправила 5]` |
-| Габариты и вес | обязательны (вес — для Ozon критичен: «Не указан вес упаковки») | `[§бизправила 6]` |
-| Категория + mapping на МП | обязательна; без связи с категорией МП — комиссия = 0 / валидация | `[§бизправила 7]` |
-| Запрещённые символы | нет `!@#$%^&*"№;%:?*+` в строковых параметрах | `[integrations §бизправила]` |
-| Артикул (уник. ключ) | `(org, unification_article, color_article, size)` уникален | `[import-export §бизправила]` |
+| Поле                         | Правило                                                           | Источник                      |
+| ---------------------------- | ----------------------------------------------------------------- | ----------------------------- |
+| Бренд                        | обязателен; `brand_id` not null                                   | `[§бизправила 3]`             |
+| Страна производства          | обязательна; по умолчанию из производителя                        | `[§бизправила 4]`             |
+| Цена со скидкой / без скидки | обязательны; `>= 0`                                               | `[§бизправила 5]`             |
+| Габариты и вес               | обязательны (вес — для Ozon критичен: «Не указан вес упаковки»)   | `[§бизправила 6]`             |
+| Категория + mapping на МП    | обязательна; без связи с категорией МП — комиссия = 0 / валидация | `[§бизправила 7]`             |
+| Запрещённые символы          | нет `!@#$%^&*"№;%:?*+` в строковых параметрах                     | `[integrations §бизправила]`  |
+| Артикул (уник. ключ)         | `(org, unification_article, color_article, size)` уникален        | `[import-export §бизправила]` |
 
 ### 9.2. Wildberries — специфичные правила `[product-cards §интеграции/бизправила 15]`, `[MVP_PRD §7.2]`
 
-| Аспект | Правило |
-|---|---|
-| Токен | тип **не** «Только чтение»; срок ограничен → ротация + уведомления |
-| Бренд | не создаётся по API — используется существующий (по имени) |
-| Категория | фиксируется при первом создании; mapping WB обязателен |
-| Новый лимит | **≤ 1000 новых карточек/сутки/org**; редактирование — без лимита |
-| Фото | передаются **отдельным процессом** после создания карточки (`upload_media`) |
-| Видео | передаётся **вместе с фото** (иначе затирается); группировать в один батч |
-| Rich-контент | через API **недоступен** — не отправляем |
-| Размер | «Российский размер» автогенерируется для WB `[§сущность Размер]` |
-| Скидка WB (цен) | отправляется **скидка целым числом** (округление вниз), не цена — **Фаза 2** (цены), но цена хранится в карточке |
-| Запрещённые символы | валидация до отправки |
+| Аспект              | Правило                                                                                                          |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Токен               | тип **не** «Только чтение»; срок ограничен → ротация + уведомления                                               |
+| Бренд               | не создаётся по API — используется существующий (по имени)                                                       |
+| Категория           | фиксируется при первом создании; mapping WB обязателен                                                           |
+| Новый лимит         | **≤ 1000 новых карточек/сутки/org**; редактирование — без лимита                                                 |
+| Фото                | передаются **отдельным процессом** после создания карточки (`upload_media`)                                      |
+| Видео               | передаётся **вместе с фото** (иначе затирается); группировать в один батч                                        |
+| Rich-контент        | через API **недоступен** — не отправляем                                                                         |
+| Размер              | «Российский размер» автогенерируется для WB `[§сущность Размер]`                                                 |
+| Скидка WB (цен)     | отправляется **скидка целым числом** (округление вниз), не цена — **Фаза 2** (цены), но цена хранится в карточке |
+| Запрещённые символы | валидация до отправки                                                                                            |
 
 ### 9.3. Ozon — специфичные правила `[product-cards §интеграции/бизправила 16]`, `[MVP_PRD §7.3]`
 
-| Аспект | Правило |
-|---|---|
-| Токен | Client-Id + Api-Key, тип **«Admin»** |
-| Бренд | **привязывается по числовому ID** (`brands.ozon_id`); не создаётся по API; если `ozon_id` пуст → ошибка валидации `required: brand.ozon_id` |
-| Артикул | обязателен (ID Ozon) + связь (номер карточки/ссылка) |
-| Категория | «Тип Ozon» = последний уровень категории; не редактируется отдельно; mapping Ozon обязателен |
-| Описание | через «Аннотацию»; можно на уровне размера; если rich заполнен — отправляется rich (старое описание не уйдёт) |
-| Цвет | из справочника Ozon, **маленькими буквами** (для одежды/обуви) `[import-export WF-7 шаг 6]` |
-| Размер | **только числа** (для одежды/обуви) `[import-export WF-7 шаг 6]` |
-| Вес | обязателен; типичная ошибка «Не указан вес для упаковки» |
-| Видео | до 5 по ссылкам (RuTube/VK/Яндекс Диск) через параметр «Ozon.Видео: ссылка» |
-| Rich-контент | JSON через API (post-MVP углублённо; в Фазе 1 — заглушка/необязательно) |
-| Заказ | создаётся **один раз** и не редактируется (Фаза 3 — строго UX) |
+| Аспект       | Правило                                                                                                                                     |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Токен        | Client-Id + Api-Key, тип **«Admin»**                                                                                                        |
+| Бренд        | **привязывается по числовому ID** (`brands.ozon_id`); не создаётся по API; если `ozon_id` пуст → ошибка валидации `required: brand.ozon_id` |
+| Артикул      | обязателен (ID Ozon) + связь (номер карточки/ссылка)                                                                                        |
+| Категория    | «Тип Ozon» = последний уровень категории; не редактируется отдельно; mapping Ozon обязателен                                                |
+| Описание     | через «Аннотацию»; можно на уровне размера; если rich заполнен — отправляется rich (старое описание не уйдёт)                               |
+| Цвет         | из справочника Ozon, **маленькими буквами** (для одежды/обуви) `[import-export WF-7 шаг 6]`                                                 |
+| Размер       | **только числа** (для одежды/обуви) `[import-export WF-7 шаг 6]`                                                                            |
+| Вес          | обязателен; типичная ошибка «Не указан вес для упаковки»                                                                                    |
+| Видео        | до 5 по ссылкам (RuTube/VK/Яндекс Диск) через параметр «Ozon.Видео: ссылка»                                                                 |
+| Rich-контент | JSON через API (post-MVP углублённо; в Фазе 1 — заглушка/необязательно)                                                                     |
+| Заказ        | создаётся **один раз** и не редактируется (Фаза 3 — строго UX)                                                                              |
 
 ### 9.4. Требования к медиа `[product-cards §cap 34-42, §бизправила 22]`
 
-| Аспект | Правило |
-|---|---|
-| Кол-во фото | до 50 на товар (через Excel); на форму — drag&drop `[§cap 35]` |
-| Главное фото | ровно одно на товар/цвет (`uq_media_main_per_variant`) |
-| Фон | автодобавление белого фона под требования МП `[§cap 34]` |
-| Привязка | к цвету (`variant_id`) `[§cap 34]` |
-| «Значки» МП | `marketplace_marks` (wb/ozon) для выборочной отправки `[§cap 34]` |
-| Форматы | фото jpeg/png; видео mp4/mov (post-MVP углублённо) |
-| Копирование | при копировании карточки фото **не копируются** `[§бизправила 22]` |
+| Аспект       | Правило                                                            |
+| ------------ | ------------------------------------------------------------------ |
+| Кол-во фото  | до 50 на товар (через Excel); на форму — drag&drop `[§cap 35]`     |
+| Главное фото | ровно одно на товар/цвет (`uq_media_main_per_variant`)             |
+| Фон          | автодобавление белого фона под требования МП `[§cap 34]`           |
+| Привязка     | к цвету (`variant_id`) `[§cap 34]`                                 |
+| «Значки» МП  | `marketplace_marks` (wb/ozon) для выборочной отправки `[§cap 34]`  |
+| Форматы      | фото jpeg/png; видео mp4/mov (post-MVP углублённо)                 |
+| Копирование  | при копировании карточки фото **не копируются** `[§бизправила 22]` |
 
 ### 9.5. Штрихкоды `[product-cards §cap 59]`, `[import-export §сущности]`
 
-| Аспект | Правило |
-|---|---|
-| Генерация | автогенерация на размер; источник `Marketplace` по умолчанию `[§cap 59]` |
-| Несколько ШК | разрешены; пометка `marketplace_usage` по МП; на этикетке — один `[§cap 59]` |
-| Уникальность | `(account_id, value)`; дубли между организациями — по глобальной настройке `[import-export §cap 24]` |
-| GTIN (ЧЗ) | начинается с 2 или 4; GTIN без первой цифры = EAN-13 (точка интеграции post-MVP) `[import-export §бизправила]` |
+| Аспект       | Правило                                                                                                        |
+| ------------ | -------------------------------------------------------------------------------------------------------------- |
+| Генерация    | автогенерация на размер; источник `Marketplace` по умолчанию `[§cap 59]`                                       |
+| Несколько ШК | разрешены; пометка `marketplace_usage` по МП; на этикетке — один `[§cap 59]`                                   |
+| Уникальность | `(account_id, value)`; дубли между организациями — по глобальной настройке `[import-export §cap 24]`           |
+| GTIN (ЧЗ)    | начинается с 2 или 4; GTIN без первой цифры = EAN-13 (точка интеграции post-MVP) `[import-export §бизправила]` |
 
 ---
 
 ## 10. Edge-cases
 
-| # | Сценарий | Поведение системы | Источник |
-|---|---|---|---|
-| E1 | **Частичный успех публикации**: одно поле не прошло валидацию МП (422) | `mapping.status='error'`, `last_error={field, code, message}`; UI показывает конкретное поле и сообщение МП; `sync_job.status='failed'` (не retry). Карточка остаётся `ready` по внутренним данным; правка поля → повтор `ready`→`publishing` | `[§cap 61]`, `[MVP_PRD FR-P5 "детальные ошибки"]` |
-| E2 | **Полный успех на WB, ошибка на Ozon** (отдельные тумблеры) | Независимые `marketplace_mappings`: WB→`published` (с `remote_id`), Ozon→`error`. UI показывает разные статусы в колонках | `[§cap 3,5]` |
-| E3 | **Расхождения при повторном импорте** (артикул тот же, параметры изменились на МП) | Обновляются **только** параметры МП (`product_attributes` namespace=wb/ozon); внутренние SelSup (название/описание) **не** трогаются; категория не меняется; габариты — по тумблеру «обновлять габариты» | `[import-export §бизправила, §cap 20,21]`, `[§бизправила 8,9]` |
-| E4 | **Изменение обязательного поля после публикации** (напр. вес) | Сохранение PATCH → если `enabled=true` и статус `published` → авто-создание `sync_job(op=publish_card)` для доставки изменений на МП (тумблер «включён» = целевое состояние синхронизируется) | `[§cap 3]` (тумблер как целевое состояние) |
-| E5 | **Rate-limit / 429** | `sync_job` retry: `attempts++`, `next_attempt_at=now()+retry_after`; `mapping.status` остаётся `publishing`; токен-ведро RPS снижает скорость; UI — «Публикуется» (без ошибки) | `[MVP_PRD §10.1]`, §7.3 |
-| E6 | **Дневной лимит WB 1000 новых карточек исчерпан** | «Лишние» `publish_card` → `queued`, `next_attempt_at` = 00:00 МСК след. суток; `mapping.status` остаётся `ready`; в UI — индикатор «В очереди (лимит)»; не считается ошибкой | `[§бизправила 15]`, `[DATA_MODEL §20]` |
-| E7 | **Невалидный/просроченный токен** (401/403) | `integrations.status='invalid_token'`; все `sync_jobs` этого МП/org → `cancelled`/приостановлены; `notifications` баннер «Перейти к настройкам»; `mapping.status` не сбрасывается в `error`, остаётся прежним (токен — не ошибка карточки) | `[FR-I3]`, `[§cap 4]` |
-| E8 | **Дубликат при импорте** (нарушение UNIQUE) | catch conflict → `import_errors(reason='duplicate_article'/'Товар уже создан')`; импорт продолжается; карточка не дублируется | `[import-export §сущность Журнал ошибок]`, §4.4 |
-| E9 | **Конфликт матчинга** (ШК совпал, но brand/category разные) | `import_errors(reason='match_conflict')`; отдельная карточка НЕ объединяется автоматически; ждёт ручного merge (post-MVP тулз) | `[import-export §бизправила]`, `[DATA_MODEL §6]`, §4.2 |
-| E10 | **Рассинхрон остатков** (упоминание риска) | В Фазе 1 остатков нет; но `sync_jobs` проектируется так, что `update_stock` (Фаза 2) идёт через ту же очередь с теми же retry. Митигация на уровне Фазы 2: первый импорт — только заказы, без обновления остатков | `[MVP_PRD §10.1 риск 3]` |
-| E11 | **Фото WB загружено до получения `remote_id`** | `upload_media` создаётся **только** после успешного `publish_card` (нужен `remote_id`/`nmId`); иначе — откладывается | `[§бизправила 15, §интеграции WB]` |
-| E12 | **Видео WB без фото в батче** | `MpFieldTranslator` для WB группирует фото+видео SKU в один `upload_media` батч; пустой фото-список при наличии видео → превалидация-ошибка | `[§бизправила 15]` |
-| E13 | **Параллельные `sync_jobs` на один SKU/МП** | `idempotency_key` UNIQUE + `SELECT ... FOR UPDATE SKIP LOCKED` гарантируют, что одновременно исполняется одна задача на target+mp; дубль — no-op | `[DATA_MODEL §15]`, §7.2 |
-| E14 | **Быстрый импорт ещё не завершил подтягивание параметров** | Карточки в статусе «параметры подтягиваются» блокируют редактирование и публикацию (флаг в `import_jobs`/`products`); UI — баннер | `[import-export §cap 5]` |
-| E15 | **Смена категории после создания** | Запрещена на уровне API (409) — категория фиксируется при первом создании | `[§бизправила 8]` |
+| #   | Сценарий                                                                           | Поведение системы                                                                                                                                                                                                                             | Источник                                                       |
+| --- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| E1  | **Частичный успех публикации**: одно поле не прошло валидацию МП (422)             | `mapping.status='error'`, `last_error={field, code, message}`; UI показывает конкретное поле и сообщение МП; `sync_job.status='failed'` (не retry). Карточка остаётся `ready` по внутренним данным; правка поля → повтор `ready`→`publishing` | `[§cap 61]`, `[MVP_PRD FR-P5 "детальные ошибки"]`              |
+| E2  | **Полный успех на WB, ошибка на Ozon** (отдельные тумблеры)                        | Независимые `marketplace_mappings`: WB→`published` (с `remote_id`), Ozon→`error`. UI показывает разные статусы в колонках                                                                                                                     | `[§cap 3,5]`                                                   |
+| E3  | **Расхождения при повторном импорте** (артикул тот же, параметры изменились на МП) | Обновляются **только** параметры МП (`product_attributes` namespace=wb/ozon); внутренние SelSup (название/описание) **не** трогаются; категория не меняется; габариты — по тумблеру «обновлять габариты»                                      | `[import-export §бизправила, §cap 20,21]`, `[§бизправила 8,9]` |
+| E4  | **Изменение обязательного поля после публикации** (напр. вес)                      | Сохранение PATCH → если `enabled=true` и статус `published` → авто-создание `sync_job(op=publish_card)` для доставки изменений на МП (тумблер «включён» = целевое состояние синхронизируется)                                                 | `[§cap 3]` (тумблер как целевое состояние)                     |
+| E5  | **Rate-limit / 429**                                                               | `sync_job` retry: `attempts++`, `next_attempt_at=now()+retry_after`; `mapping.status` остаётся `publishing`; токен-ведро RPS снижает скорость; UI — «Публикуется» (без ошибки)                                                                | `[MVP_PRD §10.1]`, §7.3                                        |
+| E6  | **Дневной лимит WB 1000 новых карточек исчерпан**                                  | «Лишние» `publish_card` → `queued`, `next_attempt_at` = 00:00 МСК след. суток; `mapping.status` остаётся `ready`; в UI — индикатор «В очереди (лимит)»; не считается ошибкой                                                                  | `[§бизправила 15]`, `[DATA_MODEL §20]`                         |
+| E7  | **Невалидный/просроченный токен** (401/403)                                        | `integrations.status='invalid_token'`; все `sync_jobs` этого МП/org → `cancelled`/приостановлены; `notifications` баннер «Перейти к настройкам»; `mapping.status` не сбрасывается в `error`, остаётся прежним (токен — не ошибка карточки)    | `[FR-I3]`, `[§cap 4]`                                          |
+| E8  | **Дубликат при импорте** (нарушение UNIQUE)                                        | catch conflict → `import_errors(reason='duplicate_article'/'Товар уже создан')`; импорт продолжается; карточка не дублируется                                                                                                                 | `[import-export §сущность Журнал ошибок]`, §4.4                |
+| E9  | **Конфликт матчинга** (ШК совпал, но brand/category разные)                        | `import_errors(reason='match_conflict')`; отдельная карточка НЕ объединяется автоматически; ждёт ручного merge (post-MVP тулз)                                                                                                                | `[import-export §бизправила]`, `[DATA_MODEL §6]`, §4.2         |
+| E10 | **Рассинхрон остатков** (упоминание риска)                                         | В Фазе 1 остатков нет; но `sync_jobs` проектируется так, что `update_stock` (Фаза 2) идёт через ту же очередь с теми же retry. Митигация на уровне Фазы 2: первый импорт — только заказы, без обновления остатков                             | `[MVP_PRD §10.1 риск 3]`                                       |
+| E11 | **Фото WB загружено до получения `remote_id`**                                     | `upload_media` создаётся **только** после успешного `publish_card` (нужен `remote_id`/`nmId`); иначе — откладывается                                                                                                                          | `[§бизправила 15, §интеграции WB]`                             |
+| E12 | **Видео WB без фото в батче**                                                      | `MpFieldTranslator` для WB группирует фото+видео SKU в один `upload_media` батч; пустой фото-список при наличии видео → превалидация-ошибка                                                                                                   | `[§бизправила 15]`                                             |
+| E13 | **Параллельные `sync_jobs` на один SKU/МП**                                        | `idempotency_key` UNIQUE + `SELECT ... FOR UPDATE SKIP LOCKED` гарантируют, что одновременно исполняется одна задача на target+mp; дубль — no-op                                                                                              | `[DATA_MODEL §15]`, §7.2                                       |
+| E14 | **Быстрый импорт ещё не завершил подтягивание параметров**                         | Карточки в статусе «параметры подтягиваются» блокируют редактирование и публикацию (флаг в `import_jobs`/`products`); UI — баннер                                                                                                             | `[import-export §cap 5]`                                       |
+| E15 | **Смена категории после создания**                                                 | Запрещена на уровне API (409) — категория фиксируется при первом создании                                                                                                                                                                     | `[§бизправила 8]`                                              |
 
 ---
 
@@ -1340,7 +1352,7 @@ MpError = {
   `audit_log` с `user_id`/`initiated_by` и diff.
 - **AC-17 (изоляция тенантов).** Ни один запрос не возвращает данные другой
   организации/аккаунта (`account_id`/`organization_id` из JWT на каждом запросе
-  + индексы).
+  - индексы).
 - **AC-18 (покрытие тестами).** Unit-покрытие `MpFieldTranslator`,
   `MatchingService`, `WildberriesAdapter`/`OzonAdapter` (на моках МП) ≥ 80%;
   E2E-тесты AC-1, AC-3, AC-6, AC-7 на тестовых кабинетах WB/Ozon (sandbox).
@@ -1350,7 +1362,7 @@ MpError = {
 ## 12. Открытые вопросы / спайки (до старта кодинга)
 
 > Источники: `[MVP_PRD §10.4]`, `[integrations-marketplaces §открытые вопросы
-> 1,3,5]`, `[product-cards §открытые вопросы]`. Что **обязательно** уточнить
+1,3,5]`, `[product-cards §открытые вопросы]`. Что **обязательно** уточнить
 > до/в первые дни кодинга (блокирует реализацию адаптеров).
 
 ### 12.1. Спайки (исследования с прототипом)
@@ -1361,7 +1373,7 @@ MpError = {
    др.), получения списка (`/content/v2/cards/list`), загрузки медиа, получения
    ошибок по полю. Формат payload (nomenclature/characteristics). **Делать
    прототип на тестовом кабинете WB до реализации адаптера.** `[integrations-
-   marketplaces §открытые вопросы 1]`
+marketplaces §открытые вопросы 1]`
 2. **[SPIKE-BLOCKER] Реальные эндпоинты Ozon Seller API.** Зафиксировать
    `/v1/product/import`, `/v1/product/list`, `/v1/product/info`,
    `/v1/category/...`, поиск бренда `/v1/brand/list` (получение числового ID).
@@ -1380,7 +1392,7 @@ MpError = {
 ### 12.2. Решения, требуемые до кодинга (продукт/архитектура)
 
 - **D1. Источник штрихкодов по умолчанию** (`Marketplace` vs `Range` vs `GS1
-  RUS`) для генерации на размер `[product-cards §cap 59]`. Решить: автогенерация
+RUS`) для генерации на размер `[product-cards §cap 59]`. Решить: автогенерация
   внутреннего диапазона vs запрос у МП.
 - **D2. Стратегия для `allow_duplicate_barcodes_across_orgs`** по умолчанию
   (влияет на индекс `uq_barcode_value_per_org`) `[import-export §cap 24]`.
@@ -1393,7 +1405,7 @@ MpError = {
   `[DATA_MODEL §примечания 19]`.
 - **D5. KMS/ротация ключей AES-256** для `integrations.credentials_enc`
   (`credentials_kid` — на что менять, как ротировать без простоя) `[FR-I1,
-  DATA_MODEL §14]`.
+DATA_MODEL §14]`.
 - **D6. Тестовые кабинеты WB/Ozon** для CI/E2E (AC-18) — доступы, sandbox.
 - **D7. N для exit-criteria AC-5** (целевое число карточек при быстром импорте
   «без потерь») — зафиксировать ≥1000.
@@ -1404,7 +1416,7 @@ MpError = {
 
 - Реальные форматы Excel-шаблонов по каждому МП (детальные колонки/валидации)
   — спайк в рамках AC-7, но full-coverage — Фаза 1+/Hardening `[product-cards
-  §открытые вопросы 6]`.
+§открытые вопросы 6]`.
 - AI-автосопоставление категорий — post-MVP `[§cap 26-28]`.
 - Тулз ручного merge/разъединения карточек (UI) — Фаза 6 (Hardening)
   `[MVP_PRD §6 Фаза 6]`; в Фазе 1 — только журнал `import_errors(match_conflict)`.
@@ -1413,20 +1425,19 @@ MpError = {
 
 ## Приложение A. Трассировка решений к источникам (summary)
 
-| Решение | Источник |
-|---|---|
-| Ядро PIM не зависит от МП; тумблеры-курки | `[product-cards §Назначение]`, `[DATA_MODEL §Обзор]`, `[WF-02]` |
-| 3-уровневая модель Модель→Цвет→Размер | `[DATA_MODEL §2]`, `[product-cards §cap 6,15]` |
-| `product_skus` = SKU = точка привязки склада/цен/заказов | `[DATA_MODEL §Sku/StockItem]`, `[MVP_PRD §6]` |
-| Единая очередь `sync_jobs` с retry/backoff (риск №1) | `[MVP_PRD §1, §10.1]`, `[DATA_MODEL §6]` |
-| Матчинг по `(article+цвет+размер)`/ШК; дедуп | `[DATA_MODEL §примечания 5,6]`, `[import-export §бизправила]` |
-| Бренд Ozon по числовому ID; не создаётся по API | `[product-cards §cap 22, §бизправила 3/16]`, `[MVP_PRD §7.3]` |
-| WB: 1000 новых/день; фото отдельно; видео с фото; rich недоступен | `[product-cards §интеграции/бизправила 15]`, `[DATA_MODEL §16,20]` |
-| Ozon: Client-Id+Admin key; «Тип» = категория; заказ 1 раз | `[MVP_PRD §7.3]`, `[product-cards §бизправила 16]` |
-| Шифрование ключей AES-256 + уведомления | `[FR-I1,I3]`, `[DATA_MODEL §14]` |
-| Категория фиксируется при создании; не меняется | `[product-cards §бизправила 8]` |
-| Габариты фиксируются при первом импорте | `[product-cards §бизправила 9]`, `[DATA_MODEL §26]` |
-| Удаление карточки на МП через систему невозможно | `[product-cards §бизправила 1]` |
-| Идемпотентность по `external`/`idempotency_key` | `[DATA_MODEL §примечания 15]` |
-| Имена API-методов WB/Ozon — [SPIKE] | `[MVP_PRD §10.4.1]`, `[integrations-marketplaces §открытые вопросы 1]` |
-
+| Решение                                                           | Источник                                                               |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Ядро PIM не зависит от МП; тумблеры-курки                         | `[product-cards §Назначение]`, `[DATA_MODEL §Обзор]`, `[WF-02]`        |
+| 3-уровневая модель Модель→Цвет→Размер                             | `[DATA_MODEL §2]`, `[product-cards §cap 6,15]`                         |
+| `product_skus` = SKU = точка привязки склада/цен/заказов          | `[DATA_MODEL §Sku/StockItem]`, `[MVP_PRD §6]`                          |
+| Единая очередь `sync_jobs` с retry/backoff (риск №1)              | `[MVP_PRD §1, §10.1]`, `[DATA_MODEL §6]`                               |
+| Матчинг по `(article+цвет+размер)`/ШК; дедуп                      | `[DATA_MODEL §примечания 5,6]`, `[import-export §бизправила]`          |
+| Бренд Ozon по числовому ID; не создаётся по API                   | `[product-cards §cap 22, §бизправила 3/16]`, `[MVP_PRD §7.3]`          |
+| WB: 1000 новых/день; фото отдельно; видео с фото; rich недоступен | `[product-cards §интеграции/бизправила 15]`, `[DATA_MODEL §16,20]`     |
+| Ozon: Client-Id+Admin key; «Тип» = категория; заказ 1 раз         | `[MVP_PRD §7.3]`, `[product-cards §бизправила 16]`                     |
+| Шифрование ключей AES-256 + уведомления                           | `[FR-I1,I3]`, `[DATA_MODEL §14]`                                       |
+| Категория фиксируется при создании; не меняется                   | `[product-cards §бизправила 8]`                                        |
+| Габариты фиксируются при первом импорте                           | `[product-cards §бизправила 9]`, `[DATA_MODEL §26]`                    |
+| Удаление карточки на МП через систему невозможно                  | `[product-cards §бизправила 1]`                                        |
+| Идемпотентность по `external`/`idempotency_key`                   | `[DATA_MODEL §примечания 15]`                                          |
+| Имена API-методов WB/Ozon — [SPIKE]                               | `[MVP_PRD §10.4.1]`, `[integrations-marketplaces §открытые вопросы 1]` |

@@ -9,7 +9,7 @@ chars: 5278
 
 В этой статье:
 
-- 
+-
 - <a href="#bystryj-start-integratsiya-za-5-minut" rel="nofollow">Быстрый старт: интеграция за 5 минут</a>
 - <a href="#3-avtomatizaciya-raboty-s-tovarami" rel="nofollow">Автоматизация работы с товарами</a>
 - <a href="#4-umnaya-logistika-fbo-i-fbs-bez-oshibok" rel="nofollow">Умная логистика: FBO и FBS без ошибок</a>
@@ -19,6 +19,7 @@ chars: 5278
 - <a href="#8-itog-zachem-perehodit-na-selsup" rel="nofollow">Итог: зачем переходить на SelSup?</a>
 
 Wildberries — крупнейший маркетплейс в СНГ, но ручное управление продажами отнимает время и приводит к ошибкам. **SelSup** — это современная платформа для автоматизации работы с Wildberries, которая:\
+
 - Ускоряет обработку заказов в 3-5 раз\
 - Снижает затраты на логистику и учет товаров\
 - Защищает от убытков из-за неконтролируемых скидок

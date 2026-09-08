@@ -17,11 +17,13 @@
 ## Acceptance Criteria
 
 ### AC1: Dashboard Page
+
 - [x] Create new page at `/analytics/dashboard`
 - [x] Add navigation link in sidebar (before other analytics pages)
 - [x] Period selector: "Последние N недель" (default: 4)
 
 ### AC2: Summary KPI Cards
+
 - [x] Total Revenue card with trend indicator
 - [x] Total Profit card with trend indicator
 - [x] Average Margin card with trend indicator
@@ -29,16 +31,19 @@
 - [x] Week-over-Week growth percentage
 
 ### AC3: Top Products Section
+
 - [x] Table with top 10 products by revenue
 - [x] Columns: Rank, Product, Revenue, Profit, Margin, Contribution %
 - [x] Click to navigate to product detail
 
 ### AC4: Top Brands Section
+
 - [x] Table with top 5 brands by revenue
 - [x] Columns: Rank, Brand, Revenue, Profit, Margin
 - [x] Click to filter analytics by brand
 
 ### AC5: Trend Indicators
+
 - [x] Show "up"/"down"/"stable" icons for trends
 - [x] Green for positive trends, red for negative
 - [x] Tooltip with exact values
@@ -219,17 +224,20 @@ function KPICard({ title, value, format = 'currency', trend, isLoading }: KPICar
 ## Tasks / Subtasks
 
 ### Task 1: Create Dashboard Page Structure (AC1)
+
 - [x] 1.1 Create `src/app/(dashboard)/analytics/dashboard/page.tsx`
 - [x] 1.2 Create `src/app/(dashboard)/analytics/dashboard/loading.tsx` (skeleton)
 - [x] 1.3 Add page metadata (title, description)
 - [x] 1.4 Add period selector state (default: 4 weeks)
 
 ### Task 2: Update Sidebar Navigation (AC1)
+
 - [x] 2.1 Add "Cabinet Summary" link to Sidebar component
 - [x] 2.2 Position before other analytics pages
 - [x] 2.3 Add LayoutDashboard icon
 
 ### Task 3: Create useCabinetSummary Hook (AC1-AC5)
+
 - [x] 3.1 Create `src/hooks/useCabinetSummary.ts`
 - [x] 3.2 Implement API call to `/v1/analytics/cabinet-summary`
 - [x] 3.3 Support `weeks` param (4, 8, 12, 13) and `weekStart`/`weekEnd`
@@ -237,6 +245,7 @@ function KPICard({ title, value, format = 'currency', trend, isLoading }: KPICar
 - [x] 3.5 Export hook and types
 
 ### Task 4: Create KPICard Component (AC2, AC5)
+
 - [x] 4.1 Create `src/components/custom/KPICard.tsx`
 - [x] 4.2 Support formats: currency, percent, number
 - [x] 4.3 Add trend indicator (up/down/stable icons)
@@ -245,6 +254,7 @@ function KPICard({ title, value, format = 'currency', trend, isLoading }: KPICar
 - [x] 4.6 Add tooltip support for trend values
 
 ### Task 5: Create Summary KPI Cards Section (AC2)
+
 - [x] 5.1 Create 5-column grid layout for KPI cards
 - [x] 5.2 Add Total Revenue card with trend
 - [x] 5.3 Add Total Profit card with trend
@@ -253,6 +263,7 @@ function KPICard({ title, value, format = 'currency', trend, isLoading }: KPICar
 - [x] 5.6 Add Week-over-Week growth card
 
 ### Task 6: Create TopProductsTable Component (AC3)
+
 - [x] 6.1 Create `src/components/custom/TopProductsTable.tsx`
 - [x] 6.2 Display rank, product name, revenue, profit, margin, contribution %
 - [x] 6.3 Add click handler to navigate to product detail
@@ -260,6 +271,7 @@ function KPICard({ title, value, format = 'currency', trend, isLoading }: KPICar
 - [x] 6.5 Add loading skeleton
 
 ### Task 7: Create TopBrandsTable Component (AC4)
+
 - [x] 7.1 Create `src/components/custom/TopBrandsTable.tsx`
 - [x] 7.2 Display rank, brand name, revenue, profit, margin
 - [x] 7.3 Add click handler to filter analytics by brand
@@ -267,12 +279,14 @@ function KPICard({ title, value, format = 'currency', trend, isLoading }: KPICar
 - [x] 7.5 Add loading skeleton
 
 ### Task 8: Add Response Types (AC1-AC5)
+
 - [x] 8.1 Create `src/types/analytics.ts`
 - [x] 8.2 Add `CabinetSummaryResponse` interface
 - [x] 8.3 Add `TopProductItem` interface
 - [x] 8.4 Add `TopBrandItem` interface
 
 ### Task 9: Testing (All ACs)
+
 - [x] 9.1 Unit tests for useCabinetSummary hook (7 tests)
 - [x] 9.2 Unit tests for KPICard component (12 tests)
 - [ ] 9.3 Unit tests for TopProductsTable component
@@ -315,11 +329,11 @@ src/
 
 ### Trend Indicator Mapping
 
-| Backend Value | Icon | Color |
-|---------------|------|-------|
-| `'up'` | ↑ (TrendingUp) | Green-600 |
-| `'down'` | ↓ (TrendingDown) | Red-600 |
-| `'stable'` | — (Minus) | Gray-400 |
+| Backend Value | Icon             | Color     |
+| ------------- | ---------------- | --------- |
+| `'up'`        | ↑ (TrendingUp)   | Green-600 |
+| `'down'`      | ↓ (TrendingDown) | Red-600   |
+| `'stable'`    | — (Minus)        | Gray-400  |
 
 ### Testing Standards
 
@@ -363,24 +377,27 @@ src/
 ## Dev Agent Record
 
 ### Agent Model Used
+
 Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### File List
-| File | Action |
-|------|--------|
-| `src/types/analytics.ts` | Created |
-| `src/hooks/useCabinetSummary.ts` | Created |
-| `src/components/custom/KPICard.tsx` | Created |
-| `src/components/custom/TopProductsTable.tsx` | Created |
-| `src/components/custom/TopBrandsTable.tsx` | Created |
-| `src/app/(dashboard)/analytics/dashboard/page.tsx` | Created |
-| `src/app/(dashboard)/analytics/dashboard/loading.tsx` | Created |
-| `src/lib/routes.ts` | Modified (added DASHBOARD route) |
-| `src/components/custom/Sidebar.tsx` | Modified (added Cabinet Summary nav link) |
-| `src/components/custom/__tests__/KPICard.test.tsx` | Created |
-| `src/hooks/__tests__/useCabinetSummary.test.ts` | Created |
+
+| File                                                  | Action                                    |
+| ----------------------------------------------------- | ----------------------------------------- |
+| `src/types/analytics.ts`                              | Created                                   |
+| `src/hooks/useCabinetSummary.ts`                      | Created                                   |
+| `src/components/custom/KPICard.tsx`                   | Created                                   |
+| `src/components/custom/TopProductsTable.tsx`          | Created                                   |
+| `src/components/custom/TopBrandsTable.tsx`            | Created                                   |
+| `src/app/(dashboard)/analytics/dashboard/page.tsx`    | Created                                   |
+| `src/app/(dashboard)/analytics/dashboard/loading.tsx` | Created                                   |
+| `src/lib/routes.ts`                                   | Modified (added DASHBOARD route)          |
+| `src/components/custom/Sidebar.tsx`                   | Modified (added Cabinet Summary nav link) |
+| `src/components/custom/__tests__/KPICard.test.tsx`    | Created                                   |
+| `src/hooks/__tests__/useCabinetSummary.test.ts`       | Created                                   |
 
 ### Completion Notes
+
 - Created Cabinet Summary Dashboard page at `/analytics/dashboard`
 - Created reusable KPICard component with trend indicators and value formatting
 - Created TopProductsTable (top 10) and TopBrandsTable (top 5) with click navigation
@@ -396,9 +413,9 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-11-29 | 1.0 | Initial draft | Claude (Opus 4.5) |
-| 2025-11-29 | 1.1 | Added Tasks/Subtasks (9 tasks), Dev Notes with Source Tree, Sidebar navigation order, Trend indicator mapping, Change Log | Sarah (PO Agent) |
-| 2025-12-05 | 2.0 | Implementation complete. Dashboard page, KPICard, TopProductsTable, TopBrandsTable, useCabinetSummary hook, sidebar nav. 19 tests. Status: Ready for Review | James (Dev Agent) |
-| 2025-12-05 | 2.1 | DEFER-003 resolved: Added 41 unit tests for TopProductsTable (21) and TopBrandsTable (20). Total: 60 tests. | Claude (Opus 4.5) |
+| Date       | Version | Description                                                                                                                                                 | Author            |
+| ---------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| 2025-11-29 | 1.0     | Initial draft                                                                                                                                               | Claude (Opus 4.5) |
+| 2025-11-29 | 1.1     | Added Tasks/Subtasks (9 tasks), Dev Notes with Source Tree, Sidebar navigation order, Trend indicator mapping, Change Log                                   | Sarah (PO Agent)  |
+| 2025-12-05 | 2.0     | Implementation complete. Dashboard page, KPICard, TopProductsTable, TopBrandsTable, useCabinetSummary hook, sidebar nav. 19 tests. Status: Ready for Review | James (Dev Agent) |
+| 2025-12-05 | 2.1     | DEFER-003 resolved: Added 41 unit tests for TopProductsTable (21) and TopBrandsTable (20). Total: 60 tests.                                                 | Claude (Opus 4.5) |

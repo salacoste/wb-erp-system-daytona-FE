@@ -7,6 +7,7 @@ Primary goal: validate correctness and absence of obvious bugs in UI/UX, busines
 ## Scope
 
 ### In scope
+
 - Authenticated application shell and critical dashboard/analytics/settings flows.
 - Representative business-data pages where backend values are transformed and displayed.
 - Frontend/backend contract checks: endpoint availability, response shape, normalizer behavior, missing/invalid data states, and UI/API value consistency where feasible.
@@ -15,12 +16,14 @@ Primary goal: validate correctness and absence of obvious bugs in UI/UX, busines
 - Logging: one audit report and actionable backlog tasks for confirmed bugs/problems/improvements.
 
 ### Out of scope
+
 - Fixing product bugs in this pass.
 - Destructive backend mutations except already-existing safe read-only or test-environment flows.
 - Production/external-user data validation.
 - Exhaustive verification of every route when representative coverage already finds enough actionable issues; coverage gaps are logged.
 
 ## Environment assumptions discovered
+
 - Frontend dev server: `npm run dev` on `http://localhost:3100`.
 - Backend: `http://localhost:3000`, `/v1/health` healthy.
 - E2E credentials exist in `.env.e2e`; Owner login succeeds against backend.
@@ -28,32 +31,34 @@ Primary goal: validate correctness and absence of obvious bugs in UI/UX, busines
 
 ## Persona / role coverage
 
-| Persona | Credential source | Required checks | Notes |
-|---|---|---|---|
-| Owner | `E2E_TEST_EMAIL` / `E2E_TEST_PASSWORD` | Main audit persona; dashboard, analytics, COGS, orders, supplies, shipments, settings | Owner login already succeeds against local backend. |
+| Persona             | Credential source                                       | Required checks                                                                                       | Notes                                                                                        |
+| ------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Owner               | `E2E_TEST_EMAIL` / `E2E_TEST_PASSWORD`                  | Main audit persona; dashboard, analytics, COGS, orders, supplies, shipments, settings                 | Owner login already succeeds against local backend.                                          |
 | Manager / non-Owner | `E2E_MANAGER_EMAIL` / `E2E_MANAGER_PASSWORD` when valid | Permission-sensitive smoke: orders client-info visibility, settings/backfill access/redirect behavior | If manager credentials fail or are absent, log as coverage gap rather than silently passing. |
-| Unauthenticated | no storage state | Login/register and protected-route redirect sanity | Should not access dashboard data. |
+| Unauthenticated     | no storage state                                        | Login/register and protected-route redirect sanity                                                    | Should not access dashboard data.                                                            |
 
 Owner-gated surfaces must be explicitly checked or logged as coverage gaps:
+
 - Orders client-info/customer data visibility.
 - `/settings/backfill` owner-only admin access.
 - Any API calls exposing PII or owner-only data.
 
 ## Validation matrix
 
-| Area | Evidence to collect | Pass criteria | Finding criteria |
-|---|---|---|---|
-| Static quality | `type-check`, lint, docs/static scripts | Commands pass or known baseline is documented | New errors, unexpected warnings above baseline, broken max-line/params/docs rules |
-| Unit/business transforms | API normalizer and business-metric Vitest suites | Tests pass; no obvious missing normalizer coverage | Failing tests, missing coverage on high-risk endpoint normalizers |
-| Auth/session/personas | Login via UI/API and dashboard shell for Owner; Manager/non-Owner if credentials work; unauth redirect | Login succeeds for configured personas; no auth loop; cabinet context present; gated routes enforce role | Redirect loop, missing cabinet, token/cookie mismatch, role-gated data leak |
-| Route/UI smoke | Browser route sweep of critical pages | Page renders main content; no console errors; no 5xx/4xx API errors unless intentionally handled | Blank pages, hydration/console errors, broken loading/error states |
-| Business data sanity | Compare selected UI values with backend/API data or normalized response | UI values match source/normalizer semantics; no impossible signs/percent/NaN | NaN/undefined, impossible percentages, mismatch with API, stale/missing fields |
-| Backend data correctness | API probes for endpoints used by selected routes | Endpoints exist and response shapes match frontend expectations | 404/500, response field drift, nullability mismatch, unhandled backend errors |
-| UX/a11y basics | Navigation, headings, buttons, table readability, empty/error states | Clear labels, stable layout, visible feedback | Missing H1, duplicate labels, clipped content, confusing/incorrect copy |
+| Area                     | Evidence to collect                                                                                    | Pass criteria                                                                                            | Finding criteria                                                                  |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Static quality           | `type-check`, lint, docs/static scripts                                                                | Commands pass or known baseline is documented                                                            | New errors, unexpected warnings above baseline, broken max-line/params/docs rules |
+| Unit/business transforms | API normalizer and business-metric Vitest suites                                                       | Tests pass; no obvious missing normalizer coverage                                                       | Failing tests, missing coverage on high-risk endpoint normalizers                 |
+| Auth/session/personas    | Login via UI/API and dashboard shell for Owner; Manager/non-Owner if credentials work; unauth redirect | Login succeeds for configured personas; no auth loop; cabinet context present; gated routes enforce role | Redirect loop, missing cabinet, token/cookie mismatch, role-gated data leak       |
+| Route/UI smoke           | Browser route sweep of critical pages                                                                  | Page renders main content; no console errors; no 5xx/4xx API errors unless intentionally handled         | Blank pages, hydration/console errors, broken loading/error states                |
+| Business data sanity     | Compare selected UI values with backend/API data or normalized response                                | UI values match source/normalizer semantics; no impossible signs/percent/NaN                             | NaN/undefined, impossible percentages, mismatch with API, stale/missing fields    |
+| Backend data correctness | API probes for endpoints used by selected routes                                                       | Endpoints exist and response shapes match frontend expectations                                          | 404/500, response field drift, nullability mismatch, unhandled backend errors     |
+| UX/a11y basics           | Navigation, headings, buttons, table readability, empty/error states                                   | Clear labels, stable layout, visible feedback                                                            | Missing H1, duplicate labels, clipped content, confusing/incorrect copy           |
 
 ## Critical route sample
 
 Initial route set for manual/browser audit:
+
 - `/dashboard`
 - `/analytics/dashboard`
 - `/analytics/orders`
@@ -72,11 +77,13 @@ Initial route set for manual/browser audit:
 - `/settings`, `/settings/notifications`, `/settings/backfill`, `/settings/cabinet`, `/settings/expenses`, `/settings/tax`, `/settings/tariffs`
 
 ## Deliverables
+
 - `docs/qa/ui-data-backend-validation-report.md` with evidence, coverage, findings, and screenshots/log references.
 - Backlog.md tasks for confirmed actionable bugs/improvements.
 - Optional machine-readable route/API probe artifacts under `test-results/qa-audit/` if useful.
 
 ## Exit criteria / stop condition
+
 Stop only after all measurable criteria below are satisfied or explicitly marked as blocked/coverage-gap in the report:
 
 1. Static gates: run and record `type-check`, lint/static scripts selected for this audit, and targeted business-normalizer/unit suites.

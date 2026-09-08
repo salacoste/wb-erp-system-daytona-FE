@@ -32,7 +32,7 @@ The backfill endpoints live under `/v1/admin/*` and were verified for the `Owner
 2. **Cabinet-membership enforcement:** guarantee the backfill job is scoped to the caller's cabinet (and only accessible cabinets) — enforce cabinet membership on the start path so the blast radius is provably bounded.
 3. **Document the scope** of `POST /v1/admin/backfill/start` (single-cabinet vs cross-cabinet) so the FE can label it accurately.
 
-A one-line reply per item suffices (resolution template in #226): *"Admin allowed + cabinet-scoped"* / *"Owner-only, FE hides for Admin"*.
+A one-line reply per item suffices (resolution template in #226): _"Admin allowed + cabinet-scoped"_ / _"Owner-only, FE hides for Admin"_.
 
 ## 5. FE UX — post-resolution note (2026-07-13)
 

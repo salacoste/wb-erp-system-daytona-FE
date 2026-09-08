@@ -17,14 +17,14 @@
 
 ## Краткая справочная таблица
 
-| Endpoint | Назначение | Ключевые поля | Кеш |
-|----------|-----------|---------------|-----|
-| `GET /v1/tariffs/warehouses-with-tariffs` | Все тарифы по складам | storage, logistics, coefficients | 1ч |
-| `GET /v1/tariffs/warehouses` | Список складов | id, name, city | 24ч |
-| `GET /v1/tariffs/commissions` | Комиссии по категориям | FBO/FBS/DBS/EDBS % | 24ч |
-| `GET /v1/tariffs/settings` | Глобальные настройки | Default rates | 24ч |
-| `GET /v1/tariffs/acceptance/coefficients` | Коэффициенты приёмки | По warehouseId | 1ч |
-| `GET /v1/tariffs/acceptance/coefficients/all` | Все коэффициенты | Все склады | 1ч |
+| Endpoint                                      | Назначение             | Ключевые поля                    | Кеш |
+| --------------------------------------------- | ---------------------- | -------------------------------- | --- |
+| `GET /v1/tariffs/warehouses-with-tariffs`     | Все тарифы по складам  | storage, logistics, coefficients | 1ч  |
+| `GET /v1/tariffs/warehouses`                  | Список складов         | id, name, city                   | 24ч |
+| `GET /v1/tariffs/commissions`                 | Комиссии по категориям | FBO/FBS/DBS/EDBS %               | 24ч |
+| `GET /v1/tariffs/settings`                    | Глобальные настройки   | Default rates                    | 24ч |
+| `GET /v1/tariffs/acceptance/coefficients`     | Коэффициенты приёмки   | По warehouseId                   | 1ч  |
+| `GET /v1/tariffs/acceptance/coefficients/all` | Все коэффициенты       | Все склады                       | 1ч  |
 
 ---
 
@@ -35,6 +35,7 @@
 **Назначение**: Агрегированные данные складов + тарифы в одном запросе
 
 **Query параметры**:
+
 ```typescript
 {
   date?: string;           // YYYY-MM-DD (default: сегодня)
@@ -44,6 +45,7 @@
 ```
 
 **Пример запроса**:
+
 ```typescript
 const response = await apiClient.get('/v1/tariffs/warehouses-with-tariffs', {
   params: {
@@ -54,6 +56,7 @@ const response = await apiClient.get('/v1/tariffs/warehouses-with-tariffs', {
 ```
 
 **Структура ответа**:
+
 ```typescript
 {
   data: {
@@ -106,6 +109,7 @@ const response = await apiClient.get('/v1/tariffs/warehouses-with-tariffs', {
 **Назначение**: Упрощённый список складов (без тарифов)
 
 **Пример ответа**:
+
 ```typescript
 {
   data: {
@@ -129,6 +133,7 @@ const response = await apiClient.get('/v1/tariffs/warehouses-with-tariffs', {
 **Назначение**: Все комиссии по категориям (7346 категорий)
 
 **Структура ответа**:
+
 ```typescript
 {
   commissions: [
@@ -161,6 +166,7 @@ const response = await apiClient.get('/v1/tariffs/warehouses-with-tariffs', {
 **Назначение**: Глобальные настройки тарифов (fallback значения)
 
 **Структура ответа**:
+
 ```typescript
 {
   default_commission_fbo_pct: 25.0,
@@ -193,6 +199,7 @@ const response = await apiClient.get('/v1/tariffs/warehouses-with-tariffs', {
 **Назначение**: Коэффициенты приёмки по конкретному складу
 
 **Query параметры**:
+
 ```typescript
 {
   warehouseId: number;  // REQUIRED - ID склада
@@ -200,6 +207,7 @@ const response = await apiClient.get('/v1/tariffs/warehouses-with-tariffs', {
 ```
 
 **Пример ответа**:
+
 ```typescript
 {
   coefficients: [
@@ -248,13 +256,14 @@ const response = await apiClient.get('/v1/tariffs/warehouses-with-tariffs', {
 
 ### Storage Rates
 
-| SDK Field | API Response | Frontend Usage |
-|-----------|--------------|----------------|
-| `boxStorageBase` | `storage.base_per_day_rub` | Базовая ставка хранения/день |
-| `boxStorageLiter` | `storage.liter_per_day_rub` | Дополнительный литр/день |
-| `boxStorageCoefExpr` | `storage.coefficient` | Региональный коэффициент |
+| SDK Field            | API Response                | Frontend Usage               |
+| -------------------- | --------------------------- | ---------------------------- |
+| `boxStorageBase`     | `storage.base_per_day_rub`  | Базовая ставка хранения/день |
+| `boxStorageLiter`    | `storage.liter_per_day_rub` | Дополнительный литр/день     |
+| `boxStorageCoefExpr` | `storage.coefficient`       | Региональный коэффициент     |
 
 **Формула расчёта**:
+
 ```typescript
 // Хранение за день (применяется коэффициент)
 const dailyStorage = (base + max(0, volume - 1) * perLiter) * coefficient;
@@ -275,16 +284,17 @@ const totalStorage = dailyStorage * days;
 
 ### Logistics Rates
 
-| SDK Field | API Response | Frontend Usage |
-|-----------|--------------|----------------|
-| `boxDeliveryBase` | `fbo.delivery_base_rub` | Базовая ставка логистики FBO |
-| `boxDeliveryLiter` | `fbo.delivery_liter_rub` | Дополнительный литр FBO |
-| `boxDeliveryCoefExpr` | `fbo.logistics_coefficient` | Коэффициент логистики FBO |
-| `boxDeliveryMarketplaceBase` | `fbs.delivery_base_rub` | Базовая ставка логистики FBS |
-| `boxDeliveryMarketplaceLiter` | `fbs.delivery_liter_rub` | Дополнительный литр FBS |
-| `boxDeliveryMarketplaceCoefExpr` | `fbs.logistics_coefficient` | Коэффициент логистики FBS |
+| SDK Field                        | API Response                | Frontend Usage               |
+| -------------------------------- | --------------------------- | ---------------------------- |
+| `boxDeliveryBase`                | `fbo.delivery_base_rub`     | Базовая ставка логистики FBO |
+| `boxDeliveryLiter`               | `fbo.delivery_liter_rub`    | Дополнительный литр FBO      |
+| `boxDeliveryCoefExpr`            | `fbo.logistics_coefficient` | Коэффициент логистики FBO    |
+| `boxDeliveryMarketplaceBase`     | `fbs.delivery_base_rub`     | Базовая ставка логистики FBS |
+| `boxDeliveryMarketplaceLiter`    | `fbs.delivery_liter_rub`    | Дополнительный литр FBS      |
+| `boxDeliveryMarketplaceCoefExpr` | `fbs.logistics_coefficient` | Коэффициент логистики FBS    |
 
 **Формула расчёта**:
+
 ```typescript
 // Логистика за поставку (применяется коэффициент)
 const logisticsCost = (base + max(0, volume - 1) * perLiter) * coefficient;
@@ -385,6 +395,7 @@ function calculateStorageCost(
 **Причина**: WB API не возвращает данные о хранении для некоторых складов
 
 **Решение**: Используйте fallback значение из настроек
+
 ```typescript
 // ❌ НЕПРАВИЛЬНО - используйте ??
 const base = tariffs.storage.base_per_day_rub ?? 0.11;
@@ -404,6 +415,7 @@ const base = tariffs.storage.base_per_day_rub || 0.11;
 **Причина**: Несовпадение названий складов между офисами и тарифами WB API
 
 **Решение**: Используйте dedicated endpoint для поиска реальных ID:
+
 ```typescript
 // Получить все коэффициенты для всех складов
 const { data } = await apiClient.get('/v1/tariffs/acceptance/coefficients/all');
@@ -421,10 +433,12 @@ const warehouse = data.coefficients.find(c =>
 **Симптом**: HTTP 429 "Too Many Requests"
 
 **Причины**:
+
 - Превышен лимит запросов к WB API
 - Нет коэффициента для указанного склада
 
 **Решение**:
+
 ```typescript
 try {
   const data = await apiClient.get('/v1/tariffs/acceptance/coefficients', {
@@ -443,12 +457,13 @@ try {
 
 ## Rate Limits
 
-| Scope | Лимит | Окно | Endpoint'ы |
-|-------|-------|------|-----------|
-| `tariffs` | 10 req/min | 60s | commissions, warehouses, settings |
-| `orders_fbw` | 6 req/min | 60s | acceptance/coefficients |
+| Scope        | Лимит      | Окно | Endpoint'ы                        |
+| ------------ | ---------- | ---- | --------------------------------- |
+| `tariffs`    | 10 req/min | 60s  | commissions, warehouses, settings |
+| `orders_fbw` | 6 req/min  | 60s  | acceptance/coefficients           |
 
 **Обработка**:
+
 - Кешируйте ответы на 1 час
 - Используйте `refresh=true` только при необходимости
 - Показывайте пользователю время до следующего запроса
@@ -457,12 +472,12 @@ try {
 
 ## Интерпретация коэффициентов приёмки
 
-| Значение | Значение | Действие |
-|----------|----------|----------|
-| -1 | Приёмка недоступна | Нельзя отправлять на этот склад |
-| 0 | Приёмка бесплатна | Промо-период, без стоимости |
-| 1 | Стандартная стоимость | Базовая ставка |
-| >1 | Повышенная стоимость | Множитель (1.5 = 150% от базы) |
+| Значение | Значение              | Действие                        |
+| -------- | --------------------- | ------------------------------- |
+| -1       | Приёмка недоступна    | Нельзя отправлять на этот склад |
+| 0        | Приёмка бесплатна     | Промо-период, без стоимости     |
+| 1        | Стандартная стоимость | Базовая ставка                  |
+| >1       | Повышенная стоимость  | Множитель (1.5 = 150% от базы)  |
 
 ---
 
@@ -470,15 +485,16 @@ try {
 
 ### Box Type ID Mapping
 
-| boxTypeID | BoxTypeName | Особенности расчёта |
-|-----------|-------------|-------------------|
-| 2 | Boxes (Короба) | Объём-based: `additionalLiterRub` имеет значение |
-| 5 | Pallets (Монопаллеты) | Фиксированная ставка: `additionalLiterRub` = 0 |
-| 6 | Supersafe (Суперсейф) | Объём-based: `additionalLiterRub` имеет значение |
+| boxTypeID | BoxTypeName           | Особенности расчёта                              |
+| --------- | --------------------- | ------------------------------------------------ |
+| 2         | Boxes (Короба)        | Объём-based: `additionalLiterRub` имеет значение |
+| 5         | Pallets (Монопаллеты) | Фиксированная ставка: `additionalLiterRub` = 0   |
+| 6         | Supersafe (Суперсейф) | Объём-based: `additionalLiterRub` имеет значение |
 
 ### Различия в расчёте
 
 **Boxes (Короба)** - объём-based расчёт:
+
 ```typescript
 // Логистика
 logistics = (baseLiterRub + max(0, volume - 1) × additionalLiterRub) × deliveryCoef
@@ -488,6 +504,7 @@ dailyStorage = (baseLiterRub + max(0, volume - 1) × additionalLiterRub) × stor
 ```
 
 **Pallets (Монопаллеты)** - фиксированная ставка:
+
 ```typescript
 // Логистика (additionalLiterRub всегда 0)
 logistics = (baseLiterRub + max(0, volume - 1) × 0) × deliveryCoef
@@ -505,6 +522,7 @@ dailyStorage = (baseLiterRub + max(0, volume - 1) × 0) × storageCoef
 **Товар**: 1 литр
 
 **Pallets Response**:
+
 ```json
 {
   "warehouseId": 130744,
@@ -527,6 +545,7 @@ dailyStorage = (baseLiterRub + max(0, volume - 1) × 0) × storageCoef
 ```
 
 **Расчёт для 1 литра на 30 дней**:
+
 ```typescript
 // Логистика
 logistics = (75 + max(0, 1 - 1) × 0) × 1.65 = 75 × 1.65 = 123.75₽
@@ -542,6 +561,7 @@ total = 123.75 + 2,041.88 = 2,165.63₽
 ```
 
 **ВАЖНО**:
+
 - API возвращает **RAW ставки** в ₽ (не коэффициенты)
 - `coefficient` - множитель, применяемый при расчёте
 - Для Pallets `additionalLiterRub` всегда = 0 (фиксированная ставка)
@@ -638,6 +658,7 @@ interface PriceCalculatorTariffs {
 **ВАЖНО**: Все ставки в API возвращаются в ₽ (rub), коэффициенты - безразмерные множители.
 
 **Формулы (подтверждены на production)**:
+
 ```typescript
 // Логистика
 logistics = (baseLiterRub + max(0, volume - 1) × additionalLiterRub) × deliveryCoef
@@ -728,6 +749,7 @@ function calculateTotalCost(
 **Backend API**: http://localhost:3000/api (Swagger)
 **Epic Status**: ✅ Complete (Epic 43: 10/10, Epic 44: 7/7)
 **Обновления**:
+
 - Формулы логистики и хранения проверены на production данных
 - Добавлен раздел "Типы упаковки (Box Types)"
 - Реальные примеры из API (Краснодар Тихорецкая, 2026-01-27)

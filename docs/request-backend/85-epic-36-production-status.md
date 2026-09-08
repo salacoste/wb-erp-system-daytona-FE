@@ -13,12 +13,14 @@
 Epic 36 **Product Card Linking** is **✅ 100% PRODUCTION READY** after critical bugfix resolution on 2025-12-28.
 
 **Key Updates**:
+
 - ✅ Critical bugfix: WB Content API pagination limit corrected (1000 → **100 cards/batch**)
 - ✅ Production validation: 47 products synced successfully in 1.4 seconds
 - ✅ PO approval: 10/10 rating ⭐⭐⭐⭐⭐ (All 26 acceptance criteria met)
 - ✅ Frontend integration ready: No breaking changes, backward compatible
 
 **What This Means for Frontend**:
+
 - ✅ Backend API is stable and tested
 - ✅ All endpoints work correctly (`POST /v1/imports/products/sync-imt-ids`, `GET /v1/analytics/advertising?group_by=imtId`)
 - ✅ No frontend code changes needed due to bugfix
@@ -61,13 +63,14 @@ const cursor: WbCursor = {
 
 **Testing Results** (Production WB Cabinet):
 
-| limit Value | HTTP Status | Result |
-|-------------|-------------|--------|
-| 10 | 200 | ✅ Success |
-| 100 | 200 | ✅ Success |
-| 1000 | 400 | ❌ ValidationError |
+| limit Value | HTTP Status | Result             |
+| ----------- | ----------- | ------------------ |
+| 10          | 200         | ✅ Success         |
+| 100         | 200         | ✅ Success         |
+| 1000        | 400         | ❌ ValidationError |
 
 **Production Validation**:
+
 ```
 ✅ Sync successful: 47 products, 27 groups, 12 merged, 1.4 seconds
 ✅ Performance: p95 < 15s (target met)
@@ -81,12 +84,14 @@ const cursor: WbCursor = {
 ### ✅ No Breaking Changes
 
 **API Contract Unchanged**:
+
 - ✅ Endpoint: `GET /v1/analytics/advertising?group_by=imtId` (same as Request #83)
 - ✅ Response format: Identical to documented examples
 - ✅ TypeScript types: No changes needed
 - ✅ Request parameters: No new required fields
 
 **Frontend Integration Safe**:
+
 - ✅ All code examples in Request #83-84 still valid
 - ✅ No frontend code modifications needed
 - ✅ Proceed with implementation as planned
@@ -94,11 +99,13 @@ const cursor: WbCursor = {
 ### ⚡ Performance Notes
 
 **Slightly More API Requests**:
+
 - Old: 1000 products = 1 request to WB API
 - New: 1000 products = 10 requests to WB API (100 cards/batch)
 - Impact: Minimal - 1000ms delay between batches = +10s for 1000 products
 
 **Backend Handles This**:
+
 - ✅ Rate limiting built into backend (1000ms between batches)
 - ✅ No frontend timeout adjustments needed
 - ✅ Sync still completes in <15s for typical catalogs
@@ -110,38 +117,45 @@ const cursor: WbCursor = {
 ### Backend Completion Status
 
 **Story 36.0** ✅ - Product Model & Database
+
 - [x] `products` table with `imtId` column
 - [x] Database migration complete
 - [x] Indexes optimized
 
 **Story 36.1** ✅ - WB SDK Integration Preparation
+
 - [x] SDK upgrade to v2.4.0
 - [x] Type definitions updated
 - [x] Error handling implemented
 
 **Story 36.2** ✅ - Content API Sync Service
+
 - [x] `ProductImtSyncService` implemented
 - [x] Cursor-based pagination (100 cards/batch)
 - [x] **Critical bugfix applied** (2025-12-28)
 - [x] Production validated
 
 **Story 36.3** ✅ - Daily Sync Scheduler
+
 - [x] BullMQ queue `product_imt_sync`
 - [x] Daily cron at 06:00 MSK
 - [x] Auto-sync on new WB key
 - [x] Retry policy (3 attempts)
 
 **Story 36.4** ✅ - Analytics API Integration
+
 - [x] `group_by=imtId` parameter support
 - [x] Aggregation logic (merged groups)
 - [x] Backward compatibility (`group_by=sku`)
 
 **Story 36.5** ✅ - Frontend API Endpoint
+
 - [x] `POST /v1/imports/products/sync-imt-ids`
 - [x] `SyncImtIdsResponseDto` type
 - [x] Task monitoring via `/v1/tasks/{uuid}`
 
 **Story 36.6** ✅ - Testing & Observability
+
 - [x] Unit tests: 96.63% coverage
 - [x] Integration tests: 6/6 passing
 - [x] E2E tests: Full workflow validated
@@ -153,6 +167,7 @@ const cursor: WbCursor = {
 **Rating**: 10/10 ⭐⭐⭐⭐⭐
 
 **All 26 Acceptance Criteria Met**:
+
 - ✅ Database schema complete
 - ✅ WB SDK integration working
 - ✅ Daily sync operational
@@ -171,6 +186,7 @@ const cursor: WbCursor = {
 ### Primary Documentation (Request #83-84)
 
 **Request #83**: API Contract - **NO CHANGES NEEDED**
+
 - File: `83-epic-36-api-contract.md`
 - Status: ✅ Still accurate after bugfix
 - TypeScript types: Valid
@@ -178,6 +194,7 @@ const cursor: WbCursor = {
 - Implementation guide: Follow as-is
 
 **Request #84**: Frontend Integration Guide - **NO CHANGES NEEDED**
+
 - File: `84-epic-36-frontend-integration-guide.md`
 - Status: ✅ Step-by-step plan remains valid
 - Estimated effort: 3-4 hours (unchanged)
@@ -186,6 +203,7 @@ const cursor: WbCursor = {
 ### Updated References
 
 **Backend Documentation** (updated with bugfix details):
+
 - `docs/epics/epic-36-product-card-linking.md`
 - `docs/stories/epic-36/story-36.2-content-api-sync.md` (bugfix section added)
 - `docs/CHANGELOG.md` (2025-12-28 entry)
@@ -193,6 +211,7 @@ const cursor: WbCursor = {
 - `test-api/README.md` (pagination limit corrected)
 
 **Test API Files** (for manual testing):
+
 ```bash
 # Manual sync trigger
 POST http://localhost:3000/v1/imports/products/sync-imt-ids
@@ -259,6 +278,7 @@ describe('Epic 36: Product Card Linking', () => {
 ### 2. Edge Case Handling
 
 **Test Cases** (from Request #83):
+
 - ✅ Single product with imtId (display as individual)
 - ✅ All products with NULL imtId (identical to `group_by=sku`)
 - ✅ Mixed response (merged groups + individual products)
@@ -266,6 +286,7 @@ describe('Epic 36: Product Card Linking', () => {
 ### 3. Performance Testing
 
 **Expected Behavior**:
+
 - ✅ API response time: <300ms (typical)
 - ✅ No frontend timeout issues
 - ✅ Large datasets (100+ products): <1.5s
@@ -285,6 +306,7 @@ describe('Epic 36: Product Card Linking', () => {
 ### Frontend (Ready to Deploy)
 
 **Pre-Deployment**:
+
 - [ ] Review Request #83-84 documentation
 - [ ] Update TypeScript types per API contract
 - [ ] Implement UI components (MergedProductBadge)
@@ -294,6 +316,7 @@ describe('Epic 36: Product Card Linking', () => {
 - [ ] Write E2E tests for merged groups flow
 
 **Deployment**:
+
 - [ ] Code review approved
 - [ ] All tests passing
 - [ ] Staging environment tested
@@ -321,6 +344,7 @@ describe('Epic 36: Product Card Linking', () => {
    - Business KPI for card linking coverage
 
 **Example Queries**:
+
 ```promql
 # Sync success rate (last 24h)
 rate(product_imt_sync_total{status="success"}[24h]) /
@@ -339,6 +363,7 @@ sum(product_merged_groups_count)
 **File**: `monitoring/grafana/dashboards/epic-36-product-card-linking.json`
 
 **Panels**:
+
 - Sync success rate over time
 - Sync duration (p50, p95, p99)
 - Merged groups count by cabinet
@@ -355,6 +380,7 @@ sum(product_merged_groups_count)
 **Issue 1**: "No merged groups returned even when products have imtId"
 
 **Solution**: Check if `group_by=imtId` parameter is sent correctly:
+
 ```typescript
 // ✅ Correct
 const params = { from, to, group_by: 'imtId' };
@@ -366,6 +392,7 @@ const params = { from, to };
 **Issue 2**: "ROAS/ROI still NULL for merged groups"
 
 **Solution**: Verify backend data:
+
 1. Check if products are actually merged (same imtId)
 2. Ensure at least one product in group has spend>0
 3. Confirm date range covers advertising activity
@@ -373,6 +400,7 @@ const params = { from, to };
 **Issue 3**: "Sync endpoint returns 400 Bad Request"
 
 **Solution**: Check request body and headers:
+
 ```typescript
 // ✅ Correct
 POST /v1/imports/products/sync-imt-ids
@@ -387,11 +415,13 @@ Content-Type: application/json
 ### Backend Team Contact
 
 **For Questions**:
+
 - **Technical**: Backend Team Lead
 - **Business Logic**: Product Owner
 - **API Contract**: Request #83 (`83-epic-36-api-contract.md`)
 
 **Slack Channels**:
+
 - `#epic-36-product-linking` - Epic-specific discussions
 - `#backend-api` - General API questions
 
@@ -402,6 +432,7 @@ Content-Type: application/json
 **Backend Status**: ✅ **100% PRODUCTION READY**
 
 **Frontend Can Proceed**:
+
 - ✅ API contract is stable (Request #83)
 - ✅ No breaking changes from bugfix
 - ✅ All acceptance criteria met
@@ -409,6 +440,7 @@ Content-Type: application/json
 - ✅ Production validated
 
 **Next Steps for Frontend**:
+
 1. Review Request #83-84 documentation
 2. Implement TypeScript types and UI components
 3. Write tests (unit, integration, E2E)
@@ -422,6 +454,7 @@ Content-Type: application/json
 ## 📚 Related Documentation
 
 ### Backend Resources
+
 - **Epic Overview**: `docs/epics/epic-36-product-card-linking.md`
 - **Bugfix Details**: `docs/stories/epic-36/story-36.2-content-api-sync.md#critical-bugfix`
 - **PO Approval**: `docs/stories/epic-36/PO-FINAL-APPROVAL-EPIC-36.md`
@@ -429,12 +462,14 @@ Content-Type: application/json
 - **API Reference**: `docs/API-PATHS-REFERENCE.md` (lines 986-1102)
 
 ### Frontend Resources
+
 - **Request #82**: Card Linking Investigation (problem context)
 - **Request #83**: API Contract (TypeScript types, examples)
 - **Request #84**: Frontend Integration Guide (step-by-step)
 - **This Document**: Production status + bugfix update
 
 ### Test API Resources
+
 - `test-api/04-imports.http` (manual sync endpoint testing)
 - `test-api/07-advertising-analytics.http` (analytics with group_by parameter)
 - `test-api/README.md` (updated with bugfix info)
@@ -444,6 +479,7 @@ Content-Type: application/json
 ## 📝 Change Log
 
 ### 2025-12-28 - Critical Bugfix + Production Ready
+
 - 🐛 **CRITICAL**: Fixed WB Content API pagination limit (1000 → 100 cards/batch)
 - ✅ **VALIDATED**: Production sync successful (47 products, 1.4s)
 - ✅ **PO APPROVED**: 10/10 rating (all 26 AC met)
@@ -451,6 +487,7 @@ Content-Type: application/json
 - 📝 **DOCS UPDATED**: test-api/, CHANGELOG.md, architecture docs
 
 ### 2025-12-27 - Initial Epic 36 Completion
+
 - ✅ Stories 36.0-36.6 complete
 - ✅ Request #83-84 documentation created
 - ✅ Backend API ready for frontend integration

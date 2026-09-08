@@ -8,6 +8,7 @@
 ---
 
 ## Title (RU)
+
 Компонент графика разбивки по дням
 
 ---
@@ -17,6 +18,7 @@
 Create a multi-series line chart component that displays all 8 dashboard metrics broken down by day for the selected period (week or month). This is the primary visualization for understanding daily financial trends.
 
 The chart must:
+
 - Display 8 metric series with distinct colors
 - Support dual Y-axis (revenue metrics left, expense metrics right)
 - Show daily data points with appropriate X-axis labels (Пн-Вс for week, 1-31 for month)
@@ -50,24 +52,24 @@ This component consumes data from the `useDailyMetrics` hook implemented in Epic
 
 ### Chart Colors (from wireframe)
 
-| Metric | Label (RU) | Color | Hex | Y-Axis |
-|--------|------------|-------|-----|--------|
-| orders | Заказы | Blue | `#3B82F6` | left |
-| ordersCogs | COGS заказов | Orange | `#F97316` | left |
-| sales | Выкупы | Green | `#22C55E` | left |
-| salesCogs | COGS выкупов | Orange Light | `#FB923C` | left |
-| advertising | Реклама | Purple | `#7C3AED` | right |
-| logistics | Логистика | Cyan | `#06B6D4` | right |
-| storage | Хранение | Pink | `#EC4899` | right |
-| profit | Теор. прибыль | Primary Red | `#E53935` | left |
+| Metric      | Label (RU)    | Color        | Hex       | Y-Axis |
+| ----------- | ------------- | ------------ | --------- | ------ |
+| orders      | Заказы        | Blue         | `#3B82F6` | left   |
+| ordersCogs  | COGS заказов  | Orange       | `#F97316` | left   |
+| sales       | Выкупы        | Green        | `#22C55E` | left   |
+| salesCogs   | COGS выкупов  | Orange Light | `#FB923C` | left   |
+| advertising | Реклама       | Purple       | `#7C3AED` | right  |
+| logistics   | Логистика     | Cyan         | `#06B6D4` | right  |
+| storage     | Хранение      | Pink         | `#EC4899` | right  |
+| profit      | Теор. прибыль | Primary Red  | `#E53935` | left   |
 
 ### Chart Dimensions
 
-| Viewport | Width | Height | Margins (T/R/B/L) |
-|----------|-------|--------|-------------------|
-| Desktop (>= 1024px) | 100% | 320px | 20/30/60/60 |
-| Tablet (768-1023px) | 100% | 280px | 16/20/50/50 |
-| Mobile (< 768px) | 100% | 240px | 12/10/40/40 |
+| Viewport            | Width | Height | Margins (T/R/B/L) |
+| ------------------- | ----- | ------ | ----------------- |
+| Desktop (>= 1024px) | 100%  | 320px  | 20/30/60/60       |
+| Tablet (768-1023px) | 100%  | 280px  | 16/20/50/50       |
+| Mobile (< 768px)    | 100%  | 240px  | 12/10/40/40       |
 
 ### Line Configuration
 
@@ -106,6 +108,7 @@ Max-width: 280px
 ### Axis Configuration
 
 **X-Axis:**
+
 ```typescript
 {
   dataKey: 'date',
@@ -117,6 +120,7 @@ Max-width: 280px
 ```
 
 **Y-Axis (Left - Revenue):**
+
 ```typescript
 {
   yAxisId: 'left',
@@ -129,6 +133,7 @@ Max-width: 280px
 ```
 
 **Y-Axis (Right - Expenses):**
+
 ```typescript
 {
   yAxisId: 'right',
@@ -218,23 +223,23 @@ function transformToChartData(metrics: DailyMetrics[]): ChartDataPoint[]
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/components/custom/dashboard/DailyBreakdownChart.tsx` | CREATE | Main chart component |
-| `src/components/custom/dashboard/DailyBreakdownTooltip.tsx` | CREATE | Custom tooltip component |
-| `src/components/custom/dashboard/chart-config.ts` | CREATE | Chart configuration constants |
-| `src/components/custom/dashboard/__tests__/DailyBreakdownChart.test.tsx` | CREATE | Unit tests |
-| `src/components/custom/dashboard/index.ts` | MODIFY | Add barrel export |
+| File                                                                     | Action | Description                   |
+| ------------------------------------------------------------------------ | ------ | ----------------------------- |
+| `src/components/custom/dashboard/DailyBreakdownChart.tsx`                | CREATE | Main chart component          |
+| `src/components/custom/dashboard/DailyBreakdownTooltip.tsx`              | CREATE | Custom tooltip component      |
+| `src/components/custom/dashboard/chart-config.ts`                        | CREATE | Chart configuration constants |
+| `src/components/custom/dashboard/__tests__/DailyBreakdownChart.test.tsx` | CREATE | Unit tests                    |
+| `src/components/custom/dashboard/index.ts`                               | MODIFY | Add barrel export             |
 
 ---
 
 ## Dependencies
 
-| Type | Dependency | Status |
-|------|------------|--------|
-| Hook | `useDailyMetrics` | From Story 61.9-FE |
-| Context | `DashboardPeriodContext` | From Epic 60-FE |
-| Library | `recharts` | Already installed |
+| Type    | Dependency               | Status             |
+| ------- | ------------------------ | ------------------ |
+| Hook    | `useDailyMetrics`        | From Story 61.9-FE |
+| Context | `DashboardPeriodContext` | From Epic 60-FE    |
+| Library | `recharts`               | Already installed  |
 
 **Blocking**: This story requires Story 61.9-FE (useDailyMetrics hook) to be completed first.
 

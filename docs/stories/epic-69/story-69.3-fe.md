@@ -1,11 +1,11 @@
 # Story 69.3-FE: Buyout Summary Widget
 
-| Field | Value |
-|-------|-------|
-| Epic | 69-FE Buyout Analytics |
-| Priority | P2 |
-| SP | 5 |
-| Status | ✅ Complete |
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Epic     | 69-FE Buyout Analytics |
+| Priority | P2                     |
+| SP       | 5                      |
+| Status   | ✅ Complete            |
 
 ## Description
 
@@ -25,9 +25,10 @@
 
 ## Files
 
-| File | Action | Lines |
-|------|--------|-------|
-| `src/app/(dashboard)/analytics/buyout/components/BuyoutSummaryWidget.tsx` | Created | 147 |
+| File                                                                      | Action  | Lines |
+| ------------------------------------------------------------------------- | ------- | ----- |
+| `src/app/(dashboard)/analytics/buyout/components/BuyoutSummaryWidget.tsx` | Created | 147   |
 
 ## Dependencies
+
 - Blocked by: 69.1, 69.2

@@ -13,7 +13,7 @@ chars: 7162
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-rabotat-s-inventarizatsiej-v-selsup" rel="nofollow">Как работать с инвентаризацией в SelSup</a>
 - <a href="#1-sozdajte-inventarizatsiyu" rel="nofollow">1. Создайте инвентаризацию</a>
 - <a href="#2-vyberite-dopolnitelnye-dannye-dlya-excel-fajla" rel="nofollow">2. Выберите дополнительные данные для Excel-файла</a>

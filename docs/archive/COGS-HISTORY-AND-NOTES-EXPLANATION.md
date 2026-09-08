@@ -25,6 +25,7 @@ notes String? @db.Text  // Optional notes field for COGS entries
 ```
 
 ### Field Details
+
 - **Type:** `String?` (optional text)
 - **Database Type:** PostgreSQL `TEXT` (unlimited length)
 - **Purpose:** Store additional information about COGS entries
@@ -37,6 +38,7 @@ notes String? @db.Text  // Optional notes field for COGS entries
 ### API Integration
 
 **Request Format:**
+
 ```typescript
 POST /v1/products/:nmId/cogs
 
@@ -49,6 +51,7 @@ POST /v1/products/:nmId/cogs
 ```
 
 **Response Format:**
+
 ```typescript
 {
   "cogs": {
@@ -93,6 +96,7 @@ model Cogs {
 ### How It Works
 
 #### First COGS Assignment (Creation)
+
 ```sql
 -- User assigns COGS for the first time
 INSERT INTO cogs (nm_id, unit_cost_rub, valid_from, valid_to, notes)
@@ -103,9 +107,11 @@ nm_id      | unit_cost | valid_from  | valid_to | notes
 -----------|-----------|-------------|----------|---------------
 321678606  | 100.00    | 2025-01-01  | NULL     | Первоначальная
 ```
+
 - `valid_to = NULL` means this is the **current active** COGS
 
 #### Second COGS Assignment (Update)
+
 ```sql
 -- User changes COGS on 2025-02-01
 -- Step 1: Close old version
@@ -125,6 +131,7 @@ nm_id      | unit_cost | valid_from  | valid_to    | notes
 ```
 
 #### Third COGS Assignment (Another Update)
+
 ```sql
 -- User changes COGS again on 2025-03-01
 -- Result (full history):
@@ -181,6 +188,7 @@ nm_id      | unit_cost | valid_from  | valid_to    | created_at           | crea
 ```
 
 **Key Insights:**
+
 - `valid_from` = business effective date (when price actually changed)
 - `created_at` = technical record creation timestamp
 - `valid_to` = business expiration date (when this version stopped being active)
@@ -319,6 +327,7 @@ useEffect(() => {
 ### Test Scenario
 
 **Before Fix ❌:**
+
 ```
 User flow:
 1. Open Product 1 (321678606) - no COGS
@@ -331,6 +340,7 @@ Result: User confused, sees wrong value
 ```
 
 **After Fix ✅:**
+
 ```
 User flow:
 1. Open Product 1 (321678606) - no COGS
@@ -382,34 +392,37 @@ model Cogs {
 
 ### Field Reference
 
-| Field | Type | Purpose | Example |
-|-------|------|---------|---------|
-| `id` | UUID | Primary key | `550e8400-e29b-41d4-a716-446655440000` |
-| `nm_id` | String | WB Product ID | `321678606` |
-| `sa_name` | String | Product name | `Краска для мебели` |
-| `valid_from` | DateTime | Version start date | `2025-01-01T00:00:00Z` |
-| `valid_to` | DateTime? | Version end date | `2025-01-31T23:59:59Z` or `NULL` |
-| `unit_cost_rub` | Decimal(15,2) | Unit cost | `999.00` |
-| `currency` | String | Currency code | `RUB` |
-| `source` | String | Entry source | `manual`, `import`, `system` |
-| `created_by` | String | Creator | `user_123` or `system` |
-| `created_at` | DateTime | Record creation | `2025-11-23T10:30:00Z` |
-| `updated_at` | DateTime | Last update | `2025-11-23T14:20:00Z` |
-| `notes` | String? | Optional notes | `Первоначальная себестоимость` |
+| Field           | Type          | Purpose            | Example                                |
+| --------------- | ------------- | ------------------ | -------------------------------------- |
+| `id`            | UUID          | Primary key        | `550e8400-e29b-41d4-a716-446655440000` |
+| `nm_id`         | String        | WB Product ID      | `321678606`                            |
+| `sa_name`       | String        | Product name       | `Краска для мебели`                    |
+| `valid_from`    | DateTime      | Version start date | `2025-01-01T00:00:00Z`                 |
+| `valid_to`      | DateTime?     | Version end date   | `2025-01-31T23:59:59Z` or `NULL`       |
+| `unit_cost_rub` | Decimal(15,2) | Unit cost          | `999.00`                               |
+| `currency`      | String        | Currency code      | `RUB`                                  |
+| `source`        | String        | Entry source       | `manual`, `import`, `system`           |
+| `created_by`    | String        | Creator            | `user_123` or `system`                 |
+| `created_at`    | DateTime      | Record creation    | `2025-11-23T10:30:00Z`                 |
+| `updated_at`    | DateTime      | Last update        | `2025-11-23T14:20:00Z`                 |
+| `notes`         | String?       | Optional notes     | `Первоначальная себестоимость`         |
 
 ---
 
 ## 7. 🔗 Related Documentation
 
 **Story Documents:**
+
 - Story 4.1: `docs/stories/4.1.single-product-cogs-assignment.md`
 - Story 4.2: `docs/stories/4.2.bulk-cogs-assignment.md`
 
 **Backend Documentation:**
+
 - Epic 18 Spec: `docs/request-backend/09-epic-18-backend-response.md`
 - Prisma Schema: `prisma/schema.prisma:387-419`
 
 **Frontend Components:**
+
 - Form Component: `src/components/custom/SingleCogsForm.tsx`
 - Hook: `src/hooks/useSingleCogsAssignment.ts`
 - Types: `src/types/cogs.ts`

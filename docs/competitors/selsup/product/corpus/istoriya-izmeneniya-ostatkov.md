@@ -13,7 +13,7 @@ chars: 4875
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-perejti-v-razdel" rel="nofollow">Как перейти в раздел</a>
 - <a href="#gde-mozhno-otkryt-istoriyu-otpravki-ostatkov" rel="nofollow">Где можно открыть историю отправки остатков</a>
 - <a href="#filtry" rel="nofollow">Фильтры</a>
@@ -35,8 +35,8 @@ chars: 4875
 
 2\. **[Склад - Остатки на складе](https://selsup.ru/application/stocks/)**
 
-Выберите нужный товар, затем в столбце **«Действия»** нажмите на значок «часы» **— [«История отправки остатков товара по FBS на маркетплейсы».](https://selsup.ru/application/stocksHistory/?productId=928899)\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/09/mspaint_ianfp3zy8d.png.webp)\**
+Выберите нужный товар, затем в столбце **«Действия»** нажмите на значок «часы» *_— [«История отправки остатков товара по FBS на маркетплейсы».](https://selsup.ru/application/stocksHistory/?productId=928899)\
+![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/09/mspaint_ianfp3zy8d.png.webp)\*_
 
 3\. Раздел **[Товары](https://selsup.ru/application/products)**
 
@@ -69,6 +69,7 @@ chars: 4875
 Отправились ли остатки на маркетплейс Успешно или при отправке возникла Ошибка.\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/09/status.png.webp)\
 Также в таблице с историей остатков Вы увидите:\
+
 - Название товара;\
 - Артикул для объединения в одну карточку;\
 - Какой остаток был передан на маркетплейс;\
@@ -76,7 +77,7 @@ chars: 4875
 - С какого склада списывались остатки;\
 - Причину возникновения ошибки при передаче остатка (если статус "Ошибка");\
 - Дату отправки остатка на марктеплейс.\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/09/dannie.png.webp)
+  ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/09/dannie.png.webp)
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 

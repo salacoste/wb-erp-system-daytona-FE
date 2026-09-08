@@ -13,7 +13,7 @@ chars: 2573
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-eto-rabotaet" rel="nofollow">Как это работает</a>
 - <a href="#kogda-eto-osobenno-aktualno" rel="nofollow">Когда это особенно актуально</a>
 - <a href="#chto-dalshe" rel="nofollow">Что дальше?</a>

@@ -16,12 +16,14 @@
 ## Acceptance Criteria
 
 ### AC1: Campaign Selector
+
 - [ ] Multi-select dropdown to filter by campaigns
 - [ ] Shows campaign name and status badge
 - [ ] Search within dropdown
 - [ ] "Select All" / "Clear All" buttons
 
 ### AC2: Campaign Status Badges
+
 - [ ] Active (9): Green dot + "Активна"
 - [ ] Paused (11): Yellow dot + "На паузе"
 - [ ] Ended (7): Gray dot + "Завершена"
@@ -29,20 +31,24 @@
 - [ ] Declined (8): Red dot + "Отклонена"
 
 ### AC3: Campaign Type Labels
+
 - [ ] Auto (8): "Авто"
 - [ ] Unified/Auction (9): "Аукцион"
 - [ ] Other types: Show type_name from API
 
 ### AC4: Campaign Filter Behavior
+
 - [ ] Filter applies to performance table
 - [ ] URL updates with selected campaign IDs
 - [ ] Clear filter shows all campaigns
 
 ### AC5: Empty State
+
 - [ ] When user has no campaigns, show: "Нет рекламных кампаний"
 - [ ] Suggest: "Создайте рекламную кампанию в личном кабинете WB"
 
 ### AC6: Accessibility
+
 - [ ] Keyboard navigation in dropdown (Arrow keys, Enter, Escape)
 - [ ] Focus trap within open popover
 - [ ] Screen reader announces selection changes
@@ -51,18 +57,21 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Campaign Selector Component
+
 - [ ] Create `components/CampaignSelector.tsx`
 - [ ] Implement multi-select dropdown UI
 - [ ] Add search input within dropdown
 - [ ] Add "Select All" / "Clear" buttons
 
 ### Phase 2: Status & Type Badges
+
 - [ ] Create `components/CampaignStatusBadge.tsx`
 - [ ] Create `components/CampaignTypeBadge.tsx`
 - [ ] Define color mapping for statuses
 - [ ] Define labels for types
 
 ### Phase 3: Integration
+
 - [ ] Connect to `useAdvertisingCampaigns` hook
 - [ ] Sync selected campaigns to parent component
 - [ ] Update URL query params
@@ -243,9 +252,9 @@ src/lib/
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-12-22 | James (Dev Agent) | Initial draft |
+| Date       | Author            | Change                                                  |
+| ---------- | ----------------- | ------------------------------------------------------- |
+| 2025-12-22 | James (Dev Agent) | Initial draft                                           |
 | 2025-12-22 | James (Dev Agent) | PO Review: Added AC5 (empty state), AC6 (accessibility) |
 
 ---

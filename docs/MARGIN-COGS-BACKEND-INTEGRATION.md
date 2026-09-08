@@ -31,6 +31,7 @@ Header: X-Cabinet-Id: {cabinet_id}
 ```
 
 **Ответ:**
+
 ```json
 {
   "data": [
@@ -69,6 +70,7 @@ Header: X-Cabinet-Id: {cabinet_id}
 ```
 
 **Ответ:**
+
 ```json
 {
   "data": [
@@ -105,6 +107,7 @@ Content-Type: application/json
 ```
 
 **Ответ 201 Created:**
+
 ```json
 {
   "id": "uuid",
@@ -131,6 +134,7 @@ Header: X-Cabinet-Id: {cabinet_id}
 ```
 
 **Ответ 202 Accepted:**
+
 ```json
 {
   "accepted": 2,
@@ -174,6 +178,7 @@ Header: X-Cabinet-Id: {cabinet_id}
 **UI:** "Нет продаж за W47" + опционально: ссылка "Посмотреть за другие недели"
 
 **Как найти маржу за предыдущие недели:**
+
 ```http
 GET /v1/analytics/weekly/by-sku?week=2025-W44&include_cogs=true
 ```
@@ -218,6 +223,7 @@ GET /v1/analytics/weekly/by-sku?week=2025-W44&include_cogs=true
 После `POST /v1/products/{nmId}/cogs` маржа пересчитывается асинхронно (5-30 сек).
 
 **Polling стратегия:**
+
 ```typescript
 const assignCogs = async (nmId, unitCost) => {
   await api.post(`/products/${nmId}/cogs`, { unit_cost_rub: unitCost });
@@ -267,6 +273,7 @@ const assignCogs = async (nmId, unitCost) => {
 **UI:** "(COGS с будущей даты)" - маржа будет рассчитана для следующей недели.
 
 **Важно:** Backend использует **midpoint недели (четверг)** для COGS lookup:
+
 - Если `valid_from ≤ Thursday` → COGS применяется к этой неделе
 - Если `valid_from > Thursday` → COGS применяется к следующей неделе
 
@@ -306,7 +313,7 @@ const assignCogs = async (nmId, unitCost) => {
 ### Какая неделя считается "последней завершённой"
 
 | День недели (Moscow) | Последняя завершённая неделя |
-|----------------------|------------------------------|
+| -------------------- | ---------------------------- |
 | Понедельник          | W-2 (2 недели назад)         |
 | Вторник до 12:00     | W-2                          |
 | Вторник после 12:00  | W-1 (прошлая неделя)         |
@@ -315,6 +322,7 @@ const assignCogs = async (nmId, unitCost) => {
 **Почему:** WB публикует данные за неделю во вторник ~10:00 MSK. Консервативный режим ждёт до 12:00.
 
 **Пример (сегодня среда 26.11.2025, W48):**
+
 - Последняя завершённая = W47 (17-23 ноября)
 - Маржа показывается за W47
 - Midpoint W47 = четверг 21 ноября
@@ -362,20 +370,20 @@ Backend использует **midpoint недели (четверг)** для �
 
 ## Таблица значений missing_data_reason
 
-| Значение              | Описание                 | Действие Frontend                  |
-|-----------------------|--------------------------|------------------------------------|
-| `null`                | Маржа рассчитана успешно | Показать `current_margin_pct`      |
-| `"NO_SALES_DATA"`     | Нет продаж за период     | "Нет продаж за {period}"           |
-| `"COGS_NOT_ASSIGNED"` | COGS не назначена        | "Назначьте себестоимость"          |
-| `"CALCULATION_PENDING"` | Расчёт в процессе      | Spinner + polling                  |
-| `"INCOMPLETE_WEEK"`   | Неделя ещё не завершена  | "Данные за {period} ещё не готовы" |
+| Значение                | Описание                 | Действие Frontend                  |
+| ----------------------- | ------------------------ | ---------------------------------- |
+| `null`                  | Маржа рассчитана успешно | Показать `current_margin_pct`      |
+| `"NO_SALES_DATA"`       | Нет продаж за период     | "Нет продаж за {period}"           |
+| `"COGS_NOT_ASSIGNED"`   | COGS не назначена        | "Назначьте себестоимость"          |
+| `"CALCULATION_PENDING"` | Расчёт в процессе        | Spinner + polling                  |
+| `"INCOMPLETE_WEEK"`     | Неделя ещё не завершена  | "Данные за {period} ещё не готовы" |
 
 ---
 
 ## Таблица HTTP статусов
 
 | Endpoint                     | Статус | Описание                        |
-|------------------------------|--------|---------------------------------|
+| ---------------------------- | ------ | ------------------------------- |
 | GET /products                | 200    | Успех                           |
 | GET /products/{id}           | 200    | Товар найден                    |
 | GET /products/{id}           | 404    | Товар не найден                 |
@@ -690,6 +698,7 @@ Backend использует **midpoint недели (четверг)** для �
 ## Связанные файлы
 
 **Frontend:**
+
 - `src/lib/margin-helpers.ts` - Helper функции (getLastCompletedWeek, isCogsAfterLastCompletedWeek)
 - `src/hooks/useMarginPollingWithQuery.ts` - Polling hook
 - `src/hooks/useSingleCogsAssignmentWithPolling.ts` - COGS + polling
@@ -697,6 +706,7 @@ Backend использует **midpoint недели (четверг)** для �
 - `src/components/custom/MarginDisplay.tsx` - Компонент отображения маржи
 
 **Backend (reference):**
+
 - `src/products/products.service.ts` - getMarginDataForProducts()
 - `src/analytics/services/margin-calculation.service.ts` - lookupCogs() with midpoint
 - `src/cogs/services/cogs.service.ts` - findCogsAtDate()

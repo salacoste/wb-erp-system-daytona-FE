@@ -13,6 +13,7 @@
 Epic 36 **Product Card Linking** is now **100% complete** in the backend. This document serves as the **official API contract** for frontend integration.
 
 **What's New**:
+
 - ✅ Products table populated with `imtId` (WB merged card identifier)
 - ✅ Daily automatic sync of imtId from WB Content API
 - ✅ Analytics API supports `group_by=imtId` parameter
@@ -28,19 +29,23 @@ Epic 36 **Product Card Linking** is now **100% complete** in the backend. This d
 **⚠️ IMPORTANT**: WB Content API pagination limit corrected after production testing.
 
 **Issue Discovered**:
+
 - WB API rejected all sync requests with `ValidationError` (HTTP 400)
 - Backend assumed 1000 cards/batch was acceptable (incorrect)
 
 **Fix Applied**:
+
 - Changed pagination limit from 1000 to **100 cards/batch** (WB API maximum)
 - File: `src/products/services/product-imt-sync.service.ts:191`
 
 **Impact on Frontend**:
+
 - ✅ **NO breaking changes** - API contract remains identical
 - ✅ **NO code updates needed** - all examples in this document still valid
 - ✅ **Production validated** - 47 products synced successfully in 1.4s
 
 **Performance Note**:
+
 - Slightly more WB API requests for large catalogs (10× more batches for 1000+ products)
 - Backend handles this transparently with 1000ms delay between batches
 - Sync still completes in <15s for typical catalogs (50-200 products)
@@ -50,6 +55,7 @@ Epic 36 **Product Card Linking** is now **100% complete** in the backend. This d
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: Epic 36 Product Card Linking is 100% complete. Products table populated with imtId from WB Content API, analytics API supports `group_by=imtId` for merged card grouping, and a critical bugfix corrected WB API pagination limit (1000 to 100 cards/batch). API contract is stable and backward compatible.
 **Frontend Action**: No further action needed unless noted above.
@@ -59,6 +65,7 @@ Epic 36 **Product Card Linking** is now **100% complete** in the backend. This d
 ### Database Schema
 
 **Table**: `products`
+
 ```prisma
 model Product {
   nmId       Int      @id @map("nm_id")
@@ -73,6 +80,7 @@ model Product {
 ```
 
 **Key Points**:
+
 - `imtId` is **nullable** (products without merging have NULL)
 - Multiple products can share the same `imtId` (merged group)
 - Auto-synced daily at 06:00 MSK from WB Content API
@@ -82,12 +90,14 @@ model Product {
 **Endpoint**: `GET /v1/analytics/advertising`
 
 **New Parameter**: `group_by`
-| Value | Description | Returns |
-|-------|-------------|---------|
-| `sku` (default) | Individual SKU metrics | Each nmId as separate row |
-| `imtId` | Merged card metrics | Aggregated by imtId (склейки) |
+
+| Value           | Description            | Returns                       |
+| --------------- | ---------------------- | ----------------------------- |
+| `sku` (default) | Individual SKU metrics | Each nmId as separate row     |
+| `imtId`         | Merged card metrics    | Aggregated by imtId (склейки) |
 
 **Example Request**:
+
 ```http
 GET /v1/analytics/advertising?from=2025-12-01&to=2025-12-21&group_by=imtId
 Authorization: Bearer {jwt_token}
@@ -220,11 +230,13 @@ export interface AdvertisingAnalyticsParams {
 ### Example 1: Merged Group (type='merged_group')
 
 **Request**:
+
 ```http
 GET /v1/analytics/advertising?from=2025-12-01&to=2025-12-21&group_by=imtId
 ```
 
 **Response** (merged group with 3 products):
+
 ```json
 {
   "data": [
@@ -268,18 +280,20 @@ GET /v1/analytics/advertising?from=2025-12-01&to=2025-12-21&group_by=imtId
 ```
 
 **Field Mapping**:
-| Field | Type | Description |
-|-------|------|-------------|
-| `type` | `'merged_group'` | Indicates this is an aggregated group |
-| `imtId` | `328632` | WB merged card identifier |
-| `mergedProducts` | `MergedProduct[]` | Array of products in group (3 items) |
-| `totalSpend` | `11337` | SUM of spend across all 3 products |
-| `totalRevenue` | `34058` | SUM of revenue (1,105 + 1,489 + 31,464) |
-| `financials.roas` | `3.0` | totalRevenue / totalSpend |
+
+| Field             | Type              | Description                             |
+| ----------------- | ----------------- | --------------------------------------- |
+| `type`            | `'merged_group'`  | Indicates this is an aggregated group   |
+| `imtId`           | `328632`          | WB merged card identifier               |
+| `mergedProducts`  | `MergedProduct[]` | Array of products in group (3 items)    |
+| `totalSpend`      | `11337`           | SUM of spend across all 3 products      |
+| `totalRevenue`    | `34058`           | SUM of revenue (1,105 + 1,489 + 31,464) |
+| `financials.roas` | `3.0`             | totalRevenue / totalSpend               |
 
 ### Example 2: Individual Product (type='individual')
 
 **Response** (product with NULL imtId):
+
 ```json
 {
   "data": [
@@ -320,17 +334,19 @@ GET /v1/analytics/advertising?from=2025-12-01&to=2025-12-21&group_by=imtId
 ```
 
 **Field Mapping**:
-| Field | Type | Description |
-|-------|------|-------------|
-| `type` | `'individual'` | Not part of a merged group |
-| `imtId` | `null` | No card linking (standalone product) |
-| `mergedProducts` | `undefined` | Field not present for individual products |
-| `totalSpend` | `5000` | Direct advertising spend |
-| `totalRevenue` | `7500` | Revenue from this product only |
+
+| Field            | Type           | Description                               |
+| ---------------- | -------------- | ----------------------------------------- |
+| `type`           | `'individual'` | Not part of a merged group                |
+| `imtId`          | `null`         | No card linking (standalone product)      |
+| `mergedProducts` | `undefined`    | Field not present for individual products |
+| `totalSpend`     | `5000`         | Direct advertising spend                  |
+| `totalRevenue`   | `7500`         | Revenue from this product only            |
 
 ### Example 3: Mixed Response (Both Types)
 
 **Response** (1 merged group + 1 individual):
+
 ```json
 {
   "data": [
@@ -373,11 +389,13 @@ GET /v1/analytics/advertising?from=2025-12-01&to=2025-12-21&group_by=imtId
 **Scenario**: Product has `imtId=328632` but NO other products share this imtId.
 
 **Backend Behavior**:
+
 - Still returns `type='merged_group'`
 - `mergedProducts` array has **1 item**
 - Metrics are identical to individual product
 
 **Frontend Handling**:
+
 ```typescript
 // Check if merged group has only 1 product
 if (item.type === 'merged_group' && item.mergedProducts?.length === 1) {
@@ -391,11 +409,13 @@ if (item.type === 'merged_group' && item.mergedProducts?.length === 1) {
 **Scenario**: No products in cabinet have imtId assigned.
 
 **Backend Behavior**:
+
 - Returns all products as `type='individual'`
 - `imtId=null` for all items
 - Identical to `group_by=sku` response
 
 **Frontend Handling**:
+
 - No UI changes needed
 - Product list displays normally
 - No "merged group" badges shown
@@ -405,6 +425,7 @@ if (item.type === 'merged_group' && item.mergedProducts?.length === 1) {
 **Scenario**: ter-09 has `spend=0, revenue=1105` (from Request #82).
 
 **Backend Behavior**:
+
 - When `group_by=imtId`:
   - ter-09 is merged with ter-13-1 (same imtId=328632)
   - ter-13-1 has `spend=11337`
@@ -412,6 +433,7 @@ if (item.type === 'merged_group' && item.mergedProducts?.length === 1) {
   - **ROAS is now calculable**: 34058 / 11337 = 3.0
 
 **Frontend Handling**:
+
 - ✅ No more "🔵 Нет данных" status for ter-09
 - ✅ ROAS/ROI are now valid numbers (no NULL)
 - ✅ Efficiency status is calculated correctly
@@ -627,11 +649,13 @@ export default function AdvertisingAnalyticsPage() {
 **None** - Epic 36 is fully backward compatible.
 
 **Default Behavior**:
+
 - If `group_by` parameter is **omitted**, backend defaults to `group_by=sku`
 - Response format for `group_by=sku` is **identical** to Epic 33
 - Existing frontend code continues to work without changes
 
 **Opt-In**:
+
 - Frontend must **explicitly pass** `group_by=imtId` to enable merged groups
 - New fields (`type`, `imtId`, `mergedProducts`) only appear when `group_by=imtId`
 
@@ -649,17 +673,20 @@ export default function AdvertisingAnalyticsPage() {
 ### Frontend Tests (TODO)
 
 **Component Tests**:
+
 - [ ] MergedProductBadge renders with correct product count
 - [ ] MergedProductBadge tooltip shows all products
 - [ ] Group by toggle switches between 'sku' and 'imtId'
 
 **Integration Tests**:
+
 - [ ] API client sends `group_by` parameter correctly
 - [ ] Response with merged groups is parsed correctly
 - [ ] Response with individual products is parsed correctly
 - [ ] Mixed response (both types) is handled correctly
 
 **E2E Tests** (Playwright):
+
 - [ ] User can toggle between "По артикулам" and "По склейкам"
 - [ ] Merged groups display with badge and tooltip
 - [ ] Individual products display without badge
@@ -688,6 +715,7 @@ export default function AdvertisingAnalyticsPage() {
    - Use: Business KPI
 
 **Frontend Metrics** (TODO):
+
 - Add `advertising_group_by_mode` counter (labels: `mode=sku|imtId`)
 - Track user engagement with merged groups view
 
@@ -696,16 +724,19 @@ export default function AdvertisingAnalyticsPage() {
 ## 🔗 Related Documentation
 
 ### Backend Documentation
+
 - **Epic 36 Main**: `docs/stories/epic-36/`
 - **Story 36.6**: `docs/stories/epic-36/story-36.6-testing-documentation-observability.md`
 - **API Paths**: `docs/API-PATHS-REFERENCE.md` (lines 986-1102)
 - **Product Sync**: `docs/architecture/epic-36/product-sync-flow.md`
 
 ### Frontend Documentation
+
 - **Request #82**: Card Linking Investigation (predecessor to Epic 36)
 - **Epic 33**: Advertising Analytics (baseline implementation)
 
 ### WB API Documentation
+
 - **Content API**: Product cards with imtId field
 - **Promotion API**: Advertising statistics by nmId
 
@@ -714,10 +745,12 @@ export default function AdvertisingAnalyticsPage() {
 ## 📞 Support & Questions
 
 **For Backend Questions**:
+
 - Contact: Backend Team Lead
 - Reference: Epic 36 documentation in `docs/stories/epic-36/`
 
 **For Frontend Integration Support**:
+
 - This document serves as the official contract
 - All TypeScript types are provided above
 - API behavior is guaranteed to match examples

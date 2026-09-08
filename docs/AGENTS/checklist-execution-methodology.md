@@ -12,7 +12,8 @@ The LLM will:
 - Execute the complete checklist validation
 - Present a final report with pass/fail rates and key findings
 - Offer to provide detailed analysis of any section, especially those with warnings or failures
-```
+
+````
 
 ## Task: document-project
 Source: .bmad-core/tasks/document-project.md
@@ -20,3 +21,4 @@ Source: .bmad-core/tasks/document-project.md
 
 ```md
 <!-- Powered by BMAD™ Core -->
+````

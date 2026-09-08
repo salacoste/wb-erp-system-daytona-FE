@@ -7,6 +7,7 @@
 ## Problem
 
 SKU page and Category/Brand pages showed different storage values:
+
 - **SKU page**: 1,737₽ (from `wb_finance_raw` nm_id='UNKNOWN')
 - **Category page**: 2,004₽ (from `paid_storage_daily`)
 
@@ -16,10 +17,10 @@ This caused margin discrepancy between views (~268₽ difference).
 
 Two different data sources for storage:
 
-| Source | Used By | Value |
-|--------|---------|-------|
-| `wb_finance_raw.storage` (nm_id='UNKNOWN') | `getCabinetLevelExpenses` → SKU page | 1,737₽ |
-| `paid_storage_daily.warehouse_price` | `margin-calculation.service` → Category/Brand pages | 2,004₽ |
+| Source                                     | Used By                                             | Value  |
+| ------------------------------------------ | --------------------------------------------------- | ------ |
+| `wb_finance_raw.storage` (nm_id='UNKNOWN') | `getCabinetLevelExpenses` → SKU page                | 1,737₽ |
+| `paid_storage_daily.warehouse_price`       | `margin-calculation.service` → Category/Brand pages | 2,004₽ |
 
 The `paid_storage_daily` table (Epic 24) contains more accurate per-SKU storage data from WB Paid Storage API.
 
@@ -82,6 +83,7 @@ const storage = Number(storageRow.storage_total);
 ## Files Changed
 
 ### Backend
+
 - `src/analytics/weekly-analytics.service.ts`
   - `getCabinetLevelExpenses()` method (lines 4048-4193)
   - Removed `storage` from `wb_finance_raw` query
@@ -90,6 +92,7 @@ const storage = Number(storageRow.storage_total);
 ## Verification
 
 After this change:
+
 - SKU page storage = Category page storage = `paid_storage_daily` value
 - Operating profit should be consistent across all views
 - Net profit formula: `gross_profit_sku - total_cabinet_expenses` (where storage comes from `paid_storage_daily`)

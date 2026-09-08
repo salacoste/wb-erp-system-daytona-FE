@@ -9,7 +9,7 @@ chars: 6084
 
 В этой статье:
 
-- 
+-
 - <a href="#zakrytie-postavok" rel="nofollow">Закрытие поставок</a>
 - <a href="#massovoe-zakrytie-postavok" rel="nofollow">Массовое закрытие поставок</a>
 - <a href="#kakie-zakazy-popadayut-v-postavki" rel="nofollow">Какие заказы попадают в поставки?</a>

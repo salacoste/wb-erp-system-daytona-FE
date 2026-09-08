@@ -11,7 +11,7 @@ chars: 3827
 
 В этой статье:
 
-- 
+-
 - <a href="#sposoby-integratsij" rel="nofollow">Способы интеграций</a>
 - <a href="#1s-upravlenie-torgovlej-10-3" rel="nofollow">1с Управление торговлей 10.3</a>
 - <a href="#1s-upravlenie-torgovlej-s-11" rel="nofollow">1с Управление торговлей с 11</a>

@@ -11,7 +11,7 @@ chars: 2991
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-dayot-integratsiya-rasshireniya" rel="nofollow">Что даёт интеграция расширения</a>
 - <a href="#shag-1-ustanovite-rasshirenie-selsup" rel="nofollow">Шаг 1. Установите расширение SelSup</a>
 - <a href="#shag-2-avtorizujtes-v-rasshirenii-selsup" rel="nofollow">Шаг 2. Авторизуйтесь в расширении SelSup</a>

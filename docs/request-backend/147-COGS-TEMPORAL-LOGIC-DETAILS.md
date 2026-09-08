@@ -127,8 +127,8 @@ const cogs = await this.cogsService.findCogsAtDate(revenue.nmId, midpoint);
 
 For ISO weeks (Monday-Sunday):
 
-| Week | Start (Mon 00:00) | End (Sun 23:59) | Midpoint |
-|------|-------------------|-----------------|----------|
+| Week | Start (Mon 00:00) | End (Sun 23:59) | Midpoint             |
+| ---- | ----------------- | --------------- | -------------------- |
 | W45  | 2025-11-03        | 2025-11-09      | **2025-11-06** (Thu) |
 | W46  | 2025-11-10        | 2025-11-16      | **2025-11-13** (Thu) |
 | W47  | 2025-11-17        | 2025-11-23      | **2025-11-20** (Thu) |
@@ -152,16 +152,16 @@ For ISO weeks (Monday-Sunday):
 
 ### 2.4 Day-of-Week Impact Table
 
-| When COGS Changed | valid_from | Applies to Week | Reason |
-|-------------------|------------|-----------------|--------|
-| Monday W47        | 2025-11-17 | **W47** | valid_from (17) <= midpoint (20) |
-| Tuesday W47       | 2025-11-18 | **W47** | valid_from (18) <= midpoint (20) |
-| Wednesday W47     | 2025-11-19 | **W47** | valid_from (19) <= midpoint (20) |
-| Thursday W47 (AM) | 2025-11-20 | **W47** | valid_from (20) <= midpoint (20) |
-| Thursday W47 (PM) | 2025-11-20 | **W47/W48** | Depends on exact time |
-| Friday W47        | 2025-11-21 | **W48** | valid_from (21) > midpoint (20) |
-| Saturday W47      | 2025-11-22 | **W48** | valid_from (22) > midpoint (20) |
-| Sunday W47        | 2025-11-23 | **W48** | valid_from (23) > midpoint (20) |
+| When COGS Changed | valid_from | Applies to Week | Reason                           |
+| ----------------- | ---------- | --------------- | -------------------------------- |
+| Monday W47        | 2025-11-17 | **W47**         | valid_from (17) <= midpoint (20) |
+| Tuesday W47       | 2025-11-18 | **W47**         | valid_from (18) <= midpoint (20) |
+| Wednesday W47     | 2025-11-19 | **W47**         | valid_from (19) <= midpoint (20) |
+| Thursday W47 (AM) | 2025-11-20 | **W47**         | valid_from (20) <= midpoint (20) |
+| Thursday W47 (PM) | 2025-11-20 | **W47/W48**     | Depends on exact time            |
+| Friday W47        | 2025-11-21 | **W48**         | valid_from (21) > midpoint (20)  |
+| Saturday W47      | 2025-11-22 | **W48**         | valid_from (22) > midpoint (20)  |
+| Sunday W47        | 2025-11-23 | **W48**         | valid_from (23) > midpoint (20)  |
 
 **User Recommendation**: If you change COGS late in the week (Fri-Sun) but want it to apply to the current week, backdate `valid_from` to Monday of that week.
 
@@ -221,6 +221,7 @@ async createCogs(dto: CreateCogsDto, userId?: string, cabinetId?: string): Promi
 ### 3.2 Case Scenarios
 
 **Case 1: No Current Version (First COGS)**
+
 ```typescript
 // Simple create with valid_to = NULL (current version)
 await this.prisma.cogs.create({
@@ -236,6 +237,7 @@ await this.prisma.cogs.create({
 ```
 
 **Case 2: New Version After Current (Request #33)**
+
 ```typescript
 // Transaction: close old + create new
 if (newValidFrom > currentVersion.validFrom) {
@@ -260,6 +262,7 @@ if (newValidFrom > currentVersion.validFrom) {
 ```
 
 **Case 3: Historical Version (Before Current)**
+
 ```typescript
 // Create historical with valid_to = current.valid_from
 if (newValidFrom < currentVersion.validFrom) {
@@ -364,6 +367,7 @@ if (!cogs) {
 ```
 
 **Frontend Display**:
+
 - `missing_data_reason: "COGS_NOT_ASSIGNED"`
 - `margin_pct: null`
 - `cogs: null`
@@ -382,6 +386,7 @@ markup_percent = (gross_profit / |cogs|) * 100%
 ```
 
 **Implementation**:
+
 ```typescript
 calculateMargins(revenue: RevenueData, cogs: CogsData): MarginMetrics {
   const grossProfitRub = revenue.revenueNetRub.minus(cogs.cogsRub);
@@ -443,12 +448,12 @@ Calculation:
 
 ### 6.1 Events That Trigger Recalculation
 
-| Event | API Endpoint | Affected Weeks |
-|-------|--------------|----------------|
+| Event               | API Endpoint                   | Affected Weeks                           |
+| ------------------- | ------------------------------ | ---------------------------------------- |
 | **COGS Assignment** | `POST /v1/products/:nmId/cogs` | From `valid_from` to last completed week |
-| **COGS Edit** | `PATCH /v1/cogs/:cogsId` | From `valid_from` to `valid_to` (or now) |
-| **COGS Delete** | `DELETE /v1/cogs/:cogsId` | From `valid_from` to `valid_to` (or now) |
-| **Bulk Upload** | `POST /v1/products/cogs/bulk` | Aggregated for all affected weeks |
+| **COGS Edit**       | `PATCH /v1/cogs/:cogsId`       | From `valid_from` to `valid_to` (or now) |
+| **COGS Delete**     | `DELETE /v1/cogs/:cogsId`      | From `valid_from` to `valid_to` (or now) |
+| **Bulk Upload**     | `POST /v1/products/cogs/bulk`  | Aggregated for all affected weeks        |
 
 ### 6.2 Recalculation Flow
 
@@ -496,12 +501,12 @@ Calculation:
 
 ### 6.3 Performance Targets
 
-| Scenario | Expected Time |
-|----------|---------------|
-| Single week (1 product) | 5-10 seconds |
-| Single week (100 products) | ≤ 5 seconds |
-| 7 weeks batch | ≤ 30 seconds |
-| Bulk 500 products | ≤ 60 seconds |
+| Scenario                   | Expected Time |
+| -------------------------- | ------------- |
+| Single week (1 product)    | 5-10 seconds  |
+| Single week (100 products) | ≤ 5 seconds   |
+| 7 weeks batch              | ≤ 30 seconds  |
+| Bulk 500 products          | ≤ 60 seconds  |
 
 ### 6.4 Error Handling
 
@@ -642,6 +647,7 @@ if (!hasRevenue) {
 ### 8.4 Coverage by Period
 
 Coverage metrics can be filtered by:
+
 - Brand
 - Category
 - Time period (specific week or range)
@@ -653,6 +659,7 @@ Coverage metrics can be filtered by:
 ### 9.1 Delete COGS (Story 5.3)
 
 When deleting the **current** version:
+
 1. Soft delete: `is_active = false`, `deleted_at`, `deleted_by`
 2. Find previous version (same nm_id, valid_to = deleted.valid_from)
 3. Reopen previous version: set `valid_to = NULL`
@@ -682,6 +689,7 @@ if (isCurrentVersion) {
 ### 9.2 Edit COGS (Story 5.2)
 
 Edit updates the **existing record** (in-place):
+
 - Only `unit_cost_rub` and `notes` can be changed
 - Does NOT create new version
 - Triggers margin recalculation for affected weeks
@@ -689,6 +697,7 @@ Edit updates the **existing record** (in-place):
 ### 9.3 Update COGS (updateCogs)
 
 Update creates a **new version** with temporal versioning:
+
 - Requires `valid_from` after current version's `valid_from`
 - Closes old version, creates new current version
 
@@ -699,6 +708,7 @@ Update creates a **new version** with temporal versioning:
 ### 10.1 Q: What if COGS is not assigned?
 
 **A**: Products without COGS:
+
 - `missing_data_reason: "COGS_NOT_ASSIGNED"`
 - `margin_pct: null`
 - `cogs: null`
@@ -711,6 +721,7 @@ Update creates a **new version** with temporal versioning:
 ### 10.3 Q: What if I delete the current COGS?
 
 **A**:
+
 - Previous version becomes current (valid_to = NULL)
 - If no previous version exists, product has no active COGS
 - Margins show COGS_NOT_ASSIGNED
@@ -718,6 +729,7 @@ Update creates a **new version** with temporal versioning:
 ### 10.4 Q: Can I assign COGS for the future?
 
 **A**: Yes, but margin will only be calculated when:
+
 1. The date arrives
 2. The week becomes "completed" (Epic 19)
 3. Sales data exists for that week
@@ -725,6 +737,7 @@ Update creates a **new version** with temporal versioning:
 ### 10.5 Q: Why is margin the same for W45-W46 but different for W47?
 
 **A**: Example: COGS changed 15.11 (Saturday W46)
+
 - W46 midpoint = 13.11, `valid_from(15.11) > 13.11` → OLD COGS
 - W47 midpoint = 20.11, `valid_from(15.11) <= 20.11` → NEW COGS
 
@@ -740,27 +753,27 @@ Update creates a **new version** with temporal versioning:
 
 ## Related Documentation
 
-| Document | Description |
-|----------|-------------|
-| `docs/BUSINESS-LOGIC-REFERENCE.md` (lines 145-256) | COGS Margin System overview |
-| `frontend/docs/request-backend/29-cogs-temporal-versioning-and-margin-calculation.md` | Original temporal versioning guide |
-| `docs/stories/epic-10/story-10.4-margin-profit-calculation.md` | Core formulas & temporal COGS |
-| `docs/stories/epic-20/` | Automatic margin recalculation infrastructure |
-| `docs/stories/epic-5/story-5.1-view-cogs-history.md` | View COGS history |
-| `docs/stories/epic-5/story-5.2-edit-cogs.md` | Edit COGS |
-| `docs/stories/epic-5/story-5.3-delete-cogs.md` | Delete COGS with soft delete |
+| Document                                                                              | Description                                   |
+| ------------------------------------------------------------------------------------- | --------------------------------------------- |
+| `docs/BUSINESS-LOGIC-REFERENCE.md` (lines 145-256)                                    | COGS Margin System overview                   |
+| `frontend/docs/request-backend/29-cogs-temporal-versioning-and-margin-calculation.md` | Original temporal versioning guide            |
+| `docs/stories/epic-10/story-10.4-margin-profit-calculation.md`                        | Core formulas & temporal COGS                 |
+| `docs/stories/epic-20/`                                                               | Automatic margin recalculation infrastructure |
+| `docs/stories/epic-5/story-5.1-view-cogs-history.md`                                  | View COGS history                             |
+| `docs/stories/epic-5/story-5.2-edit-cogs.md`                                          | Edit COGS                                     |
+| `docs/stories/epic-5/story-5.3-delete-cogs.md`                                        | Delete COGS with soft delete                  |
 
 ---
 
 ## Source Files Reference
 
-| File | Purpose |
-|------|---------|
-| `src/cogs/services/cogs.service.ts` | COGS CRUD, temporal versioning, bulk upload |
-| `src/analytics/services/margin-calculation.service.ts` | Margin calculation with COGS lookup |
-| `src/analytics/helpers/affected-weeks.helper.ts` | Calculate affected weeks for recalculation |
-| `src/products/dto/cogs-coverage-metrics.dto.ts` | Coverage metrics DTO |
-| `src/aggregation/iso-week.service.ts` | Week bounds and completed week logic |
+| File                                                   | Purpose                                     |
+| ------------------------------------------------------ | ------------------------------------------- |
+| `src/cogs/services/cogs.service.ts`                    | COGS CRUD, temporal versioning, bulk upload |
+| `src/analytics/services/margin-calculation.service.ts` | Margin calculation with COGS lookup         |
+| `src/analytics/helpers/affected-weeks.helper.ts`       | Calculate affected weeks for recalculation  |
+| `src/products/dto/cogs-coverage-metrics.dto.ts`        | Coverage metrics DTO                        |
+| `src/aggregation/iso-week.service.ts`                  | Week bounds and completed week logic        |
 
 ---
 

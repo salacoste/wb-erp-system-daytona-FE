@@ -13,12 +13,13 @@
 
 **Wildberries has TWO different tariff systems**, both **already implemented**:
 
-| Система | Назначение | SDK Метод | Service | Endpoint |
-|---------|------------|-----------|--------|----------|
-| **Inventory (остатки)** | Фактические затраты на хранение | `sdk.tariffs.getTariffsBox()` | `WarehousesTariffsService` | `GET /v1/tariffs/warehouses-with-tariffs` |
-| **Supply (поставка)** | Планирование поставок на 14 дней | `sdk.ordersFBW.getAcceptanceCoefficients()` | `AcceptanceCoefficientsService` | `GET /v1/tariffs/acceptance/coefficients` |
+| Система                 | Назначение                       | SDK Метод                                   | Service                         | Endpoint                                  |
+| ----------------------- | -------------------------------- | ------------------------------------------- | ------------------------------- | ----------------------------------------- |
+| **Inventory (остатки)** | Фактические затраты на хранение  | `sdk.tariffs.getTariffsBox()`               | `WarehousesTariffsService`      | `GET /v1/tariffs/warehouses-with-tariffs` |
+| **Supply (поставка)**   | Планирование поставок на 14 дней | `sdk.ordersFBW.getAcceptanceCoefficients()` | `AcceptanceCoefficientsService` | `GET /v1/tariffs/acceptance/coefficients` |
 
 **Ключевое понимание**: Разница между Marketplace (более высокие ставки) и нашим API обусловлена тем, что:
+
 - Marketplace показывает ставки **Supply** (для планирования)
 - Наш API возвращает ставки **Inventory** (текущие затраты)
 
@@ -26,13 +27,13 @@
 
 ### Когда использовать какую систему?
 
-| Сценарий | Система | Endpoint | Причина |
-|----------|---------|----------|---------|
-| **Price Calculator** (текущие затраты) | Inventory | `/warehouses-with-tariffs` | Фактические ставки на сегодня |
-| **Price Calculator** (планирование доставки) | Supply | `/acceptance/coefficients` | Прогноз на 14 дней |
-| **Финансовые отчеты** | Inventory | `/warehouses-with-tariffs` | Реальные понесенные расходы |
-| **Планирование поставок** | Supply | `/acceptance/coefficients/all` | 14-дневный прогноз |
-| **Анализ затрат на хранение** | Inventory | `/warehouses-with-tariffs` | Фактические затраты |
+| Сценарий                                     | Система   | Endpoint                       | Причина                       |
+| -------------------------------------------- | --------- | ------------------------------ | ----------------------------- |
+| **Price Calculator** (текущие затраты)       | Inventory | `/warehouses-with-tariffs`     | Фактические ставки на сегодня |
+| **Price Calculator** (планирование доставки) | Supply    | `/acceptance/coefficients`     | Прогноз на 14 дней            |
+| **Финансовые отчеты**                        | Inventory | `/warehouses-with-tariffs`     | Реальные понесенные расходы   |
+| **Планирование поставок**                    | Supply    | `/acceptance/coefficients/all` | 14-дневный прогноз            |
+| **Анализ затрат на хранение**                | Inventory | `/warehouses-with-tariffs`     | Фактические затраты           |
 
 📖 **Полное руководство**: [`108-two-tariff-systems-guide.md`](./108-two-tariff-systems-guide.md)
 
@@ -41,22 +42,25 @@
 ## ✅ IMPLEMENTATION STATUS
 
 **ALL 6 ENDPOINTS IMPLEMENTED:**
-| Endpoint | Method | Status | Description |
-|----------|--------|--------|-------------|
-| `/v1/tariffs/warehouses-with-tariffs` | GET | ✅ | Aggregated warehouses + tariffs |
-| `/v1/tariffs/warehouses` | GET | ✅ | Simplified warehouse list |
-| `/v1/tariffs/commissions` | GET | ✅ | Commission categories |
-| `/v1/tariffs/settings` | GET | ✅ | Global tariff settings |
-| `/v1/tariffs/acceptance/coefficients` | GET | ✅ | Acceptance coefficients by warehouse |
-| `/v1/tariffs/acceptance/coefficients/all` | GET | ✅ | All acceptance coefficients |
+
+| Endpoint                                  | Method | Status | Description                          |
+| ----------------------------------------- | ------ | ------ | ------------------------------------ |
+| `/v1/tariffs/warehouses-with-tariffs`     | GET    | ✅     | Aggregated warehouses + tariffs      |
+| `/v1/tariffs/warehouses`                  | GET    | ✅     | Simplified warehouse list            |
+| `/v1/tariffs/commissions`                 | GET    | ✅     | Commission categories                |
+| `/v1/tariffs/settings`                    | GET    | ✅     | Global tariff settings               |
+| `/v1/tariffs/acceptance/coefficients`     | GET    | ✅     | Acceptance coefficients by warehouse |
+| `/v1/tariffs/acceptance/coefficients/all` | GET    | ✅     | All acceptance coefficients          |
 
 **NOT IMPLEMENTED (wishlist - filter client-side):**
+
 | Endpoint | Status | Recommendation |
-|----------|--------|----------------|
+| -------- | ------ | -------------- |
 
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 | `GET /v1/tariffs/commissions/category/:id` | ❌ NOT IMPLEMENTED | Use client-side filter on `/commissions` |
 | `GET /v1/tariffs/commissions/product/:nmId` | ❌ NOT IMPLEMENTED | Use Products API category + filter |
@@ -73,12 +77,14 @@
 When WB API returns zero or missing storage rates, the backend automatically applies fallback values from `WbTariffSettings`:
 
 **Default Values**:
+
 - `storage_box_base_per_day`: 0.11 ₽/день
 - `storage_box_liter_per_day`: 0.11 ₽/литр/день
 
 **Fallback Condition**: `storageBase > 0 ? storageBase : defaultStorageBasePerDay ?? storageBase`
 
 **For Frontend Developers**:
+
 - You don't need to implement fallback logic on the frontend
 - The backend already substitutes default values when WB API returns 0
 - See `frontend/docs/request-backend/105-tariffs-storage-fallback-guide.md` for details
@@ -89,12 +95,12 @@ When WB API returns zero or missing storage rates, the backend automatically app
 
 Backend реализовал полный набор сервисов для работы с тарифами WB:
 
-| Сервис | Описание | Story |
-|--------|----------|-------|
-| **TariffsService** | Комиссии по категориям (FBO/FBS/DBS/EDBS) | 43.1 |
-| **WbTariffSettingsService** | Глобальные настройки тарифов (БД) | 43.8 |
-| **WarehousesTariffsService** | Склады + тарифы (логистика/хранение) | 43.5 |
-| **AcceptanceCoefficientsService** | Коэффициенты приёмки FBO | 43.9 ✨ NEW |
+| Сервис                            | Описание                                  | Story       |
+| --------------------------------- | ----------------------------------------- | ----------- |
+| **TariffsService**                | Комиссии по категориям (FBO/FBS/DBS/EDBS) | 43.1        |
+| **WbTariffSettingsService**       | Глобальные настройки тарифов (БД)         | 43.8        |
+| **WarehousesTariffsService**      | Склады + тарифы (логистика/хранение)      | 43.5        |
+| **AcceptanceCoefficientsService** | Коэффициенты приёмки FBO                  | 43.9 ✨ NEW |
 
 ---
 
@@ -102,12 +108,12 @@ Backend реализовал полный набор сервисов для р�
 
 ### 1. Кэширование ✅
 
-| Данные | TTL | Обоснование |
-|--------|-----|-------------|
-| Warehouses list | 24h | Редко меняются |
-| Commission rates | 24h | Редко меняются |
-| Box tariffs | 1h | Коэффициенты могут меняться |
-| Acceptance coefficients | 1h | Ежедневно обновляются |
+| Данные                  | TTL | Обоснование                 |
+| ----------------------- | --- | --------------------------- |
+| Warehouses list         | 24h | Редко меняются              |
+| Commission rates        | 24h | Редко меняются              |
+| Box tariffs             | 1h  | Коэффициенты могут меняться |
+| Acceptance coefficients | 1h  | Ежедневно обновляются       |
 
 ### 2. Cargo Type Filtering ✅
 
@@ -129,6 +135,7 @@ GET /v1/tariffs/commissions/category/{id}?fulfillmentType=FBO
 ### 4. Coefficient Expression Format ✅
 
 Backend автоматически конвертирует:
+
 - SDK возвращает: `"120"` (строка, проценты)
 - Backend возвращает: `1.2` (число, множитель)
 
@@ -178,6 +185,7 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 Возвращает все комиссии по категориям (7346 категорий).
 
 **Response:**
+
 ```json
 {
   "data": {
@@ -205,6 +213,7 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 ```
 
 **Бизнес-логика**:
+
 - Кэш 24 часа (тарифы редко меняются)
 - Rate limit: 10 req/min (scope: `tariffs`)
 - FBS комиссия в 96.5% случаев выше FBO
@@ -232,6 +241,7 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 Глобальные настройки тарифов из БД. Используются как fallback когда WB API недоступен.
 
 **Response:**
+
 ```json
 {
   "data": {
@@ -262,6 +272,7 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 ```
 
 **Бизнес-логика**:
+
 - Single-row таблица `wb_tariff_settings` (id=1)
 - Кэш 24 часа
 - Источник данных: официальный PDF WB "Стоимость логистики, приёмки и хранения"
@@ -271,6 +282,7 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 > **⚠️ Этот endpoint НЕ реализован.**
 >
 > **Альтернатива:** Получите `logistics_volume_tiers` из `GET /v1/tariffs/settings` и рассчитайте на клиенте:
+>
 > ```typescript
 > // Логика расчёта (client-side)
 > if (volume <= 1) {
@@ -285,6 +297,7 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 > **⚠️ Этот endpoint НЕ реализован.**
 >
 > **Альтернатива:** Используйте `acceptance_box_rate_per_liter` из `GET /v1/tariffs/settings`:
+>
 > ```typescript
 > const cost = settings.acceptance_box_rate_per_liter * volumeLiters * coefficient;
 > ```
@@ -294,6 +307,7 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 > **⚠️ Этот endpoint НЕ реализован.**
 >
 > **Альтернатива:** Используйте `storage_free_days` из `GET /v1/tariffs/settings`:
+>
 > ```typescript
 > const isFree = daysSinceShipment < settings.storage_free_days; // 60 дней
 > ```
@@ -309,6 +323,7 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 Список всех складов WB.
 
 **Response:**
+
 ```json
 {
   "data": {
@@ -383,10 +398,12 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 **SUPPLY System** - Коэффициенты приёмки для всех складов на 14 дней вперёд.
 
 **Query Parameters:**
+
 - `warehouseId` (optional): ID конкретного склада
 - `warehouseIds` (optional): список ID через запятую
 
 **Response (SUPPLY System):**
+
 ```json
 {
   "coefficients": [
@@ -416,6 +433,7 @@ getCommissionByFulfillmentType(cabinetId, parentId, fulfillmentType): Promise<nu
 ```
 
 **Box Type Values:**
+
 - `boxTypeId: 2` → "Boxes" (Коробки)
 - `boxTypeId: 5` → "Pallets" (Паллеты)
 - `boxTypeId: 6` → "Supersafe" (Суперсейф)
@@ -432,6 +450,7 @@ storage = dailyStorage × days
 ```
 
 **IMPORTANT for Pallets (boxTypeId: 5):**
+
 - `additionalLiterRub = 0` for storage (null in WB API)
 - Storage becomes fixed rate: `baseLiterRub × storageCoef × days`
 
@@ -451,14 +470,15 @@ total = 123.75 + 2041.80 = 2165.55 ₽
 
 **Coefficient Interpretation:**
 
-| Value | Meaning | UI Recommendation |
-|-------|---------|-------------------|
-| `-1` | Приёмка недоступна | Показать "Недоступно", disabled |
-| `0` | Приёмка бесплатная | Показать "Бесплатно" badge |
-| `1` | Стандартная стоимость | Обычное отображение |
-| `>1` | Повышенная стоимость | Показать warning (×1.65 = 165%) |
+| Value | Meaning               | UI Recommendation               |
+| ----- | --------------------- | ------------------------------- |
+| `-1`  | Приёмка недоступна    | Показать "Недоступно", disabled |
+| `0`   | Приёмка бесплатная    | Показать "Бесплатно" badge      |
+| `1`   | Стандартная стоимость | Обычное отображение             |
+| `>1`  | Повышенная стоимость  | Показать warning (×1.65 = 165%) |
 
 **Key Differences from INVENTORY System:**
+
 - **Date-specific**: Returns coefficients for specific dates (14-day window)
 - **Box type separated**: Different rates for Boxes vs Pallets
 - **Forward-looking**: Planning rates, not current actual costs
@@ -470,6 +490,7 @@ total = 123.75 + 2041.80 = 2165.55 ₽
 > **⚠️ Этот endpoint НЕ реализован.**
 >
 > **Альтернатива:** Получите данные из `GET /v1/tariffs/acceptance/coefficients/all` и отфильтруйте на клиенте:
+>
 > ```typescript
 > const available = coefficients.filter(c =>
 >   c.coefficient >= 0 && c.allowUnload === true
@@ -482,44 +503,44 @@ total = 123.75 + 2041.80 = 2165.55 ₽
 
 ## Сравнительная таблица тарифных систем
 
-| Характеристика | **INVENTORY System** | **SUPPLY System** |
-|---------------|---------------------|-------------------|
-| **Endpoint** | `/v1/tariffs/warehouses-with-tariffs` | `/v1/tariffs/acceptance/coefficients/all` |
-| **Service** | `WarehousesTariffsService` | `AcceptanceCoefficientsService` |
-| **SDK Method** | `sdk.tariffs.getTariffsBox()` | `sdk.ordersFBW.getAcceptanceCoefficients()` |
-| **Назначение** | Фактические затраты на хранение | Планирование поставок на 14 дней |
-| **Временной охват** | Текущие тарифы на сегодня | Прогноз на 14 дней вперёд |
-| **Box Type** | Не разделяется (общие тарифы) | Разделяется: Boxes (2), Pallets (5), Supersafe (6) |
-| **Date Field** | `effective_from`, `effective_until` | `date` (конкретная дата поставки) |
-| **Warehouse IDs** | ID из `sdk.products.offices()` | ID из `sdk.ordersFBW.getAcceptanceCoefficients()` |
-| **Rate Limit** | 10 req/min (scope: tariffs) | 6 req/min (scope: orders_fbw) |
-| **Cache TTL** | 1 hour | 1 hour |
-| **Уровень ставок** | Базовые (фактические) | Повышенные (планирование) |
-| **Coef Expression** | Проценты → множитель (120% → 1.2) | Проценты → множитель (165% → 1.65) |
-| **Storage null handling** | Использует fallback значения | `additionalLiterRub = 0` для Pallets |
-| **Использовать для** | Price Calculator (текущие затраты) | Price Calculator (планирование доставки) |
+| Характеристика            | **INVENTORY System**                  | **SUPPLY System**                                  |
+| ------------------------- | ------------------------------------- | -------------------------------------------------- |
+| **Endpoint**              | `/v1/tariffs/warehouses-with-tariffs` | `/v1/tariffs/acceptance/coefficients/all`          |
+| **Service**               | `WarehousesTariffsService`            | `AcceptanceCoefficientsService`                    |
+| **SDK Method**            | `sdk.tariffs.getTariffsBox()`         | `sdk.ordersFBW.getAcceptanceCoefficients()`        |
+| **Назначение**            | Фактические затраты на хранение       | Планирование поставок на 14 дней                   |
+| **Временной охват**       | Текущие тарифы на сегодня             | Прогноз на 14 дней вперёд                          |
+| **Box Type**              | Не разделяется (общие тарифы)         | Разделяется: Boxes (2), Pallets (5), Supersafe (6) |
+| **Date Field**            | `effective_from`, `effective_until`   | `date` (конкретная дата поставки)                  |
+| **Warehouse IDs**         | ID из `sdk.products.offices()`        | ID из `sdk.ordersFBW.getAcceptanceCoefficients()`  |
+| **Rate Limit**            | 10 req/min (scope: tariffs)           | 6 req/min (scope: orders_fbw)                      |
+| **Cache TTL**             | 1 hour                                | 1 hour                                             |
+| **Уровень ставок**        | Базовые (фактические)                 | Повышенные (планирование)                          |
+| **Coef Expression**       | Проценты → множитель (120% → 1.2)     | Проценты → множитель (165% → 1.65)                 |
+| **Storage null handling** | Использует fallback значения          | `additionalLiterRub = 0` для Pallets               |
+| **Использовать для**      | Price Calculator (текущие затраты)    | Price Calculator (планирование доставки)           |
 
 ### Когда использовать какую систему?
 
-| Сценарий | Система | Endpoint | Причина |
-|----------|---------|----------|---------|
-| **Price Calculator** (текущие затраты) | INVENTORY | `/warehouses-with-tariffs` | Фактические ставки на сегодня |
-| **Price Calculator** (планирование доставки) | SUPPLY | `/acceptance/coefficients/all` | Прогноз на 14 дней |
-| **Финансовые отчеты** | INVENTORY | `/warehouses-with-tariffs` | Реальные понесенные расходы |
-| **Планирование поставок** | SUPPLY | `/acceptance/coefficients/all` | 14-дневный прогноз |
-| **Анализ затрат на хранение** | INVENTORY | `/warehouses-with-tariffs` | Фактические затраты |
-| **Сравнение Boxes vs Pallets** | SUPPLY | `/acceptance/coefficients/all` | Разделение по boxTypeId |
+| Сценарий                                     | Система   | Endpoint                       | Причина                       |
+| -------------------------------------------- | --------- | ------------------------------ | ----------------------------- |
+| **Price Calculator** (текущие затраты)       | INVENTORY | `/warehouses-with-tariffs`     | Фактические ставки на сегодня |
+| **Price Calculator** (планирование доставки) | SUPPLY    | `/acceptance/coefficients/all` | Прогноз на 14 дней            |
+| **Финансовые отчеты**                        | INVENTORY | `/warehouses-with-tariffs`     | Реальные понесенные расходы   |
+| **Планирование поставок**                    | SUPPLY    | `/acceptance/coefficients/all` | 14-дневный прогноз            |
+| **Анализ затрат на хранение**                | INVENTORY | `/warehouses-with-tariffs`     | Фактические затраты           |
+| **Сравнение Boxes vs Pallets**               | SUPPLY    | `/acceptance/coefficients/all` | Разделение по boxTypeId       |
 
 ### Warehouse ID Mapping
 
 **IMPORTANT**: Different systems use different warehouse IDs!
 
-| Warehouse Name | INVENTORY ID | SUPPLY ID |
-|----------------|--------------|-----------|
-| Краснодар | 507 | 130744 |
-| Краснодар (Тихорецкая) | - | 130744 |
-| Коледино | 117686 | 117686 |
-| Электросталь | 117825 | 117825 |
+| Warehouse Name         | INVENTORY ID | SUPPLY ID |
+| ---------------------- | ------------ | --------- |
+| Краснодар              | 507          | 130744    |
+| Краснодар (Тихорецкая) | -            | 130744    |
+| Коледино               | 117686       | 117686    |
+| Электросталь           | 117825       | 117825    |
 
 **Solution**: Use `GET /v1/tariffs/acceptance/coefficients/all` to discover valid SUPPLY warehouse IDs.
 
@@ -562,10 +583,12 @@ logistics = (46 + 2 × 14) × 1.2
 ```
 
 **INVENTORY System** (Current costs):
+
 - Uses `logistics_coefficient` from tariffs
 - Fixed rates: `delivery_base_rub`, `delivery_liter_rub`
 
 **SUPPLY System** (Planning):
+
 - Uses `delivery.coefficient` (multiplier, e.g., 1.65 = 165%)
 - Per-box-type rates: `delivery.baseLiterRub`, `delivery.additionalLiterRub`
 - Separates Boxes (2), Pallets (5), Supersafe (6)
@@ -586,6 +609,7 @@ acceptanceAvailable = coefficient >= 0 && allowUnload
 ```
 
 **UI Display Recommendations:**
+
 ```typescript
 if (coefficient === -1 || !allowUnload) {
   return <Badge variant="destructive">Недоступно</Badge>;
@@ -625,19 +649,23 @@ storage = 0.07 × 30 = 2.10 ₽
 ```
 
 **IMPORTANT for Pallets (SUPPLY system, boxTypeId: 5):**
+
 - `additionalLiterRub = 0` (null in WB API)
 - Storage becomes **fixed rate**: `baseLiterRub × storageCoef × days`
 - No volume-based calculation for storage
 
 **INVENTORY System** (Current costs):
+
 - Uses fallback values when WB API returns 0
 - Default: `base_per_day_rub = 0.07 ₽`, `liter_per_day_rub = 0.05 ₽`
 
 **SUPPLY System** (Planning):
+
 - Per-box-type rates: `storage.baseLiterRub`, `storage.additionalLiterRub`
 - Higher coefficients (e.g., 1.65 = 165%)
 
 **Free Storage Period:**
+
 ```typescript
 // Free storage for first 60 days
 const isFree = daysSinceShipment < 60;
@@ -775,10 +803,10 @@ export async function getAcceptanceCoefficients(warehouseIds?: number[]) {
 
 ## Rate Limits
 
-| Scope | Limit | Window | Endpoints |
-|-------|-------|--------|-----------|
-| `tariffs` | 10 req/min | 60s | commissions, warehouses, box |
-| `orders_fbw` | 6 req/min | 60s | acceptance coefficients |
+| Scope        | Limit      | Window | Endpoints                    |
+| ------------ | ---------- | ------ | ---------------------------- |
+| `tariffs`    | 10 req/min | 60s    | commissions, warehouses, box |
+| `orders_fbw` | 6 req/min  | 60s    | acceptance coefficients      |
 
 **⚠️ ВАЖНО**: Acceptance coefficients используют более строгий rate limit (6 req/min вместо 10).
 
@@ -786,14 +814,14 @@ export async function getAcceptanceCoefficients(warehouseIds?: number[]) {
 
 ## Cache Strategy
 
-| Endpoint | Cache Key | TTL | Reason |
-|----------|-----------|-----|--------|
-| GET /commissions | `tariffs:commissions:{cabinetId}` | 24h | Редко меняются |
-| GET /commissions/category | `tariffs:category:{cabinetId}:{parentId}` | 24h | Derived |
-| GET /settings | `wb:tariff-settings:global` | 24h | Локальная БД |
-| GET /warehouses | `tariffs:offices:{cabinetId}` | 24h | Редко меняются |
-| GET /warehouses/box | `tariffs:box:{cabinetId}:{date}` | 1h | Коэффициенты меняются |
-| GET /acceptance | `tariffs:acceptance:all:{cabinetId}` | 1h | Ежедневно обновляются |
+| Endpoint                  | Cache Key                                 | TTL | Reason                |
+| ------------------------- | ----------------------------------------- | --- | --------------------- |
+| GET /commissions          | `tariffs:commissions:{cabinetId}`         | 24h | Редко меняются        |
+| GET /commissions/category | `tariffs:category:{cabinetId}:{parentId}` | 24h | Derived               |
+| GET /settings             | `wb:tariff-settings:global`               | 24h | Локальная БД          |
+| GET /warehouses           | `tariffs:offices:{cabinetId}`             | 24h | Редко меняются        |
+| GET /warehouses/box       | `tariffs:box:{cabinetId}:{date}`          | 1h  | Коэффициенты меняются |
+| GET /acceptance           | `tariffs:acceptance:all:{cabinetId}`      | 1h  | Ежедневно обновляются |
 
 ---
 
@@ -934,6 +962,7 @@ type TariffSystem = 'inventory' | 'supply';
 ## Documentation References
 
 ### Backend Documentation
+
 - **API Test Collection**: [`test-api/18-tariffs.http`](../../../test-api/18-tariffs.http)
 - **Knowledge Base**: [`docs/stories/epic-43/story-43.8-wb-tariffs-knowledge-base.md`](../../../docs/stories/epic-43/story-43.8-wb-tariffs-knowledge-base.md)
 - **Story 43.1**: [`docs/stories/epic-43/story-43.1-tariffs-integration.md`](../../../docs/stories/epic-43/story-43.1-tariffs-integration.md)
@@ -941,6 +970,7 @@ type TariffSystem = 'inventory' | 'supply';
 - **[Tariffs Formulas Validation Report](104-tariffs-formulas-validation-report.md)** - Complete formula validation with examples (✅ ALL CHECKS PASSED)
 
 ### Source Code
+
 - **TariffsService**: `src/tariffs/tariffs.service.ts`
 - **WbTariffSettingsService**: `src/tariffs/wb-tariff-settings.service.ts`
 - **WarehousesTariffsService**: `src/tariffs/warehouses-tariffs.service.ts`
@@ -948,6 +978,7 @@ type TariffSystem = 'inventory' | 'supply';
 - **Types**: `src/tariffs/types/acceptance-coefficients.types.ts`
 
 ### External
+
 - [WB Tariffs API Docs](https://dev.wildberries.ru/openapi/wb-tariffs)
 - [WB OrdersFBW API Docs](https://dev.wildberries.ru/openapi/wb-fulfillment-supplies)
 
@@ -955,13 +986,13 @@ type TariffSystem = 'inventory' | 'supply';
 
 ## Changelog
 
-| Date | Change |
-|------|--------|
-| 2026-01-19 | Initial implementation (Stories 43.1, 43.5, 43.8, 43.9) |
-| 2026-01-19 | FBO/FBS commission analysis (96.5% FBS > FBO) |
-| 2026-01-19 | AcceptanceCoefficientsService implementation (OrdersFBW module) |
-| 2026-01-19 | API documentation in test-api/18-tariffs.http |
-| 2026-01-22 | **Documentation Audit**: Marked non-implemented endpoints, updated status |
+| Date       | Change                                                                                    |
+| ---------- | ----------------------------------------------------------------------------------------- |
+| 2026-01-19 | Initial implementation (Stories 43.1, 43.5, 43.8, 43.9)                                   |
+| 2026-01-19 | FBO/FBS commission analysis (96.5% FBS > FBO)                                             |
+| 2026-01-19 | AcceptanceCoefficientsService implementation (OrdersFBW module)                           |
+| 2026-01-19 | API documentation in test-api/18-tariffs.http                                             |
+| 2026-01-22 | **Documentation Audit**: Marked non-implemented endpoints, updated status                 |
 | 2026-01-27 | **SUPPLY System Documentation**: Added boxTypeId, calculation formulas, real test results |
 
 ---
@@ -1002,14 +1033,15 @@ type TariffSystem = 'inventory' | 'supply';
 
 **Calculated Costs** (1 liter, 30 days):
 
-| Component | Formula | Result |
-|-----------|---------|--------|
-| **Logistics** | `(75 + 0 × 23) × 1.65` | 123.75 ₽ |
-| **Storage (daily)** | `(41.25 + 0 × 0) × 1.65` | 68.06 ₽/день |
-| **Storage (30 days)** | `68.06 × 30` | 2041.80 ₽ |
-| **TOTAL** | `123.75 + 2041.80` | **2165.55 ₽** |
+| Component             | Formula                  | Result        |
+| --------------------- | ------------------------ | ------------- |
+| **Logistics**         | `(75 + 0 × 23) × 1.65`   | 123.75 ₽      |
+| **Storage (daily)**   | `(41.25 + 0 × 0) × 1.65` | 68.06 ₽/день  |
+| **Storage (30 days)** | `68.06 × 30`             | 2041.80 ₽     |
+| **TOTAL**             | `123.75 + 2041.80`       | **2165.55 ₽** |
 
 **Key Findings**:
+
 1. **Pallets have `additionalLiterRub = 0` for storage** (fixed rate per day)
 2. **Coefficients are multipliers** (1.65 = 165%, not 1.65%)
 3. **SUPPLY rates are significantly higher** than INVENTORY rates
@@ -1031,6 +1063,7 @@ type TariffSystem = 'inventory' | 'supply';
 **Реализовано:** 6 endpoints (см. Implementation Status выше)
 
 **НЕ реализовано (wishlist):** 7 endpoints помечены как `❌ NOT IMPLEMENTED` с альтернативами:
+
 - `GET /v1/tariffs/commissions/category/:id` → filter client-side
 - `GET /v1/tariffs/commissions/product/:nmId` → use Products API
 - `GET /v1/tariffs/settings/logistics` → calculate client-side

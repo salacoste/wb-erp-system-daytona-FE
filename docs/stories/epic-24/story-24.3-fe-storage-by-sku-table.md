@@ -16,72 +16,85 @@
 ## Acceptance Criteria
 
 ### AC1: Table Display
+
 - [ ] Display all SKUs with storage data
 - [ ] Columns: Артикул, Название, Бренд, Хранение (₽), ₽/день, Объём, Склады, Дней
 - [ ] Sort by storage cost (default: descending)
 - [ ] Sortable columns: storage_cost, volume, days_stored
 
 ### AC2: Data Formatting
+
 - [ ] Currency formatting with ₽ symbol (e.g., "4,500 ₽")
 - [ ] Volume with "л" suffix (e.g., "2.5 л")
 - [ ] Warehouses as **badges with overflow** (UX Decision Q6): show first 2 + "+N"
 - [ ] Product name truncated at **45-50 chars** with tooltip (UX Decision Q8)
 
 ### AC3: Pagination
+
 - [ ] Cursor-based pagination
 - [ ] Items per page: 20 (configurable)
 - [ ] Show total count
 - [ ] "Load more" or page navigation
 
 ### AC4: Filtering
+
 - [ ] Search by nm_id or vendor_code (debounced 500ms)
 - [ ] Filter by brand (from parent page)
 - [ ] Filter by warehouse (optional)
 
 ### AC5: Row Actions
+
 - [ ] Click row → navigate to product detail
 - [ ] Link to `/analytics/sku?nm_id={nm_id}`
 
 ## Tasks / Subtasks
 
 ### Phase 1: Component Setup
+
 - [ ] Create `src/app/(dashboard)/analytics/storage/components/StorageBySkuTable.tsx`
 - [ ] Define component props interface
 - [ ] Set up data fetching with `useStorageBySku` hook
 
 ### Phase 2: Table Structure
+
 - [ ] Implement table header with sortable columns
 - [ ] Implement table body with data rows
 - [ ] Add sort icons for sortable columns
 - [ ] Wire up sort state management
 
 ### Phase 3: Data Formatting
+
 - [ ] Implement currency formatting helper
 - [ ] Implement volume formatting helper
 - [ ] Implement WarehouseBadges component (2 badges + overflow)
 - [ ] Implement ProductNameCell with truncation + tooltip
 
 ### Phase 4: Pagination
+
 - [ ] Implement pagination controls
 - [ ] Wire up cursor-based pagination
 - [ ] Show "Показано X из Y"
 - [ ] Handle "Load more" / page navigation
 
 ### Phase 5: Search & Filtering
+
 - [ ] Implement search input with debounce (500ms)
 - [ ] Wire up brand filter from parent
 - [ ] Wire up warehouse filter (optional)
 
 ### Phase 6: Row Interactions
+
 - [ ] Implement row click handler
 - [ ] Navigate to product detail page
 - [ ] Add hover state styling
 
 ### Phase 7: Loading & Empty States
+
 - [ ] Implement loading skeleton for table
 - [ ] Implement empty state: "Нет товаров с данными о хранении"
 
 ### Phase 8: Testing
+
 - [ ] Unit tests for formatting helpers
 - [ ] Component tests for table rendering
 - [ ] Test pagination interactions
@@ -148,16 +161,16 @@ const {
 
 ### Table Columns
 
-| Column | Field | Sortable | Format | Width |
-|--------|-------|----------|--------|-------|
-| Артикул | `nm_id` | ❌ | Link | 100px |
-| Название | `product_name` | ❌ | Truncate 45 chars + tooltip | 250px |
-| Бренд | `brand` | ❌ | Text | 120px |
-| Хранение | `storage_cost_total` | ✅ | Currency ₽ | 100px |
-| ₽/день | `storage_cost_avg_daily` | ✅ | Currency ₽ | 80px |
-| Объём | `volume_avg` | ✅ | Number + "л" | 70px |
-| Склады | `warehouses` | ❌ | Badges (2 + overflow) | 150px |
-| Дней | `days_stored` | ✅ | Number | 60px |
+| Column   | Field                    | Sortable | Format                      | Width |
+| -------- | ------------------------ | -------- | --------------------------- | ----- |
+| Артикул  | `nm_id`                  | ❌       | Link                        | 100px |
+| Название | `product_name`           | ❌       | Truncate 45 chars + tooltip | 250px |
+| Бренд    | `brand`                  | ❌       | Text                        | 120px |
+| Хранение | `storage_cost_total`     | ✅       | Currency ₽                  | 100px |
+| ₽/день   | `storage_cost_avg_daily` | ✅       | Currency ₽                  | 80px  |
+| Объём    | `volume_avg`             | ✅       | Number + "л"                | 70px  |
+| Склады   | `warehouses`             | ❌       | Badges (2 + overflow)       | 150px |
+| Дней     | `days_stored`            | ✅       | Number                      | 60px  |
 
 ### Warehouse Badges Component (UX Decision Q6)
 
@@ -255,11 +268,11 @@ src/
 
 ### UX Decisions Applied
 
-| Question | Decision | Rationale |
-|----------|----------|-----------|
-| Q6: Warehouses | Badges with +N overflow | Visual scannability |
-| Q7: Mobile | Horizontal scroll | Standard table pattern |
-| Q8: Truncation | 45-50 chars + tooltip | Real WB product names are long |
+| Question       | Decision                | Rationale                      |
+| -------------- | ----------------------- | ------------------------------ |
+| Q6: Warehouses | Badges with +N overflow | Visual scannability            |
+| Q7: Mobile     | Horizontal scroll       | Standard table pattern         |
+| Q8: Truncation | 45-50 chars + tooltip   | Real WB product names are long |
 
 ### Mobile Responsiveness (UX Decision Q7)
 
@@ -282,6 +295,7 @@ src/
 ## Testing
 
 ### Framework & Location
+
 - **Framework**: Vitest + React Testing Library
 - **Test Location**: `src/app/(dashboard)/analytics/storage/components/__tests__/StorageBySkuTable.test.tsx`
 
@@ -301,6 +315,7 @@ src/
 - [ ] Tooltip shows full name on hover
 
 ### Coverage Target
+
 - Component: >80%
 - Helper functions: >90%
 
@@ -338,11 +353,11 @@ src/
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-11-29 | PO (Sarah) | Initial draft |
+| Date       | Author            | Change                                                           |
+| ---------- | ----------------- | ---------------------------------------------------------------- |
+| 2025-11-29 | PO (Sarah)        | Initial draft                                                    |
 | 2025-11-29 | UX Expert (Sally) | Updated: badges with overflow, 45-char truncation, mobile scroll |
-| 2025-11-29 | UX Expert (Sally) | Added Tasks, Dev Notes, Testing sections with code examples |
+| 2025-11-29 | UX Expert (Sally) | Added Tasks, Dev Notes, Testing sections with code examples      |
 
 ---
 
@@ -372,11 +387,13 @@ Notes:
 ## QA Results
 
 ### Review Date: 2025-11-29
+
 ### Reviewed By: Quinn (Test Architect)
 
 **Gate: PASS** | **Score: 85/100** → `docs/qa/gates/24.3-fe-storage-by-sku-table.yml`
 
 **Strengths:**
+
 - All sortable columns implemented (storage_cost, daily, volume, days_stored)
 - WarehouseBadges with +N overflow and tooltip
 - ProductNameCell with 45-char truncation and tooltip
@@ -384,10 +401,11 @@ Notes:
 - Empty state and loading skeleton
 
 **Issues:**
-| ID | Severity | Finding |
-|----|----------|---------|
-| TEST-001 | Medium | No unit tests (Phase 8) |
-| PERF-001 | Low | Debounce handled by parent |
+
+| ID       | Severity | Finding                    |
+| -------- | -------- | -------------------------- |
+| TEST-001 | Medium   | No unit tests (Phase 8)    |
+| PERF-001 | Low      | Debounce handled by parent |
 
 **Files:** StorageBySkuTable.tsx (242), WarehouseBadges.tsx (53), ProductNameCell.tsx (45)
 

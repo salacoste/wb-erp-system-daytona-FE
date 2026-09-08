@@ -15,7 +15,7 @@ chars: 3347
 
 В этой статье:
 
-- 
+-
 - <a href="#istoriya-tsen" rel="nofollow">История цен</a>
 - <a href="#kak-posmotret-prichinu-oshibki" rel="nofollow">Как посмотреть причину ошибки</a>
 - <a href="#kak-posmotret-podrobnyj-status-obnovleniya-tseny" rel="nofollow">Как посмотреть подробный статус обновления цены</a>
@@ -68,6 +68,6 @@ SelSup покажет, что произошло с ценой: она приш�
 
 Подробнее о работе с ценами рассказали [в отдельной инструкции](../prices/index.html).
 
-------------------------------------------------------------------------
+---
 
 Следите за обновлениями сервиса в нашем [Telegram-канале](https://t.me/SelSup_ru), на сайте в разделе [«Новости SelSup»](https://selsup.ru/news/), подписывайтесь на [канал в YouTube](https://www.youtube.com/@selsup376). Читайте [блог](https://selsup.ru/news-mp/) — там много полезных статей.

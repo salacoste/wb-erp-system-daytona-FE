@@ -34,6 +34,7 @@
 ## ✅ Acceptance Criteria Verification
 
 ### AC1: Binding Modal (Q1 - Centered Modal Overlay)
+
 - [x] Centered modal overlay using shadcn/ui Dialog
 - [x] 480-560px width on desktop (`sm:max-w-[540px]`)
 - [x] Full-screen on mobile (default Dialog behavior)
@@ -43,6 +44,7 @@
 - [x] Modal title: "Подключение Telegram" (H2, 24px, semi-bold)
 
 ### AC2: Countdown Timer (Q2 - Progress Bar + Text)
+
 - [x] Linear progress bar showing time remaining
 - [x] Text display: "Код действителен ещё: 9:45"
 - [x] Progress bar color changes:
@@ -53,6 +55,7 @@
 - [x] Shows "Код истёк. Пожалуйста, закройте окно и попробуйте снова." when expired
 
 ### AC3: Deep Link Button (Q3 - Telegram Blue CTA)
+
 - [x] Primary button with Telegram branding
 - [x] Background: Telegram Blue (#0088CC) → `bg-[#0088CC] hover:bg-[#0077B3]`
 - [x] Text: "Открыть в Telegram" with Send icon (lucide-react)
@@ -61,6 +64,7 @@
 - [x] Opens in new tab with `window.open(..., '_blank', 'noopener,noreferrer')`
 
 ### AC4: Polling Indicator (Q4 - Spinner + Text)
+
 - [x] Spinner (24x24px) → Loader2 from lucide-react (`h-6 w-6`)
 - [x] 3-second polling interval (from `useTelegramBinding` hook)
 - [x] Dynamic text updates:
@@ -71,6 +75,7 @@
 - [x] Stops polling when code expired (`timeRemaining <= 0`)
 
 ### AC5: Unbind Confirmation (Q5 - Separate Dialog)
+
 - [x] AlertDialog component (shadcn/ui)
 - [x] Warning icon (⚠️ emoji, orange color)
 - [x] Explains consequences with bullet points (3 items)
@@ -80,6 +85,7 @@
 - [x] Success toast after unbind: "Telegram отключен" (sonner)
 
 ### AC6: Accessibility (WCAG 2.1 AA)
+
 - [x] All interactive elements keyboard accessible (native shadcn/ui behavior)
 - [x] aria-labels on icons and buttons:
   - [x] Phone emoji: `aria-label="Телефон"`
@@ -96,6 +102,7 @@
 ## 🎨 Design Compliance
 
 ### Colors
+
 - ✅ Telegram Blue: `bg-[#0088CC]` hover: `bg-[#0077B3]`
 - ✅ Success Green: `bg-green-500`
 - ✅ Error Red: `bg-red-500`
@@ -103,17 +110,20 @@
 - ✅ Gray variants: `bg-gray-100`, `bg-gray-200`, `text-muted-foreground`
 
 ### Typography
+
 - ✅ Dialog title: `text-2xl font-semibold` (24px)
 - ✅ Step header: `text-base font-medium` (16px)
 - ✅ Body text: `text-sm` (14px)
 - ✅ Code: `font-mono text-lg` (18px)
 
 ### Spacing
+
 - ✅ Modal padding: `p-6` (24px) via DialogContent
 - ✅ Section gaps: `space-y-6` (24px)
 - ✅ Element gaps: `gap-2`, `gap-3` (8px, 12px)
 
 ### Animations
+
 - ✅ Countdown pulsation: `animate-pulse` when < 30s
 - ✅ Progress bar smooth transition: `transition-all duration-1000`
 - ✅ Modal animations: Built into shadcn/ui Dialog/AlertDialog
@@ -123,6 +133,7 @@
 ## 🔧 Technical Implementation
 
 ### Dependencies Used
+
 - ✅ shadcn/ui Dialog (for TelegramBindingModal)
 - ✅ shadcn/ui AlertDialog (for UnbindConfirmationDialog)
 - ✅ shadcn/ui Button
@@ -134,11 +145,13 @@
 - ✅ useTelegramBinding hook (from Story 34.1-FE)
 
 ### State Management
+
 - ✅ React useState for local component state
 - ✅ React useEffect for timers and lifecycle
 - ✅ TanStack Query (via useTelegramBinding) for server state
 
 ### Error Handling
+
 - ✅ Toast notifications for user feedback
 - ✅ Console.error for debugging
 - ✅ Graceful degradation on API errors
@@ -149,6 +162,7 @@
 ## 🧪 Testing Status
 
 ### Manual Verification
+
 - [x] TypeScript compilation: ✅ No errors
 - [x] ESLint: ✅ No errors
 - [x] Component exports: ✅ All components exported via index.ts
@@ -156,6 +170,7 @@
 - [x] Accessibility attributes: ✅ All implemented
 
 ### Unit Tests (Pending)
+
 - [ ] TelegramBindingCard: Not bound state
 - [ ] TelegramBindingCard: Bound state
 - [ ] TelegramBindingModal: Code generation
@@ -164,6 +179,7 @@
 - [ ] UnbindConfirmationDialog: Confirmation flow
 
 ### E2E Tests (Pending)
+
 - [ ] Complete binding flow
 - [ ] Code copy functionality
 - [ ] Deep link navigation
@@ -175,6 +191,7 @@
 ## 📝 Code Quality
 
 ### Best Practices Applied
+
 - ✅ TypeScript strict mode compliance
 - ✅ Component documentation with JSDoc
 - ✅ Accessibility-first design
@@ -185,6 +202,7 @@
 - ✅ Responsive design (mobile-first)
 
 ### Code Comments
+
 - ✅ Section headers with clear organization
 - ✅ Epic/Story references in file headers
 - ✅ Inline comments for complex logic
@@ -216,6 +234,7 @@ function NotificationsSettings() {
 ```
 
 ### Required Setup
+
 1. ✅ `useTelegramBinding` hook must be available (Story 34.1-FE)
 2. ✅ `@/types/notifications` must be available (Story 34.1-FE)
 3. ✅ `@/lib/api/notifications` must be available (Story 34.1-FE)

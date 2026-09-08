@@ -32,6 +32,7 @@ Live validation against cabinet `f75836f7-…cce8e` (ИП Дергачёв, RUB,
 ### 3. MEDIUM — list `acquiring_fee_sum` ≠ Σ detail `acquiring_fee` for the same report
 
 Report `667105801`:
+
 - list-level `acquiring_fee_sum` = **10 884.14**
 - Σ of its 712 detail `acquiring_fee` = **11 527.24** (Δ **643.10**, ~6%)
 - VAT reconciles **exactly** (594.98 = 594.98)

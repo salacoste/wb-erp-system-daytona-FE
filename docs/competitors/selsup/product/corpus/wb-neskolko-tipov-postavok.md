@@ -9,7 +9,7 @@ chars: 1177
 
 ## Если Wildberries изменил тип поставки:
 
- Вернитесь на 1 шаг в SelSup и измените тип поставки:
+Вернитесь на 1 шаг в SelSup и измените тип поставки:
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2021/12/izobrazhenie_2021-12-01_182622.png.webp)
 
@@ -17,7 +17,7 @@ chars: 1177
 
 Зайдите в каждый заказ на портале WB, нажмите кнопку «Выгрузить в Excel». ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2021/12/izobrazhenie_2021-12-01_185041.png.webp)
 
-После чего создайте новый заказ в SelSup со страницы Заказы и выберите скачанный файл в поле «Перетащите файл или кликните для выбора файла с товарами». 
+После чего создайте новый заказ в SelSup со страницы Заказы и выберите скачанный файл в поле «Перетащите файл или кликните для выбора файла с товарами».
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2021/12/izobrazhenie_2021-12-01_185114.png.webp)
 

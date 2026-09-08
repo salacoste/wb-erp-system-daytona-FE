@@ -10,14 +10,14 @@ This shard contains the recent margin calculation investigation, documentation u
 
 ## Summary of Issues & Resolutions
 
-| Request | Issue | Status | Resolution |
-|---------|-------|--------|------------|
-| **#120** | Margin recalculation not triggered on COGS bulk upload | FIXED | Auto-trigger implemented |
-| **#117** | weekly_margin_fact table empty | FIXED | Manual trigger + 834 records populated |
-| **#116** | Advertising date range filter needs frontend guide | DOCS UPDATED | Frontend guide created |
-| **#115** | Advertising date filter empty state | DOCS UPDATED | Behavior documented |
-| **#114** | Margin calculation frontend quick reference | DOCS UPDATED | 517-line guide created |
-| **#113** | Margin fields returning null | DOCUMENTED | Not a bug - expected behavior |
+| Request  | Issue                                                  | Status       | Resolution                             |
+| -------- | ------------------------------------------------------ | ------------ | -------------------------------------- |
+| **#120** | Margin recalculation not triggered on COGS bulk upload | FIXED        | Auto-trigger implemented               |
+| **#117** | weekly_margin_fact table empty                         | FIXED        | Manual trigger + 834 records populated |
+| **#116** | Advertising date range filter needs frontend guide     | DOCS UPDATED | Frontend guide created                 |
+| **#115** | Advertising date filter empty state                    | DOCS UPDATED | Behavior documented                    |
+| **#114** | Margin calculation frontend quick reference            | DOCS UPDATED | 517-line guide created                 |
+| **#113** | Margin fields returning null                           | DOCUMENTED   | Not a bug - expected behavior          |
 
 ---
 
@@ -31,15 +31,18 @@ This shard contains the recent margin calculation investigation, documentation u
 **Problem**: `GET /v1/analytics/weekly/finance-summary` returned `null` for `cogs_total` and `cogs_coverage_pct` because `weekly_margin_fact` table was empty.
 
 **Root Cause**:
+
 1. COGS bulk upload did NOT trigger margin recalculation
 2. Margin calculation had never been executed for weeks 2025-W47 through 2026-W04
 
 **Fixes Applied**:
 
 ### 1. Code Fix: Auto-trigger Margin Recalculation on COGS Upload
+
 **File**: `src/cogs/services/cogs.service.ts`
 
 **Changes**:
+
 - Added `marginRecalculation` field to `BulkUploadResult` interface
 - Enhanced `bulkUpload()` to track earliest `valid_from` date
 - Calculate affected weeks using `calculateAffectedWeeks()` helper
@@ -49,28 +52,31 @@ This shard contains the recent margin calculation investigation, documentation u
 **Impact**: Future COGS bulk uploads will automatically trigger margin recalculation.
 
 ### 2. Manual Trigger: Margin Calculation for Historical Weeks
+
 **Action**: Enqueued margin recalculation for weeks 2025-W47 through 2026-W04.
 
 **Result**: `weekly_margin_fact` table now contains **834 records** across all 10 weeks.
 
 **Verification**:
-| Week | Records | cogs_total | Products | Coverage |
-|------|---------|-----------|----------|----------|
-| 2025-W47 | 93 | 237,063 | 17 | 100% |
-| 2025-W48 | 90 | 182,271 | 18 | 100% |
-| 2025-W49 | 96 | 152,190 | 15 | 100% |
-| 2025-W50 | 117 | 173,457 | 19 | 100% |
-| 2025-W51 | 75 | 209,481 | 23 | 100% |
-| 2025-W52 | 63 | 152,586 | 17 | 100% |
-| 2026-W01 | 72 | 131,670 | 18 | 100% |
-| 2026-W02 | 75 | 183,597 | 19 | 100% |
-| 2026-W03 | 75 | 138,879 | 19 | 100% |
-| 2026-W04 | 78 | 107,454 | 20 | 100% |
-| **Total** | **834** | **1,667,748** | **185** | **100%** |
+
+| Week      | Records | cogs_total    | Products | Coverage |
+| --------- | ------- | ------------- | -------- | -------- |
+| 2025-W47  | 93      | 237,063       | 17       | 100%     |
+| 2025-W48  | 90      | 182,271       | 18       | 100%     |
+| 2025-W49  | 96      | 152,190       | 15       | 100%     |
+| 2025-W50  | 117     | 173,457       | 19       | 100%     |
+| 2025-W51  | 75      | 209,481       | 23       | 100%     |
+| 2025-W52  | 63      | 152,586       | 17       | 100%     |
+| 2026-W01  | 72      | 131,670       | 18       | 100%     |
+| 2026-W02  | 75      | 183,597       | 19       | 100%     |
+| 2026-W03  | 75      | 138,879       | 19       | 100%     |
+| 2026-W04  | 78      | 107,454       | 20       | 100%     |
+| **Total** | **834** | **1,667,748** | **185**  | **100%** |
 
 **API Response Changes**:
 
 **New Bulk Upload Response**:
+
 ```json
 {
   "data": {
@@ -88,6 +94,7 @@ This shard contains the recent margin calculation investigation, documentation u
 ```
 
 **Documentation**:
+
 - **[120-backend-fixes-completed.md](./120-backend-fixes-completed.md)** - FIX DETAILS (140 lines)
 
 ---
@@ -100,17 +107,20 @@ This shard contains the recent margin calculation investigation, documentation u
 **Component**: Backend API - Analytics Module
 
 **Investigation Summary**:
+
 - **Problem**: Margin fields return `null` in finance summary
 - **Root Cause**: `weekly_margin_fact` table empty
 - **Not a Bug**: This is expected behavior when table is empty
 - **Solution**: Implement data aggregation pipeline (separate Epic)
 
 **Key Findings**:
+
 - `weekly_payout_summary` - Working (Epic 2)
 - `cogs` table - Has 40 records (Epic 12, 16)
 - `weekly_margin_fact` - EMPTY (no aggregation pipeline)
 
 **Documentation**:
+
 - **[117-margin-calculation-investigation-findings.md](./117-margin-calculation-investigation-findings.md)**
 
 ---
@@ -125,6 +135,7 @@ This shard contains the recent margin calculation investigation, documentation u
 **Summary**: Complete guide for implementing advertising date range picker with empty state handling.
 
 **Key Sections**:
+
 - Date range picker patterns
 - Empty state behavior
 - API request examples
@@ -132,6 +143,7 @@ This shard contains the recent margin calculation investigation, documentation u
 - Testing scenarios
 
 **Documentation**:
+
 - **[116-advertising-date-range-frontend-guide.md](./116-advertising-date-range-frontend-guide.md)**
 
 ---
@@ -147,11 +159,13 @@ This shard contains the recent margin calculation investigation, documentation u
 **Summary**: Documentation of empty state behavior when no advertising data exists for selected date range.
 
 **Behavior**:
+
 - Returns empty array `[]` for no data
 - Returns summary with zero values
 - Frontend should display "Нет данных за выбранный период"
 
 **Documentation**:
+
 - **[115-advertising-date-filter-empty-state-behavior.md](./115-advertising-date-filter-empty-state-behavior.md)**
 
 ---
@@ -167,6 +181,7 @@ This shard contains the recent margin calculation investigation, documentation u
 **Summary**: Quick troubleshooting guide for FrontEnd developers working with margin calculation.
 
 **Key Sections**:
+
 - Quick troubleshooting card
 - API response examples (all scenarios)
 - Empty state handling patterns
@@ -177,12 +192,14 @@ This shard contains the recent margin calculation investigation, documentation u
 - FAQ section
 
 **Scenarios Covered**:
+
 1. No margin data available (all fields null)
 2. Margin data available (full metrics)
 3. Partial COGS coverage (warning banner)
 4. Margin calculation in progress (polling)
 
 **Documentation**:
+
 - **[114-margin-calculation-frontend-guide.md](./114-margin-calculation-frontend-guide.md)** - QUICK REFERENCE (517 lines)
 
 ---
@@ -197,20 +214,24 @@ This shard contains the recent margin calculation investigation, documentation u
 **Finding**: **NOT A BUG** - Margin fields returning `null` is expected behavior when `weekly_margin_fact` table is empty.
 
 **Executive Summary**:
+
 - **Endpoint**: `GET /v1/analytics/weekly/finance-summary?week=YYYY-Www`
 - **Observed**: `{ "sale_gross_total": 305778.32, "cogs_total": null, "gross_profit": null }`
 - **Root Cause**: `weekly_margin_fact` table is EMPTY (data pipeline not implemented)
 - **Epic 56 Status**: Completed 2026-01-29, but does NOT populate `weekly_margin_fact`
 
 **Data Pipeline Status**:
-| Component | Status | Details |
-|-----------|--------|---------|
-| COGS Import | Working | 40 records in `cogs` table |
-| Margin Aggregation | Not Implemented | `weekly_margin_fact` is EMPTY |
-| Finance Summary | Working | Returns `null` for margin fields when table empty |
+
+| Component          | Status          | Details                                           |
+| ------------------ | --------------- | ------------------------------------------------- |
+| COGS Import        | Working         | 40 records in `cogs` table                        |
+| Margin Aggregation | Not Implemented | `weekly_margin_fact` is EMPTY                     |
+| Finance Summary    | Working         | Returns `null` for margin fields when table empty |
 
 **FrontEnd Handling**:
+
 1. **Empty State Component** (Recommended)
+
    ```tsx
    <CogsMissingState
      coveragePercentage={0}
@@ -219,6 +240,7 @@ This shard contains the recent margin calculation investigation, documentation u
    ```
 
 2. **Warning Badge**
+
    ```tsx
    <Badge variant="warning">
      Недостаточно данных для расчёта маржи. Назначьте себестоимость.
@@ -235,6 +257,7 @@ This shard contains the recent margin calculation investigation, documentation u
    ```
 
 **Documentation**:
+
 - **[113-margin-calculation-empty-state-behavior.md](./113-margin-calculation-empty-state-behavior.md)** - COMPLETE (416 lines)
 
 ---
@@ -245,6 +268,7 @@ This shard contains the recent margin calculation investigation, documentation u
 **Purpose**: Summary of all margin calculation documentation updates
 
 **Summary**:
+
 - 2 new documentation files created (933 total lines)
 - 3 existing documentation files updated
 - Complete explanation of issue and solutions
@@ -253,6 +277,7 @@ This shard contains the recent margin calculation investigation, documentation u
 - Roadmap for future backend work outlined
 
 **Documentation**:
+
 - **[MARGIN-CALCULATION-DOCUMENTATION-SUMMARY.md](./MARGIN-CALCULATION-DOCUMENTATION-SUMMARY.md)** - SUMMARY (265 lines)
 
 ---
@@ -280,11 +305,11 @@ This shard contains the recent margin calculation investigation, documentation u
 
 ## Epic Status Updates
 
-| Epic | Name | Status | Completion Date |
-|------|------|--------|-----------------|
-| **Epic 20** | Auto Margin Recalculation | COMPLETE | 2025-01 |
-| **Epic 56** | Historical Inventory Import | COMPLETE | 2026-01-29 |
-| **Epic 57** | FBS Analytics Enhancement | COMPLETE | 2026-01-30 |
+| Epic        | Name                        | Status   | Completion Date |
+| ----------- | --------------------------- | -------- | --------------- |
+| **Epic 20** | Auto Margin Recalculation   | COMPLETE | 2025-01         |
+| **Epic 56** | Historical Inventory Import | COMPLETE | 2026-01-29      |
+| **Epic 57** | FBS Analytics Enhancement   | COMPLETE | 2026-01-30      |
 
 **Epic 56 Note**: Epic 56 implemented COGS import from WB Analytics API but does NOT populate `weekly_margin_fact`. A separate Epic is needed for margin data aggregation pipeline.
 
@@ -293,11 +318,13 @@ This shard contains the recent margin calculation investigation, documentation u
 ## Component Reference
 
 **Existing Components** (from Request #114):
+
 - `MissingCogsAlert` - Displays warning with CTA
 - `CogsMissingState` - Full empty state component
 - `MetricCardEnhanced` - Metric card with empty state support
 
 **File Locations**:
+
 - `frontend/src/components/custom/MissingCogsAlert.tsx`
 - `frontend/src/components/custom/CogsMissingState.tsx`
 - `frontend/src/components/custom/MetricCardEnhanced.tsx`
@@ -307,17 +334,20 @@ This shard contains the recent margin calculation investigation, documentation u
 ## Testing Checklist
 
 ### Unit Tests
+
 - [x] Test empty state component renders when `cogs_total === null`
 - [x] Test warning banner displays when coverage < 100%
 - [x] Test metrics display when margin data is available
 - [x] Test formatCurrency/formatPercentage with null values
 
 ### Integration Tests
+
 - [x] Test API response parsing with null values
 - [x] Test component state transitions (empty → loading → data)
 - [x] Test error handling when API call fails
 
 ### E2E Tests
+
 - [x] Test complete flow: No COGS → Assign COGS → View margin data
 - [x] Test polling after COGS assignment
 - [x] Test margin status endpoint integration
@@ -327,6 +357,7 @@ This shard contains the recent margin calculation investigation, documentation u
 ## Backend Tests Status
 
 All 45 COGS service tests pass:
+
 ```
 Test Suites: 1 passed, 1 total
 Tests:       45 passed, 45 total
@@ -339,20 +370,20 @@ Time:        1.819s
 
 ### Null Value Handling
 
-| Field | When Null | FrontEnd Action |
-|-------|-----------|-----------------|
-| `cogs_total` | No COGS data | Display empty state |
-| `gross_profit` | No margin calculation | Display empty state |
-| `margin_pct` | Cannot calculate | Display empty state |
-| `cogs_coverage_pct` | No products with COGS | Show 0% coverage |
+| Field               | When Null             | FrontEnd Action     |
+| ------------------- | --------------------- | ------------------- |
+| `cogs_total`        | No COGS data          | Display empty state |
+| `gross_profit`      | No margin calculation | Display empty state |
+| `margin_pct`        | Cannot calculate      | Display empty state |
+| `cogs_coverage_pct` | No products with COGS | Show 0% coverage    |
 
 ### Coverage Percentage Thresholds
 
-| Coverage | Display | Action |
-|----------|---------|--------|
-| 0% | Empty state | Assign COGS to all products |
-| 1-99% | Warning banner | Assign COGS to remaining products |
-| 100% | Full metrics | No action needed |
+| Coverage | Display        | Action                            |
+| -------- | -------------- | --------------------------------- |
+| 0%       | Empty state    | Assign COGS to all products       |
+| 1-99%    | Warning banner | Assign COGS to remaining products |
+| 100%     | Full metrics   | No action needed                  |
 
 ---
 

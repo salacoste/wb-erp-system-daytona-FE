@@ -11,7 +11,7 @@ chars: 3385
 
 В этой статье:
 
-- 
+-
 - <a href="#kogda-vklyuchat-pereklyuchatel" rel="nofollow">Когда включать переключатель</a>
 - <a href="#kogda-vyklyuchat-pereklyuchatel" rel="nofollow">Когда выключать переключатель?</a>
 - <a href="#primery-ispolzovaniya" rel="nofollow">Примеры использования</a>

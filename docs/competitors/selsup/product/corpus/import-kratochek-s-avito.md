@@ -15,7 +15,7 @@ chars: 3430
 
 В этой статье:
 
-- 
+-
 - <a href="#import-tovarov-iz-avito-cherez-excel-fajl" rel="nofollow">Импорт товаров из Avito<strong> через Excel-файл</strong></a>
 - <a href="#vozmozhnye-oshibki-importa" rel="nofollow">Возможные ошибки импорта</a>
 

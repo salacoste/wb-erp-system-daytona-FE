@@ -15,7 +15,8 @@
 - [ ] Existing {{feature}} tested before changes
 - [ ] Changes can be feature-flagged or isolated
 - [ ] Rollback procedure documented
-```
+
+````
 
 ## 6. Final Story Validation
 
@@ -48,3 +49,4 @@ Save the story with appropriate naming:
 Include header noting documentation context:
 
 ```markdown
+````

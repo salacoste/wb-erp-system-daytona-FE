@@ -13,15 +13,18 @@
 
 The backend returns every Prisma `DECIMAL` column as the **Decimal.js internal object** rather than a
 decimal string. Live evidence (created a 70×40×40 box type, a 5000₽ shipment, a box line):
+
 ```json
 "lengthCm":          {"s":1,"e":1,"d":[70]}          // expected "70" (value 70)
 "totalDeliveryCost": {"s":1,"e":3,"d":[5000]}        // expected "5000" (value 5000)
 "finalCostPerUnit":  {"s":1,"e":2,"d":[708,3333000]} // expected "708.3333" (value 708.33)
 ```
+
 Swagger + `test-api/99-box-types.http` document these as strings (`"60.00"`). The frontend's
 `parseDecimal()` does `parseFloat(value)`; `parseFloat({…})` → `NaN` → returns 0.
 
 **Impact (render-confirmed):**
+
 - /shipments/box-types: every row shows dimensions **"0 × 0 × 0"**, volume **"0"**.
 - /shipments/[id]: header delivery cost **"0,00 ₽"**; all post-calc box-line costs **"0,00 ₽"**.
   (The `value ? … : '—'` guards never fire because a Decimal.js object is truthy → fabricated 0 is
@@ -60,6 +63,7 @@ should read `productionCostPerUnit`).
 ---
 
 ## Summary
+
 Items 1 (Decimal serialization — backend-wide) and 2 (calculate envelope) are CRITICAL and make the
 shipment-cost feature non-functional on the live backend. 3 + 4 are field-contract drift. The FE has
 applied a defensive Decimal-object shim (item 1) so box-types/shipment costs render correctly in the

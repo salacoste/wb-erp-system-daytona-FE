@@ -13,7 +13,7 @@ chars: 2964
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-sobirat-zakazy-dbs-i-otpravlyat-cherez-cdek" rel="nofollow">Как собирать заказы DBS и отправлять через CDEK</a>
 - <a href="#dostavka-zakazov-po-modeli-vitrina-dbs-dlya-wildberries" rel="nofollow">Доставка заказов по модели «Витрина» (DBS) для Wildberries</a>
 
@@ -55,7 +55,7 @@ chars: 2964
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/02/nakladnaya-e1747905839391.png.webp)
 
-***Со всеми возможностями интеграции с сервисом CDEK можете ознакомиться [здесь](../sdek/index.html).***
+_**Со всеми возможностями интеграции с сервисом CDEK можете ознакомиться [здесь](../sdek/index.html).**_
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 

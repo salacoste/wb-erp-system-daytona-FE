@@ -17,10 +17,10 @@
 
 The `aggregateFinanceSummaries()` function calculates gross profit incorrectly:
 
-| Formula | Calculation | Result |
-|---------|-------------|--------|
-| **Current (WRONG)** | `payout_total - cogs_total` | Uses post-deduction amount |
-| **Correct** | `sale_gross_total - cogs_total` | Uses actual revenue |
+| Formula             | Calculation                     | Result                     |
+| ------------------- | ------------------------------- | -------------------------- |
+| **Current (WRONG)** | `payout_total - cogs_total`     | Uses post-deduction amount |
+| **Correct**         | `sale_gross_total - cogs_total` | Uses actual revenue        |
 
 **Why it's wrong**: `payout_total` already has logistics, storage, commissions deducted. It's "маржинальный доход" (marginal income), not gross revenue.
 
@@ -130,24 +130,24 @@ describe('aggregateFinanceSummaries', () => {
 
 ## Financial Concepts Reference
 
-| Term | API Field | Description |
-|------|-----------|-------------|
-| **Gross Revenue** | `sales_gross` | Total sales at retail price |
-| **Net Sales** | `sale_gross_total` | Sales minus returns |
-| **Seller Revenue** | `wb_sales_gross` | After WB commission |
-| **Payout** | `payout_total` | After ALL deductions (logistics, storage, etc.) |
-| **COGS** | `cogs_total` | Cost of Goods Sold |
-| **Gross Profit** | calculated | `sale_gross_total - cogs_total` |
+| Term               | API Field          | Description                                     |
+| ------------------ | ------------------ | ----------------------------------------------- |
+| **Gross Revenue**  | `sales_gross`      | Total sales at retail price                     |
+| **Net Sales**      | `sale_gross_total` | Sales minus returns                             |
+| **Seller Revenue** | `wb_sales_gross`   | After WB commission                             |
+| **Payout**         | `payout_total`     | After ALL deductions (logistics, storage, etc.) |
+| **COGS**           | `cogs_total`       | Cost of Goods Sold                              |
+| **Gross Profit**   | calculated         | `sale_gross_total - cogs_total`                 |
 
 ---
 
 ## Files to Modify
 
-| File | Change |
-|------|--------|
-| `src/hooks/useFinancialSummary.ts` | Fix formula in `aggregateFinanceSummaries()` |
-| `src/hooks/__tests__/useFinancialSummary.test.ts` | Add unit tests (NEW or modify) |
-| `src/types/finance-summary.ts` | Add documentation comments |
+| File                                              | Change                                       |
+| ------------------------------------------------- | -------------------------------------------- |
+| `src/hooks/useFinancialSummary.ts`                | Fix formula in `aggregateFinanceSummaries()` |
+| `src/hooks/__tests__/useFinancialSummary.test.ts` | Add unit tests (NEW or modify)               |
+| `src/types/finance-summary.ts`                    | Add documentation comments                   |
 
 ---
 

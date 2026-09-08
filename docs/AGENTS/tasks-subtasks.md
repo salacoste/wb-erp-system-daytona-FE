@@ -19,8 +19,10 @@
   - [ ] Unit tests following {{project test pattern}}
   - [ ] Integration test for {{integration point}}
   - [ ] Update existing tests if needed
+
 ```
-````
+
+```
 
 ## 5. Risk Assessment and Mitigation
 
@@ -29,3 +31,5 @@ CRITICAL: for brownfield - always include risk assessment
 Add section for brownfield-specific risks:
 
 ```markdown
+
+```

@@ -15,17 +15,20 @@
 **What**: Реализация analytics endpoint для мониторинга Telegram notifications в production
 
 **Why**:
+
 - ✅ Frontend Epic 34-FE: Telegram Notifications UI - **100% COMPLETE** (8 компонентов, 6 stories)
 - ✅ Frontend monitoring integration - **100% COMPLETE** (15 metrics, auto-batching, SSR-safe)
 - ❌ Backend analytics endpoint - **NOT IMPLEMENTED** (блокирует production visibility)
 
 **Impact Without Analytics**:
+
 - ❌ Слепы к проблемам binding flow (не знаем completion rate, failure reasons)
 - ❌ Не видим API errors до user complaints
 - ❌ Не понимаем adoption metrics (сколько users используют notifications)
 - ❌ Невозможно измерить success metrics из Epic 34 requirements
 
 **Business Value**:
+
 - ✅ Early detection проблем (binding failures, API errors)
 - ✅ Data-driven decisions (какие features users используют)
 - ✅ Performance monitoring (average binding duration, API latency)
@@ -38,10 +41,12 @@
 **Completed (2025-12-30)**:
 
 **Core Files**:
+
 - ✅ `src/lib/analytics/analytics.service.ts` - Event batching service (30s intervals)
 - ✅ `src/lib/analytics/telegram-metrics.ts` - 15 metric tracking helpers
 
 **Component Integrations**:
+
 - ✅ `TelegramBindingModal.tsx` - Binding flow metrics (5 events)
 - ✅ `NotificationPreferencesPanel.tsx` - Preferences tracking (4 events)
 - ✅ `api-client.ts` - Auto error tracking (2 events)
@@ -52,9 +57,11 @@
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: Backend analytics endpoint for Telegram notifications monitoring was implemented, providing visibility into binding flow metrics, API errors, adoption rates, and performance data for the production Telegram notifications system (Epic 34).
 **Frontend Action**: No further action needed unless noted above.
+
 - ✅ SSR-safe (только в browser)
 - ✅ Batch events every 30s (reduces API load)
 - ✅ Auto-flush on page unload & tab switch
@@ -72,15 +79,18 @@
 **Purpose**: Принимает batch events от frontend (до 50 событий за раз)
 
 **Authentication**: ❌ NO AUTH REQUIRED
+
 - Frontend service work anonymous (no JWT)
 - `cabinet_id` передается в event payload
 - Analytics - non-sensitive data (метрики, не PII)
 
 **Rate Limiting**:
+
 - **60 requests/minute per IP** (разумно для batch every 30s)
 - Превышение → 429 Too Many Requests
 
 **Request**:
+
 ```json
 {
   "events": [
@@ -108,11 +118,13 @@
 ```
 
 **Response Success** (204 No Content):
+
 ```
 (Empty body)
 ```
 
 **Response Error** (400 Bad Request):
+
 ```json
 {
   "error": {
@@ -133,6 +145,7 @@
 ```
 
 **Response Error** (429 Too Many Requests):
+
 ```json
 {
   "error": {
@@ -152,6 +165,7 @@
 **Purpose**: Хранение всех analytics events для Telegram notifications
 
 **Schema**:
+
 ```sql
 CREATE TABLE analytics_events (
   id SERIAL PRIMARY KEY,
@@ -188,12 +202,14 @@ CREATE INDEX idx_analytics_events_recent
 ```
 
 **Why JSONB for properties**:
+
 - ✅ Flexible schema (different events = different properties)
 - ✅ Queryable (можем делать `properties->>'duration_seconds'`)
 - ✅ Indexable (GIN index если нужно)
 - ✅ No migrations при добавлении новых metrics
 
 **Retention Policy** (рекомендация):
+
 ```sql
 -- Delete events older than 90 days (run daily via cron)
 DELETE FROM analytics_events
@@ -207,11 +223,13 @@ WHERE timestamp < NOW() - INTERVAL '90 days';
 ### Request Validation
 
 **Array Level**:
+
 - ✅ `events` must be array
 - ✅ `events` must have 1-50 items (защита от spam)
 - ❌ Empty array → 400 Bad Request
 
 **Event Level**:
+
 - ✅ `timestamp` - required, valid ISO 8601, not future (max +5min clock skew)
 - ✅ `event_type` - required, non-empty string, max 100 chars
 - ✅ `category` - required, one of: `binding`, `preferences`, `error`, `behavior`
@@ -220,6 +238,7 @@ WHERE timestamp < NOW() - INTERVAL '90 days';
 - ✅ `cabinet_id` - optional, string, max 100 chars
 
 **Example Validation Error Response**:
+
 ```json
 {
   "error": {
@@ -256,15 +275,18 @@ ALTER TABLE analytics_events
 **Purpose**: Aggregate analytics для Grafana dashboards
 
 **Authentication**: ✅ REQUIRED (JWT + X-Cabinet-Id)
+
 - Dashboards = internal tool for admins/PMs
 - Sensitive business metrics (completion rates, error rates)
 
 **Query Parameters**:
+
 ```
 GET /v1/analytics/telegram?from=2025-12-01&to=2025-12-31&category=binding
 ```
 
 **Response**:
+
 ```json
 {
   "summary": {
@@ -297,6 +319,7 @@ GET /v1/analytics/telegram?from=2025-12-01&to=2025-12-31&category=binding
 ```
 
 **Implementation Priority**: ⚠️ **OPTIONAL**
+
 - Can query directly in Postgres for dashboards
 - Nice to have but not blocking
 
@@ -305,15 +328,18 @@ GET /v1/analytics/telegram?from=2025-12-01&to=2025-12-31&category=binding
 ## 🧪 Acceptance Criteria
 
 ### AC1: POST /v1/analytics/events - Happy Path
+
 **Given**: Frontend sends valid batch with 2 events
 **When**: POST /v1/analytics/events with valid JSON
 **Then**:
+
 - ✅ Return 204 No Content
 - ✅ All events stored in `analytics_events` table
 - ✅ `created_at` populated automatically
 - ✅ `properties` stored as JSONB
 
 **Verification**:
+
 ```sql
 SELECT COUNT(*) FROM analytics_events
 WHERE event_type IN ('telegram_binding_started', 'telegram_binding_completed');
@@ -323,14 +349,17 @@ WHERE event_type IN ('telegram_binding_started', 'telegram_binding_completed');
 ---
 
 ### AC2: POST /v1/analytics/events - Validation Errors
+
 **Given**: Frontend sends invalid request
 **When**: POST with empty array / invalid timestamp / missing fields
 **Then**:
+
 - ✅ Return 400 Bad Request
 - ✅ Response includes error code + details
 - ✅ NO events stored in database
 
 **Test Cases**:
+
 ```json
 // Test 1: Empty array
 {"events": []}
@@ -352,14 +381,17 @@ WHERE event_type IN ('telegram_binding_started', 'telegram_binding_completed');
 ---
 
 ### AC3: Rate Limiting
+
 **Given**: Client sends >60 requests in 1 minute
 **When**: POST /v1/analytics/events
 **Then**:
+
 - ✅ Return 429 Too Many Requests after 60th request
 - ✅ Response includes rate limit error
 - ✅ Previous 60 requests were accepted (events stored)
 
 **Rate Limit Headers** (optional):
+
 ```
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 0
@@ -369,14 +401,17 @@ X-RateLimit-Reset: 1672531200
 ---
 
 ### AC4: Large Batch Performance
+
 **Given**: Frontend sends batch with 50 events (max allowed)
 **When**: POST /v1/analytics/events
 **Then**:
+
 - ✅ Response time p95 < 500ms (acceptable for batch insert)
 - ✅ All 50 events stored successfully
 - ✅ No database performance degradation
 
 **Performance Test**:
+
 ```bash
 # Load test with k6 or Artillery
 POST /v1/analytics/events (50 events) × 100 concurrent requests
@@ -387,14 +422,17 @@ POST /v1/analytics/events (50 events) × 100 concurrent requests
 ---
 
 ### AC5: JSONB Properties Storage
+
 **Given**: Event has complex properties object
 **When**: POST with nested properties
 **Then**:
+
 - ✅ Properties stored as JSONB (not JSON string)
 - ✅ Queryable via `properties->>'field_name'`
 - ✅ Properties size < 5KB enforced
 
 **Test Data**:
+
 ```json
 {
   "events": [{
@@ -415,6 +453,7 @@ POST /v1/analytics/events (50 events) × 100 concurrent requests
 ```
 
 **Verification**:
+
 ```sql
 SELECT properties->>'duration_seconds' as duration,
        properties->'metadata'->>'browser' as browser
@@ -426,9 +465,11 @@ WHERE event_type = 'telegram_binding_completed';
 ---
 
 ### AC6: No Auth Required for POST
+
 **Given**: Frontend calls POST /v1/analytics/events without JWT
 **When**: Request sent with valid events array
 **Then**:
+
 - ✅ Return 204 No Content (NOT 401 Unauthorized)
 - ✅ Events stored successfully
 - ✅ No authentication checks performed
@@ -438,13 +479,16 @@ WHERE event_type = 'telegram_binding_completed';
 ---
 
 ### AC7: Database Indexes Performance
+
 **Given**: Table contains 100K events
 **When**: Query by timestamp + category + event_type
 **Then**:
+
 - ✅ Query uses composite index (no seq scan)
 - ✅ Query time < 50ms for date range queries
 
 **Verification**:
+
 ```sql
 EXPLAIN ANALYZE
 SELECT COUNT(*) FROM analytics_events
@@ -459,15 +503,18 @@ WHERE category = 'binding'
 ---
 
 ### AC8: Clock Skew Tolerance
+
 **Given**: Frontend has clock skew ≤5 minutes ahead
 **When**: POST with timestamp +3 minutes in future
 **Then**:
+
 - ✅ Accept event (tolerate reasonable skew)
 - ✅ Return 204 No Content
 
 **Given**: Frontend has clock skew >5 minutes ahead
 **When**: POST with timestamp +10 minutes in future
 **Then**:
+
 - ❌ Reject event
 - ✅ Return 400 Bad Request
 
@@ -480,6 +527,7 @@ WHERE category = 'binding'
 **Purpose**: Track binding flow success rate
 
 **SQL Query**:
+
 ```sql
 SELECT
   date_trunc('day', timestamp) as day,
@@ -500,6 +548,7 @@ ORDER BY day DESC;
 ```
 
 **Expected Output**:
+
 ```
    day        | started | completed | failed | expired | completion_rate_pct
 --------------+---------+-----------+--------+---------+--------------------
@@ -516,6 +565,7 @@ ORDER BY day DESC;
 **Purpose**: Top API errors by endpoint + status code
 
 **SQL Query**:
+
 ```sql
 SELECT
   properties->>'endpoint' as endpoint,
@@ -531,6 +581,7 @@ LIMIT 10;
 ```
 
 **Expected Output**:
+
 ```
         endpoint          | status_code | error_count |          messages
 --------------------------+-------------+-------------+---------------------------
@@ -547,6 +598,7 @@ LIMIT 10;
 **Purpose**: Track binding performance over time
 
 **SQL Query**:
+
 ```sql
 SELECT
   date_trunc('hour', timestamp) as hour,
@@ -563,6 +615,7 @@ ORDER BY hour DESC;
 ```
 
 **Expected Output**:
+
 ```
        hour        | avg_duration | p50_seconds | p95_seconds | completions
 -------------------+--------------+-------------+-------------+-------------
@@ -579,6 +632,7 @@ ORDER BY hour DESC;
 **Purpose**: Track preference updates and feature usage
 
 **SQL Query**:
+
 ```sql
 SELECT
   event_type,
@@ -592,6 +646,7 @@ ORDER BY count DESC;
 ```
 
 **Expected Output**:
+
 ```
          event_type           | count | unique_users
 ------------------------------+-------+--------------
@@ -610,6 +665,7 @@ ORDER BY count DESC;
 ### Alert 1: Binding Failure Rate High (P1)
 
 **Condition**:
+
 ```sql
 -- Check last 1 hour
 WITH metrics AS (
@@ -640,6 +696,7 @@ FROM metrics;
 ### Alert 2: API Error Rate Spike (P1)
 
 **Condition**:
+
 ```sql
 SELECT COUNT(*) as error_count
 FROM analytics_events
@@ -656,6 +713,7 @@ WHERE event_type = 'telegram_api_error'
 ### Alert 3: Binding Completion Rate Dropped (P1)
 
 **Condition**:
+
 ```sql
 WITH metrics AS (
   SELECT
@@ -685,6 +743,7 @@ FROM metrics;
 ### Alert 4: High Expiry Rate (P2)
 
 **Condition**:
+
 ```sql
 WITH metrics AS (
   SELECT
@@ -714,6 +773,7 @@ FROM metrics;
 ### Alert 5: API Latency Degradation (P2)
 
 **Condition** (requires additional tracking):
+
 ```sql
 SELECT PERCENTILE_CONT(0.95) WITHIN GROUP (
   ORDER BY (properties->>'latency_ms')::int
@@ -733,12 +793,14 @@ WHERE event_type LIKE '%_api_call%'
 ## 📦 Implementation Checklist
 
 ### Phase 1: Database Setup (30 min)
+
 - [ ] Create migration file: `YYYYMMDDHHMMSS_create_analytics_events_table.ts`
 - [ ] Apply migration to dev environment
 - [ ] Verify all indexes created correctly (`\d analytics_events`)
 - [ ] Test insert performance (batch of 50 events)
 
 ### Phase 2: DTO & Validation (1h)
+
 - [ ] Create `src/analytics/dto/analytics-events.dto.ts`
   - [ ] `CreateAnalyticsEventsDto` (request body)
   - [ ] `AnalyticsEventDto` (single event)
@@ -749,6 +811,7 @@ WHERE event_type LIKE '%_api_call%'
 - [ ] Add properties size check (max 5KB)
 
 ### Phase 3: Controller & Service (1.5h)
+
 - [ ] Create `src/analytics/analytics.controller.ts`
   - [ ] POST /v1/analytics/events endpoint
   - [ ] NO auth guards (anonymous endpoint)
@@ -761,6 +824,7 @@ WHERE event_type LIKE '%_api_call%'
 - [ ] Register module in `app.module.ts`
 
 ### Phase 4: Testing (1-1.5h)
+
 - [ ] Unit tests: `analytics.service.spec.ts`
   - [ ] Test batch insert with valid events
   - [ ] Test validation errors
@@ -777,12 +841,14 @@ WHERE event_type LIKE '%_api_call%'
   - [ ] Full flow: POST → verify DB → query events
 
 ### Phase 5: Documentation (30 min)
+
 - [ ] Update `README.md` with new endpoint
 - [ ] Add Swagger/OpenAPI annotations
 - [ ] Document rate limits in API docs
 - [ ] Add example curl commands
 
 ### Phase 6: Monitoring Setup (Optional - 1h)
+
 - [ ] Create Grafana dashboard with 4 panels
 - [ ] Configure Prometheus metrics (if using)
 - [ ] Set up alerting rules (5 alerts)
@@ -792,6 +858,7 @@ WHERE event_type LIKE '%_api_call%'
 ## 🎯 Success Metrics (Week 1 Post-Launch)
 
 **Binding Flow**:
+
 - ✅ Completion rate: **>90%**
   - Track: `telegram_binding_completed / telegram_binding_started`
 - ✅ Average duration: **<60s**
@@ -800,18 +867,21 @@ WHERE event_type LIKE '%_api_call%'
   - Track: `telegram_binding_failed / telegram_binding_started`
 
 **API Health**:
+
 - ✅ API error rate: **<2%**
   - Track: `telegram_api_error / total_api_calls`
 - ✅ Network error rate: **<1%**
   - Track: `telegram_network_error / total_api_calls`
 
 **User Engagement**:
+
 - ✅ Page views: **>100/day**
   - Track: `COUNT(telegram_page_viewed) per day`
 - ✅ Help clicks: **<10% of page views**
   - Track: `telegram_help_clicked / telegram_page_viewed`
 
 **Performance**:
+
 - ✅ POST /v1/analytics/events p95: **<500ms** for 50-event batch
 - ✅ Dashboard queries p95: **<100ms** for 30-day range
 
@@ -822,6 +892,7 @@ WHERE event_type LIKE '%_api_call%'
 ### Happy Path: 2 Events Batch
 
 **Request**:
+
 ```bash
 curl -X POST http://localhost:3000/v1/analytics/events \
   -H "Content-Type: application/json" \
@@ -851,6 +922,7 @@ curl -X POST http://localhost:3000/v1/analytics/events \
 ```
 
 **Response** (204 No Content):
+
 ```
 (Empty body)
 ```
@@ -860,6 +932,7 @@ curl -X POST http://localhost:3000/v1/analytics/events \
 ### Error: Empty Array
 
 **Request**:
+
 ```bash
 curl -X POST http://localhost:3000/v1/analytics/events \
   -H "Content-Type: application/json" \
@@ -867,6 +940,7 @@ curl -X POST http://localhost:3000/v1/analytics/events \
 ```
 
 **Response** (400 Bad Request):
+
 ```json
 {
   "error": {
@@ -887,6 +961,7 @@ curl -X POST http://localhost:3000/v1/analytics/events \
 ### Error: Future Timestamp
 
 **Request**:
+
 ```bash
 curl -X POST http://localhost:3000/v1/analytics/events \
   -H "Content-Type: application/json" \
@@ -902,6 +977,7 @@ curl -X POST http://localhost:3000/v1/analytics/events \
 ```
 
 **Response** (400 Bad Request):
+
 ```json
 {
   "error": {
@@ -922,6 +998,7 @@ curl -X POST http://localhost:3000/v1/analytics/events \
 ### Error: Rate Limit Exceeded
 
 **Request**: 61st request within 1 minute
+
 ```bash
 curl -X POST http://localhost:3000/v1/analytics/events \
   -H "Content-Type: application/json" \
@@ -929,6 +1006,7 @@ curl -X POST http://localhost:3000/v1/analytics/events \
 ```
 
 **Response** (429 Too Many Requests):
+
 ```json
 {
   "error": {
@@ -940,6 +1018,7 @@ curl -X POST http://localhost:3000/v1/analytics/events \
 ```
 
 **Headers**:
+
 ```
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 0
@@ -952,15 +1031,18 @@ Retry-After: 45
 ## 🔗 Related Documentation
 
 **Frontend**:
+
 - `frontend/docs/DEV-HANDOFF-EPIC-34-FE.md` - Complete monitoring implementation guide
 - `frontend/src/lib/analytics/analytics.service.ts` - Event batching service (reference)
 - `frontend/src/lib/analytics/telegram-metrics.ts` - 15 metric helpers (reference)
 
 **Backend**:
+
 - Request #73: Telegram Notifications API (base Epic 34 backend)
 - Epic 34 Stories: Telegram bot implementation
 
 **Infrastructure**:
+
 - Grafana dashboard setup guide (в этом документе выше)
 - Prometheus metrics configuration (optional)
 
@@ -969,26 +1051,31 @@ Retry-After: 45
 ## ❓ Questions for Backend Team
 
 **Q1: Rate Limiting Strategy**
+
 - Current implementation: Global 60 req/min per IP?
 - Or per cabinet_id? (requires parsing event payload)
 - Recommendation: Per IP (simpler, frontend batch = 1 request per 30s)
 
 **Q2: Retention Policy**
+
 - Auto-delete events >90 days?
 - Or manual archival to separate cold storage?
 - Recommendation: Daily cron job deletion (см. SQL выше)
 
 **Q3: Query Endpoint Priority**
+
 - Implement GET /v1/analytics/telegram for dashboards?
 - Or query Postgres directly via Grafana?
 - Recommendation: Start with direct Postgres, add API later if needed
 
 **Q4: Prometheus Integration**
+
 - Expose metrics via /metrics endpoint?
 - Or rely solely on database queries?
 - Recommendation: Optional, database queries sufficient for MVP
 
 **Q5: Deployment Timeline**
+
 - Can complete by 2025-12-31 (0.5-1 day)?
 - Or need more time for testing/review?
 
@@ -1010,6 +1097,7 @@ Retry-After: 45
 ---
 
 **Next Steps**:
+
 1. ✅ Backend team reviews Request #89
 2. ⏳ Backend team provides effort estimate
 3. ⏳ Backend team implements per checklist above

@@ -47,18 +47,19 @@ salePrice: order.convertedPrice, // ❌ Сохраняет kopecks как rubles
 **Resolution date**: 2026-02-01
 **Summary**: Fixed FBS order prices stored in kopecks without division by 100. Updated `orders-sync.service.ts` to divide `price` and `salePrice` by 100. Migration `20260201193002_bug002_fix_fbs_prices_kopecks` corrected existing data. 48 tests passing.
 **Remaining frontend action**: None - data corrected and future syncs convert correctly.
-| Поле | API значение | Ожидаемое (₽) | Сохранённое |
-|------|--------------|---------------|-------------|
-| price | 47300 kopecks | 473.00 ₽ | 47300 ₽ |
-| salePrice | 320900 kopecks | 3209.00 ₽ | 320900 ₽ |
+
+| Поле      | API значение   | Ожидаемое (₽) | Сохранённое |
+| --------- | -------------- | ------------- | ----------- |
+| price     | 47300 kopecks  | 473.00 ₽      | 47300 ₽     |
+| salePrice | 320900 kopecks | 3209.00 ₽     | 320900 ₽    |
 
 ### Влияние на дашборд (Week 2026-W05)
 
-| Метрика | Отображается | Должно быть |
-|---------|--------------|-------------|
-| FBS Total Revenue | 964,400 ₽ | **9,644.00 ₽** |
-| FBS Avg Order Value | 107,155 ₽/заказ | **1,071.55 ₽/заказ** |
-| Total Orders Revenue | 1,265,467 ₽ | **304,711 ₽** |
+| Метрика              | Отображается    | Должно быть          |
+| -------------------- | --------------- | -------------------- |
+| FBS Total Revenue    | 964,400 ₽       | **9,644.00 ₽**       |
+| FBS Avg Order Value  | 107,155 ₽/заказ | **1,071.55 ₽/заказ** |
+| Total Orders Revenue | 1,265,467 ₽     | **304,711 ₽**        |
 
 ---
 
@@ -124,11 +125,11 @@ FBO заказы (`orders_fbo` таблица) приходят из друго�
 
 ## Файлы для изменения
 
-| Файл | Изменение |
-|------|-----------|
-| `src/orders/services/orders-sync.service.ts` | Деление на 100 при upsert |
+| Файл                                          | Изменение                               |
+| --------------------------------------------- | --------------------------------------- |
+| `src/orders/services/orders-sync.service.ts`  | Деление на 100 при upsert               |
 | `src/orders/services/orders-query.service.ts` | (Опционально) Деление на 100 при чтении |
-| Миграция SQL | Конвертация существующих данных |
+| Миграция SQL                                  | Конвертация существующих данных         |
 
 ---
 

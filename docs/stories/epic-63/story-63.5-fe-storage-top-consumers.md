@@ -18,6 +18,7 @@
 ## Acceptance Criteria
 
 ### AC1: Widget Display
+
 - [ ] Show top 5-10 products by storage cost in a compact card widget
 - [ ] Display rank number (1-10) with Lucide icons for top 3 (Trophy/Medal)
 - [ ] Show product name (truncated if needed)
@@ -25,6 +26,7 @@
 - [ ] Show percent of total storage cost
 
 ### AC2: Storage-to-Revenue Ratio
+
 - [ ] Display storage-to-revenue ratio percentage when `include_revenue=true`
 - [ ] Color coding thresholds:
   - **>20%** = Red (high risk, optimization needed)
@@ -34,16 +36,19 @@
 - [ ] Warning badge for items with ratio >20%
 
 ### AC3: Period Context
+
 - [ ] Widget respects dashboard's selected period (weekStart/weekEnd)
 - [ ] Title includes period indicator if not current week
 - [ ] Adapts to period context provider
 
 ### AC4: Interactions
+
 - [ ] Click row → navigate to full Storage Analytics page (`/analytics/storage`)
 - [ ] "Смотреть все" link → navigate to full Storage Analytics page
 - [ ] Hover state on rows for interactivity feedback
 
 ### AC5: Loading & Empty States
+
 - [ ] Loading skeleton matching widget layout
 - [ ] Empty state: "Нет данных по хранению за выбранный период"
 - [ ] Error state with retry button
@@ -51,38 +56,45 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Component Setup
+
 - [ ] Create `src/components/custom/dashboard/StorageTopConsumersWidget.tsx`
 - [ ] Define component props interface
 - [ ] Set up data fetching with `useStorageTopConsumers` hook
 
 ### Phase 2: Widget Structure
+
 - [ ] Implement Card container with header (icon + title)
 - [ ] Implement compact table/list layout
 - [ ] Add rank column with Lucide icons (Trophy, Medal)
 - [ ] Add "Смотреть все" link in header
 
 ### Phase 3: Visual Elements
+
 - [ ] Implement RankIndicator component (reuse or create)
 - [ ] Implement StorageRatioIndicator with color-coded dots
 - [ ] Implement warning badge for high ratio items
 - [ ] Apply purple color scheme for storage (#7C4DFF)
 
 ### Phase 4: Interactions
+
 - [ ] Implement row click handler with navigation
 - [ ] Implement "Смотреть все" navigation
 - [ ] Add hover state styling
 
 ### Phase 5: Loading & Error States
+
 - [ ] Implement loading skeleton
 - [ ] Implement error state with retry
 - [ ] Implement empty state
 
 ### Phase 6: Integration
+
 - [ ] Integrate with dashboard period context
 - [ ] Add to dashboard expenses section layout
 - [ ] Test responsiveness
 
 ### Phase 7: Testing
+
 - [ ] Test component renders with mock data
 - [ ] Test color coding thresholds
 - [ ] Test navigation interactions
@@ -115,12 +127,12 @@ GET /v1/analytics/storage/top-consumers
 
 **Request Parameters:**
 
-| Parameter | Required | Default | Description |
-|-----------|----------|---------|-------------|
-| `weekStart` | Yes | - | Start period (YYYY-Www) |
-| `weekEnd` | Yes | - | End period (YYYY-Www) |
-| `limit` | No | 10 | Number of records (max 100) |
-| `include_revenue` | No | false | Include revenue for ratio calculation |
+| Parameter         | Required | Default | Description                           |
+| ----------------- | -------- | ------- | ------------------------------------- |
+| `weekStart`       | Yes      | -       | Start period (YYYY-Www)               |
+| `weekEnd`         | Yes      | -       | End period (YYYY-Www)                 |
+| `limit`           | No       | 10      | Number of records (max 100)           |
+| `include_revenue` | No       | false   | Include revenue for ratio calculation |
 
 **Example Request:**
 
@@ -317,12 +329,12 @@ src/
 
 ### Color Thresholds
 
-| Ratio | Severity | Color | Action |
-|-------|----------|-------|--------|
-| >20% | High | Red (`#EF4444`) | Optimize inventory, reduce stock |
-| 10-20% | Medium | Yellow (`#F59E0B`) | Monitor, consider adjustments |
-| <10% | Low | Green (`#22C55E`) | Healthy ratio |
-| null | Unknown | Gray (`#9CA3AF`) | No revenue data available |
+| Ratio  | Severity | Color              | Action                           |
+| ------ | -------- | ------------------ | -------------------------------- |
+| >20%   | High     | Red (`#EF4444`)    | Optimize inventory, reduce stock |
+| 10-20% | Medium   | Yellow (`#F59E0B`) | Monitor, consider adjustments    |
+| <10%   | Low      | Green (`#22C55E`)  | Healthy ratio                    |
+| null   | Unknown  | Gray (`#9CA3AF`)   | No revenue data available        |
 
 ### Accessibility
 
@@ -335,6 +347,7 @@ src/
 ## Testing
 
 ### Framework & Location
+
 - **Framework**: Vitest + React Testing Library
 - **Test Location**: `src/components/custom/dashboard/__tests__/StorageTopConsumersWidget.test.tsx`
 
@@ -358,6 +371,7 @@ src/
 - [ ] Product name truncates when too long
 
 ### Coverage Target
+
 - Component: >80%
 - Helper components: >90%
 
@@ -398,8 +412,8 @@ src/
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author      | Change                                 |
+| ---------- | ----------- | -------------------------------------- |
 | 2026-01-31 | PM (Claude) | Initial draft based on backend API doc |
 
 ---
@@ -409,6 +423,7 @@ src/
 **Component**: `src/components/custom/dashboard/StorageTopConsumersWidget.tsx`
 **Lines**: 194
 **Key Features**:
+
 - Top 5-10 products by storage cost in compact card widget
 - Rank indicators with Lucide Trophy/Medal icons for top 3
 - Storage-to-revenue ratio with color-coded dots (green <10%, yellow 10-20%, red >20%)

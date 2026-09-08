@@ -13,7 +13,7 @@ chars: 2404
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-rabotaet-obnovlenie" rel="nofollow">Как работает обновление</a>
 - <a href="#vazhnye-momenty" rel="nofollow">Важные моменты</a>
 - <a href="#rekomendatsii" rel="nofollow">Рекомендации</a>

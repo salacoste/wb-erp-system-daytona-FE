@@ -27,6 +27,7 @@ Sanity check returns `missing_cogs_products` (first 100 nm_ids) and `missing_cog
 ## Acceptance Criteria
 
 ### AC1: Alert Displays When Missing COGS
+
 ```gherkin
 Given sanity check completed
 When missing_cogs_total > 0
@@ -36,6 +37,7 @@ And provide link to COGS management page
 ```
 
 ### AC2: Alert Hidden When All COGS Assigned
+
 ```gherkin
 Given sanity check completed
 When missing_cogs_total = 0
@@ -43,6 +45,7 @@ Then no alert should display
 ```
 
 ### AC3: Actionable Links
+
 ```gherkin
 Given alert is displayed
 When user clicks "Назначить COGS"
@@ -50,6 +53,7 @@ Then navigate to /cogs page with filter has_cogs=false
 ```
 
 ### AC4: Dismissible
+
 ```gherkin
 Given alert is displayed
 When user clicks dismiss
@@ -242,16 +246,19 @@ interface SanityCheckResult {
 ## Display Locations
 
 ### Primary: Dashboard Page (`/dashboard`)
+
 - Position: Top of content area, below header
 - Trigger: After sanity check completes (manual or automatic)
 - Behavior: Dismissible for current session
 
 ### Secondary: COGS Management Page (`/cogs`)
+
 - Position: Above product list
 - Trigger: When `missingCount > 0` from ProductList API response
 - Alternative: Can use ProductList `has_cogs=false` count instead of sanity check
 
 ### Optional: Analytics Pages
+
 - Show banner on pages where margin accuracy matters
 - e.g., `/analytics/sku`, `/analytics/dashboard`
 
@@ -260,6 +267,7 @@ interface SanityCheckResult {
 ## Usage Examples
 
 ### Dashboard Integration
+
 ```typescript
 // src/app/(dashboard)/page.tsx
 import { MissingCogsAlert } from '@/components/custom/MissingCogsAlert'
@@ -283,6 +291,7 @@ export default function Dashboard() {
 ```
 
 ### COGS Page Integration
+
 ```typescript
 // src/app/(dashboard)/cogs/page.tsx
 <MissingCogsAlert
@@ -323,6 +332,7 @@ describe('MissingCogsAlert', () => {
 ```
 
 ### Visual Regression
+
 - Screenshot test for alert styling
 - Mobile/desktop responsive check
 
@@ -331,6 +341,7 @@ describe('MissingCogsAlert', () => {
 ## Design Notes
 
 ### Visual Design
+
 - **Color**: Amber (warning variant) - actionable, not critical
 - **Icon**: `AlertTriangle` (lucide-react) - consistent with similar alerts
 - **Position**: Top of page content, below header
@@ -338,11 +349,13 @@ describe('MissingCogsAlert', () => {
 - **Dismiss**: Session only, not persistent (no localStorage)
 
 ### Pattern References
+
 - **`StorageAlertBanner.tsx`** (Epic 24.8) - Similar tooltip pattern, Russian pluralization
 - **`WbTokenBanner.tsx`** - Same amber color scheme, action button pattern
 - **`alert.tsx` variant="warning"** - Uses yellow-300/yellow-50/yellow-800 base
 
 ### Accessibility (WCAG 2.1 AA)
+
 - Color contrast: Amber text on light background meets 4.5:1 ratio
 - Dismiss button has `aria-label="Закрыть уведомление"`
 - Alert has `role="alert"` (from base component)
@@ -378,5 +391,5 @@ describe('MissingCogsAlert', () => {
 
 ---
 
-*Created: 2026-01-06*
-*Updated: 2026-01-29 - PM validation: Added pattern references, display locations, fixed code sample*
+_Created: 2026-01-06_
+_Updated: 2026-01-29 - PM validation: Added pattern references, display locations, fixed code sample_

@@ -12,12 +12,14 @@
 ## Обзор
 
 Epic 35 добавляет **гибридный запрос** для отображения полной картины продаж:
+
 - **Total Sales** (totalSales) - общая выручка товара (органика + реклама)
 - **Ad-Attributed Revenue** (revenue) - выручка только из рекламных кампаний
 - **Organic Sales** (organicSales) - продажи без участия рекламы
 - **Organic Contribution** (organicContribution) - процент органических продаж
 
 **Гибридная архитектура**:
+
 ```
 Completed Weeks (≤ last Sunday)
   └─> wb_finance_raw (финализированные недели)
@@ -43,6 +45,7 @@ Current Week (Monday → today)
 ### ✅ Новые поля в ответе API
 
 **Per-Item Level** (каждый товар/кампания):
+
 ```typescript
 interface AdvertisingItem {
   // ... existing fields
@@ -58,6 +61,7 @@ interface AdvertisingItem {
 ```
 
 **Summary Level**:
+
 ```typescript
 interface AdvertisingSummary {
   // ... existing fields
@@ -77,6 +81,7 @@ interface AdvertisingSummary {
 ## Example API Response (Real Data)
 
 ### Request
+
 ```http
 GET /v1/analytics/advertising?from=2025-12-15&to=2025-12-25
 Authorization: Bearer <token>
@@ -84,6 +89,7 @@ X-Cabinet-Id: <cabinet-id>
 ```
 
 ### Response (with Epic 35 fields)
+
 ```json
 {
   "items": [
@@ -166,6 +172,7 @@ X-Cabinet-Id: <cabinet-id>
 ### Use Case 1: Organic vs Paid Split Analysis
 
 **Product A - Strong Organic Performance**:
+
 ```json
 {
   "nmId": 270937054,
@@ -177,9 +184,11 @@ X-Cabinet-Id: <cabinet-id>
   "roas": 2.18
 }
 ```
+
 **Insight**: Товар продается преимущественно органически (87.6%). Реклама добавляет только 12.4% к продажам. Можно сократить бюджет на рекламу.
 
 **Product B - Ad-Dependent Product**:
+
 ```json
 {
   "nmId": 123456,
@@ -191,6 +200,7 @@ X-Cabinet-Id: <cabinet-id>
   "roas": 2.8
 }
 ```
+
 **Insight**: Товар сильно зависит от рекламы (93.3%). Без рекламы продажи упадут в 15 раз. Нужно работать над органической видимостью (SEO, карточка товара, отзывы).
 
 ---
@@ -200,12 +210,14 @@ X-Cabinet-Id: <cabinet-id>
 **Scenario**: 100,000₽ рекламного бюджета на месяц
 
 **Стратегия 1 - Focus on High Organic Products**:
+
 - Товары с organicContribution > 80%
 - Минимальная реклама (10,000₽)
 - Organic sales grow by improving SEO/reviews
 - **Result**: 90,000₽ saved, reinvest in organic growth
 
 **Стратегия 2 - Scale Ad-Driven Products**:
+
 - Товары с organicContribution < 20%
 - Maximum ad spend (90,000₽)
 - Focus on ROAS optimization
@@ -216,6 +228,7 @@ X-Cabinet-Id: <cabinet-id>
 ### Use Case 3: Negative Organic Sales (Over-Attribution)
 
 **Edge Case**:
+
 ```json
 {
   "nmId": 789012,
@@ -226,9 +239,11 @@ X-Cabinet-Id: <cabinet-id>
   "roas": 1.2
 }
 ```
+
 **Причина**: WB Promotion API может переатрибутировать продажи к рекламе (клик был, но покупка через органический поиск).
 
 **Frontend Handling**:
+
 - Display as "0" or "—" with tooltip "WB API over-attribution"
 - Show warning badge
 - Don't break calculation (use 0 for negative organic)
@@ -269,12 +284,12 @@ export interface AdvertisingSummary {
 
 **PerformanceMetricsTable Component**:
 
-| Column Header | Field | Format | Tooltip |
-|---------------|-------|--------|---------|
-| **Всего продаж** | `total_sales` | `45,000₽` | "Общая выручка товара (органика + реклама)" |
-| **Из рекламы** | `revenue` | `28,600₽` | "Выручка только из рекламных кампаний" |
-| **Органика** | `organic_sales` | `16,400₽` | "Продажи без участия рекламы" |
-| **Органика %** | `organic_contribution` | `36.4%` | "Процент органических продаж от общих" |
+| Column Header    | Field                  | Format    | Tooltip                                     |
+| ---------------- | ---------------------- | --------- | ------------------------------------------- |
+| **Всего продаж** | `total_sales`          | `45,000₽` | "Общая выручка товара (органика + реклама)" |
+| **Из рекламы**   | `revenue`              | `28,600₽` | "Выручка только из рекламных кампаний"      |
+| **Органика**     | `organic_sales`        | `16,400₽` | "Продажи без участия рекламы"               |
+| **Органика %**   | `organic_contribution` | `36.4%`   | "Процент органических продаж от общих"      |
 
 ### 3. Edge Cases Handling
 
@@ -359,11 +374,13 @@ function formatOrganicContribution(item: AdvertisingItem): string {
 ### Hybrid Query Architecture
 
 **Date Boundary Logic** (`IsoWeekService.getLastCompletedWeek()`):
+
 - Returns last Sunday 23:59:59 (Europe/Moscow timezone)
 - Completed weeks: Monday → last Sunday (use `wb_finance_raw`)
 - Current week: Monday after last Sunday → today (use `daily_sales_raw`)
 
 **Example** (today = 2025-12-25 Thursday):
+
 ```
 Last Completed Week: Week 51 (2025-12-16 Monday → 2025-12-22 Sunday)
   Data source: wb_finance_raw ✅
@@ -375,12 +392,14 @@ Current Week: Week 52 (2025-12-23 Monday → 2025-12-25 Thursday)
 ### Performance Optimization
 
 **Redis Caching**:
+
 - Cache key: `totalSales:map:{cabinet_id}:{from}:{to}`
 - TTL: 30 minutes
 - Cache invalidation: Daily sales sync (06:00 MSK)
 - Hit ratio target: >50%
 
 **Query Performance**:
+
 - Hybrid query: 17-37ms p95 (27× faster than <500ms target)
 - Cache hit: <50ms
 - Full API response: <500ms p95
@@ -388,6 +407,7 @@ Current Week: Week 52 (2025-12-23 Monday → 2025-12-25 Thursday)
 ### Daily Sync Schedule
 
 **Cron**: `0 6 * * *` (06:00 MSK daily)
+
 - Fetches last 7 days from WB API
 - Upserts into `daily_sales_raw` table
 - Deduplicates by SHA-256 hash
@@ -428,6 +448,7 @@ GET {{host}}/v1/analytics/advertising?from=2025-12-01&to=2025-12-23&view_by=bran
 ### Frontend Test Cases
 
 **useAdvertisingAnalytics.test.ts** (Epic 35 tests):
+
 ```typescript
 describe('Epic 35: Organic vs Ad Split', () => {
   it('calculates organic sales correctly', () => {
@@ -450,6 +471,7 @@ describe('Epic 35: Organic vs Ad Split', () => {
 ```
 
 **AdvertisingFilters.test.tsx** (90-day limit tests):
+
 ```typescript
 describe('90-day limit validation', () => {
   it('shows warning when range exceeds 90 days', () => {
@@ -470,12 +492,14 @@ describe('90-day limit validation', () => {
 ## Documentation References
 
 ### Backend Documentation
+
 - **[Epic 35 Overview](../../../docs/epics/epic-35-total-sales-organic-split.md)** - Complete epic documentation
 - **[ADVERTISING-ANALYTICS-GUIDE.md](../../../docs/ADVERTISING-ANALYTICS-GUIDE.md#epic-35-organic-vs-advertising-revenue-split)** - Complete guide with Epic 35 section
 - **[API Reference](../../../docs/API-PATHS-REFERENCE.md#epic-35-total-sales--organic-vs-ad-split)** - API documentation
 - **[test-api/07-advertising-analytics.http](../../../test-api/07-advertising-analytics.http)** - API testing examples (requests #40-42)
 
 ### Architecture
+
 - **[Story 35.0](../../../docs/stories/epic-35/35.0.epic-design.md)** - Epic design and architecture
 - **[Story 35.1](../../../docs/stories/epic-35/35.1.data-model-sync.md)** - Daily sales data model & sync
 - **[Story 35.2](../../../docs/stories/epic-35/35.2.background-scheduler.md)** - Background sync scheduler
@@ -485,6 +509,7 @@ describe('90-day limit validation', () => {
 - **[Story 35.6](../../../docs/stories/epic-35/35.6.deployment-monitoring.md)** - Deployment & monitoring
 
 ### QA
+
 - **[QA Gate Results](../../../docs/qa/gates/35.6-deployment-monitoring.yml)** - Quality assessment (95/100)
 - **[Test Coverage](../../../docs/COMPLETED-EPICS-REFERENCE.md#epic-35)** - Backend 35/35, Frontend 3 edge cases
 
@@ -493,12 +518,15 @@ describe('90-day limit validation', () => {
 ## Migration Guide (If Needed)
 
 ### Breaking Changes
+
 ✅ **NONE** - Epic 35 is 100% backward compatible
 
 ### API Changes
+
 ✅ **Additive only** - New fields added, no existing fields modified
 
 ### Frontend Checklist
+
 - [x] Update types (`advertising-analytics.ts`) ✅ DONE (commit a75c61e)
 - [x] Add "Всего продаж" column to table ✅ DONE (commit a75c61e)
 - [x] Add "Из рекламы" column (rename "Выручка") ✅ DONE (commit a75c61e)
@@ -525,25 +553,30 @@ describe('90-day limit validation', () => {
 ## FAQ
 
 ### Q: Почему organicSales может быть отрицательным?
+
 **A**: WB Promotion API может переатрибутировать продажи к рекламе. Например, пользователь кликнул на объявление, но купил через органический поиск. WB зачисляет продажу к рекламе (revenue), хотя она была органической (totalSales). Результат: revenue > totalSales → organicSales < 0.
 
 ### Q: Как обрабатывать отрицательные organicSales на frontend?
+
 **A**: Показывать "—" или "0" с тултипом "WB API переатрибутировал продажи к рекламе". Не ломать расчет органического процента (использовать 0 вместо отрицательного значения).
 
 ### Q: Почему totalSales берется из двух источников?
+
 **A**: WB Weekly Reports API (`wb_finance_raw`) финализируется только в воскресенье 23:59. Для текущей недели (понедельник → сегодня) используем Daily Sales API (`daily_sales_raw`). Гибридный запрос объединяет оба источника для полной картины.
 
 ### Q: Что если данные из daily_sales_raw не синхронизированы?
+
 **A**: Daily sync запускается каждый день в 06:00 MSK. Если синхронизация не прошла, текущая неделя будет показывать только завершенные дни. Frontend показывает "Данные за сегодня обновляются" с индикатором последней синхронизации.
 
 ### Q: Влияет ли Epic 35 на производительность API?
+
 **A**: Нет. Гибридный запрос работает 17-37ms p95 (27× быстрее цели <500ms). Redis кэширование с 30min TTL обеспечивает <50ms на cache hit.
 
 ---
 
-*Дата создания: 2025-12-24*
-*Последнее обновление: 2025-12-25 03:30 MSK*
-*Epic Status: ✅ COMPLETE (Backend + Frontend Integration)*
-*Quality Score: 95/100 (EXCEPTIONAL)*
-*Test Coverage: 35/35 backend + 62/62 frontend (including 3 Epic 35 edge cases)*
-*Frontend Integration: 6 summary cards, 2 table columns, tooltips, edge case handling*
+_Дата создания: 2025-12-24_
+_Последнее обновление: 2025-12-25 03:30 MSK_
+_Epic Status: ✅ COMPLETE (Backend + Frontend Integration)_
+_Quality Score: 95/100 (EXCEPTIONAL)_
+_Test Coverage: 35/35 backend + 62/62 frontend (including 3 Epic 35 edge cases)_
+_Frontend Integration: 6 summary cards, 2 table columns, tooltips, edge case handling_

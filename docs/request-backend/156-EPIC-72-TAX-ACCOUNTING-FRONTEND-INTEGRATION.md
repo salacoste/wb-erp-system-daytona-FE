@@ -15,6 +15,7 @@ Backend Epic 72 реализовал полный налоговый учёт. �
 ### 1.1 Cabinet Tax Settings
 
 **Чтение**: `GET /v1/cabinets/:id`
+
 ```json
 {
   "id": "uuid",
@@ -27,6 +28,7 @@ Backend Epic 72 реализовал полный налоговый учёт. �
 ```
 
 **Обновление**: `PUT /v1/cabinets/:id`
+
 ```json
 { "taxSystem": "usn15", "taxRate": null }
 ```
@@ -40,14 +42,15 @@ Backend Epic 72 реализовал полный налоговый учёт. �
 **Summary**: Epic 72 (Tax Accounting) backend complete. Tax settings integrated into cabinet model (taxSystem, taxRate, vatPayer, vatRate). Tax metrics available in finance-summary response under `summary_total.tax`. Supports USN 6%, USN 15%, manual rate, and VAT integration. Ready for frontend Epic 66-FE.
 **Remaining frontend action**: Build tax configuration UI per Epic 66-FE using endpoints documented here.
 
-| taxSystem | Название | taxRate |
-|-----------|----------|---------|
-| `null` | Не настроена | Игнорируется |
-| `"usn6"` | УСН 6% (по доходам) | Автоочистка до null |
-| `"usn15"` | УСН 15% (по прибыли) | Автоочистка до null |
+| taxSystem  | Название                | taxRate               |
+| ---------- | ----------------------- | --------------------- |
+| `null`     | Не настроена            | Игнорируется          |
+| `"usn6"`   | УСН 6% (по доходам)     | Автоочистка до null   |
+| `"usn15"`  | УСН 15% (по прибыли)    | Автоочистка до null   |
 | `"manual"` | Пользовательская ставка | **Обязателен**, 0-100 |
 
 **Ошибка валидации (400)**:
+
 ```json
 { "error": { "code": "VALIDATION_ERROR", "message": "taxRate is required when taxSystem is \"manual\"" } }
 ```
@@ -78,14 +81,14 @@ Backend Epic 72 реализовал полный налоговый учёт. �
 
 ### 1.3 TaxMetrics DTO
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `tax_amount` | `number \| null` | Рассчитанная сумма налога |
-| `tax_base` | `number \| null` | База: выручка (USN6/manual), прибыль (USN15) |
-| `effective_tax_rate` | `number \| null` | Применённая ставка в % |
-| `tax_system` | `string \| null` | `"usn6"` / `"usn15"` / `"manual"` |
-| `is_minimum_rule` | `boolean` | true = применено правило мин. 1% (USN15) |
-| `net_profit_after_tax` | `number \| null` | Чистая прибыль после налога |
+| Поле                   | Тип              | Описание                                     |
+| ---------------------- | ---------------- | -------------------------------------------- |
+| `tax_amount`           | `number \| null` | Рассчитанная сумма налога                    |
+| `tax_base`             | `number \| null` | База: выручка (USN6/manual), прибыль (USN15) |
+| `effective_tax_rate`   | `number \| null` | Применённая ставка в %                       |
+| `tax_system`           | `string \| null` | `"usn6"` / `"usn15"` / `"manual"`            |
+| `is_minimum_rule`      | `boolean`        | true = применено правило мин. 1% (USN15)     |
+| `net_profit_after_tax` | `number \| null` | Чистая прибыль после налога                  |
 
 Когда `tax === null` → налоговая система не настроена для кабинета.
 
@@ -94,6 +97,7 @@ Backend Epic 72 реализовал полный налоговый учёт. �
 **УСН 6%**: `налог = sales_gross_total × 6%`
 
 **УСН 15%**:
+
 ```
 расходы = логистика + хранение + приёмка + штрафы + корректировки + себестоимость + реклама
 прибыль = выручка − расходы
@@ -116,15 +120,15 @@ Backend Epic 72 реализовал полный налоговый учёт. �
 
 ### 2.2 Что создаём
 
-| Story | Описание | Файлы |
-|-------|----------|-------|
-| 66.1 | Типы + API модуль кабинета | `types/cabinet.ts`, `types/finance-summary.ts`, `lib/api/cabinet.ts` |
-| 66.2 | TanStack Query хуки | `hooks/useCabinetTaxSettings.ts` |
-| 66.3 | Страница настроек `/settings/tax` | `app/(dashboard)/settings/tax/page.tsx`, `components/custom/settings/TaxSettingsForm.tsx` |
-| 66.4 | Интеграция tax в finance-summary пайплайн | `hooks-v1/financial/aggregation.ts` |
-| 66.5 | Рефакторинг TaxCard на бекенд-данные | `components/custom/dashboard/TaxCard.tsx` |
-| 66.6 | Карточка "Чистая прибыль после налога" | `components/custom/dashboard/NetProfitCard.tsx` |
-| 66.7 | Предупреждения и пустые состояния | `components/custom/dashboard/TaxWarningBanner.tsx` |
+| Story | Описание                                  | Файлы                                                                                     |
+| ----- | ----------------------------------------- | ----------------------------------------------------------------------------------------- |
+| 66.1  | Типы + API модуль кабинета                | `types/cabinet.ts`, `types/finance-summary.ts`, `lib/api/cabinet.ts`                      |
+| 66.2  | TanStack Query хуки                       | `hooks/useCabinetTaxSettings.ts`                                                          |
+| 66.3  | Страница настроек `/settings/tax`         | `app/(dashboard)/settings/tax/page.tsx`, `components/custom/settings/TaxSettingsForm.tsx` |
+| 66.4  | Интеграция tax в finance-summary пайплайн | `hooks-v1/financial/aggregation.ts`                                                       |
+| 66.5  | Рефакторинг TaxCard на бекенд-данные      | `components/custom/dashboard/TaxCard.tsx`                                                 |
+| 66.6  | Карточка "Чистая прибыль после налога"    | `components/custom/dashboard/NetProfitCard.tsx`                                           |
+| 66.7  | Предупреждения и пустые состояния         | `components/custom/dashboard/TaxWarningBanner.tsx`                                        |
 
 ### 2.3 Основные паттерны интеграции
 
@@ -157,6 +161,7 @@ const afterTaxMargin = (taxData.net_profit_after_tax / revenue) * 100
 **Вопрос**: Правильно ли суммировать `tax_amount` и `net_profit_after_tax` по неделям при отображении месячных данных? Или бекенд планирует предоставить агрегированный endpoint для периода?
 
 **Наше текущее решение**:
+
 ```typescript
 // Суммируем tax_amount и net_profit_after_tax
 // effective_tax_rate берём из первой недели (ставка не меняется)
@@ -211,11 +216,13 @@ Epic 72 **НЕ поддерживает НДС** (Налог на добавле
 - Влияет на расчёт дохода ДО расчёта налога на прибыль
 
 **Кому нужен НДС**:
+
 - ООО на ОСН → 20%
 - ИП на ОСН → 20%
 - УСН при выручке > 60М (с 2025) → 5%
 
 **Что нужно от бекенда**:
+
 1. Добавить `vatPayer: boolean` + `vatRate: number | null` в Cabinet
 2. Расширить `TaxMetrics` полями: `vat_output`, `vat_input`, `vat_payable`, `revenue_excl_vat`
 3. Изменить порядок расчёта: сначала НДС → затем налог на доход с revenue_excl_vat
@@ -224,6 +231,7 @@ Epic 72 **НЕ поддерживает НДС** (Налог на добавле
 **Оценка**: 3-5 SP на бекенде поверх существующей инфраструктуры Epic 72.
 
 **Ключевые вопросы**:
+
 1. Есть ли в COGS данные о входящем НДС для вычета?
 2. Есть ли отдельная колонка НДС в еженедельном отчёте WB?
 3. Как обрабатывать смену ставки НДС в середине периода?
@@ -232,12 +240,12 @@ Epic 72 **НЕ поддерживает НДС** (Налог на добавле
 
 ## 5. Что НЕ реализуем сейчас (подтверждено бекенд-командой)
 
-| Функционал | Причина | Когда |
-|------------|---------|-------|
-| Per-SKU налоговые метрики | Рассчитываются, но не выведены в API v1 | Следующая итерация |
-| История изменений настроек (UI) | Аудит-трейл на бекенде, нет эндпоинта для просмотра | Следующая итерация |
-| Ручной запуск бэкфилла | `POST /v1/tasks/enqueue` с `tax_backfill`, только для админов | Пока без UI |
-| ~~НДС (VAT)~~ | ✅ Реализовано бекендом (Task-50) | Request #155 resolved |
+| Функционал                      | Причина                                                       | Когда                 |
+| ------------------------------- | ------------------------------------------------------------- | --------------------- |
+| Per-SKU налоговые метрики       | Рассчитываются, но не выведены в API v1                       | Следующая итерация    |
+| История изменений настроек (UI) | Аудит-трейл на бекенде, нет эндпоинта для просмотра           | Следующая итерация    |
+| Ручной запуск бэкфилла          | `POST /v1/tasks/enqueue` с `tax_backfill`, только для админов | Пока без UI           |
+| ~~НДС (VAT)~~                   | ✅ Реализовано бекендом (Task-50)                             | Request #155 resolved |
 
 ---
 
@@ -267,7 +275,7 @@ USN 15% включает рекламные расходы. Если advertising
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-02-22 | Frontend Team (BMad Master) | Initial document created |
-| 2026-02-23 | Frontend Team (Claude) | Backend fully verified: Epic 72 + Task-50 (НДС). Migrations applied, 119/119 tests passing. Decimal serialization fixed. Ready for Epic 66-FE implementation. |
+| Date       | Author                      | Change                                                                                                                                                        |
+| ---------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-02-22 | Frontend Team (BMad Master) | Initial document created                                                                                                                                      |
+| 2026-02-23 | Frontend Team (Claude)      | Backend fully verified: Epic 72 + Task-50 (НДС). Migrations applied, 119/119 tests passing. Decimal serialization fixed. Ready for Epic 66-FE implementation. |

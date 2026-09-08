@@ -69,38 +69,38 @@ This card is critical for the theoretical profit calculation and must handle the
 
 ### Colors
 
-| Element | Color | Hex | Tailwind |
-|---------|-------|-----|----------|
-| Icon | Gray | `#6B7280` | `text-gray-500` |
-| Main value | Gray | `#6B7280` | `text-gray-500` |
-| Title | Muted | `#757575` | `text-muted-foreground` |
-| Warning text | Yellow | `#F59E0B` | `text-yellow-600` |
-| Warning bg | Light yellow | `#FEF3C7` | `bg-yellow-100` |
-| Warning icon | Yellow | `#F59E0B` | `text-yellow-500` |
-| Action link | Primary red | `#E53935` | `text-primary` |
-| Positive comparison | Green | `#22C55E` | `bg-green-100 text-green-700` |
-| Negative comparison | Red | `#EF4444` | `bg-red-100 text-red-700` |
+| Element             | Color        | Hex       | Tailwind                      |
+| ------------------- | ------------ | --------- | ----------------------------- |
+| Icon                | Gray         | `#6B7280` | `text-gray-500`               |
+| Main value          | Gray         | `#6B7280` | `text-gray-500`               |
+| Title               | Muted        | `#757575` | `text-muted-foreground`       |
+| Warning text        | Yellow       | `#F59E0B` | `text-yellow-600`             |
+| Warning bg          | Light yellow | `#FEF3C7` | `bg-yellow-100`               |
+| Warning icon        | Yellow       | `#F59E0B` | `text-yellow-500`             |
+| Action link         | Primary red  | `#E53935` | `text-primary`                |
+| Positive comparison | Green        | `#22C55E` | `bg-green-100 text-green-700` |
+| Negative comparison | Red          | `#EF4444` | `bg-red-100 text-red-700`     |
 
 ### Typography
 
-| Element | Size | Weight | Line Height |
-|---------|------|--------|-------------|
-| Title | 14px | 500 (medium) | 1.5 |
-| Main value | 32px | 700 (bold) | 1.2 |
-| Warning text | 14px | 500 (medium) | 1.5 |
-| Coverage text | 12px | 400 (regular) | 1.5 |
-| Action link | 12px | 500 (medium) | 1.5 |
-| Comparison badge | 12px | 500 (medium) | 1.5 |
+| Element          | Size | Weight        | Line Height |
+| ---------------- | ---- | ------------- | ----------- |
+| Title            | 14px | 500 (medium)  | 1.5         |
+| Main value       | 32px | 700 (bold)    | 1.2         |
+| Warning text     | 14px | 500 (medium)  | 1.5         |
+| Coverage text    | 12px | 400 (regular) | 1.5         |
+| Action link      | 12px | 500 (medium)  | 1.5         |
+| Comparison badge | 12px | 500 (medium)  | 1.5         |
 
 ### Spacing
 
-| Element | Value | Tailwind |
-|---------|-------|----------|
-| Card padding | 16px | `p-4` |
-| Between title and value | 8px | `mt-2` |
-| Between value and comparison | 8px | `mt-2` |
-| Warning padding | 8px | `p-2` |
-| Warning border-radius | 6px | `rounded-md` |
+| Element                      | Value | Tailwind     |
+| ---------------------------- | ----- | ------------ |
+| Card padding                 | 16px  | `p-4`        |
+| Between title and value      | 8px   | `mt-2`       |
+| Between value and comparison | 8px   | `mt-2`       |
+| Warning padding              | 8px   | `p-2`        |
+| Warning border-radius        | 6px   | `rounded-md` |
 
 ---
 
@@ -151,25 +151,25 @@ function getCoverageStatus(coverage: number): 'complete' | 'partial' | 'missing'
 
 ### Dependencies
 
-| Hook/Utility | Source | Purpose |
-|--------------|--------|---------|
-| `useOrdersCogs` | Story 61.4-FE | COGS for orders data |
-| `formatCurrency` | `src/lib/formatters.ts` | Currency formatting |
-| `formatPercentage` | `src/lib/formatters.ts` | Percentage formatting |
-| `ComparisonBadge` | Existing | Comparison indicator |
-| `Tooltip` | shadcn/ui | Info tooltip |
-| `Package` | lucide-react | Card icon |
-| `AlertTriangle` | lucide-react | Warning icon |
-| `useRouter` | next/navigation | Navigation to COGS page |
+| Hook/Utility       | Source                  | Purpose                 |
+| ------------------ | ----------------------- | ----------------------- |
+| `useOrdersCogs`    | Story 61.4-FE           | COGS for orders data    |
+| `formatCurrency`   | `src/lib/formatters.ts` | Currency formatting     |
+| `formatPercentage` | `src/lib/formatters.ts` | Percentage formatting   |
+| `ComparisonBadge`  | Existing                | Comparison indicator    |
+| `Tooltip`          | shadcn/ui               | Info tooltip            |
+| `Package`          | lucide-react            | Card icon               |
+| `AlertTriangle`    | lucide-react            | Warning icon            |
+| `useRouter`        | next/navigation         | Navigation to COGS page |
 
 ---
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
+| File                                                       | Action | Description                |
+| ---------------------------------------------------------- | ------ | -------------------------- |
 | `src/components/custom/dashboard/OrdersCogsMetricCard.tsx` | CREATE | COGS by orders metric card |
-| `src/components/custom/dashboard/index.ts` | MODIFY | Add export |
+| `src/components/custom/dashboard/index.ts`                 | MODIFY | Add export                 |
 
 ---
 
@@ -394,6 +394,7 @@ useAnalyticsComparison hook
 ## Navigation Routes
 
 When "Заполнить COGS" is clicked:
+
 - Navigate to `ROUTES.COGS.SINGLE` (e.g., `/cogs/single`)
 - Preserve current context if needed via query params
 
@@ -451,13 +452,13 @@ When "Заполнить COGS" is clicked:
 
 ## Edge Cases
 
-| Scenario | Behavior |
-|----------|----------|
-| 100% COGS coverage | Show value, no warning |
+| Scenario             | Behavior                                                      |
+| -------------------- | ------------------------------------------------------------- |
+| 100% COGS coverage   | Show value, no warning                                        |
 | Partial COGS (1-99%) | Show calculated value + warning badge + "Заполнить COGS" link |
-| Zero COGS (0%) | Show warning state, no value |
-| null cogsTotal | Show warning state as if 0% |
-| API error | Show error state with retry |
+| Zero COGS (0%)       | Show warning state, no value                                  |
+| null cogsTotal       | Show warning state as if 0%                                   |
+| API error            | Show error state with retry                                   |
 
 ---
 

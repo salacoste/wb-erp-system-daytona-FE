@@ -51,6 +51,7 @@ All artifacts below exist in the frontend repo at the cited file:line locations.
 Located in `src/app/(dashboard)/monitor/components/`:
 
 **Main components:**
+
 1. `MonitorBuyoutGauge.tsx` — buyout-rate gauge visualization (raw SVG per Story 92.5-FE)
 2. `MonitorKpiCards.tsx` — top-level KPI cards
 3. `MonitorMetricsTable.tsx` — period-comparison metrics table
@@ -59,6 +60,7 @@ Located in `src/app/(dashboard)/monitor/components/`:
 6. `MonitorWeeklyChart.tsx` — weekly trends chart (recharts)
 
 **Utility files:**
+
 1. `monitor-metrics-utils.ts`
 2. `monitor-pipeline-utils.ts`
 3. `monitor-weekly-chart-tooltip.tsx`
@@ -67,8 +69,8 @@ Located in `src/app/(dashboard)/monitor/components/`:
 ### Backend Endpoint Consumption
 
 - **Hook**: `src/app/(dashboard)/monitor/hooks/use-monitor-summary.ts:26` — `export function useMonitorSummary(enabled = true) {`
-- **Endpoint cited in hook header**: `src/app/(dashboard)/monitor/hooks/use-monitor-summary.ts:3` — *"Single-endpoint hook for GET /v1/analytics/monitor/summary."*
-- **Endpoint cited in types file**: `src/app/(dashboard)/monitor/types/monitor-summary.ts:3` — *"Backend endpoint: GET /v1/analytics/monitor/summary"*
+- **Endpoint cited in hook header**: `src/app/(dashboard)/monitor/hooks/use-monitor-summary.ts:3` — _"Single-endpoint hook for GET /v1/analytics/monitor/summary."_
+- **Endpoint cited in types file**: `src/app/(dashboard)/monitor/types/monitor-summary.ts:3` — _"Backend endpoint: GET /v1/analytics/monitor/summary"_
 
 ### Types
 

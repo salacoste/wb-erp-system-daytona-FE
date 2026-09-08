@@ -11,6 +11,7 @@
 ## Executive Summary
 
 Frontend team has observed cases where the API response for products includes:
+
 - `current_margin_pct: null` (no margin value)
 - `missing_data_reason: null` (no reason provided)
 - `has_cogs: true` (COGS is assigned)
@@ -52,10 +53,12 @@ When calling `GET /v1/products?include_cogs=true` or `GET /v1/products/:nmId?inc
 ### Expected Behavior (Based on Request #16)
 
 According to Request #16 documentation, backend should return:
+
 - **Either** `current_margin_pct: number` (margin calculated)
 - **Or** `missing_data_reason: string` (reason why margin is not available)
 
 **Possible `missing_data_reason` values** (from Request #16):
+
 - `NO_SALES_IN_PERIOD` - No sales in the last completed week
 - `COGS_NOT_ASSIGNED` - No COGS valid for the last completed week
 - `NO_SALES_DATA` - Product never had sales
@@ -65,6 +68,7 @@ According to Request #16 documentation, backend should return:
 ### Current Frontend Handling
 
 Frontend currently shows "(расчёт...)" (calculation in progress) when:
+
 - `current_margin_pct === null`
 - `missing_data_reason === null`
 - `has_cogs === true`
@@ -79,11 +83,13 @@ Frontend currently shows "(расчёт...)" (calculation in progress) when:
 ### 1. Is This Expected Behavior?
 
 **Q1.1**: Can `current_margin_pct: null` and `missing_data_reason: null` occur simultaneously for products with:
+
 - ✅ COGS assigned (`has_cogs: true`)
 - ✅ Sales data exists (`last_sale_date` and `total_sales_qty` present)
 - ✅ COGS `valid_from` date is before or during last completed week
 
 **Q1.2**: If yes, what does this state indicate?
+
 - Is margin calculation in progress (Epic 20)?
 - Is this a data inconsistency issue?
 - Is this a transient state that will resolve?
@@ -91,27 +97,29 @@ Frontend currently shows "(расчёт...)" (calculation in progress) when:
 ### 2. What Scenarios Can Cause This?
 
 **Q2.1**: Please list all scenarios where backend returns:
+
 - `current_margin_pct: null`
 - `missing_data_reason: null`
 - `has_cogs: true`
 
 **Possible scenarios we've considered**:
+
 1. **Margin calculation task queued but not started yet** (Epic 20)
    - Task is in queue but worker hasn't processed it
    - Expected: Should resolve when task completes
-   
+
 2. **Data inconsistency in weekly_margin_fact table**
    - COGS exists, sales exist, but no margin record in `weekly_margin_fact`
    - Expected: Should be fixed by recalculation task
-   
+
 3. **Race condition during COGS assignment**
    - COGS just assigned, margin calculation not yet triggered
    - Expected: Should resolve within seconds (Epic 20 automatic recalculation)
-   
+
 4. **Last completed week calculation edge case**
    - COGS valid_from is exactly at boundary of last completed week
    - Expected: Should be handled by temporal lookup logic
-   
+
 5. **Analytics service temporary unavailability**
    - Backend couldn't fetch analytics data but didn't set `missing_data_reason`
    - Expected: Should set `ANALYTICS_UNAVAILABLE` or retry
@@ -127,25 +135,28 @@ Frontend currently shows "(расчёт...)" (calculation in progress) when:
 ### 4. How Should Frontend React?
 
 **Q4.1**: What should frontend display when:
+
 - `current_margin_pct: null`
 - `missing_data_reason: null`
 - `has_cogs: true`
 - Sales data exists
 
 **Options we're considering**:
+
 - **Option A**: Show "(расчёт маржи...)" (calculation in progress)
   - Assumes Epic 20 task is running
   - May be misleading if task is not actually running
-  
+
 - **Option B**: Show "(нет данных)" (no data available)
   - Generic message, doesn't imply calculation
   - May confuse users if calculation is actually in progress
-  
+
 - **Option C**: Show "(требуется пересчёт)" (recalculation required)
   - Suggests user should trigger manual recalculation
   - May be incorrect if automatic recalculation is in progress
 
 **Q4.2**: Should frontend:
+
 - Poll for updates (like we do after COGS assignment)?
 - Show a button to trigger manual recalculation?
 - Just show a generic "no data" message?
@@ -172,7 +183,7 @@ Frontend currently shows "(расчёт...)" (calculation in progress) when:
 - **Request #16**: COGS History and Margin Data Structure Guide
   - Documents `missing_data_reason` values
   - Explains margin calculation logic
-  
+
 - **Request #17**: COGS Assigned After Completed Week - Manual Recalculation Required
   - Documents scenarios where automatic recalculation is skipped
   - Provides manual recalculation workaround
@@ -182,6 +193,7 @@ Frontend currently shows "(расчёт...)" (calculation in progress) when:
 ## Example API Response (Problematic Case)
 
 **Request**:
+
 ```http
 GET /v1/products/235263406?include_cogs=true
 Authorization: Bearer <token>
@@ -189,6 +201,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Response** (Current - Problematic):
+
 ```json
 {
   "nm_id": "235263406",
@@ -216,6 +229,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Expected Response** (What we expect):
+
 ```json
 {
   "nm_id": "235263406",
@@ -254,7 +268,7 @@ Please provide:
 
 - **Epic 20**: Automatic Margin Recalculation on COGS Update
   - May be related to task queue processing delays
-  
+
 - **Request #17**: COGS Assigned After Completed Week
   - Similar issue with missing margin data
   - Solution: Manual recalculation via `POST /v1/tasks/enqueue`
@@ -279,4 +293,3 @@ Please provide:
 - **Resolution date**: 2025-01-26
 - **Summary**: Addressed in the companion `-backend.md` file. All scenarios where `missing_data_reason` can be null alongside `current_margin_pct: null` have been documented. The `null` + `null` case indicates calculation is in progress (Epic 20). Backend now guarantees `missing_data_reason` is set when COGS is assigned but margin is unavailable.
 - **Remaining frontend action**: Implement accurate status display using the documented scenarios -- use `has_cogs` + `missing_data_reason` combinations to show correct UI state.
-

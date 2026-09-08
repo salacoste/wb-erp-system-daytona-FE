@@ -9,7 +9,7 @@ chars: 6263
 
 В этой статье:
 
-- 
+-
 - <a href="#sborka-zakazov-fbo" rel="nofollow">Сборка заказов FBO</a>
 - <a href="#nastrojka-otobrazheniya-vseh-tovarov-pri-sborke-fbo" rel="nofollow">Настройка отображения всех товаров при сборке FBO</a>
 - <a href="#nastrojka-sborki-komplektov" rel="nofollow">Настройка сборки комплектов</a>

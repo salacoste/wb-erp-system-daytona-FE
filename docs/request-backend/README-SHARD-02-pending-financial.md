@@ -19,14 +19,15 @@ This shard contains pending and in-progress requests related to financial featur
 
 **Summary**: Wildberries renamed expense categories in financial reports (effective 22.12.2024):
 
-| Old Name | New Name |
-|----------|----------|
-| `Paid acceptance` (column) | `Operations at acceptance` |
-| `Paid acceptance` (reason) | `Product processing` |
-| `Paid acceptance MP by boxes` | `Product processing MP by boxes` |
+| Old Name                         | New Name                            |
+| -------------------------------- | ----------------------------------- |
+| `Paid acceptance` (column)       | `Operations at acceptance`          |
+| `Paid acceptance` (reason)       | `Product processing`                |
+| `Paid acceptance MP by boxes`    | `Product processing MP by boxes`    |
 | `Box number for paid acceptance` | `Box number for product processing` |
 
 **Backend Changes**:
+
 - `src/imports/column-mapper/synonym-dictionary.const.ts` - Added new synonyms
 - `src/imports/column-mapper/required-columns.const.ts` - Added comments
 - `CLAUDE.md` - Updated Column Synonym Dictionary section
@@ -49,6 +50,7 @@ This shard contains pending and in-progress requests related to financial featur
 **Business Need**: Show business owner the complete sales funnel starting from their set price (before WB discounts).
 
 **New Fields**:
+
 - `retail_price_total` = SUM(retail_price) WHERE doc_type='sale' - sum by YOUR prices
 - `retail_price_returns` = SUM(retail_price) WHERE doc_type='return' - returns by YOUR prices
 

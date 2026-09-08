@@ -36,7 +36,9 @@ confirm SKU-only display is acceptable (then the FE can drop the productName sub
 ---
 
 ## Note
+
 These are display-completeness gaps, NOT data-correctness bugs — after iter-68 the FE renders honest
 "—" placeholders (Defensive Frontend) rather than NaN/blank. The detail header + orders/documents now
 render correctly against the real (nested) backend shape. Authoritative contract: `#111` (RESOLVED)
-+ `src/supplies/services/supply.service.ts`.
+
+- `src/supplies/services/supply.service.ts`.

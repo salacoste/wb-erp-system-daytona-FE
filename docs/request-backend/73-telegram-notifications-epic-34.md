@@ -11,6 +11,7 @@
 ## Обзор
 
 Система Telegram push-уведомлений о выполнении фоновых задач с поддержкой:
+
 - Привязка Telegram-аккаунта через 6-значный код верификации
 - Настройка предпочтений уведомлений (типы событий, язык, тихие часы)
 - Telegram bot с интерактивными командами (/start, /status, /settings, /help)
@@ -43,6 +44,7 @@ interface BindingCodeResponseDto {
 ```
 
 **Example Response**:
+
 ```json
 {
   "binding_code": "A1B2C3D4",
@@ -57,7 +59,9 @@ interface BindingCodeResponseDto {
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
+
 1. Frontend: Call `POST /v1/notifications/telegram/bind`
 2. Frontend: Show binding code + instructions OR redirect to `deep_link`
 3. User: Open Telegram, send `/start A1B2C3D4` to bot
@@ -87,6 +91,7 @@ interface BindingStatusResponseDto {
 ```
 
 **Example (bound)**:
+
 ```json
 {
   "bound": true,
@@ -97,6 +102,7 @@ interface BindingStatusResponseDto {
 ```
 
 **Example (not bound)**:
+
 ```json
 {
   "bound": false,
@@ -126,6 +132,7 @@ interface UnbindResponseDto {
 ```
 
 **Example (success)**:
+
 ```json
 {
   "unbound": true,
@@ -134,6 +141,7 @@ interface UnbindResponseDto {
 ```
 
 **Example (no binding)**:
+
 ```json
 {
   "unbound": false,
@@ -179,6 +187,7 @@ interface NotificationPreferencesResponseDto {
 ```
 
 **Example Response**:
+
 ```json
 {
   "cabinet_id": "uuid-string",
@@ -236,6 +245,7 @@ interface UpdateNotificationPreferencesDto {
 ```
 
 **Example (enable quiet hours)**:
+
 ```json
 {
   "quiet_hours": {
@@ -248,6 +258,7 @@ interface UpdateNotificationPreferencesDto {
 ```
 
 **Example (disable all notifications)**:
+
 ```json
 {
   "telegram_enabled": false
@@ -255,6 +266,7 @@ interface UpdateNotificationPreferencesDto {
 ```
 
 **Example (change language)**:
+
 ```json
 {
   "language": "en"
@@ -284,6 +296,7 @@ interface TestNotificationResponseDto {
 ```
 
 **Example (success)**:
+
 ```json
 {
   "sent": true,
@@ -293,6 +306,7 @@ interface TestNotificationResponseDto {
 ```
 
 **Example (failed)**:
+
 ```json
 {
   "sent": false,
@@ -301,6 +315,7 @@ interface TestNotificationResponseDto {
 ```
 
 **Example (not linked - 400 error)**:
+
 ```json
 {
   "message": "Telegram not linked",
@@ -312,12 +327,12 @@ interface TestNotificationResponseDto {
 
 ## Event Types Reference
 
-| Event Type | Описание | Default | Когда отправляется |
-|------------|----------|---------|-------------------|
-| `task_completed` | Задача успешно выполнена | ✅ true | При завершении любой фоновой задачи без ошибок |
-| `task_failed` | Задача завершилась с ошибкой | ✅ true | При ошибке выполнения задачи (после всех retry попыток) |
-| `task_stalled` | Задача зависла (>30 min) | ❌ false | Когда задача выполняется дольше 30 минут |
-| `daily_digest` | Ежедневный дайджест | ✅ true | Ежедневно в `digest_time` (по умолчанию 08:00) |
+| Event Type       | Описание                     | Default  | Когда отправляется                                      |
+| ---------------- | ---------------------------- | -------- | ------------------------------------------------------- |
+| `task_completed` | Задача успешно выполнена     | ✅ true  | При завершении любой фоновой задачи без ошибок          |
+| `task_failed`    | Задача завершилась с ошибкой | ✅ true  | При ошибке выполнения задачи (после всех retry попыток) |
+| `task_stalled`   | Задача зависла (>30 min)     | ❌ false | Когда задача выполняется дольше 30 минут                |
+| `daily_digest`   | Ежедневный дайджест          | ✅ true  | Ежедневно в `digest_time` (по умолчанию 08:00)          |
 
 ---
 
@@ -382,12 +397,12 @@ interface TestNotificationResponseDto {
 
 **Bot Username**: @WBRepricerBot (example)
 
-| Команда | Описание | Пример |
-|---------|----------|--------|
-| `/start <code>` | Привязать аккаунт с кодом верификации | `/start A1B2C3D4` |
-| `/status` | Показать статус подключения и последние уведомления | `/status` |
-| `/settings` | Интерактивные настройки с inline-кнопками | `/settings` |
-| `/help` | Показать список доступных команд | `/help` |
+| Команда         | Описание                                            | Пример            |
+| --------------- | --------------------------------------------------- | ----------------- |
+| `/start <code>` | Привязать аккаунт с кодом верификации               | `/start A1B2C3D4` |
+| `/status`       | Показать статус подключения и последние уведомления | `/status`         |
+| `/settings`     | Интерактивные настройки с inline-кнопками           | `/settings`       |
+| `/help`         | Показать список доступных команд                    | `/help`           |
 
 **Settings Interactive Menu** (inline keyboard):
 
@@ -407,12 +422,13 @@ interface TestNotificationResponseDto {
 
 ## Rate Limiting
 
-| Тип лимита | Значение | Описание |
-|------------|----------|----------|
-| **Global Rate** | 30 msg/sec | Telegram API limit (глобальный) |
-| **Per-Chat Rate** | 1 msg/sec | Лимит на чат (предотвращение спама) |
+| Тип лимита        | Значение   | Описание                            |
+| ----------------- | ---------- | ----------------------------------- |
+| **Global Rate**   | 30 msg/sec | Telegram API limit (глобальный)     |
+| **Per-Chat Rate** | 1 msg/sec  | Лимит на чат (предотвращение спама) |
 
 **Behavior при превышении**:
+
 - Уведомление откладывается в очередь
 - Статус в `notification_log`: `rate_limited`
 - Повторная попытка через интервал (exponential backoff)
@@ -424,6 +440,7 @@ interface TestNotificationResponseDto {
 ### 400 Bad Request
 
 **Missing required fields**:
+
 ```json
 {
   "error": {
@@ -437,6 +454,7 @@ interface TestNotificationResponseDto {
 ```
 
 **Invalid quiet hours format**:
+
 ```json
 {
   "error": {
@@ -454,6 +472,7 @@ interface TestNotificationResponseDto {
 ### 404 Not Found
 
 **Telegram not connected**:
+
 ```json
 {
   "error": {
@@ -464,6 +483,7 @@ interface TestNotificationResponseDto {
 ```
 
 **Invalid binding code**:
+
 ```json
 {
   "error": {
@@ -478,6 +498,7 @@ interface TestNotificationResponseDto {
 ### 409 Conflict
 
 **Binding already exists**:
+
 ```json
 {
   "error": {
@@ -611,44 +632,44 @@ function TestNotificationButton() {
 
 ### telegram_user_bindings
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `id` | UUID | Primary key |
-| `user_id` | UUID | FK → users |
-| `cabinet_id` | UUID | FK → cabinets (cascade delete) |
-| `telegram_id` | BIGINT | Telegram user ID (unique) |
-| `chat_id` | BIGINT | Telegram chat ID |
-| `binding_code` | VARCHAR | 6-digit verification code |
-| `binding_expires_at` | TIMESTAMP | Code expiration (10 min TTL) |
-| `is_verified` | BOOLEAN | Account verified |
-| `created_at` | TIMESTAMP | Record creation time |
+| Поле                 | Тип       | Описание                       |
+| -------------------- | --------- | ------------------------------ |
+| `id`                 | UUID      | Primary key                    |
+| `user_id`            | UUID      | FK → users                     |
+| `cabinet_id`         | UUID      | FK → cabinets (cascade delete) |
+| `telegram_id`        | BIGINT    | Telegram user ID (unique)      |
+| `chat_id`            | BIGINT    | Telegram chat ID               |
+| `binding_code`       | VARCHAR   | 6-digit verification code      |
+| `binding_expires_at` | TIMESTAMP | Code expiration (10 min TTL)   |
+| `is_verified`        | BOOLEAN   | Account verified               |
+| `created_at`         | TIMESTAMP | Record creation time           |
 
 ### notification_preferences
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `id` | UUID | Primary key |
-| `user_id` | UUID | FK → users |
-| `cabinet_id` | UUID | FK → cabinets (cascade delete) |
-| `telegram_enabled` | BOOLEAN | Master toggle |
-| `event_preferences` | JSONB | Per-event toggles |
-| `language` | VARCHAR | 'ru' \| 'en' |
-| `quiet_hours_*` | VARCHAR | Quiet hours settings |
-| `timezone` | VARCHAR | IANA timezone |
+| Поле                | Тип     | Описание                       |
+| ------------------- | ------- | ------------------------------ |
+| `id`                | UUID    | Primary key                    |
+| `user_id`           | UUID    | FK → users                     |
+| `cabinet_id`        | UUID    | FK → cabinets (cascade delete) |
+| `telegram_enabled`  | BOOLEAN | Master toggle                  |
+| `event_preferences` | JSONB   | Per-event toggles              |
+| `language`          | VARCHAR | 'ru' \| 'en'                   |
+| `quiet_hours_*`     | VARCHAR | Quiet hours settings           |
+| `timezone`          | VARCHAR | IANA timezone                  |
 
 ### notification_log
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `id` | UUID | Primary key |
-| `cabinet_id` | UUID | FK → cabinets |
-| `user_id` | UUID | FK → users |
-| `channel` | VARCHAR | 'telegram' |
-| `event_type` | VARCHAR | task.completed, task.failed, etc. |
-| `task_id` | UUID | Related task (optional) |
-| `status` | VARCHAR | sent/failed/skipped/rate_limited |
-| `telegram_message_id` | BIGINT | Telegram message ID |
-| `created_at` | TIMESTAMP | Record creation time |
+| Поле                  | Тип       | Описание                          |
+| --------------------- | --------- | --------------------------------- |
+| `id`                  | UUID      | Primary key                       |
+| `cabinet_id`          | UUID      | FK → cabinets                     |
+| `user_id`             | UUID      | FK → users                        |
+| `channel`             | VARCHAR   | 'telegram'                        |
+| `event_type`          | VARCHAR   | task.completed, task.failed, etc. |
+| `task_id`             | UUID      | Related task (optional)           |
+| `status`              | VARCHAR   | sent/failed/skipped/rate_limited  |
+| `telegram_message_id` | BIGINT    | Telegram message ID               |
+| `created_at`          | TIMESTAMP | Record creation time              |
 
 ---
 
@@ -687,9 +708,9 @@ function TestNotificationButton() {
 
 ---
 
-*Дата создания: 2025-12-24*
-*Последнее обновление: 2025-12-24*
-*Epic Status: ✅ COMPLETE (Backend + Bot Integration)*
+_Дата создания: 2025-12-24_
+_Последнее обновление: 2025-12-24_
+_Epic Status: ✅ COMPLETE (Backend + Bot Integration)_
 
 ## Backend Team Response
 

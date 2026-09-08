@@ -18,6 +18,7 @@
 **So that** I can quickly compare different warehouses without being blocked by API rate limits.
 
 **Non-goals**:
+
 - Backend rate limit changes (backend limits are fixed)
 - Complex rate limit prediction UI
 - Rate limit bypassing (correct implementation only)
@@ -33,6 +34,7 @@ Backend Request #98 revealed a critical rate limit issue:
 **Impact**: Rapid warehouse switching can trigger 429 errors before user realizes it.
 
 **Current Problem**:
+
 - User selects warehouse → immediate API call
 - User changes warehouse again → another immediate API call
 - After 6 rapid changes → HTTP 429 "Too Many Requests" error
@@ -47,6 +49,7 @@ Backend Request #98 revealed a critical rate limit issue:
 ## Acceptance Criteria
 
 ### AC1: Warehouse Selection Debouncing
+
 - [x] Implement 500ms debounce on warehouse selection changes
 - [x] Show loading indicator during debounce delay
 - [x] Cancel pending debounce if user changes warehouse again
@@ -54,6 +57,7 @@ Backend Request #98 revealed a critical rate limit issue:
 - [x] No API calls until user stops changing warehouses
 
 ### AC2: Loading State During Debounce
+
 - [x] Show "Загрузка коэффициентов..." indicator during debounce
 - [x] Show spinner/skeleton in coefficient fields
 - [x] Disable warehouse dropdown during debounce
@@ -61,6 +65,7 @@ Backend Request #98 revealed a critical rate limit issue:
 - [x] Clear loading state when API call completes
 
 ### AC3: Rate Limit Error Handling
+
 - [x] Detect HTTP 429 responses from acceptance coefficients API
 - [x] Show user-friendly error message: "Слишком много запросов. Подождите {N} секунд."
 - [x] Display retry countdown timer in error message
@@ -68,6 +73,7 @@ Backend Request #98 revealed a critical rate limit issue:
 - [x] Auto-retry after cooldown period (optional)
 
 ### AC4: Rate Limit Cooldown UI
+
 - [x] Show progress bar for cooldown period
 - [x] Display remaining time: "Доступно через {сек} сек"
 - [x] Visual indicator: locked warehouse dropdown
@@ -75,6 +81,7 @@ Backend Request #98 revealed a critical rate limit issue:
 - [x] Re-enable dropdown after cooldown expires
 
 ### AC5: Intelligent Caching Strategy
+
 - [x] Cache warehouse coefficients for 1 hour (as per backend TTL)
 - [x] Use cached data if available (no API call)
 - [x] Show "Из кэша" badge when using cached data
@@ -82,18 +89,21 @@ Backend Request #98 revealed a critical rate limit issue:
 - [x] Prefetch coefficients for recently used warehouses (optional)
 
 ### AC6: User Guidance for Rate Limits
+
 - [x] Show info tooltip on warehouse dropdown: "Коэффициенты обновляются автоматически. Не переключайте склады слишком часто."
 - [x] Display rate limit status: "Запросов осталось: {N}/6" (if available from backend)
 - [x] Show warning when approaching limit: "Осталось мало запросов ({N}/6). Подождите {сек} сек."
 - [x] Help text explains: "Лимит установлен Wildberries API"
 
 ### AC7: Fallback to Previous Selection
+
 - [x] If rate limited, revert to previously working warehouse selection
 - [x] Keep previous coefficients in form during cooldown
 - [x] Show message: "Восстановлен предыдущий выбор: {warehouse_name}"
 - [x] Don't lose form data on rate limit error
 
 ### AC8: Analytics & Logging
+
 - [x] Log rate limit occurrences for monitoring
 - [x] Track debounce effectiveness (canceled calls)
 - [x] Monitor cache hit rate
@@ -112,11 +122,11 @@ Backend Request #98 revealed a critical rate limit issue:
 
 **Rate Limits Reference**:
 
-| Scope | Limit | Window | Endpoints |
-|-------|-------|--------|-----------|
-| `tariffs` | 10/min | 60s | commissions, warehouses, box |
-| `orders_fbw` | **6/min** | 60s | **acceptance coefficients** ⚠️ |
-| Standard | 600/min | 60s | price-calculator |
+| Scope        | Limit     | Window | Endpoints                      |
+| ------------ | --------- | ------ | ------------------------------ |
+| `tariffs`    | 10/min    | 60s    | commissions, warehouses, box   |
+| `orders_fbw` | **6/min** | 60s    | **acceptance coefficients** ⚠️ |
+| Standard     | 600/min   | 60s    | price-calculator               |
 
 ---
 
@@ -125,6 +135,7 @@ Backend Request #98 revealed a critical rate limit issue:
 ### Backend Rate Limit Response
 
 **HTTP 429 Too Many Requests**:
+
 ```json
 {
   "statusCode": 429,
@@ -137,6 +148,7 @@ Backend Request #98 revealed a critical rate limit issue:
 ### Acceptance Coefficients Endpoint
 
 **GET /v1/tariffs/acceptance/coefficients?warehouseId={id}**:
+
 - **Rate Limit**: 6 requests/minute (orders_fbw scope)
 - **Cache TTL**: 1 hour (backend)
 - **Response Time**: ~200-500ms
@@ -640,6 +652,7 @@ export const useRateLimitStore = create<RateLimitStore>()(
 ## Testing Scenarios
 
 ### Unit Tests
+
 - [ ] Debounce delay works correctly (500ms)
 - [ ] Debounce cancels on rapid changes
 - [ ] Cooldown timer counts down correctly
@@ -647,6 +660,7 @@ export const useRateLimitStore = create<RateLimitStore>()(
 - [ ] Cache retrieval works (1h TTL)
 
 ### Integration Tests
+
 - [ ] Warehouse selection triggers debounced API call
 - [ ] Loading state shows during debounce
 - [ ] Rate limit error shows cooldown UI
@@ -654,6 +668,7 @@ export const useRateLimitStore = create<RateLimitStore>()(
 - [ ] Form keeps previous data on rate limit
 
 ### E2E Tests
+
 - [ ] User rapidly changes warehouses (no 429 error)
 - [ ] User sees loading indicator during debounce
 - [ ] User sees rate limit warning (if triggered)
@@ -664,14 +679,14 @@ export const useRateLimitStore = create<RateLimitStore>()(
 
 ## Invariants & Edge Cases
 
-| Scenario | Handling |
-|----------|----------|
-| User changes warehouse rapidly | Debounce prevents API spam |
-| Rate limit hit (429) | Show cooldown UI, revert to previous selection |
-| No warehouse selected | Don't fetch coefficients |
-| Cached data available | Skip API call, show "Из кэша" badge |
-| Network error during debounce | Show error, allow retry |
-| Component unmounts during debounce | Cancel debounce cleanup |
+| Scenario                           | Handling                                       |
+| ---------------------------------- | ---------------------------------------------- |
+| User changes warehouse rapidly     | Debounce prevents API spam                     |
+| Rate limit hit (429)               | Show cooldown UI, revert to previous selection |
+| No warehouse selected              | Don't fetch coefficients                       |
+| Cached data available              | Skip API call, show "Из кэша" badge            |
+| Network error during debounce      | Show error, allow retry                        |
+| Component unmounts during debounce | Cancel debounce cleanup                        |
 
 ---
 
@@ -705,23 +720,26 @@ export const useRateLimitStore = create<RateLimitStore>()(
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/hooks/useWarehouseCoefficients.ts` | UPDATE | +40 | Add debouncing logic |
-| `src/hooks/useRateLimitCooldown.ts` | CREATE | ~50 | Cooldown state management |
-| `src/components/custom/price-calculator/WarehouseSelector.tsx` | UPDATE | +60 | Integrate debouncing + UI |
-| `src/components/custom/price-calculator/RateLimitWarning.tsx` | CREATE | ~50 | Rate limit warning component |
-| `src/components/custom/price-calculator/CoefficientsLoadingSkeleton.tsx` | CREATE | ~30 | Loading skeleton |
-| `src/stores/rateLimitStore.ts` | CREATE | ~80 | Zustand store for rate limits |
-| `src/lib/debounce.ts` | UPDATE | +20 | Reusable debounce hook |
+
+| File                                                                     | Change Type | Lines (Est.) | Description                   |
+| ------------------------------------------------------------------------ | ----------- | ------------ | ----------------------------- |
+| `src/hooks/useWarehouseCoefficients.ts`                                  | UPDATE      | +40          | Add debouncing logic          |
+| `src/hooks/useRateLimitCooldown.ts`                                      | CREATE      | ~50          | Cooldown state management     |
+| `src/components/custom/price-calculator/WarehouseSelector.tsx`           | UPDATE      | +60          | Integrate debouncing + UI     |
+| `src/components/custom/price-calculator/RateLimitWarning.tsx`            | CREATE      | ~50          | Rate limit warning component  |
+| `src/components/custom/price-calculator/CoefficientsLoadingSkeleton.tsx` | CREATE      | ~30          | Loading skeleton              |
+| `src/stores/rateLimitStore.ts`                                           | CREATE      | ~80          | Zustand store for rate limits |
+| `src/lib/debounce.ts`                                                    | UPDATE      | +20          | Reusable debounce hook        |
 
 ### Dependencies on Previous Stories
-| Story | Component/Type Used |
-|-------|---------------------|
-| 44.12 | WarehouseSelector (dropdown component) |
+
+| Story | Component/Type Used                           |
+| ----- | --------------------------------------------- |
+| 44.12 | WarehouseSelector (dropdown component)        |
 | 44.27 | Warehouse integration (coefficients fetching) |
 
 ### Change Log
+
 _(To be filled by Dev Agent during implementation)_
 
 ---
@@ -735,16 +753,17 @@ _(To be filled after implementation)_
 **Gate Decision**:
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Warehouse Selection Debouncing | ⏳ | |
-| AC2 | Loading State During Debounce | ⏳ | |
-| AC3 | Rate Limit Error Handling | ⏳ | |
-| AC4 | Rate Limit Cooldown UI | ⏳ | |
-| AC5 | Intelligent Caching Strategy | ⏳ | |
-| AC6 | User Guidance for Rate Limits | ⏳ | |
-| AC7 | Fallback to Previous Selection | ⏳ | |
-| AC8 | Analytics & Logging | ⏳ | |
+
+| AC  | Requirement                    | Status | Evidence |
+| --- | ------------------------------ | ------ | -------- |
+| AC1 | Warehouse Selection Debouncing | ⏳     |          |
+| AC2 | Loading State During Debounce  | ⏳     |          |
+| AC3 | Rate Limit Error Handling      | ⏳     |          |
+| AC4 | Rate Limit Cooldown UI         | ⏳     |          |
+| AC5 | Intelligent Caching Strategy   | ⏳     |          |
+| AC6 | User Guidance for Rate Limits  | ⏳     |          |
+| AC7 | Fallback to Previous Selection | ⏳     |          |
+| AC8 | Analytics & Logging            | ⏳     |          |
 
 ---
 

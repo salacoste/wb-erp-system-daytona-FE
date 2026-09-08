@@ -7,6 +7,7 @@
 ## Problem
 
 User wants to see storage data from BOTH sources side-by-side:
+
 1. **Primary**: `paid_storage_daily` (Storage API)
 2. **Secondary**: `wb_finance_raw` (Weekly Report)
 
@@ -28,6 +29,7 @@ storage_difference: number;       // storage - storage_weekly_report
 ```
 
 SQL queries:
+
 ```sql
 -- Primary: paid_storage_daily
 SELECT COALESCE(SUM(warehouse_price), 0) as storage_total
@@ -50,6 +52,7 @@ WHERE cabinet_id = ? AND sale_dt >= ? AND sale_dt < ?
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: Added `storage_weekly_report` and `storage_difference` fields to the expenses response, allowing frontend to display storage data from both sources (paid_storage_daily and wb_finance_raw) side-by-side for comparison and transparency.
 **Frontend Action**: No further action needed unless noted above.
@@ -68,6 +71,7 @@ export interface CabinetLevelExpenses {
 **File**: `frontend/src/app/(dashboard)/analytics/sku/page.tsx`
 
 Updated storage card in cabinet expenses section:
+
 - Shows "Хранение (API)" as primary value
 - Below shows "Отчёт: X ₽" with difference in parentheses
 - Yellow background if difference > 1 ₽
@@ -76,6 +80,7 @@ Updated storage card in cabinet expenses section:
 #### 3. Category & Brand Pages
 
 **Files**:
+
 - `frontend/src/app/(dashboard)/analytics/category/page.tsx`
 - `frontend/src/app/(dashboard)/analytics/brand/page.tsx`
 
@@ -91,14 +96,15 @@ Added storage comparison card between summary stats and table:
 ```
 
 Card styling:
+
 - Normal: `border-gray-200`
 - Discrepancy (>1₽): `border-yellow-400 bg-yellow-50` + badge
 
 ## UI Behavior
 
-| Condition | Styling |
-|-----------|---------|
-| Difference ≤ 1₽ | Normal card, green difference text |
+| Condition       | Styling                                        |
+| --------------- | ---------------------------------------------- |
+| Difference ≤ 1₽ | Normal card, green difference text             |
 | Difference > 1₽ | Yellow card, red/orange difference text, badge |
 
 ## Why Differences Occur

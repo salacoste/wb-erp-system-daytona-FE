@@ -15,7 +15,7 @@ chars: 12067
 
 В этой статье:
 
-- 
+-
 - <a href="#vozmozhnosti-regulyarnogo-obmena" rel="nofollow">Возможности регулярного обмена</a>
 - <a href="#fit6cq" rel="nofollow">Как работает регулярный обмен</a>
 - <a href="#1hraetw" rel="nofollow">Настройки регулярного обмена</a>

@@ -1,12 +1,12 @@
 # Story 70.3-FE: Fix Margin Calculations (Weighted Avg, Denominators)
 
-| Field | Value |
-|-------|-------|
-| Epic | 70-FE Validation Fixes |
-| Priority | P2 |
-| SP | 2 |
-| Status | 📋 Ready for Dev |
-| Group | D (D-7, D-9) |
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Epic     | 70-FE Validation Fixes |
+| Priority | P2                     |
+| SP       | 2                      |
+| Status   | 📋 Ready for Dev       |
+| Group    | D (D-7, D-9)           |
 
 ## Description
 
@@ -17,19 +17,19 @@
 
 ### D-7: Три маржи на SKU-странице
 
-| Location | Value | Formula | Denominator |
-|----------|-------|---------|-------------|
-| Header card | 11.3% | operating_profit / (sales_gross - returns) | Gross sales |
-| Footer table | 16.6% | operating_profit / revenue_net | Net revenue |
-| API | 15.86% | operating_margin_pct | Backend calculation |
+| Location     | Value  | Formula                                    | Denominator         |
+| ------------ | ------ | ------------------------------------------ | ------------------- |
+| Header card  | 11.3%  | operating_profit / (sales_gross - returns) | Gross sales         |
+| Footer table | 16.6%  | operating_profit / revenue_net             | Net revenue         |
+| API          | 15.86% | operating_margin_pct                       | Backend calculation |
 
 **Root cause**: Header и footer используют разные знаменатели без пояснения.
 
 ### D-9: Brand footer — simple average вместо weighted
 
-| Location | Value | Formula |
-|----------|-------|---------|
-| Header card | 10.83% | total_profit / total_sales (weighted) |
+| Location     | Value  | Formula                                               |
+| ------------ | ------ | ----------------------------------------------------- |
+| Header card  | 10.83% | total_profit / total_sales (weighted)                 |
 | Footer table | 51.47% | (margin₁ + margin₂ + ... + marginₙ) / n (unweighted!) |
 
 **Root cause**: Footer использует `simple arithmetic average` маржей брендов.
@@ -38,6 +38,7 @@
 ## Root Cause Code
 
 ### D-7: SKU page header
+
 **File**: `src/app/(dashboard)/analytics/sku/page.tsx`, lines 199-212
 
 ```typescript
@@ -53,6 +54,7 @@ avgMargin: (() => {
 Uses `sales_gross` (до комиссий WB) as denominator.
 
 ### D-7: SKU table footer
+
 **File**: `src/components/custom/SkuFinancialsTable.tsx`, line 342
 
 ```typescript
@@ -63,6 +65,7 @@ const avgMargin = totalRevenue > 0 ? (totalOperatingProfit / totalRevenue) * 100
 Uses `revenue_net` (после комиссий) as denominator.
 
 ### D-9: Brand footer
+
 **File**: `src/components/custom/MarginByBrandTable.tsx`, lines 472-480
 
 ```typescript
@@ -99,6 +102,7 @@ avgMargin: (() => {
 ### D-7: SKU page (UX improvement)
 
 **Option A** (Recommended): Align header to use `revenue_net` denominator (same as footer):
+
 ```typescript
 // sku/page.tsx: replace sales_gross with revenue_net
 const totalRevenue = withCogs.reduce((sum, item) => sum + item.revenue.net, 0)
@@ -109,10 +113,10 @@ return totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : null
 
 ## Files to Modify
 
-| File | Change |
-|------|--------|
-| `src/components/custom/MarginByBrandTable.tsx` | Weighted average (D-9) |
-| `src/app/(dashboard)/analytics/sku/page.tsx` | Align denominator (D-7) |
+| File                                              | Change                   |
+| ------------------------------------------------- | ------------------------ |
+| `src/components/custom/MarginByBrandTable.tsx`    | Weighted average (D-9)   |
+| `src/app/(dashboard)/analytics/sku/page.tsx`      | Align denominator (D-7)  |
 | `src/components/custom/MarginByCategoryTable.tsx` | Check same pattern (D-9) |
 
 ## Test Plan

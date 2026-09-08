@@ -14,7 +14,7 @@ chars: 8323
 
 В этой статье:
 
-- 
+-
 - <a href="#obshhaya-informatsiya" rel="nofollow">Общая информация</a>
 - <a href="#avtomaticheskoe-razdelenie-zakazov-ozon-yandeks-market-i-megamarket" rel="nofollow">Автоматическое разделение заказов Ozon, Яндекс.Маркет и Мегамаркет</a>
 - <a href="#kak-razdelit-zakazy-fbs-cherez-selsup" rel="nofollow">Как разделить заказы FBS через SelSup</a>
@@ -55,11 +55,7 @@ chars: 8323
 
 При активации данной функции **все заказы, импортированные в SelSup и содержащие более одной единицы товара, будут автоматически разделены** на отдельные отправления на маркетплейсе.
 
-> 
->
 > Эта функция не применяется к товарам, требующим маркировки в системе «Честный знак».
->
-> 
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 

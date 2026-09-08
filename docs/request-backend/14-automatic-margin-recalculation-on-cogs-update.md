@@ -18,6 +18,7 @@
 **Проблема:** После назначения COGS через UI, маржа не отображается в списке товаров. Таблица `weekly_margin_fact` остаётся пустой, т.к. backend не рассчитывает маржу автоматически.
 
 **Impact:**
+
 - 😞 **Плохой UX:** Пользователь назначил COGS → видит "— (нет продаж)" вместо маржи
 - 📊 **Data inconsistency:** Таблица `cogs` заполнена, `weekly_margin_fact` пустая
 - ❌ **Request #15 не работает:** `GET /v1/products?include_cogs=true` возвращает `null` для margin
@@ -35,6 +36,7 @@
 #### Frontend → Backend:
 
 **User Action:**
+
 ```
 1. Открывает /cogs
 2. Выбирает товар "Краска для мебели" (321678606)
@@ -46,6 +48,7 @@
 ```
 
 **Frontend API Call:**
+
 ```http
 POST /v1/products/321678606/cogs
 Authorization: Bearer {jwt}
@@ -63,6 +66,7 @@ Content-Type: application/json
 #### Expected Backend Behavior:
 
 **Step 1: Validate & Create COGS** ✅ (Already implemented)
+
 ```typescript
 // src/products/products.service.ts
 1. Validate product exists in WB API
@@ -71,6 +75,7 @@ Content-Type: application/json
 ```
 
 **Step 2: Calculate Affected Weeks** 🔴 (NEEDS IMPLEMENTATION)
+
 ```typescript
 // Determine which weeks need margin recalculation
 // Logic: From valid_from date to current week
@@ -80,6 +85,7 @@ const affectedWeeks = calculateAffectedWeeks("2025-11-24");
 ```
 
 **Step 3: Enqueue Margin Recalculation Task** 🔴 (NEEDS IMPLEMENTATION)
+
 ```typescript
 // src/products/products.service.ts
 await this.taskQueue.add('recalculate_weekly_margin', {
@@ -92,6 +98,7 @@ await this.taskQueue.add('recalculate_weekly_margin', {
 ```
 
 **Step 4: Background Worker Processes Task** 🔴 (NEEDS IMPLEMENTATION)
+
 ```typescript
 // src/queue/processors/margin-calculation.processor.ts
 // For week 2025-W47:
@@ -106,6 +113,7 @@ await this.taskQueue.add('recalculate_weekly_margin', {
 #### Expected Response:
 
 **Immediate Response (201 Created):**
+
 ```json
 {
   "nm_id": "321678606",
@@ -127,11 +135,13 @@ await this.taskQueue.add('recalculate_weekly_margin', {
 **After Background Task (3-5 seconds):**
 
 When frontend refreshes or polls:
+
 ```http
 GET /v1/products?include_cogs=true&limit=25
 ```
 
 Response includes:
+
 ```json
 {
   "products": [
@@ -156,18 +166,21 @@ Response includes:
 #### Expected Data State:
 
 **Table `cogs`:**
+
 ```sql
 SELECT * FROM cogs WHERE nm_id = '321678606';
 -- 1 row: unit_cost_rub=990, valid_from=2025-11-24, valid_to=NULL
 ```
 
 **Table `weekly_margin_fact`:**
+
 ```sql
 SELECT * FROM weekly_margin_fact WHERE nm_id = '321678606' AND week = '2025-W47';
 -- 1 row: margin_percent=12.5, cogs_rub=9900, revenue_net_rub=15000
 ```
 
 **Table `tasks`:**
+
 ```sql
 SELECT * FROM tasks WHERE task_type = 'recalculate_weekly_margin' ORDER BY created_at DESC LIMIT 1;
 -- 1 row: status='completed', payload={ cabinetId, weeks: ['2025-W47'] }
@@ -182,6 +195,7 @@ SELECT * FROM tasks WHERE task_type = 'recalculate_weekly_margin' ORDER BY creat
 #### Frontend → Backend:
 
 **User Action:**
+
 ```
 1. Выбирает товар "Краска для мебели" (321678606)
 2. Заполняет форму:
@@ -192,6 +206,7 @@ SELECT * FROM tasks WHERE task_type = 'recalculate_weekly_margin' ORDER BY creat
 ```
 
 **Frontend API Call:**
+
 ```http
 POST /v1/products/321678606/cogs
 
@@ -206,6 +221,7 @@ POST /v1/products/321678606/cogs
 #### Expected Backend Behavior:
 
 **Step 2: Calculate Affected Weeks** 🔴 (NEEDS IMPLEMENTATION)
+
 ```typescript
 const affectedWeeks = calculateAffectedWeeks("2025-10-10");
 // Result: ["2025-W41", "2025-W42", "2025-W43", "2025-W44", "2025-W45", "2025-W46", "2025-W47"]
@@ -213,6 +229,7 @@ const affectedWeeks = calculateAffectedWeeks("2025-10-10");
 ```
 
 **Step 3: Enqueue Task для ВСЕХ затронутых недель** 🔴
+
 ```typescript
 await this.taskQueue.add('recalculate_weekly_margin', {
   cabinetId: 'uuid',
@@ -224,6 +241,7 @@ await this.taskQueue.add('recalculate_weekly_margin', {
 ```
 
 **Step 4: Background Worker пересчитывает ВСЕ недели** 🔴
+
 ```typescript
 // For EACH week in ["2025-W41", "2025-W42", ..., "2025-W47"]:
 1. Get sales for that week
@@ -239,6 +257,7 @@ await this.taskQueue.add('recalculate_weekly_margin', {
 **After Background Task (20-30 seconds for 7 weeks):**
 
 **Table `weekly_margin_fact`:**
+
 ```sql
 SELECT week, margin_percent FROM weekly_margin_fact
 WHERE nm_id = '321678606' AND week >= '2025-W41'
@@ -255,6 +274,7 @@ ORDER BY week;
 ```
 
 **UI Updates:**
+
 - Product list now shows margin for all 7 weeks of data
 - Analytics graphs show historical margin trends
 
@@ -267,6 +287,7 @@ ORDER BY week;
 #### Frontend → Backend:
 
 **User Action:**
+
 ```
 1. Выбирает товар с существующей COGS
    Текущая COGS: 1110 ₽ с 2025-11-24
@@ -276,6 +297,7 @@ ORDER BY week;
 ```
 
 **Frontend API Call:**
+
 ```http
 POST /v1/products/321678606/cogs
 
@@ -290,6 +312,7 @@ POST /v1/products/321678606/cogs
 #### Expected Backend Behavior:
 
 **Step 1: UPDATE existing COGS** ✅ (Already implemented - Request #12)
+
 ```typescript
 // src/cogs/services/cogs.service.ts
 // Find existing COGS with (nm_id=321678606, valid_from=2025-11-24)
@@ -314,6 +337,7 @@ await this.prisma.cogs.update({
 ```
 
 **Step 2: Enqueue Margin Recalculation** 🔴 (NEEDS IMPLEMENTATION)
+
 ```typescript
 // COGS изменилась → margin для 2025-W47 нужно пересчитать!
 await this.taskQueue.add('recalculate_weekly_margin', {
@@ -328,6 +352,7 @@ await this.taskQueue.add('recalculate_weekly_margin', {
 #### Expected Data State:
 
 **Table `cogs`:**
+
 ```sql
 -- STILL 1 row (updated, not created new)
 SELECT * FROM cogs WHERE nm_id = '321678606';
@@ -337,6 +362,7 @@ SELECT * FROM cogs WHERE nm_id = '321678606';
 ```
 
 **Table `weekly_margin_fact`:**
+
 ```sql
 -- Updated with NEW margin based on corrected COGS
 SELECT * FROM weekly_margin_fact WHERE nm_id = '321678606' AND week = '2025-W47';
@@ -352,6 +378,7 @@ SELECT * FROM weekly_margin_fact WHERE nm_id = '321678606' AND week = '2025-W47'
 #### Frontend → Backend:
 
 **User Action:**
+
 ```
 1. Товар имеет COGS: 990 ₽ с 2025-11-24
 2. Пользователь создаёт новую версию:
@@ -362,6 +389,7 @@ SELECT * FROM weekly_margin_fact WHERE nm_id = '321678606' AND week = '2025-W47'
 ```
 
 **Frontend API Call:**
+
 ```http
 POST /v1/products/321678606/cogs
 
@@ -375,6 +403,7 @@ POST /v1/products/321678606/cogs
 #### Expected Backend Behavior:
 
 **Step 1: Create NEW version** ✅ (Already works)
+
 ```typescript
 // Existing COGS NOT found with valid_from=2025-12-01
 // → Create NEW row
@@ -389,6 +418,7 @@ await this.prisma.cogs.create({
 ```
 
 **Step 2: Close old version** 🔴 (NEEDS IMPLEMENTATION?)
+
 ```typescript
 // OLD version should be closed?
 // UPDATE cogs SET valid_to = '2025-12-01'
@@ -398,6 +428,7 @@ await this.prisma.cogs.create({
 ```
 
 **Step 3: Enqueue Margin Recalculation** 🔴 (NEEDS IMPLEMENTATION)
+
 ```typescript
 // Если valid_from в будущем → enqueue НЕ нужен (нет sales data yet)
 if (new Date(dto.valid_from) <= new Date()) {
@@ -409,6 +440,7 @@ if (new Date(dto.valid_from) <= new Date()) {
 #### Expected Data State:
 
 **Table `cogs`:**
+
 ```sql
 SELECT * FROM cogs WHERE nm_id = '321678606' ORDER BY valid_from;
 
@@ -418,6 +450,7 @@ SELECT * FROM cogs WHERE nm_id = '321678606' ORDER BY valid_from;
 ```
 
 **Table `weekly_margin_fact`:**
+
 ```sql
 -- No changes yet (valid_from в будущем)
 -- When week 2025-W48 starts, margin будет рассчитана с COGS 1050
@@ -432,6 +465,7 @@ SELECT * FROM cogs WHERE nm_id = '321678606' ORDER BY valid_from;
 #### Frontend → Backend:
 
 **User Action:**
+
 ```
 1. Открывает страницу bulk COGS upload
 2. Загружает CSV с 500 товарами
@@ -439,6 +473,7 @@ SELECT * FROM cogs WHERE nm_id = '321678606' ORDER BY valid_from;
 ```
 
 **Frontend API Call:**
+
 ```http
 POST /v1/products/cogs/bulk
 
@@ -454,6 +489,7 @@ POST /v1/products/cogs/bulk
 #### Expected Backend Behavior:
 
 **Step 1: Validate & Create COGS** ✅ (Already implemented)
+
 ```typescript
 // For each item:
 1. Validate product exists
@@ -462,6 +498,7 @@ POST /v1/products/cogs/bulk
 ```
 
 **Step 2: Calculate Affected Weeks (AGGREGATED)** 🔴 (NEEDS IMPLEMENTATION)
+
 ```typescript
 // IMPORTANT: Don't create 500 separate tasks!
 // Aggregate all affected weeks across ALL items
@@ -477,6 +514,7 @@ for (const item of dto.items) {
 ```
 
 **Step 3: Enqueue SINGLE Batch Task** 🔴 (NEEDS IMPLEMENTATION)
+
 ```typescript
 // ONE task for all products and weeks
 await this.taskQueue.add('recalculate_weekly_margin_batch', {
@@ -489,6 +527,7 @@ await this.taskQueue.add('recalculate_weekly_margin_batch', {
 ```
 
 **Step 4: Background Worker (Batch Processing)** 🔴 (NEEDS IMPLEMENTATION)
+
 ```typescript
 // Process ALL weeks in single job
 for (const week of job.data.weeks) {
@@ -500,6 +539,7 @@ for (const week of job.data.weeks) {
 #### Expected Response:
 
 **Immediate Response (202 Accepted):**
+
 ```json
 {
   "task_id": "uuid-here",
@@ -517,12 +557,14 @@ for (const week of job.data.weeks) {
 #### Expected Data State:
 
 **Table `cogs`:**
+
 ```sql
 SELECT COUNT(*) FROM cogs;
 -- 500 rows created/updated
 ```
 
 **Table `weekly_margin_fact`:**
+
 ```sql
 -- After background job completes (~45 seconds)
 SELECT week, COUNT(*) as products FROM weekly_margin_fact
@@ -541,12 +583,14 @@ GROUP BY week;
 #### Frontend → Backend:
 
 **User Action:**
+
 ```
 1. Открывает /cogs
 2. ProductList component рендерится с enableMarginDisplay={true}
 ```
 
 **Frontend API Call:**
+
 ```http
 GET /v1/products?limit=25&include_cogs=true
 ```
@@ -554,6 +598,7 @@ GET /v1/products?limit=25&include_cogs=true
 #### Expected Backend Behavior:
 
 **Current Implementation** ✅ (Request #15 - already works)
+
 ```typescript
 // src/products/products.service.ts
 1. Get products from WB API
@@ -563,6 +608,7 @@ GET /v1/products?limit=25&include_cogs=true
 ```
 
 **Expected:** Margin data должна быть доступна, если:
+
 - ✅ COGS assigned
 - ✅ Sales data exists for last week
 - ✅ **weekly_margin_fact populated** ← This happens AUTOMATICALLY after Flow 1-5
@@ -602,6 +648,7 @@ GET /v1/products?limit=25&include_cogs=true
 #### Frontend Behavior:
 
 **Option 1: Polling (Recommended for MVP)**
+
 ```typescript
 // After COGS assignment
 const response = await apiClient.post(`/v1/products/${nmId}/cogs`, cogs);
@@ -627,6 +674,7 @@ const pollInterval = setInterval(async () => {
 ```
 
 **Option 2: Optimistic UI (Better UX)**
+
 ```typescript
 // After COGS assignment
 toast.info('Себестоимость назначена. Расчёт маржи начат...');
@@ -639,6 +687,7 @@ setTimeout(() => {
 ```
 
 **Option 3: WebSocket (Future Enhancement)**
+
 ```typescript
 // Backend emits event when margin calculated
 socket.on('margin:calculated', (data) => {
@@ -654,6 +703,7 @@ socket.on('margin:calculated', (data) => {
 **For Option 1 & 2:** Already works (no changes needed)
 
 **For Option 3:** 🔴 (Future enhancement)
+
 ```typescript
 // After margin calculation completes
 this.websocketGateway.emit('margin:calculated', {
@@ -818,16 +868,19 @@ export class MarginCalculationProcessor {
 ## 📊 Performance Considerations
 
 ### Single Product Assignment
+
 - **Affected weeks:** 1 week (if current date)
 - **Calculation time:** 2-5 seconds
 - **Priority:** Normal
 
 ### Historical Assignment (6 weeks back)
+
 - **Affected weeks:** 7 weeks
 - **Calculation time:** 20-30 seconds
 - **Priority:** Normal
 
 ### Bulk Assignment (500 products)
+
 - **Affected weeks:** 7 weeks (deduplicated)
 - **Calculation time:** 45-60 seconds
 - **Priority:** Low (background)
@@ -885,6 +938,7 @@ if (existing) {
 ## 🧪 Testing Scenarios
 
 ### Test 1: Single COGS Current Date
+
 ```bash
 POST /v1/products/321678606/cogs { valid_from: "2025-11-24", unit_cost: 990 }
 → Wait 10 seconds
@@ -893,6 +947,7 @@ POST /v1/products/321678606/cogs { valid_from: "2025-11-24", unit_cost: 990 }
 ```
 
 ### Test 2: Historical COGS (6 weeks)
+
 ```bash
 POST /v1/products/321678606/cogs { valid_from: "2025-10-10", unit_cost: 990 }
 → Wait 30 seconds
@@ -901,6 +956,7 @@ POST /v1/products/321678606/cogs { valid_from: "2025-10-10", unit_cost: 990 }
 ```
 
 ### Test 3: Bulk Assignment
+
 ```bash
 POST /v1/products/cogs/bulk { items: [...500 items...] }
 → Wait 60 seconds
@@ -909,6 +965,7 @@ POST /v1/products/cogs/bulk { items: [...500 items...] }
 ```
 
 ### Test 4: Update Existing COGS
+
 ```bash
 POST /v1/products/321678606/cogs { valid_from: "2025-11-24", unit_cost: 111 }  // Changed from 1110
 → Wait 10 seconds

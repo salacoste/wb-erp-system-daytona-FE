@@ -13,7 +13,7 @@ chars: 7685
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-dobavit-v-arhiv-kartochku-tovara" rel="nofollow">Как добавить в архив карточку товара</a>
 - <a href="#kak-dobavit-v-arhiv-tsvet-ili-razmer" rel="nofollow">Как добавить в архив цвет или размер</a>
 - <a href="#gde-prosmotret-kartochki-v-arhive" rel="nofollow">Где просмотреть карточки в архиве</a>
@@ -28,8 +28,9 @@ chars: 7685
 ## Как добавить в архив карточку товара
 
 **Добавить товары в архив можно несколькими способами из раздела [Товары](https://selsup.ru/application/products):**\
+
 1. В таблице с товарами найдите нужный товар, затем в столбце "Удалить/В архив" нажмите на соответсвующий значок "В архив".\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/02/screenshot_26-1.png.webp)
+   ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/02/screenshot_26-1.png.webp)
 
 2\. Выберите несколько товаров в таблице с товарами, выделив их галочкой, затем нажмите на кнопку "В архив" в верхней части страницы.\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/02/v-arhiv-massovo.png.webp)\
@@ -82,21 +83,21 @@ chars: 7685
 
 ## Как восстановить карточку, цвет или размер из архива
 
-**Восстановить из архива карточку товара:\**
+*_Восстановить из архива карточку товара:\*_
 Чтобы восстановить карточку, перейдите в раздел [Товары](https://selsup.ru/application/products), отфильтруйте товары в Архиве, затем в столбце "Удалить/В архив" нажмите на зеленый переключатель "Восстановить товары".\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/02/vosstanovit-iz-arhiva.png.webp)
 
-**Чтобы восстановить цвет:\**
+*_Чтобы восстановить цвет:\*_
 Перейдите в карточку этого товара, найдите нужный цвет и нажмите на зеленый крестик рядом с названием.\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/02/vosstanovit-cvet.png.webp)\
 Цвет будет восстановлен из архива.
 
-**Чтобы восстановить размер:\**
+_*Чтобы восстановить размер:\**
 Перейдите в карточку этого товара, найдите нужный размер и нажмите на зеленую кнопку "Восстановить товар" в столбце "Удалить".\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/02/vosstanovit-razmer.png.webp)\
 **Восстановить карточки их архива массово:\**
 Массово восстановить карточки из Архива можно через Excel-файл.\
-Для этого скачайте файл с товарами из раздела [Товары](https://selsup.ru/application/products), кнопка "Экспорт", **в*****ключив переключатель "Выгружать удаленные"***.\
+Для этого скачайте файл с товарами из раздела [Товары](https://selsup.ru/application/products), кнопка "Экспорт", **в*****ключив переключатель "Выгружать удаленные"**_.\
 В скачанном файле в столбце "Архив" проставьте "НЕТ" и загрузите измененный файл обратно на странице [Товары](https://selsup.ru/application/products), кнопка Импорт.\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/02/arhiv-net.png.webp)
 

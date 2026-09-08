@@ -22,13 +22,13 @@ This document summarizes the comprehensive update to tariffs documentation for t
 
 ## Documentation Changes Summary
 
-| File | Type | Lines | Status | Description |
-|------|------|-------|--------|-------------|
-| `104-tariffs-formulas-validation-report.md` | New | 674 | ✅ Created | Frontend-oriented formula validation report |
-| `105-tariffs-storage-fallback-guide.md` | New | 748 | ✅ Created | Storage fallback mechanism guide |
-| `106-tariffs-quick-reference.md` | New | 601 | ✅ Created | Quick reference for tariffs API |
-| `98-warehouses-tariffs-BACKEND-RESPONSE.md` | Updated | ~750 | ✅ Updated | Status → PRODUCTION READY |
-| `PRICE-CALCULATOR-LOGISTICS-GUIDE.md` | Updated | ~1155 | ✅ Updated | Added coefficient handling section |
+| File                                        | Type    | Lines | Status     | Description                                 |
+| ------------------------------------------- | ------- | ----- | ---------- | ------------------------------------------- |
+| `104-tariffs-formulas-validation-report.md` | New     | 674   | ✅ Created | Frontend-oriented formula validation report |
+| `105-tariffs-storage-fallback-guide.md`     | New     | 748   | ✅ Created | Storage fallback mechanism guide            |
+| `106-tariffs-quick-reference.md`            | New     | 601   | ✅ Created | Quick reference for tariffs API             |
+| `98-warehouses-tariffs-BACKEND-RESPONSE.md` | Updated | ~750  | ✅ Updated | Status → PRODUCTION READY                   |
+| `PRICE-CALCULATOR-LOGISTICS-GUIDE.md`       | Updated | ~1155 | ✅ Updated | Added coefficient handling section          |
 
 **Total Documentation**: 5 files, ~3,928 lines
 
@@ -89,10 +89,10 @@ The backend **automatically applies default values** when the WB API returns zer
 
 #### Default Storage Rates
 
-| Tariff Type | Default Rate | Unit |
-|-------------|--------------|------|
-| Base Storage | 0.11 ₽ | per day |
-| Per Liter Storage | 0.11 ₽ | per liter per day |
+| Tariff Type       | Default Rate | Unit              |
+| ----------------- | ------------ | ----------------- |
+| Base Storage      | 0.11 ₽       | per day           |
+| Per Liter Storage | 0.11 ₽       | per liter per day |
 
 #### Fallback Logic Flow
 
@@ -110,24 +110,24 @@ WB API Response → Check if zero/null → Apply default → Return to frontend
 
 #### Available Endpoints
 
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `/tariffs/admin/coefficients` | GET | Get all coefficients | Admin |
-| `/tariffs/admin/coefficients` | PATCH | Update coefficients | Admin |
-| `/tariffs/admin/base-rates` | GET | Get base rates | Admin |
-| `/tariffs/admin/base-rates` | POST | Create base rate | Admin |
-| `/warehouses/with-tariffs` | GET | Get warehouses + tariffs | User |
-| `/warehouses/{id}/tariffs` | GET | Get tariffs for warehouse | User |
+| Endpoint                      | Method | Purpose                   | Auth  |
+| ----------------------------- | ------ | ------------------------- | ----- |
+| `/tariffs/admin/coefficients` | GET    | Get all coefficients      | Admin |
+| `/tariffs/admin/coefficients` | PATCH  | Update coefficients       | Admin |
+| `/tariffs/admin/base-rates`   | GET    | Get base rates            | Admin |
+| `/tariffs/admin/base-rates`   | POST   | Create base rate          | Admin |
+| `/warehouses/with-tariffs`    | GET    | Get warehouses + tariffs  | User  |
+| `/warehouses/{id}/tariffs`    | GET    | Get tariffs for warehouse | User  |
 
 #### Field Mapping Table
 
-| SDK Field | API Field | Frontend Field | Type |
-|-----------|-----------|----------------|------|
-| `warehouseBoxStorageCoefficient` | `boxStorageCoefficient` | `boxStorageCoefficient` | number |
+| SDK Field                           | API Field                  | Frontend Field             | Type   |
+| ----------------------------------- | -------------------------- | -------------------------- | ------ |
+| `warehouseBoxStorageCoefficient`    | `boxStorageCoefficient`    | `boxStorageCoefficient`    | number |
 | `warehousePalletStorageCoefficient` | `palletStorageCoefficient` | `palletStorageCoefficient` | number |
-| `warehouseAcceptanceCoefficient` | `acceptanceCoefficient` | `acceptanceCoefficient` | number |
-| `warehouseDeliveryCoefficient` | `deliveryCoefficient` | `deliveryCoefficient` | number |
-| `warehouseReturnCoefficient` | `returnCoefficient` | `returnCoefficient` | number |
+| `warehouseAcceptanceCoefficient`    | `acceptanceCoefficient`    | `acceptanceCoefficient`    | number |
+| `warehouseDeliveryCoefficient`      | `deliveryCoefficient`      | `deliveryCoefficient`      | number |
+| `warehouseReturnCoefficient`        | `returnCoefficient`        | `returnCoefficient`        | number |
 
 **Note**: Coefficients are pre-divided by 100 in API responses.
 
@@ -140,6 +140,7 @@ WB API Response → Check if zero/null → Apply default → Return to frontend
 **Status Change**: `PARTIALLY IMPLEMENTED` → `PRODUCTION READY`
 
 All 6 endpoints are now complete and validated:
+
 - ✅ Coefficients GET (admin)
 - ✅ Coefficients PATCH (admin)
 - ✅ Base Rates GET (admin)
@@ -253,29 +254,29 @@ const storageCost = warehouse.boxStorage.baseRate *
 
 ### Formula Validation
 
-| Formula | SDK Reference | Implementation | Status |
-|---------|---------------|----------------|--------|
-| Box Storage | `line 339` | ✅ Match | PASS |
-| Pallet Storage | `line 346` | ✅ Match | PASS |
-| Acceptance | `line 354` | ✅ Match | PASS |
-| Delivery | `line 362` | ✅ Match | PASS |
-| Return | `line 370` | ✅ Match | PASS |
+| Formula        | SDK Reference | Implementation | Status |
+| -------------- | ------------- | -------------- | ------ |
+| Box Storage    | `line 339`    | ✅ Match       | PASS   |
+| Pallet Storage | `line 346`    | ✅ Match       | PASS   |
+| Acceptance     | `line 354`    | ✅ Match       | PASS   |
+| Delivery       | `line 362`    | ✅ Match       | PASS   |
+| Return         | `line 370`    | ✅ Match       | PASS   |
 
 ### Coefficient Pre-Processing
 
-| SDK Value | API Value | Multiplier | Status |
-|-----------|-----------|------------|--------|
-| 1.05 | 0.0105 | 100 | ✅ PASS |
-| 1.15 | 0.0115 | 100 | ✅ PASS |
-| 1.00 | 0.0100 | 100 | ✅ PASS |
+| SDK Value | API Value | Multiplier | Status  |
+| --------- | --------- | ---------- | ------- |
+| 1.05      | 0.0105    | 100        | ✅ PASS |
+| 1.15      | 0.0115    | 100        | ✅ PASS |
+| 1.00      | 0.0100    | 100        | ✅ PASS |
 
 ### Fallback Mechanism
 
-| Scenario | Expected | Actual | Status |
-|----------|----------|--------|--------|
-| Zero base rate | Default applied | 0.11 ₽ | ✅ PASS |
-| Null base rate | Default applied | 0.11 ₽ | ✅ PASS |
-| Valid base rate | Used as-is | Correct | ✅ PASS |
+| Scenario        | Expected        | Actual  | Status  |
+| --------------- | --------------- | ------- | ------- |
+| Zero base rate  | Default applied | 0.11 ₽  | ✅ PASS |
+| Null base rate  | Default applied | 0.11 ₽  | ✅ PASS |
+| Valid base rate | Used as-is      | Correct | ✅ PASS |
 
 ---
 
@@ -292,12 +293,12 @@ If you encounter any issues or have questions:
 
 ### Common Issues
 
-| Issue | Solution | Reference |
-|-------|----------|-----------|
-| Coefficients seem too small | Already divided by 100 | Section 1.2 |
-| Missing tariff data | Backend applies defaults | Section 2 |
-| Wrong calculation results | Check formula implementation | Section 3.3 |
-| Authentication errors | Verify JWT claims | API docs |
+| Issue                       | Solution                     | Reference   |
+| --------------------------- | ---------------------------- | ----------- |
+| Coefficients seem too small | Already divided by 100       | Section 1.2 |
+| Missing tariff data         | Backend applies defaults     | Section 2   |
+| Wrong calculation results   | Check formula implementation | Section 3.3 |
+| Authentication errors       | Verify JWT claims            | API docs    |
 
 ---
 
@@ -369,6 +370,6 @@ If you encounter any issues or have questions:
 
 ## Change Log
 
-| Date | Version | Changes | Author |
-|------|---------|---------|--------|
-| 2026-01-25 | 1.0.0 | Initial release - Complete documentation update summary | Backend Team |
+| Date       | Version | Changes                                                 | Author       |
+| ---------- | ------- | ------------------------------------------------------- | ------------ |
+| 2026-01-25 | 1.0.0   | Initial release - Complete documentation update summary | Backend Team |

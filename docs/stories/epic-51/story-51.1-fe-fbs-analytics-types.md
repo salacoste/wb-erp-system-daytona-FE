@@ -17,17 +17,20 @@
 ## Acceptance Criteria
 
 ### AC1: TypeScript Types for Analytics Endpoints
+
 - [ ] Create `types/fbs-analytics.ts` with all response/request types
 - [ ] Types match backend API response structure (from `15-analytics-fbs.http`)
 - [ ] Proper nullability handling where applicable
 - [ ] Discriminated unions for aggregation types
 
 ### AC2: TypeScript Types for Admin Backfill Endpoints
+
 - [ ] Backfill status types (pending, in_progress, completed, failed, paused)
 - [ ] Backfill progress tracking types
 - [ ] Start/Pause/Resume request/response types
 
 ### AC3: API Client Functions
+
 - [ ] `getFbsTrends(params)` - GET /v1/analytics/orders/trends
 - [ ] `getFbsSeasonal(params)` - GET /v1/analytics/orders/seasonal
 - [ ] `getFbsCompare(params)` - GET /v1/analytics/orders/compare
@@ -37,6 +40,7 @@
 - [ ] `resumeBackfill(cabinetId)` - POST /v1/admin/backfill/resume
 
 ### AC4: Query Parameter Types
+
 - [ ] `FbsTrendsParams` with from, to, aggregation, metrics
 - [ ] `FbsSeasonalParams` with months, view
 - [ ] `FbsCompareParams` with period1_from/to, period2_from/to
@@ -45,6 +49,7 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Analytics Response Types
+
 - [ ] Create `src/types/fbs-analytics.ts`
 - [ ] Define `TrendDataPoint` interface
 - [ ] Define `TrendsSummary` interface
@@ -62,6 +67,7 @@
 - [ ] Define `CompareResponse` interface
 
 ### Phase 2: Admin Backfill Types
+
 - [ ] Define `BackfillStatus` type (union)
 - [ ] Define `DataSource` type (union)
 - [ ] Define `StartBackfillRequest` interface
@@ -72,6 +78,7 @@
 - [ ] Define `BackfillActionResponse` interface
 
 ### Phase 3: Query Parameter Types
+
 - [ ] Define `AggregationType` type ('day' | 'week' | 'month')
 - [ ] Define `SeasonalViewType` type ('monthly' | 'weekly' | 'quarterly')
 - [ ] Define `FbsTrendsParams` interface
@@ -79,6 +86,7 @@
 - [ ] Define `FbsCompareParams` interface
 
 ### Phase 4: API Client Functions
+
 - [ ] Create `src/lib/api/fbs-analytics.ts`
 - [ ] Implement `getFbsTrends(params)`
 - [ ] Implement `getFbsSeasonal(params)`
@@ -92,6 +100,7 @@
 - [ ] Add error handling for 400/401/403
 
 ### Phase 5: Export & Integration
+
 - [ ] Export all types from types index (if exists)
 - [ ] Verify no TypeScript errors
 - [ ] Add JSDoc comments for all interfaces
@@ -852,10 +861,12 @@ src/
 ### API Authentication
 
 All endpoints require:
+
 - `Authorization: Bearer {JWT_TOKEN}`
 - `X-Cabinet-Id: {cabinet_id}`
 
 Admin endpoints additionally require:
+
 - User role: `Owner`
 
 Headers are automatically added by `src/lib/api-client.ts`.
@@ -869,33 +880,33 @@ Headers are automatically added by `src/lib/api-client.ts`.
 
 ### Error Handling
 
-| Status | Error Code | Frontend Action |
-|--------|------------|-----------------|
-| 400 | INVALID_DATE_FORMAT | Show validation error |
-| 400 | INVALID_DATE_RANGE | Show validation error |
-| 400 | DATE_RANGE_EXCEEDED | Show max 365 days message |
-| 401 | UNAUTHORIZED | Redirect to login |
-| 403 | FORBIDDEN | Show permission error |
-| 404 | CABINET_NOT_FOUND | Show not found error |
+| Status | Error Code          | Frontend Action           |
+| ------ | ------------------- | ------------------------- |
+| 400    | INVALID_DATE_FORMAT | Show validation error     |
+| 400    | INVALID_DATE_RANGE  | Show validation error     |
+| 400    | DATE_RANGE_EXCEEDED | Show max 365 days message |
+| 401    | UNAUTHORIZED        | Redirect to login         |
+| 403    | FORBIDDEN           | Show permission error     |
+| 404    | CABINET_NOT_FOUND   | Show not found error      |
 
 ## Testing
 
 ### Test Cases
 
-| Test | Priority | Category |
-|------|----------|----------|
-| Types compile without errors | Critical | Type |
-| TrendsResponse interface matches API | High | Type |
-| SeasonalResponse interface matches API | High | Type |
-| CompareResponse interface matches API | High | Type |
-| BackfillStatusResponse matches API | High | Type |
-| getFbsTrends returns correct structure | High | API |
-| getFbsSeasonal returns correct structure | High | API |
-| getFbsCompare returns correct structure | High | API |
-| Admin endpoints return correct structure | Medium | API |
-| Error handling for 400 errors | Medium | API |
-| Error handling for 401/403 | Medium | API |
-| Query params serialized correctly | Medium | API |
+| Test                                     | Priority | Category |
+| ---------------------------------------- | -------- | -------- |
+| Types compile without errors             | Critical | Type     |
+| TrendsResponse interface matches API     | High     | Type     |
+| SeasonalResponse interface matches API   | High     | Type     |
+| CompareResponse interface matches API    | High     | Type     |
+| BackfillStatusResponse matches API       | High     | Type     |
+| getFbsTrends returns correct structure   | High     | API      |
+| getFbsSeasonal returns correct structure | High     | API      |
+| getFbsCompare returns correct structure  | High     | API      |
+| Admin endpoints return correct structure | Medium   | API      |
+| Error handling for 400 errors            | Medium   | API      |
+| Error handling for 401/403               | Medium   | API      |
+| Query params serialized correctly        | Medium   | API      |
 
 ### Coverage Target
 
@@ -931,8 +942,8 @@ Headers are automatically added by `src/lib/api-client.ts`.
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author   | Change        |
+| ---------- | -------- | ------------- |
 | 2026-01-29 | PM Agent | Initial draft |
 
 ---

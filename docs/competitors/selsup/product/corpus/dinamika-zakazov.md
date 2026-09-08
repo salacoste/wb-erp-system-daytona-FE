@@ -12,7 +12,7 @@ chars: 3529
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-poluchit-dostup-k-otchyotu" rel="nofollow">Как получить доступ к отчёту</a>
 - <a href="#otchet-v-excel-fajle" rel="nofollow">Отчет в Excel-файле</a>
 - <a href="#preimushhestva-dlya-biznesa" rel="nofollow">Преимущества для бизнеса</a>

@@ -11,7 +11,7 @@ chars: 3583
 
 В этой статье:
 
-- 
+-
 - <a href="#zakreplenie-yacheek-dlya-tovarov-s-nulevym-ostatkom" rel="nofollow">Закрепление ячеек для товаров с нулевым остатком</a>
 - <a href="#udalenie-i-skrytie-yacheek-i-stellazhej" rel="nofollow">Удаление и скрытие ячеек и стеллажей</a>
 - <a href="#peremeshhenie-chasti-tovara-mezhdu-yachejkami" rel="nofollow">Перемещение части товара между ячейками</a>

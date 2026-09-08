@@ -11,7 +11,7 @@ chars: 3824
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojka-spravochnikov" rel="nofollow">Настройка справочников</a>
 - <a href="#nastrojka-zakazov-v-1s-unf-i-1s-ut-i-1s-ka" rel="nofollow">Настройка заказов в 1С:УНФ И 1С:УТ и 1С:КА</a>
 

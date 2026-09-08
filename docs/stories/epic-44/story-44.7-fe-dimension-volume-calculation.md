@@ -15,6 +15,7 @@
 **So that** I can accurately calculate logistics costs based on WB volume-based pricing and know which tariff category my product falls into.
 
 **Non-goals**:
+
 - Auto-fill dimensions from WB product catalog
 - Pallet tariff calculations (KGT+ requires manual input)
 - Weight-based calculations (WB uses volume, not weight)
@@ -24,6 +25,7 @@
 ## Acceptance Criteria
 
 ### AC1: Dimension Input Fields
+
 - [ ] Input field for Length (Длина) in cm (≥0.1, max 300, step 0.1)
 - [ ] Input field for Width (Ширина) in cm (≥0.1, max 300, step 0.1)
 - [ ] Input field for Height (Высота) in cm (≥0.1, max 300, step 0.1)
@@ -32,6 +34,7 @@
 - [ ] Placeholder text: "0.0 см"
 
 ### AC2: Volume Calculation
+
 - [ ] Auto-calculate volume in liters: `(L × W × H) / 1000`
 - [ ] Display calculated volume with 3 decimal places
 - [ ] Update volume in real-time as dimensions change
@@ -39,6 +42,7 @@
 - [ ] Send `volume_liters` to Backend API in request body
 
 ### AC3: Cargo Type Detection (NEW - from Backend Story 43.7)
+
 - [ ] Detect cargo type based on maximum dimension:
   - **MGT** (Мелкогабаритный): max dimension ≤ 60 см → Green badge
   - **SGT** (Среднегабаритный): max dimension ≤ 120 см → Yellow badge
@@ -48,6 +52,7 @@
 - [ ] Tooltip explaining cargo type limits
 
 ### AC4: KGT Error Handling
+
 - [ ] When KGT detected (any dimension > 120cm):
   - Show error alert: "Крупногабаритный груз (KGT) требует ручного ввода тарифов"
   - Disable auto-fill logistics fields
@@ -56,6 +61,7 @@
 - [ ] Backend returns `KGT_CARGO_DETECTED` error code for this case
 
 ### AC5: Volume Display with Tier Indicator
+
 - [ ] Display calculated volume next to dimension inputs
 - [ ] Format: "Объём: X,XXX л" (Russian locale, comma decimal)
 - [ ] Visual tier indicator:
@@ -65,6 +71,7 @@
 - [ ] Tooltip explaining WB volume pricing tiers
 
 ### AC6: Backend API Integration
+
 - [ ] Send `dimensions` object to API when provided:
   ```json
   {
@@ -86,6 +93,7 @@
 ## API Contract (Backend Story 43.7)
 
 ### Request
+
 ```http
 POST /v1/products/price-calculator
 Authorization: Bearer {token}
@@ -108,6 +116,7 @@ Content-Type: application/json
 ```
 
 ### Response (Success - MGT/SGT)
+
 ```json
 {
   "result": {
@@ -141,6 +150,7 @@ Content-Type: application/json
 ```
 
 ### Response (Error - KGT Detected)
+
 ```json
 {
   "error": {
@@ -169,11 +179,11 @@ Content-Type: application/json
 
 ### WB Cargo Type Reference (Official)
 
-| Type | Code | Max Dimension | Tariff Method | Color |
-|------|------|---------------|---------------|-------|
-| Малогабаритный | MGT | ≤ 60 см | `getTariffsBox()` | Green |
-| Среднегабаритный | SGT | ≤ 120 см | `getTariffsBox()` | Yellow |
-| Крупногабаритный | KGT | > 120 см | `getTariffsPallet()` | Red (Error) |
+| Type             | Code | Max Dimension | Tariff Method        | Color       |
+| ---------------- | ---- | ------------- | -------------------- | ----------- |
+| Малогабаритный   | MGT  | ≤ 60 см       | `getTariffsBox()`    | Green       |
+| Среднегабаритный | SGT  | ≤ 120 см      | `getTariffsBox()`    | Yellow      |
+| Крупногабаритный | KGT  | > 120 см      | `getTariffsPallet()` | Red (Error) |
 
 ---
 
@@ -431,17 +441,17 @@ KGT Error State:
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| All dimensions = 0 | Volume = 0, no cargo type displayed |
-| One dimension = 0 | Volume = 0, show "Введите все габариты" |
-| Any dimension > 300 cm | Validation error, max 300 cm |
-| Max dimension = 60 cm | MGT badge (green), auto-calculate enabled |
-| Max dimension = 100 cm | SGT badge (yellow), auto-calculate enabled |
+| Scenario               | Expected Behavior                                     |
+| ---------------------- | ----------------------------------------------------- |
+| All dimensions = 0     | Volume = 0, no cargo type displayed                   |
+| One dimension = 0      | Volume = 0, show "Введите все габариты"               |
+| Any dimension > 300 cm | Validation error, max 300 cm                          |
+| Max dimension = 60 cm  | MGT badge (green), auto-calculate enabled             |
+| Max dimension = 100 cm | SGT badge (yellow), auto-calculate enabled            |
 | Max dimension = 150 cm | KGT badge (red), ERROR state, auto-calculate disabled |
-| Decimal dimensions | Round volume to 3 decimal places |
-| Dimension changed | Recalculate volume and cargo type immediately |
-| KGT then edit to MGT | Clear error state, enable auto-calculate |
+| Decimal dimensions     | Round volume to 3 decimal places                      |
+| Dimension changed      | Recalculate volume and cargo type immediately         |
+| KGT then edit to MGT   | Clear error state, enable auto-calculate              |
 
 ---
 
@@ -478,22 +488,25 @@ KGT Error State:
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Description |
-|------|-------------|-------------|
-| `src/components/custom/price-calculator/DimensionInputSection.tsx` | EXISTING | Dimension input group with 3 fields, volume display, cargo type badge (197 lines) |
-| `src/lib/dimension-utils.ts` | EXISTING | Volume & cargo type calculation helpers (200 lines) |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | EXISTING | DimensionInputSection integrated at line 151 |
-| `src/components/custom/price-calculator/usePriceCalculatorForm.ts` | EXISTING | FormData includes dimension fields (Story 44.7) |
-| `src/types/price-calculator.ts` | EXISTING | ProductDimensions, CargoType, DimensionAutoFillState types |
-| `src/lib/__tests__/dimension-utils.test.ts` | CREATE | Unit tests for dimension utilities (48 tests) |
+
+| File                                                               | Change Type | Description                                                                       |
+| ------------------------------------------------------------------ | ----------- | --------------------------------------------------------------------------------- |
+| `src/components/custom/price-calculator/DimensionInputSection.tsx` | EXISTING    | Dimension input group with 3 fields, volume display, cargo type badge (197 lines) |
+| `src/lib/dimension-utils.ts`                                       | EXISTING    | Volume & cargo type calculation helpers (200 lines)                               |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`   | EXISTING    | DimensionInputSection integrated at line 151                                      |
+| `src/components/custom/price-calculator/usePriceCalculatorForm.ts` | EXISTING    | FormData includes dimension fields (Story 44.7)                                   |
+| `src/types/price-calculator.ts`                                    | EXISTING    | ProductDimensions, CargoType, DimensionAutoFillState types                        |
+| `src/lib/__tests__/dimension-utils.test.ts`                        | CREATE      | Unit tests for dimension utilities (48 tests)                                     |
 
 ### Change Log
-| Date | Author | Changes |
-|------|--------|---------|
+
+| Date       | Author    | Changes                                                                   |
+| ---------- | --------- | ------------------------------------------------------------------------- |
 | 2026-01-21 | Dev Agent | Added unit tests for dimension-utils.ts (48 tests covering all functions) |
-| 2026-01-21 | Dev Agent | Verified existing implementation meets all acceptance criteria |
+| 2026-01-21 | Dev Agent | Verified existing implementation meets all acceptance criteria            |
 
 ### Implementation Notes
+
 **Story 44.7-FE was already implemented** as part of earlier Epic 44 work. The implementation includes:
 
 1. **DimensionInputSection.tsx** (197 lines) - Complete UI component with:
@@ -525,6 +538,7 @@ KGT Error State:
    - Integration scenarios
 
 ### Review Follow-ups
+
 _(To be filled by AI Code Review)_
 
 ---
@@ -554,33 +568,36 @@ _(To be filled by AI Code Review)_
 **Gate Decision**: PASS
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Dimension input fields | ✅ | `DimensionInputSection.tsx` lines 87-158 - 3 inputs with validation (0-300cm, step 0.1) |
-| AC2 | Volume calculation | ✅ | `dimension-utils.ts:calculateVolumeLiters()` - 48 unit tests pass |
-| AC3 | Cargo type detection | ✅ | `dimension-utils.ts:detectCargoType()` - MGT/SGT/KGT with correct thresholds |
-| AC4 | KGT error handling | ✅ | `DimensionInputSection.tsx` lines 185-193 - Alert with role="alert" |
-| AC5 | Volume display with tier | ✅ | `DimensionInputSection.tsx` lines 162-182 - tier badges with colors |
-| AC6 | Backend API integration | ✅ | `usePriceCalculatorForm.ts` - dimension fields in FormData |
+
+| AC  | Requirement              | Status | Evidence                                                                                |
+| --- | ------------------------ | ------ | --------------------------------------------------------------------------------------- |
+| AC1 | Dimension input fields   | ✅     | `DimensionInputSection.tsx` lines 87-158 - 3 inputs with validation (0-300cm, step 0.1) |
+| AC2 | Volume calculation       | ✅     | `dimension-utils.ts:calculateVolumeLiters()` - 48 unit tests pass                       |
+| AC3 | Cargo type detection     | ✅     | `dimension-utils.ts:detectCargoType()` - MGT/SGT/KGT with correct thresholds            |
+| AC4 | KGT error handling       | ✅     | `DimensionInputSection.tsx` lines 185-193 - Alert with role="alert"                     |
+| AC5 | Volume display with tier | ✅     | `DimensionInputSection.tsx` lines 162-182 - tier badges with colors                     |
+| AC6 | Backend API integration  | ✅     | `usePriceCalculatorForm.ts` - dimension fields in FormData                              |
 
 ### Test Scenarios
+
 | Input (L×W×H cm) | Volume (L) | Cargo Type | Error? | Test Status |
-|------------------|------------|------------|--------|-------------|
-| 30×20×15 | 9.000 | MGT | No | ✅ Pass |
-| 50×50×50 | 125.000 | SGT | No | ✅ Pass |
-| 60×60×60 | 216.000 | MGT | No | ✅ Pass |
-| 80×60×40 | 192.000 | SGT | No | ✅ Pass |
-| 150×50×50 | 375.000 | KGT | YES | ✅ Pass |
-| 0×20×15 | 0 | - | - | ✅ Pass |
+| ---------------- | ---------- | ---------- | ------ | ----------- |
+| 30×20×15         | 9.000      | MGT        | No     | ✅ Pass     |
+| 50×50×50         | 125.000    | SGT        | No     | ✅ Pass     |
+| 60×60×60         | 216.000    | MGT        | No     | ✅ Pass     |
+| 80×60×40         | 192.000    | SGT        | No     | ✅ Pass     |
+| 150×50×50        | 375.000    | KGT        | YES    | ✅ Pass     |
+| 0×20×15          | 0          | -          | -      | ✅ Pass     |
 
 ### Accessibility Check
-| Check | Status | Evidence |
-|-------|--------|----------|
-| Labels for all inputs | ✅ | `<Label htmlFor="length_cm">` etc. |
-| aria-live on volume | ✅ | `<div aria-live="polite">` line 162 |
-| Keyboard navigation | ✅ | Standard form inputs |
-| Color contrast | ✅ | Green/Yellow/Red badges with 4.5:1 contrast |
-| Error alert role | ✅ | `<Alert variant="destructive">` with AlertTriangle icon |
+
+| Check                 | Status | Evidence                                                |
+| --------------------- | ------ | ------------------------------------------------------- |
+| Labels for all inputs | ✅     | `<Label htmlFor="length_cm">` etc.                      |
+| aria-live on volume   | ✅     | `<div aria-live="polite">` line 162                     |
+| Keyboard navigation   | ✅     | Standard form inputs                                    |
+| Color contrast        | ✅     | Green/Yellow/Red badges with 4.5:1 contrast             |
+| Error alert role      | ✅     | `<Alert variant="destructive">` with AlertTriangle icon |
 
 ---
 

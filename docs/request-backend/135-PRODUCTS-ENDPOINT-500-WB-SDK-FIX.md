@@ -46,6 +46,7 @@ const response = await (sdk.products as unknown as WbProductsModule).getCardsLis
 **Resolution date**: 2026-02-10
 **Summary**: Fixed SDK v3.1.0 method rename `createCardsList` -> `getCardsList` in `product-sync.service.ts`. Same pattern as the tariffs SDK migration in #136. Two files updated to use correct method name.
 **Remaining frontend action**: None - products endpoint now returns 200 OK.
+
 ### Файл 2: `product-imt-sync.service.ts` (строка 362)
 
 ```typescript
@@ -76,24 +77,24 @@ const response = await (sdk as any).products.getCardsList(requestPayload);
 
 ## Влияние на фронтенд
 
-| Область | Влияние |
-|---------|---------|
-| Карточки "COGS по заказам" / "COGS выкупов" | Показывают "0 из 0 товаров (0%)" на всех неделях |
-| Консоль браузера | 4 ошибки при каждой загрузке дашборда |
-| Фоновая синхронизация товаров | Не работает — новые товары не импортируются |
-| Обогащение товаров (brand/category) | Не работает после backfill COGS |
-| Ежедневная синхронизация imtID (06:00 MSK) | Не работает — объединение/разделение карточек не обнаруживается |
+| Область                                     | Влияние                                                         |
+| ------------------------------------------- | --------------------------------------------------------------- |
+| Карточки "COGS по заказам" / "COGS выкупов" | Показывают "0 из 0 товаров (0%)" на всех неделях                |
+| Консоль браузера                            | 4 ошибки при каждой загрузке дашборда                           |
+| Фоновая синхронизация товаров               | Не работает — новые товары не импортируются                     |
+| Обогащение товаров (brand/category)         | Не работает после backfill COGS                                 |
+| Ежедневная синхронизация imtID (06:00 MSK)  | Не работает — объединение/разделение карточек не обнаруживается |
 
 ---
 
 ## Объём исправлений
 
-| Файл | Строка | Изменение |
-|-------|--------|-----------|
-| `src/products/services/product-sync.service.ts` | 108-121 | Интерфейс: `createCardsList` → `getCardsList` |
-| `src/products/services/product-sync.service.ts` | 305 | Вызов: `createCardsList` → `getCardsList` |
-| `src/products/services/product-imt-sync.service.ts` | 362 | Вызов: `createCardsList` → `getCardsList` |
-| `src/products/services/__tests__/product-imt-sync.service.spec.ts` | 24 | Мок: `createCardsList` → `getCardsList` |
+| Файл                                                               | Строка  | Изменение                                     |
+| ------------------------------------------------------------------ | ------- | --------------------------------------------- |
+| `src/products/services/product-sync.service.ts`                    | 108-121 | Интерфейс: `createCardsList` → `getCardsList` |
+| `src/products/services/product-sync.service.ts`                    | 305     | Вызов: `createCardsList` → `getCardsList`     |
+| `src/products/services/product-imt-sync.service.ts`                | 362     | Вызов: `createCardsList` → `getCardsList`     |
+| `src/products/services/__tests__/product-imt-sync.service.spec.ts` | 24      | Мок: `createCardsList` → `getCardsList`       |
 
 **Совместимость**: SDK v3.1.0 `getCardsList` принимает те же параметры + опциональный `options?: { locale?: string }`. Существующий код не передаёт второй аргумент, поэтому дополнительных изменений не требуется.
 
@@ -137,10 +138,10 @@ pm2 logs wb-repricer --lines 5 --nostream | grep createCardsList
 
 Выполнена замена `createCardsList` → `getCardsList` в 3 файлах:
 
-| Файл | Изменение |
-|------|-----------|
-| `src/products/services/product-sync.service.ts` | Интерфейс `WbProductsModule` + вызов + комментарии |
-| `src/products/services/product-imt-sync.service.ts` | Вызов SDK + лог-сообщение + комментарий |
-| `src/products/services/__tests__/product-imt-sync.service.spec.ts` | Мок `mockCreateCardsList` → `mockGetCardsList` |
+| Файл                                                               | Изменение                                          |
+| ------------------------------------------------------------------ | -------------------------------------------------- |
+| `src/products/services/product-sync.service.ts`                    | Интерфейс `WbProductsModule` + вызов + комментарии |
+| `src/products/services/product-imt-sync.service.ts`                | Вызов SDK + лог-сообщение + комментарий            |
+| `src/products/services/__tests__/product-imt-sync.service.spec.ts` | Мок `mockCreateCardsList` → `mockGetCardsList`     |
 
 **Верификация**: `curl /v1/products?limit=2` → HTTP 200, продукты с COGS возвращаются корректно.

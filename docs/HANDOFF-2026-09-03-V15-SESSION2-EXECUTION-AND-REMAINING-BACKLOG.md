@@ -11,16 +11,16 @@
 
 ## 1. Сессия-2 (2026-09-02/03, оркестратор V15): 8 PR, всё merged, cleanup 0/0/0
 
-| # | Item | PR / merge | Содержание | Ревью | Ключевое |
-|---|---|---|---|---|---|
-| 1 | **D-1 (PB-1)** P1 | #390 / `56529ced` | initiation-mint `ensureSessionNonce` + indeterminate recovery-alert + `finishRecoveryOperation` release; e2e true-pin (двухтабный nonce-nulling, падает на main) | 3 прохода (Trigger 3) | флор 19415→**19421**; открыт `/v1/auth/refresh` 404 (→ стало request #230) |
-| 2 | **D-2 (PB-3)** → стоп | #391 / `36916754` | BE-блок: refresh-эндпоинта нет; request-backend #230 создан; реестры → BE-BLOCKED | doc-only | curl-репродукция 404 |
-| 3 | **P2 /10-family ASB** | #392 / `c21a571e` | AcceptanceStatusBadge success/warning → solid-пары (4.49/4.24 fail → 5.13/4.81); эскалация high/warning восстановлена бордером /60-vs-/40 | 3 прохода (Trigger 3) | коллапс эскалации пойман pass-2 |
-| 4 | **P2 C13+C15** | #393 / `c4c7bf3c` | GapsTable SR-дедуп (aria-label ≠ caption); `ScenarioUrgencyTier` типизация (single classification source) | 2 прохода | флор →**19424** (+3 tier) |
-| 5 | **P2 boundary волна-1** | #394 / `d7205094` | financial-summary family ×11 файлов, 58 сайтов → семантические токены; house-rule + харнесс-канон | 2 (REJECT→APPROVE) | boundary **459→401**; пойманы: 3 stale-пина вне семейной директории + незамеренная 4.44 sub-AA пара |
-| 6 | **P2 boundary волна-2** | #395 / `86fb550c` | Margin-семейство 29 сайтов (дрейф каталога 58→29!) + **D-4 fold-in**: excellent/critical /15 = 4.19/4.42 живой AA-fail, скрытый аттестацией D-4 → /5 | 2 (APPROVE×2, оба с независимой контраст-математикой) | boundary **401→372**; реестр скорригирован APPEND-only |
-| 7 | **BE-handoff пакет** | #396 / `c07cffc6` | вход-док для BE-команды (3 item'а) | doc-only | — |
-| 8 | **BE-ответ аннекс** | #397 / `c5ca2669` | контракт refresh согласован; SEC-DOC-1 done-in-branch; queue:down = ложная семантика | doc-only | PB-3 → CONTRACT-READY; 2 FE-хазарда записаны |
+| #   | Item                    | PR / merge        | Содержание                                                                                                                                                       | Ревью                                                 | Ключевое                                                                                            |
+| --- | ----------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 1   | **D-1 (PB-1)** P1       | #390 / `56529ced` | initiation-mint `ensureSessionNonce` + indeterminate recovery-alert + `finishRecoveryOperation` release; e2e true-pin (двухтабный nonce-nulling, падает на main) | 3 прохода (Trigger 3)                                 | флор 19415→**19421**; открыт `/v1/auth/refresh` 404 (→ стало request #230)                          |
+| 2   | **D-2 (PB-3)** → стоп   | #391 / `36916754` | BE-блок: refresh-эндпоинта нет; request-backend #230 создан; реестры → BE-BLOCKED                                                                                | doc-only                                              | curl-репродукция 404                                                                                |
+| 3   | **P2 /10-family ASB**   | #392 / `c21a571e` | AcceptanceStatusBadge success/warning → solid-пары (4.49/4.24 fail → 5.13/4.81); эскалация high/warning восстановлена бордером /60-vs-/40                        | 3 прохода (Trigger 3)                                 | коллапс эскалации пойман pass-2                                                                     |
+| 4   | **P2 C13+C15**          | #393 / `c4c7bf3c` | GapsTable SR-дедуп (aria-label ≠ caption); `ScenarioUrgencyTier` типизация (single classification source)                                                        | 2 прохода                                             | флор →**19424** (+3 tier)                                                                           |
+| 5   | **P2 boundary волна-1** | #394 / `d7205094` | financial-summary family ×11 файлов, 58 сайтов → семантические токены; house-rule + харнесс-канон                                                                | 2 (REJECT→APPROVE)                                    | boundary **459→401**; пойманы: 3 stale-пина вне семейной директории + незамеренная 4.44 sub-AA пара |
+| 6   | **P2 boundary волна-2** | #395 / `86fb550c` | Margin-семейство 29 сайтов (дрейф каталога 58→29!) + **D-4 fold-in**: excellent/critical /15 = 4.19/4.42 живой AA-fail, скрытый аттестацией D-4 → /5             | 2 (APPROVE×2, оба с независимой контраст-математикой) | boundary **401→372**; реестр скорригирован APPEND-only                                              |
+| 7   | **BE-handoff пакет**    | #396 / `c07cffc6` | вход-док для BE-команды (3 item'а)                                                                                                                               | doc-only                                              | —                                                                                                   |
+| 8   | **BE-ответ аннекс**     | #397 / `c5ca2669` | контракт refresh согласован; SEC-DOC-1 done-in-branch; queue:down = ложная семантика                                                                             | doc-only                                              | PB-3 → CONTRACT-READY; 2 FE-хазарда записаны                                                        |
 
 Артефакты сессии-2: `_bmad-output/implementation-artifacts/debt-{d1-pb1-silent-cabinet-create, p2-10-family-asb, p2-c13-c15-quality-wave, p2-boundary-wave1-finsum, p2-boundary-wave2-margin}.md` — **волны boundary содержат канон маппинга + house rule + харнесс** — читать перед волнами 3+.
 
@@ -39,14 +39,14 @@
 
 Все сайты — один и тот же house-rule-паттерн (`/15→/5` или `/10→/5`; канон в `debt-p2-boundary-wave2-margin.md` Follow-ups):
 
-| Файл | Сайты | Замер (light) | Фикс |
-|---|---|---|---|
-| `src/lib/unit-economics-config.ts` | 3 из 5 entry | pos/15=4.19, **warning/15=3.97 — худший в классе**, neg/15=4.42 | /15→/5 (4.80/5.20 PASS) |
-| `src/app/(dashboard)/analytics/sku/components/CashflowRowPrimitives.tsx:27,82,109,152` | 4 /15 | тот же класс | /15→/5 |
-| `src/components/custom/pnl-waterfall/GrossProfitSection.tsx` | 2 | тот же класс | /15→/5 |
-| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx:16,23` | 2 | fin-pos/10=4.49, warning/10=4.24 | /10→/5 |
-| `src/components/custom/price-calculator/MarginSlider.tsx:33,35` | 2 | 4.24, 4.49 | /10→/5 |
-| `src/components/custom/price-calculator/MarginSection.tsx:139` | 1 | 4.49 | /10→/5 |
+| Файл                                                                                   | Сайты        | Замер (light)                                                   | Фикс                    |
+| -------------------------------------------------------------------------------------- | ------------ | --------------------------------------------------------------- | ----------------------- |
+| `src/lib/unit-economics-config.ts`                                                     | 3 из 5 entry | pos/15=4.19, **warning/15=3.97 — худший в классе**, neg/15=4.42 | /15→/5 (4.80/5.20 PASS) |
+| `src/app/(dashboard)/analytics/sku/components/CashflowRowPrimitives.tsx:27,82,109,152` | 4 /15        | тот же класс                                                    | /15→/5                  |
+| `src/components/custom/pnl-waterfall/GrossProfitSection.tsx`                           | 2            | тот же класс                                                    | /15→/5                  |
+| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx:16,23`                 | 2            | fin-pos/10=4.49, warning/10=4.24                                | /10→/5                  |
+| `src/components/custom/price-calculator/MarginSlider.tsx:33,35`                        | 2            | 4.24, 4.49                                                      | /10→/5                  |
+| `src/components/custom/price-calculator/MarginSection.tsx:139`                         | 1            | 4.49                                                            | /10→/5                  |
 
 DoD: все пары ≥4.5 обеих тем (харнесс из артефакта волны-2: `/tmp/p2-bw2-contrast.mjs` паттерн, токены живым grep); тест-пины consumer-тестов grep + ре-пин (урок F1: sweep крыть И consumer-тесты, не только семейную директорию); манифест-пины проверить (consumer tests!). НЕ трогать sku-financials (там fg-on-tint — безопасен).
 
@@ -55,6 +55,7 @@ DoD: все пары ≥4.5 обеих тем (харнесс из артефа�
 Контракт (аннекс [`docs/request-backend/230-auth-refresh-endpoint-missing.md`](request-backend/230-auth-refresh-endpoint-missing.md)): `POST /v1/auth/refresh`, Bearer валидного JWT, `{}` → `{token}`; sliding-rotation; **истёкший JWT НЕ обновляется**.
 
 **Re-scope (✅ подтверждён owner 2026-09-03; исполнен)**:
+
 1. Interceptor в api-client: 401 → single-flight refresh (**токен из СТОРА**, не из упавшего запроса — single-use ревокация!) → replay×1 → повторный 401 → существующий logout-путь
 2. **Пративный фикс**: `useAuth.refreshTokenIfNeeded` использует store-`login()` → минт новой sessionNonce ломает D-1 settlement in-flight creates → заменить на store-`refreshToken(token, user)` (nonce-сохраняющий)
 3. Обновить G4-пин (`api-client-401-refresh.test.ts` — пинит «нет реактивного refresh»)
@@ -83,16 +84,16 @@ harness restart-per-run раннер · FR-7 (reseed nmId 202867769 W26 ИЛИ r
 
 ### 3.5 Owner-decision ledger (2026-09-03)
 
-| Решение | Статус |
-|---|---|
-| D-2 re-scope (§3.1) | ✅ owner-«ок» получено 2026-09-03; ✅ live-гейт SATISFIED 02:02Z (локальная пересборка BE: refresh 200 + ревокация 401, см. #230 ФИНАЛЬНАЯ) — D-2 исполнен |
-| C5 chart-palette (гейтит chart-hex трек ~50 сайтов) | ⏳ варианты: categorical token-set (рекомендовано) / расширенные exceptions |
-| financial-foreground токены | ⏳ рекомендация: отложить |
-| logger-redact волна | ⏳ рекомендация: после boundary |
-| FR-7 / AT-матрица / Manager-creds / docs-95 / prettier-md / pm2-id5 | ⏳ P3, быстрые ответы |
-| SEC-DOC-1 (все под-item'ы) | ✅ закрыт полностью (FE + BE in-branch; после BE publish — финальная live-проверка) |
-| BE queue:down | ✅ фикс активен локально (02:02Z: queue up); remote publish — открытый BE-вопрос |
-| BE publish/deploy (remote) | ⏳ локально всё верифицировано (refresh+health+D-2 e2e); остаётся remote-публикация BE-ветки + remote re-check |
+| Решение                                                             | Статус                                                                                                                                                     |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D-2 re-scope (§3.1)                                                 | ✅ owner-«ок» получено 2026-09-03; ✅ live-гейт SATISFIED 02:02Z (локальная пересборка BE: refresh 200 + ревокация 401, см. #230 ФИНАЛЬНАЯ) — D-2 исполнен |
+| C5 chart-palette (гейтит chart-hex трек ~50 сайтов)                 | ⏳ варианты: categorical token-set (рекомендовано) / расширенные exceptions                                                                                |
+| financial-foreground токены                                         | ⏳ рекомендация: отложить                                                                                                                                  |
+| logger-redact волна                                                 | ⏳ рекомендация: после boundary                                                                                                                            |
+| FR-7 / AT-матрица / Manager-creds / docs-95 / prettier-md / pm2-id5 | ⏳ P3, быстрые ответы                                                                                                                                      |
+| SEC-DOC-1 (все под-item'ы)                                          | ✅ закрыт полностью (FE + BE in-branch; после BE publish — финальная live-проверка)                                                                        |
+| BE queue:down                                                       | ✅ фикс активен локально (02:02Z: queue up); remote publish — открытый BE-вопрос                                                                           |
+| BE publish/deploy (remote)                                          | ⏳ локально всё верифицировано (refresh+health+D-2 e2e); остаётся remote-публикация BE-ветки + remote re-check                                             |
 
 ## 4. Процесс-канон сессии-3 (свод; полный — V15-промпт)
 
@@ -100,7 +101,7 @@ harness restart-per-run раннер · FR-7 (reseed nmId 202867769 W26 ИЛИ r
 2. **Делегация**: recon → explore; механика → executor(sonnet); behavior/D-2-interceptor → executor(**opus**); ревью → ТОЛЬКО code-reviewer(**opus**) СВЕЖИЙ контекст на каждый проход; числа — живыми прогонами. Контраст-волны: executor(opus) с харнесс-каноном из артефактов волн.
 3. **Ревью-дисциплина**: ≥2 прохода; триггеры (>12 кумулятив / >5 в проходе / novel-pattern / meta-claims) → +проходы. Findings APPLIED/DISPOSITIONED с evidence — оба в артефакт.
 4. **Гейты на каждый PR**: §2 таблица; флор монотонен; базлайны — тем же PR.
-5. **WCAG-канон волн** (артефакты волн 1-2 — ЕСТЬ ВСЁ): маппинг (grays→muted; money-direction→financial-*; статус-смысл→status-*), house rule (цветной текст на тинте ≥4.5 light → /5 ИЛИ fg/muted; замеренный pass остаётся), харнесс (HSL→sRGB, alpha float-blend над CARD — не background! — в dark), **аттестация валидна только для замеренных пар** (урок D-4).
+5. **WCAG-канон волн** (артефакты волн 1-2 — ЕСТЬ ВСЁ): маппинг (grays→muted; money-direction→financial-_; статус-смысл→status-_), house rule (цветной текст на тинте ≥4.5 light → /5 ИЛИ fg/muted; замеренный pass остаётся), харнесс (HSL→sRGB, alpha float-blend над CARD — не background! — в dark), **аттестация валидна только для замеренных пар** (урок D-4).
 6. **Ловушки сессии-2** (добавка к V15 §10):
    - Сид-токен e2e = настоящий base64url JSON (битый payload → isTokenExpired fail-safe → logout mid-test)
    - «Спек зелёный» ≠ «пинит дельту» — проверяй падение на main
@@ -114,14 +115,14 @@ harness restart-per-run раннер · FR-7 (reseed nmId 202867769 W26 ИЛИ r
 
 ## 5. Точки входа мейнтейнера
 
-| Ресурс | Путь |
-|---|---|
-| Процесс V14/V15 | `docs/ORCHESTRATOR-PROMPT-2026-09-02-*.md` |
-| Артефакты волн (канон WCAG) | `_bmad-output/implementation-artifacts/debt-p2-boundary-wave{1,2}-*.md` |
-| BE-контракт + хазарды | `docs/request-backend/230-auth-refresh-endpoint-missing.md` (ANEX) |
-| BE-вход-док | `docs/request-backend/BE-TEAM-HANDOFF-2026-09-03.md` |
-| Debt-registry | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` |
-| Гейты-базлайны | `CLAUDE.md` Accepted Baselines · `scripts/.*-baseline.txt` |
-| Каталог boundary | `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md` (+ live-скан: `grep -roE '<legacy-regex>' src --include=*.tsx --include=*.ts | grep -v test | cut -d: -f1 | sort | uniq -c | sort -rn`) |
+| Ресурс                      | Путь                                                                                                                                                         |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Процесс V14/V15             | `docs/ORCHESTRATOR-PROMPT-2026-09-02-*.md`                                                                                                                   |
+| Артефакты волн (канон WCAG) | `_bmad-output/implementation-artifacts/debt-p2-boundary-wave{1,2}-*.md`                                                                                      |
+| BE-контракт + хазарды       | `docs/request-backend/230-auth-refresh-endpoint-missing.md` (ANEX)                                                                                           |
+| BE-вход-док                 | `docs/request-backend/BE-TEAM-HANDOFF-2026-09-03.md`                                                                                                         |
+| Debt-registry               | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`                                                                               |
+| Гейты-базлайны              | `CLAUDE.md` Accepted Baselines · `scripts/.*-baseline.txt`                                                                                                   |
+| Каталог boundary            | `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md` (+ live-скан: `grep -roE '<legacy-regex>' src --include=_.tsx --include=_.ts | grep -v test | cut -d: -f1 | sort | uniq -c | sort -rn`) |
 
 _Подготовлено оркестратором V15, сессия-2 (2026-09-02/03); факты сверены живыми прогонами на main `c5ca2669`._

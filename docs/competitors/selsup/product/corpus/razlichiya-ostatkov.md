@@ -15,7 +15,7 @@ chars: 7132
 
 В этой статье:
 
-- 
+-
 - <a href="#ostatki-fbs-v-selsup" rel="nofollow">Остатки FBS в SelSup</a>
 - <a href="#ostatki-fbo-v-selsup" rel="nofollow">Остатки FBO в SelSup</a>
 

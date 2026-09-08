@@ -15,6 +15,7 @@
 **So that** I can accurately calculate final logistics costs accounting for warehouse-specific coefficient variations.
 
 **Non-goals**:
+
 - Automatic coefficient history/presets (future enhancement)
 - Manual coefficient entry without warehouse selection (Story 44.13 handles auto-fill)
 - Backend API changes (use existing coefficients API from Request #98)
@@ -41,6 +42,7 @@ WB provides acceptance coefficients per warehouse for a 14-day rolling window:
 ```
 
 **Key points:**
+
 - Coefficients are integers (100 = 1.0, 125 = 1.25, 150 = 1.5)
 - Frontend must normalize: `displayCoefficient = coefficient / 100`
 - Coefficients change daily based on warehouse capacity
@@ -53,6 +55,7 @@ logistics_cost = (baseLiterRub + (volume - 1) × additionalLiterRub) × coeffici
 ```
 
 **Example**:
+
 - Base logistics: 58 RUB (for 3L volume)
 - Coefficient: 1.25 (warehouse "busy")
 - **Final**: 58 × 1.25 = **72.50 RUB**
@@ -62,6 +65,7 @@ logistics_cost = (baseLiterRub + (volume - 1) × additionalLiterRub) × coeffici
 ## Acceptance Criteria
 
 ### AC1: Coefficient Display in Collapsible Section
+
 - [ ] Create collapsible section "Коэффициенты логистики"
 - [ ] Collapsed by default (coefficients are auto-filled from warehouse)
 - [ ] Section header shows current coefficient: "Коэффициент: 1.25"
@@ -69,6 +73,7 @@ logistics_cost = (baseLiterRub + (volume - 1) × additionalLiterRub) × coeffici
 - [ ] Show coefficient date: "Действует с: 20.01.2026"
 
 ### AC2: Coefficient Value Display
+
 - [ ] Display current coefficient value with 2 decimal places (e.g., "1.25")
 - [ ] Show coefficient status badge:
   - `1.00` = "Базовый" (green)
@@ -77,6 +82,7 @@ logistics_cost = (baseLiterRub + (volume - 1) × additionalLiterRub) × coeffici
 - [ ] Tooltip explaining coefficient impact on logistics cost
 
 ### AC3: 14-Day Coefficient Calendar (Optional Enhancement)
+
 - [ ] Show mini-calendar with coefficients for next 14 days
 - [ ] Color-coded by coefficient level (green/yellow/red)
 - [ ] Click on date to see that day's coefficient
@@ -84,24 +90,28 @@ logistics_cost = (baseLiterRub + (volume - 1) × additionalLiterRub) × coeffici
 - [ ] Collapsed by default (expand on user request)
 
 ### AC4: Cost Impact Calculation
+
 - [ ] Apply coefficient to `logistics_forward_rub` before API call
 - [ ] Formula: `adjusted_logistics = base_logistics × coefficient`
 - [ ] Show cost impact: "Увеличение: +X ₽ (+Y%)"
 - [ ] Update in real-time as coefficient changes
 
 ### AC5: Coefficient Auto-fill Integration (with Story 44.13)
+
 - [ ] When warehouse selected, auto-fill coefficient from API
 - [ ] Show "Автозаполнено" badge when coefficient from API
 - [ ] Show "Вручную" badge when user overrides (if allowed)
 - [ ] Track original vs current coefficient value
 
 ### AC6: Tooltips and Help
+
 - [ ] Tooltip for coefficient explaining warehouse-specific variation
 - [ ] Help link: "Где найти коэффициенты?" → WB documentation
 - [ ] URL: `https://seller.wildberries.ru/supplies-management/all-supplies`
 - [ ] Link styled as small text link below the coefficient display
 
 ### AC7: No Warehouse Selected State
+
 - [ ] If no warehouse selected, show info notice
 - [ ] Text: "Выберите склад для отображения коэффициента"
 - [ ] Coefficient field hidden or disabled until warehouse selected
@@ -115,6 +125,7 @@ logistics_cost = (baseLiterRub + (volume - 1) × additionalLiterRub) × coeffici
 **Endpoint**: `GET /v1/tariffs/acceptance/coefficients?warehouseId={id}`
 
 **Request**:
+
 ```http
 GET /v1/tariffs/acceptance/coefficients?warehouseId=507
 Authorization: Bearer {token}
@@ -122,6 +133,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Response**:
+
 ```json
 {
   "data": {
@@ -616,16 +628,16 @@ export function CoefficientCalendar({ coefficients }: CoefficientCalendarProps) 
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| Coefficient = 100 (API) | Display as 1.00 (normalized) |
-| Coefficient = 125 (API) | Display as 1.25 (normalized) |
-| Coefficient > 200 (API) | Allow but show "Высокий" (red) status |
-| No warehouse selected | Show info notice, hide coefficient section |
-| API returns empty coefficients | Use default 1.0, show warning |
-| API error | Show error message, allow fallback |
-| Form reset | Coefficients reset when warehouse cleared |
-| Date outside 14-day window | Extrapolate or show last known value |
+| Scenario                       | Expected Behavior                          |
+| ------------------------------ | ------------------------------------------ |
+| Coefficient = 100 (API)        | Display as 1.00 (normalized)               |
+| Coefficient = 125 (API)        | Display as 1.25 (normalized)               |
+| Coefficient > 200 (API)        | Allow but show "Высокий" (red) status      |
+| No warehouse selected          | Show info notice, hide coefficient section |
+| API returns empty coefficients | Use default 1.0, show warning              |
+| API error                      | Show error message, allow fallback         |
+| Form reset                     | Coefficients reset when warehouse cleared  |
+| Date outside 14-day window     | Extrapolate or show last known value       |
 
 ---
 
@@ -659,17 +671,20 @@ export function CoefficientCalendar({ coefficients }: CoefficientCalendarProps) 
 ## Testing Requirements
 
 ### Unit Tests
+
 - [ ] normalizeCoefficient: 100 → 1.0, 125 → 1.25
 - [ ] getCoefficientStatus: base/elevated/high
 - [ ] calculateCoefficientImpact: increase calculation
 
 ### Component Tests
+
 - [ ] CoefficientDisplay renders correctly
 - [ ] Calendar shows correct 14 days
 - [ ] Collapsed state shows summary
 - [ ] No warehouse shows info notice
 
 ### E2E Tests
+
 - [ ] User can expand coefficients section
 - [ ] Calendar dates are clickable
 - [ ] Help link opens in new tab
@@ -679,20 +694,23 @@ export function CoefficientCalendar({ coefficients }: CoefficientCalendarProps) 
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/types/coefficients.ts` | CREATE | ~40 | Type definitions |
-| `src/lib/coefficient-utils.ts` | CREATE | ~80 | Normalization and status helpers |
-| `src/hooks/useAcceptanceCoefficients.ts` | CREATE | ~30 | TanStack Query hook |
-| `src/components/custom/price-calculator/LogisticsCoefficientsSection.tsx` | CREATE | ~100 | Main collapsible section |
-| `src/components/custom/price-calculator/CoefficientDisplay.tsx` | CREATE | ~60 | Coefficient value display |
-| `src/components/custom/price-calculator/CoefficientCalendar.tsx` | CREATE | ~70 | 14-day mini calendar |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +20 | Integrate coefficients section |
+
+| File                                                                      | Change Type | Lines (Est.) | Description                      |
+| ------------------------------------------------------------------------- | ----------- | ------------ | -------------------------------- |
+| `src/types/coefficients.ts`                                               | CREATE      | ~40          | Type definitions                 |
+| `src/lib/coefficient-utils.ts`                                            | CREATE      | ~80          | Normalization and status helpers |
+| `src/hooks/useAcceptanceCoefficients.ts`                                  | CREATE      | ~30          | TanStack Query hook              |
+| `src/components/custom/price-calculator/LogisticsCoefficientsSection.tsx` | CREATE      | ~100         | Main collapsible section         |
+| `src/components/custom/price-calculator/CoefficientDisplay.tsx`           | CREATE      | ~60          | Coefficient value display        |
+| `src/components/custom/price-calculator/CoefficientCalendar.tsx`          | CREATE      | ~70          | 14-day mini calendar             |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`          | UPDATE      | +20          | Integrate coefficients section   |
 
 ### Change Log
+
 _To be filled during implementation_
 
 ### Review Follow-ups
+
 _To be filled after code review_
 
 ---
@@ -716,22 +734,24 @@ _To be filled after code review_
 ## QA Checklist
 
 ### Functional Verification
-| Test Case | Expected Result | Status |
-|-----------|-----------------|--------|
-| Coefficient = 1.00 | "Базовый" badge (green) | [ ] |
-| Coefficient = 1.25 | "Повышенный" badge (yellow) | [ ] |
-| Coefficient = 1.75 | "Высокий" badge (red) | [ ] |
-| No warehouse | Info notice displayed | [ ] |
-| Expand section | Shows calendar and help link | [ ] |
-| Click help link | Opens WB docs in new tab | [ ] |
+
+| Test Case          | Expected Result              | Status |
+| ------------------ | ---------------------------- | ------ |
+| Coefficient = 1.00 | "Базовый" badge (green)      | [ ]    |
+| Coefficient = 1.25 | "Повышенный" badge (yellow)  | [ ]    |
+| Coefficient = 1.75 | "Высокий" badge (red)        | [ ]    |
+| No warehouse       | Info notice displayed        | [ ]    |
+| Expand section     | Shows calendar and help link | [ ]    |
+| Click help link    | Opens WB docs in new tab     | [ ]    |
 
 ### Accessibility Verification
-| Check | Status |
-|-------|--------|
-| Keyboard navigation | [ ] |
-| Color contrast | [ ] |
-| Focus visible | [ ] |
-| Screen reader compatible | [ ] |
+
+| Check                    | Status |
+| ------------------------ | ------ |
+| Keyboard navigation      | [ ]    |
+| Color contrast           | [ ]    |
+| Focus visible            | [ ]    |
+| Screen reader compatible | [ ]    |
 
 ---
 

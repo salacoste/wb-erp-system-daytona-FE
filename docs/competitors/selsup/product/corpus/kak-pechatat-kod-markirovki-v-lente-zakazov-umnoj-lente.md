@@ -19,7 +19,7 @@ chars: 3914
 
 В этой статье:
 
-- 
+-
 - <a href="#dlya-chego-eto-nuzhno" rel="nofollow">Для чего это нужно</a>
 - <a href="#kak-vklyuchit-i-ispolzovat-pechat-koda-markirovki-v-lente-zakazov" rel="nofollow">Как включить и использовать печать кода маркировки в ленте заказов</a>
 - <a href="#1-aktivatsiya-funktsii" rel="nofollow">1. Активация функции</a>
@@ -82,11 +82,7 @@ chars: 3914
 
 - Для печати используйте прямое подключение **принтера**.
 
-  
-
   Важно: в файл ПДФ код маркировки не скачается.
-
-  
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/05/screenshot_38.png.webp)
 

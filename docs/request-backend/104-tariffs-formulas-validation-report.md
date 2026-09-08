@@ -8,14 +8,14 @@
 
 ## Краткая сводка (Executive Summary)
 
-| Показатель | Статус | Детали |
-|------------|--------|--------|
-| **Общий статус** | ✅ PASS | Реализация полностью соответствует формулам WB SDK |
-| **Бэкенд-реализация** | ✅ 100% | Все формулы реализованы корректно |
-| **Коэффициенты** | ✅ PASS | Деление на 100 реализовано правильно |
-| **Типы данных** | ✅ PASS | String → Number конвертация работает |
-| **Fallback логика** | ✅ PASS | Значения по умолчанию применяются корректно |
-| **Уровень уверенности** | **100%** | Подтверждено кодом и тестами |
+| Показатель              | Статус   | Детали                                             |
+| ----------------------- | -------- | -------------------------------------------------- |
+| **Общий статус**        | ✅ PASS  | Реализация полностью соответствует формулам WB SDK |
+| **Бэкенд-реализация**   | ✅ 100%  | Все формулы реализованы корректно                  |
+| **Коэффициенты**        | ✅ PASS  | Деление на 100 реализовано правильно               |
+| **Типы данных**         | ✅ PASS  | String → Number конвертация работает               |
+| **Fallback логика**     | ✅ PASS  | Значения по умолчанию применяются корректно        |
+| **Уровень уверенности** | **100%** | Подтверждено кодом и тестами                       |
 
 **Вывод**: Реализация тарифов в бэкенде полностью соответствует спецификации WB SDK v2.4.3+. Фронтенд может безопасно использовать API endpoints для расчета стоимости.
 
@@ -33,17 +33,21 @@
 ### 1.1. Хранение коробок в день (Box Storage Per Day)
 
 **Формула WB SDK**:
+
 ```javascript
 (boxStorageBase + additionalLiters × boxStorageLiter) × (boxStorageCoefExpr / 100)
 ```
+
 где `additionalLiters = Math.max(0, volumeLiters - 1)`
 
 **Реализация в бэкенде** (`src/products/services/price-calculator.service.ts:389`):
+
 ```typescript
 const dailyCost = (baseRate + Math.max(0, volume - 1) * literRate) * coefficient;
 ```
 
 **Пример расчета** (5L товар, склад Коледино):
+
 ```
 Входные данные:
 - volumeLiters = 5
@@ -63,18 +67,22 @@ dailyCost = 0.42 × 1.15 = 0.483 ₽/день
 ### 1.2. Логистика коробок (Box Logistics)
 
 **Формула WB SDK**:
+
 ```javascript
 (boxDeliveryBase + additionalLiters × boxDeliveryLiter) × (boxDeliveryCoefExpr / 100)
 ```
+
 где `additionalLiters = Math.max(0, volumeLiters - 1)`
 
 **Реализация в бэкенде** (`src/products/services/price-calculator.service.ts:342-344`):
+
 ```typescript
 const baseCost = tariff.delivery_base_rub + Math.max(0, volume - 1) * tariff.delivery_liter_rub;
 return Math.round(baseCost * tariff.logistics_coefficient * 100) / 100;
 ```
 
 **Пример расчета** (5L товар, склад Коледино):
+
 ```
 Входные данные:
 - volumeLiters = 5
@@ -91,11 +99,13 @@ totalCost = 102 × 1.15 = 117.3 ₽ (округляется до 117.30 ₽)
 ### 1.3. Хранение паллет (Pallet Storage Per Day)
 
 **Формула WB SDK**:
+
 ```javascript
 palletStorageValueExpr × (palletStorageExpr / 100)
 ```
 
 **Реализация в бэкенде** (Story 43.11):
+
 ```typescript
 // Фиксированная ставка × коэффициент
 const palletDailyRate = 23; // ₽/день за моно-паллет
@@ -103,6 +113,7 @@ const totalCost = palletDailyRate × storage_coef × pallet_count × storage_day
 ```
 
 **Пример расчета**:
+
 ```
 Входные данные:
 - palletCount = 10 паллет
@@ -119,21 +130,22 @@ totalCost = 23 × 1.15 × 10 × 30 = 7,935 ₽
 
 ### 2.1. Таблица соответствия полей
 
-| Поле WB SDK | Поле Backend API | Тип | Пример | Описание |
-|-------------|------------------|-----|--------|----------|
-| `boxStorageBase` | `storage.base_per_day_rub` | number | 0.14 | Базовая ставка хранения (₽/день) |
-| `boxStorageLiter` | `storage.liter_per_day_rub` | number | 0.07 | Доп. ставка за литр (₽/литр/день) |
-| `boxStorageCoefExpr` | `storage.coefficient` | number | 1.15 | Коэффициент хранения (уже разделен на 100) |
-| `boxDeliveryBase` | `fbo.delivery_base_rub` | number | 46.0 | Базовая ставка доставки FBO (₽) |
-| `boxDeliveryLiter` | `fbo.delivery_liter_rub` | number | 14.0 | Доп. ставка за литр FBO (₽/литр) |
-| `boxDeliveryCoefExpr` | `fbo.logistics_coefficient` | number | 1.15 | Коэффициент логистики FBO |
-| `boxDeliveryMarketplaceBase` | `fbs.delivery_base_rub` | number | 51.0 | Базовая ставка доставки FBS (₽) |
-| `boxDeliveryMarketplaceLiter` | `fbs.delivery_liter_rub` | number | 15.0 | Доп. ставка за литр FBS (₽/литр) |
-| `boxDeliveryMarketplaceCoefExpr` | `fbs.logistics_coefficient` | number | 1.15 | Коэффициент логистики FBS |
+| Поле WB SDK                      | Поле Backend API            | Тип    | Пример | Описание                                   |
+| -------------------------------- | --------------------------- | ------ | ------ | ------------------------------------------ |
+| `boxStorageBase`                 | `storage.base_per_day_rub`  | number | 0.14   | Базовая ставка хранения (₽/день)           |
+| `boxStorageLiter`                | `storage.liter_per_day_rub` | number | 0.07   | Доп. ставка за литр (₽/литр/день)          |
+| `boxStorageCoefExpr`             | `storage.coefficient`       | number | 1.15   | Коэффициент хранения (уже разделен на 100) |
+| `boxDeliveryBase`                | `fbo.delivery_base_rub`     | number | 46.0   | Базовая ставка доставки FBO (₽)            |
+| `boxDeliveryLiter`               | `fbo.delivery_liter_rub`    | number | 14.0   | Доп. ставка за литр FBO (₽/литр)           |
+| `boxDeliveryCoefExpr`            | `fbo.logistics_coefficient` | number | 1.15   | Коэффициент логистики FBO                  |
+| `boxDeliveryMarketplaceBase`     | `fbs.delivery_base_rub`     | number | 51.0   | Базовая ставка доставки FBS (₽)            |
+| `boxDeliveryMarketplaceLiter`    | `fbs.delivery_liter_rub`    | number | 15.0   | Доп. ставка за литр FBS (₽/литр)           |
+| `boxDeliveryMarketplaceCoefExpr` | `fbs.logistics_coefficient` | number | 1.15   | Коэффициент логистики FBS                  |
 
 ### 2.2. TypeScript интерфейсы
 
 **Логистический тариф**:
+
 ```typescript
 interface LogisticsTariffDto {
   delivery_base_rub: number;      // Базовая ставка за первый литр (₽)
@@ -143,6 +155,7 @@ interface LogisticsTariffDto {
 ```
 
 **Тариф хранения**:
+
 ```typescript
 interface StorageTariffDto {
   base_per_day_rub: number;   // Базовая ставка хранения за первый литр (₽/день)
@@ -152,6 +165,7 @@ interface StorageTariffDto {
 ```
 
 **Полный тариф склада**:
+
 ```typescript
 interface TransformedTariffsDto {
   fbo: LogisticsTariffDto;     // FBO логистика
@@ -169,6 +183,7 @@ interface TransformedTariffsDto {
 ### 3.1. Проблема
 
 **WB SDK возвращает коэффициенты как строки**:
+
 ```javascript
 {
   boxStorageCoefExpr: "115",    // означает 115% = 1.15
@@ -179,6 +194,7 @@ interface TransformedTariffsDto {
 ### 3.2. Решение в бэкенде
 
 **Метод парсинга** (`src/tariffs/warehouses-tariffs.service.ts:606-609`):
+
 ```typescript
 private parseCoefficient(value: string | undefined): number {
   const parsed = parseFloat(value || '100');
@@ -187,6 +203,7 @@ private parseCoefficient(value: string | undefined): number {
 ```
 
 **Применение** (`src/tariffs/warehouses-tariffs.service.ts:512,517,522`):
+
 ```typescript
 fbo: {
   delivery_base_rub: this.parseNumeric(raw.boxDeliveryBase),
@@ -198,6 +215,7 @@ fbo: {
 ### 3.3. Что получает фронтенд
 
 **API Response** (уже обработанный):
+
 ```json
 {
   "storage": {
@@ -225,6 +243,7 @@ const dailyCost = (base + additionalLiters * perLiter) * tariff.storage.coeffici
 ### 4.1. Проблема
 
 Иногда WB API возвращает `0` для ставок хранения:
+
 ```javascript
 {
   boxStorageBase: "0",      // Нет ставки от WB
@@ -235,6 +254,7 @@ const dailyCost = (base + additionalLiters * perLiter) * tariff.storage.coeffici
 ### 4.2. Решение в бэкенде
 
 **Fallback логика** (`src/tariffs/warehouses-tariffs.service.ts:502-506`):
+
 ```typescript
 const storageBase = this.parseNumeric(raw.boxStorageBase);
 const storageLiter = this.parseNumeric(raw.boxStorageLiter);
@@ -244,6 +264,7 @@ const finalStorageLiter = storageLiter > 0 ? storageLiter : defaultStorageLiterP
 ```
 
 **Значения по умолчанию** (из `WbTariffSettings`):
+
 ```typescript
 defaultStorageBasePerDay = 0.11 ₽/день
 defaultStorageLiterPerDay = 0.11 ₽/литр/день
@@ -252,6 +273,7 @@ defaultStorageLiterPerDay = 0.11 ₽/литр/день
 ### 4.3. Что получает фронтенд
 
 **Если WB API вернул 0**:
+
 ```json
 {
   "storage": {
@@ -273,6 +295,7 @@ defaultStorageLiterPerDay = 0.11 ₽/литр/день
 **Endpoint**: `GET /v1/tariffs/warehouses-with-tariffs?date=2026-01-26`
 
 **Response**:
+
 ```json
 {
   "data": {
@@ -320,6 +343,7 @@ defaultStorageLiterPerDay = 0.11 ₽/литр/день
 ### 5.2. Расчет на фронтенде (TypeScript)
 
 **Хелпер для расчета хранения**:
+
 ```typescript
 interface StorageTariffDto {
   base_per_day_rub: number;
@@ -354,6 +378,7 @@ console.log(`Стоимость хранения: ${cost} ₽`); // 14.49 ₽
 ```
 
 **Хелпер для расчета логистики**:
+
 ```typescript
 interface LogisticsTariffDto {
   delivery_base_rub: number;
@@ -459,10 +484,12 @@ export const PriceCalculator: React.FC = () => {
 **Симптом**: `coefficient = 100` или `coefficient = 0`
 
 **Причина**:
+
 - `coefficient = 100` → фронтенд не поделил на 100 (но бэкенд уже это сделал!)
 - `coefficient = 0` → WB API вернул "0", должен был быть fallback
 
 **Решение**:
+
 ```typescript
 // ПРОВЕРКА: Коэффициент должен быть в диапазоне 0.5 - 3.0
 if (tariff.storage.coefficient > 10) {
@@ -480,6 +507,7 @@ if (tariff.storage.coefficient === 0) {
 **Симптом**: Стоимость значительно отличается от ожидаемой
 
 **Диагностика**:
+
 ```typescript
 function debugCalculation(volumeLiters: number, tariff: StorageTariffDto, days: number) {
   console.log('=== DEBUG Storage Calculation ===');
@@ -512,6 +540,7 @@ debugCalculation(5, tariff.storage, 30);
 ### 6.3. Проверка коэффициентов
 
 **Unit тест для проверки коэффициентов**:
+
 ```typescript
 function testCoefficientParsing(apiCoefficient: number, expectedRange: [number, number]) {
   if (apiCoefficient < expectedRange[0] || apiCoefficient > expectedRange[1]) {
@@ -605,13 +634,14 @@ const mockTariffResponse = {
 ### 7.2. Ожидаемые результаты расчетов
 
 | Объем (L) | Хранение (₽/день) | Логистика FBO (₽) | Логистика FBS (₽) |
-|-----------|-------------------|-------------------|-------------------|
-| 0.5 | 0.161 | 76.80 | 81.60 |
-| 1.0 | 0.161 | 76.80 | 81.60 |
-| 5.0 | 0.483 | 148.48 | 158.25 |
-| 10.0 | 1.035 | 252.16 | 268.65 |
+| --------- | ----------------- | ----------------- | ----------------- |
+| 0.5       | 0.161             | 76.80             | 81.60             |
+| 1.0       | 0.161             | 76.80             | 81.60             |
+| 5.0       | 0.483             | 148.48            | 158.25            |
+| 10.0      | 1.035             | 252.16            | 268.65            |
 
 **Формула для проверки**:
+
 ```typescript
 // Хранение: (0.14 + max(0, vol-1) × 0.07) × 1.15
 // Логистика FBO: (48 + max(0, vol-1) × 11.2) × 1.6
@@ -660,6 +690,7 @@ const mockTariffResponse = {
 **Статус валидации**: ✅ **PASS**
 
 Реализация тарифов в бэкенде полностью соответствует спецификации WB SDK:
+
 - ✅ Коэффициенты правильно делятся на 100
 - ✅ String → Number конвертация работает корректно
 - ✅ Формулы `additionalLiters = Math.max(0, volume - 1)` реализованы верно
@@ -676,6 +707,7 @@ const mockTariffResponse = {
 **Отчет сгенерирован**: 2026-01-25
 **Следующая проверка**: При обновлении WB SDK tariff structure
 **Связанные документы**:
+
 - `docs/TARIFFS-FORMULA-VALIDATION-REPORT.md` (полный бэкенд-отчет)
 - `docs/reference/PRICE-CALCULATOR-GUIDE.md` (руководство по калькулятору)
 - `docs/epics/epic-43-price-calculator.md` (спецификация Epic 43)

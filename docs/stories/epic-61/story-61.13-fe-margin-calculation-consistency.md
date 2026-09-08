@@ -25,10 +25,10 @@
 
 The Dashboard displays **different margin formulas** depending on the selected period:
 
-| Period | Formula Used | Margin Type | Example Value |
-|--------|-------------|-------------|---------------|
-| **Week (W04)** | `(payout_total - cogs) / sale_gross` | Net Margin | 12.92% |
-| **Month (January)** | `(sale_gross - cogs) / sale_gross` | Gross Margin | 72.32% |
+| Period              | Formula Used                         | Margin Type  | Example Value |
+| ------------------- | ------------------------------------ | ------------ | ------------- |
+| **Week (W04)**      | `(payout_total - cogs) / sale_gross` | Net Margin   | 12.92%        |
+| **Month (January)** | `(sale_gross - cogs) / sale_gross`   | Gross Margin | 72.32%        |
 
 **User Impact**: A 5x difference in margin values (12% vs 72%) causes significant confusion and undermines trust in the dashboard.
 
@@ -42,6 +42,7 @@ The Dashboard displays **different margin formulas** depending on the selected p
 ### Evidence from Data Validation
 
 **Week W04 (2025-01-20 to 2025-01-26)**:
+
 ```
 sale_gross_total: 126,922.45 ₽
 payout_total: 52,219.92 ₽
@@ -53,6 +54,7 @@ Expected Gross Margin: (126,922.45 - 35,818) / 126,922.45 = 71.77%
 ```
 
 **Month (4 weeks aggregated)**:
+
 ```
 sale_gross_total: 676,244.80 ₽
 payout_total: 226,248.26 ₽
@@ -65,15 +67,16 @@ If using Net Margin formula: (226,248.26 - 187,200) / 676,244.80 = 5.77%
 
 ### Affected Files
 
-| File | Line | Issue |
-|------|------|-------|
-| `src/hooks/financial/aggregation.ts` | 109-111 | Calculates `gross_profit` but not `margin_pct` |
-| `src/components/custom/FinancialSummaryTable.tsx` | 446 | Uses `payout_total` in margin display |
-| `src/hooks/financial/hooks.ts` | 65-66 | Month aggregation loses margin context |
+| File                                              | Line    | Issue                                          |
+| ------------------------------------------------- | ------- | ---------------------------------------------- |
+| `src/hooks/financial/aggregation.ts`              | 109-111 | Calculates `gross_profit` but not `margin_pct` |
+| `src/components/custom/FinancialSummaryTable.tsx` | 446     | Uses `payout_total` in margin display          |
+| `src/hooks/financial/hooks.ts`                    | 65-66   | Month aggregation loses margin context         |
 
 ### Code Evidence
 
 **aggregation.ts (line 109-111)**:
+
 ```typescript
 // Only calculates gross_profit, no margin_pct
 if (result.cogs_coverage_pct === 100 && result.sale_gross_total && result.cogs_total) {
@@ -83,6 +86,7 @@ if (result.cogs_coverage_pct === 100 && result.sale_gross_total && result.cogs_t
 ```
 
 **FinancialSummaryTable.tsx (line 446)**:
+
 ```typescript
 // Uses payout_total (Net Margin) not sale_gross_total (Gross Margin)
 Маржа: {payoutTotal > 0 ? ((grossProfit / payoutTotal) * 100).toFixed(1) : 0}%
@@ -93,6 +97,7 @@ if (result.cogs_coverage_pct === 100 && result.sale_gross_total && result.cogs_t
 ## Acceptance Criteria
 
 ### Required
+
 - [ ] **AC1**: Define single source of truth for margin formula across entire frontend
 - [ ] **AC2**: Margin % shows identical formula for week and month periods
 - [ ] **AC3**: `aggregateFinanceSummaries()` calculates `margin_pct` field after aggregation
@@ -101,6 +106,7 @@ if (result.cogs_coverage_pct === 100 && result.sale_gross_total && result.cogs_t
 - [ ] **AC6**: TypeScript types include `margin_pct` field in aggregation result
 
 ### Nice to Have
+
 - [ ] **AC7**: Add tooltip explaining margin calculation to user
 - [ ] **AC8**: E2E test comparing week vs month margin values
 
@@ -201,10 +207,10 @@ describe('Story 61.13: Margin Calculation Consistency', () => {
 
 **QUESTION**: Which margin formula should be the standard?
 
-| Option | Formula | Pros | Cons |
-|--------|---------|------|------|
+| Option           | Formula                            | Pros                                         | Cons                           |
+| ---------------- | ---------------------------------- | -------------------------------------------- | ------------------------------ |
 | **Gross Margin** | `(sale_gross - cogs) / sale_gross` | Industry standard, higher values look better | Doesn't reflect WB fees impact |
-| **Net Margin** | `(payout - cogs) / sale_gross` | Shows real profit after WB fees | Lower values may alarm users |
+| **Net Margin**   | `(payout - cogs) / sale_gross`     | Shows real profit after WB fees              | Lower values may alarm users   |
 
 **Recommendation**: Use **Gross Margin** as the primary metric with clear labeling ("Валовая маржа" vs "Чистая маржа").
 
@@ -235,14 +241,14 @@ npm run test:e2e -- --grep "margin consistency"
 
 ## Files to Modify
 
-| File | Change Type | Description |
-|------|-------------|-------------|
-| `src/hooks/financial/aggregation.ts` | MODIFY | Add `margin_pct` calculation |
-| `src/hooks/financial/types.ts` | MODIFY | Add `margin_pct` to FinanceSummary type |
-| `src/components/custom/FinancialSummaryTable.tsx` | MODIFY | Use consistent margin formula |
-| `src/components/custom/dashboard/PeriodComparisonSection.tsx` | CHECK | Verify uses same formula |
-| `src/components/custom/dashboard/trends-config.ts` | CHECK | Verify margin_pct source |
-| `src/hooks/__tests__/useFinancialSummary.test.ts` | MODIFY | Add consistency tests |
+| File                                                          | Change Type | Description                             |
+| ------------------------------------------------------------- | ----------- | --------------------------------------- |
+| `src/hooks/financial/aggregation.ts`                          | MODIFY      | Add `margin_pct` calculation            |
+| `src/hooks/financial/types.ts`                                | MODIFY      | Add `margin_pct` to FinanceSummary type |
+| `src/components/custom/FinancialSummaryTable.tsx`             | MODIFY      | Use consistent margin formula           |
+| `src/components/custom/dashboard/PeriodComparisonSection.tsx` | CHECK       | Verify uses same formula                |
+| `src/components/custom/dashboard/trends-config.ts`            | CHECK       | Verify margin_pct source                |
+| `src/hooks/__tests__/useFinancialSummary.test.ts`             | MODIFY      | Add consistency tests                   |
 
 ---
 

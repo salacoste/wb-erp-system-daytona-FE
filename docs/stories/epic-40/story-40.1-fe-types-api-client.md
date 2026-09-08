@@ -18,6 +18,7 @@
 **So that** I can safely integrate with the backend Orders API endpoints.
 
 **Non-goals**:
+
 - React Query hooks (separate story 40.2-FE)
 - UI components (stories 40.3-40.6)
 
@@ -89,13 +90,13 @@
 
 ### Files to Create
 
-| File | Lines (Est.) | Description |
-|------|--------------|-------------|
-| `src/types/orders.ts` | ~120 | Order list & details types |
-| `src/types/orders-history.ts` | ~150 | History types (local, WB, full) |
-| `src/types/orders-analytics.ts` | ~100 | Analytics metrics types |
-| `src/lib/api/orders.ts` | ~120 | Orders API client |
-| `src/lib/api/orders-analytics.ts` | ~80 | Analytics API client |
+| File                              | Lines (Est.) | Description                     |
+| --------------------------------- | ------------ | ------------------------------- |
+| `src/types/orders.ts`             | ~120         | Order list & details types      |
+| `src/types/orders-history.ts`     | ~150         | History types (local, WB, full) |
+| `src/types/orders-analytics.ts`   | ~100         | Analytics metrics types         |
+| `src/lib/api/orders.ts`           | ~120         | Orders API client               |
+| `src/lib/api/orders-analytics.ts` | ~80          | Analytics API client            |
 
 ### TypeScript Interfaces
 
@@ -763,6 +764,7 @@ export async function getOrdersSyncStatus(): Promise<SyncStatusResponse> {
 ### Existing WB Status Mapping
 
 The file `src/lib/wb-status-mapping.ts` already contains:
+
 - `WbStatusConfig` interface with label, color, category
 - `WB_STATUS_CONFIG` with 40+ status codes
 - Helper functions: `getWbStatusConfig()`, `getWbStatusLabel()`, `isWbStatusFinal()`
@@ -803,18 +805,18 @@ Reuse these utilities in history components (Story 40.5-FE).
 
 ### Required (Blocking)
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Backend Story 40.9 | ✅ Complete | WB Native Status History API |
-| `src/lib/api-client.ts` | ✅ Exists | Centralized API client |
-| `src/lib/wb-status-mapping.ts` | ✅ Exists | WB status code utilities |
+| Dependency                     | Status      | Notes                        |
+| ------------------------------ | ----------- | ---------------------------- |
+| Backend Story 40.9             | ✅ Complete | WB Native Status History API |
+| `src/lib/api-client.ts`        | ✅ Exists   | Centralized API client       |
+| `src/lib/wb-status-mapping.ts` | ✅ Exists   | WB status code utilities     |
 
 ### Non-Blocking
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
+| Dependency    | Status  | Notes                                |
+| ------------- | ------- | ------------------------------------ |
 | Story 40.2-FE | Pending | React Query hooks (uses these types) |
-| Story 40.3-FE | Pending | Orders List Page (uses these types) |
+| Story 40.3-FE | Pending | Orders List Page (uses these types)  |
 
 ---
 
@@ -829,8 +831,8 @@ Reuse these utilities in history components (Story 40.5-FE).
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author                 | Change        |
+| ---------- | ---------------------- | ------------- |
 | 2026-01-29 | Claude Code (PM Agent) | Initial draft |
 
 ---

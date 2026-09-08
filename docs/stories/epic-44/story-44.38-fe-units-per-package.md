@@ -2,16 +2,16 @@
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| **Story ID** | 44.38-FE |
-| **Epic** | Epic 44 - Price Calculator UI |
-| **Type** | Enhancement |
-| **Priority** | P1 - High |
-| **Story Points** | 3 SP |
-| **Status** | ✅ Complete |
-| **Completed** | 2026-01-23 |
-| **Depends On** | Story 44.32 (BoxTypeSelector) |
+| Field            | Value                         |
+| ---------------- | ----------------------------- |
+| **Story ID**     | 44.38-FE                      |
+| **Epic**         | Epic 44 - Price Calculator UI |
+| **Type**         | Enhancement                   |
+| **Priority**     | P1 - High                     |
+| **Story Points** | 3 SP                          |
+| **Status**       | ✅ Complete                   |
+| **Completed**    | 2026-01-23                    |
+| **Depends On**   | Story 44.32 (BoxTypeSelector) |
 
 ## User Story
 
@@ -29,11 +29,13 @@ When a user selects "Короб" (box) or "Монопаллета" (pallet) as t
 - A **pallet typically contains 50-500+ units** of product
 
 **Current incorrect behavior:**
+
 ```
 Короб costs 100₽ → Shows 100₽ per product unit (WRONG)
 ```
 
 **Expected correct behavior:**
+
 ```
 Короб costs 100₽, contains 10 units → 100₽ / 10 = 10₽ per product unit (CORRECT)
 ```
@@ -42,25 +44,26 @@ This calculation error significantly overstates the acceptance cost per unit, le
 
 ### Impact Assessment
 
-| Metric | Current | Expected |
-|--------|---------|----------|
+| Metric                   | Current                            | Expected                  |
+| ------------------------ | ---------------------------------- | ------------------------- |
 | Acceptance cost accuracy | 0% (per-package shown as per-unit) | 100% (true per-unit cost) |
-| Margin calculation error | 5-50% overstated costs | Accurate |
-| User decision impact | Wrong pricing decisions | Correct pricing decisions |
+| Margin calculation error | 5-50% overstated costs             | Accurate                  |
+| User decision impact     | Wrong pricing decisions            | Correct pricing decisions |
 
 ### Real-World Example
 
-| Scenario | Box Cost | Units | Current Display | Correct Display |
-|----------|----------|-------|-----------------|-----------------|
-| Small items | 100₽ | 20 units | 100₽/unit | 5₽/unit |
-| Medium items | 150₽ | 10 units | 150₽/unit | 15₽/unit |
-| Pallet | 500₽ | 100 units | 500₽/unit | 5₽/unit |
+| Scenario     | Box Cost | Units     | Current Display | Correct Display |
+| ------------ | -------- | --------- | --------------- | --------------- |
+| Small items  | 100₽     | 20 units  | 100₽/unit       | 5₽/unit         |
+| Medium items | 150₽     | 10 units  | 150₽/unit       | 15₽/unit        |
+| Pallet       | 500₽     | 100 units | 500₽/unit       | 5₽/unit         |
 
 ## Technical Analysis
 
 ### Current Code State
 
 **BoxTypeSelector.tsx** (lines 25-36):
+
 ```typescript
 const BOX_TYPE_CONFIG = {
   box: {
@@ -77,6 +80,7 @@ const BOX_TYPE_CONFIG = {
 ```
 
 **usePriceCalculatorForm.ts** (lines 52-59):
+
 ```typescript
 export interface FormData {
   // ... other fields ...
@@ -87,13 +91,13 @@ export interface FormData {
 
 ### Gap Analysis
 
-| Component | Current State | Required Change |
-|-----------|---------------|-----------------|
-| `FormData` interface | No `units_per_package` | Add field with validation |
-| `BoxTypeSelector` | No units input | Add or create companion component |
-| `priceCalculatorUtils.ts` | No division logic | Add per-unit calculation |
-| `PriceCalculatorResults` | Shows total acceptance | Show per-unit acceptance |
-| Type definitions | No `units_per_package` type | Add to `price-calculator.ts` |
+| Component                 | Current State               | Required Change                   |
+| ------------------------- | --------------------------- | --------------------------------- |
+| `FormData` interface      | No `units_per_package`      | Add field with validation         |
+| `BoxTypeSelector`         | No units input              | Add or create companion component |
+| `priceCalculatorUtils.ts` | No division logic           | Add per-unit calculation          |
+| `PriceCalculatorResults`  | Shows total acceptance      | Show per-unit acceptance          |
+| Type definitions          | No `units_per_package` type | Add to `price-calculator.ts`      |
 
 ## Acceptance Criteria
 
@@ -131,6 +135,7 @@ export interface FormData {
 ## Technical Tasks
 
 ### Task 1: Add Type Definition
+
 **File:** `src/types/price-calculator.ts`
 **Effort:** 0.5 SP
 
@@ -148,26 +153,31 @@ export interface UnitsPerPackageConfig {
 ```
 
 ### Task 2: Update FormData Interface
+
 **File:** `src/components/custom/price-calculator/usePriceCalculatorForm.ts`
 **Effort:** 0.5 SP
 
 Add to `FormData` interface:
+
 ```typescript
 /** Story 44.38: Units per package for FBO acceptance cost division (default: 1) */
 units_per_package: number
 ```
 
 Add to `defaultFormValues`:
+
 ```typescript
 /** Story 44.38: Units per package default (single unit) */
 units_per_package: 1,
 ```
 
 ### Task 3: Create UnitsPerPackageInput Component
+
 **File:** `src/components/custom/price-calculator/UnitsPerPackageInput.tsx`
 **Effort:** 1.0 SP
 
 New component with:
+
 - Number input with label "Количество штук в упаковке"
 - Min/max/step validation (1-1000, step 1)
 - Tooltip explaining purpose
@@ -193,6 +203,7 @@ export function UnitsPerPackageInput({
 ```
 
 ### Task 4: Update BoxTypeSelector Integration
+
 **File:** `src/components/custom/price-calculator/BoxTypeSelector.tsx`
 **Effort:** 0.25 SP
 
@@ -202,15 +213,18 @@ Option B: Keep as separate component, integrate in parent form
 **Recommended:** Option B - Keep separation of concerns
 
 Update tooltip text:
+
 ```typescript
 <FieldTooltip content="Тип доставки влияет на стоимость приёмки: Короб (~1.70 ₽/л) или Монопаллета (~500 ₽ фикс). Укажите количество единиц товара в упаковке ниже." />
 ```
 
 ### Task 5: Update Calculation Logic
+
 **File:** `src/components/custom/price-calculator/priceCalculatorUtils.ts`
 **Effort:** 0.5 SP
 
 Add helper function:
+
 ```typescript
 /**
  * Story 44.38: Calculate per-unit acceptance cost
@@ -228,10 +242,12 @@ export function calculateAcceptancePerUnit(
 ```
 
 ### Task 6: Update Results Display
+
 **File:** `src/components/custom/price-calculator/PriceCalculatorResults.tsx`
 **Effort:** 0.25 SP
 
 Update acceptance cost display:
+
 ```typescript
 // When units_per_package > 1
 <div>
@@ -241,6 +257,7 @@ Update acceptance cost display:
 ```
 
 ### Task 7: Add Unit Tests
+
 **File:** `src/components/custom/price-calculator/__tests__/priceCalculatorUtils.test.ts`
 **Effort:** 0.25 SP
 
@@ -264,22 +281,23 @@ describe('calculateAcceptancePerUnit', () => {
 
 ## Files to Modify
 
-| File | Changes | Priority |
-|------|---------|----------|
-| `src/types/price-calculator.ts` | Add `units_per_package` type | P0 |
-| `src/components/custom/price-calculator/usePriceCalculatorForm.ts` | Add field to FormData | P0 |
-| `src/components/custom/price-calculator/UnitsPerPackageInput.tsx` | Create new component | P0 |
-| `src/components/custom/price-calculator/priceCalculatorUtils.ts` | Add division logic | P0 |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | Integrate new input | P0 |
-| `src/components/custom/price-calculator/PriceCalculatorResults.tsx` | Update display | P1 |
-| `src/components/custom/price-calculator/BoxTypeSelector.tsx` | Update tooltip | P2 |
-| `src/components/custom/price-calculator/__tests__/priceCalculatorUtils.test.ts` | Add tests | P1 |
+| File                                                                            | Changes                      | Priority |
+| ------------------------------------------------------------------------------- | ---------------------------- | -------- |
+| `src/types/price-calculator.ts`                                                 | Add `units_per_package` type | P0       |
+| `src/components/custom/price-calculator/usePriceCalculatorForm.ts`              | Add field to FormData        | P0       |
+| `src/components/custom/price-calculator/UnitsPerPackageInput.tsx`               | Create new component         | P0       |
+| `src/components/custom/price-calculator/priceCalculatorUtils.ts`                | Add division logic           | P0       |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`                | Integrate new input          | P0       |
+| `src/components/custom/price-calculator/PriceCalculatorResults.tsx`             | Update display               | P1       |
+| `src/components/custom/price-calculator/BoxTypeSelector.tsx`                    | Update tooltip               | P2       |
+| `src/components/custom/price-calculator/__tests__/priceCalculatorUtils.test.ts` | Add tests                    | P1       |
 
 ## Test Plan
 
 ### Unit Tests
 
 #### Test Case 1: Division Logic
+
 ```typescript
 describe('calculateAcceptancePerUnit', () => {
   test.each([
@@ -294,6 +312,7 @@ describe('calculateAcceptancePerUnit', () => {
 ```
 
 #### Test Case 2: Validation
+
 ```typescript
 describe('UnitsPerPackageInput validation', () => {
   it('rejects values below 1', () => {
@@ -313,6 +332,7 @@ describe('UnitsPerPackageInput validation', () => {
 ### Integration Tests
 
 #### Test Case 3: Form Integration
+
 ```typescript
 it('includes units_per_package in form state', () => {
   // Render form
@@ -322,6 +342,7 @@ it('includes units_per_package in form state', () => {
 ```
 
 #### Test Case 4: Results Display
+
 ```typescript
 it('shows per-unit cost when units > 1', () => {
   // Render results with acceptance_total=100, units=10
@@ -332,6 +353,7 @@ it('shows per-unit cost when units > 1', () => {
 ### Manual Testing
 
 #### Test Case 5: User Flow
+
 1. Navigate to `/cogs/price-calculator`
 2. Select FBO fulfillment type
 3. Select "Короб" box type
@@ -340,11 +362,13 @@ it('shows per-unit cost when units > 1', () => {
 6. **Verify**: Acceptance cost shows per-unit value
 
 #### Test Case 6: Box Type Switch
+
 1. Set units to 20 for "Короб"
 2. Switch to "Монопаллета"
 3. **Verify**: Units reset to 1
 
 #### Test Case 7: Fulfillment Switch
+
 1. Set FBO with units = 15
 2. Switch to FBS
 3. **Verify**: Units input hidden or disabled
@@ -375,16 +399,17 @@ it('shows per-unit cost when units > 1', () => {
 ### Tooltip Content
 
 **Field tooltip:**
+
 > Укажите сколько штук товара помещается в одну упаковку (короб или паллету). Стоимость приёмки будет разделена на это количество для расчёта себестоимости одной единицы.
 
 ### Error States
 
-| Condition | Error Message |
-|-----------|---------------|
-| Value < 1 | "Минимум 1 единица" |
+| Condition    | Error Message          |
+| ------------ | ---------------------- |
+| Value < 1    | "Минимум 1 единица"    |
 | Value > 1000 | "Максимум 1000 единиц" |
-| Non-integer | "Только целые числа" |
-| Empty | "Обязательное поле" |
+| Non-integer  | "Только целые числа"   |
+| Empty        | "Обязательное поле"    |
 
 ## Out of Scope
 

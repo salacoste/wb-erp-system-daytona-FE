@@ -10,6 +10,7 @@
 ## Executive Summary
 
 Frontend team needs clear guidance on:
+
 1. **How to check if COGS was assigned historically** (earlier dates)
 2. **How margin calculation works and where margin data is returned** (unique per week)
 3. **Data structure for margin analytics** (week-by-week uniqueness)
@@ -21,6 +22,7 @@ This document provides API endpoints, request examples, and response structures 
 ## Problem Description
 
 Frontend developers are experiencing confusion about:
+
 - **COGS History**: How to query if a product had COGS assigned in the past (not just current COGS)
 - **Margin Calculation**: Understanding where margin data comes from and how it's structured
 - **Week Uniqueness**: Confirming that margin data is unique per ISO week (not aggregated across weeks)
@@ -36,6 +38,7 @@ Frontend developers are experiencing confusion about:
 **Purpose**: Query all COGS entries (current and historical) with filters.
 
 **Query Parameters**:
+
 - `nm_id?: string` - Filter by product article number
 - `sa_name?: string` - Filter by product name (partial match)
 - `valid_at?: string` - **Temporal lookup**: Get COGS valid at specific date (ISO 8601 format: `YYYY-MM-DD`)
@@ -51,6 +54,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Response**:
+
 ```json
 {
   "data": [
@@ -91,6 +95,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Key Fields**:
+
 - `validFrom`: When this COGS version became effective
 - `validTo`: When this version expired (NULL = current active version)
 - `unitCostRub`: Cost per unit in RUB
@@ -115,6 +120,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Response**:
+
 ```json
 {
   "id": "uuid-2",
@@ -143,6 +149,7 @@ X-Cabinet-Id: <cabinet_id>
 **Purpose**: Get complete version history of COGS for a specific product with **affected weeks analysis**.
 
 **Why Use This Instead of `GET /v1/cogs`?**
+
 - ✅ Includes `affected_weeks` - ISO weeks with sales in each COGS period
 - ✅ Includes `meta` section with product info, current COGS, total versions
 - ✅ Cabinet isolation security (403 if product not in user's cabinet)
@@ -150,6 +157,7 @@ X-Cabinet-Id: <cabinet_id>
 - ✅ Optional `include_deleted=true` for audit purposes
 
 **Query Parameters**:
+
 - `nm_id` (required): Product article number (e.g., `147205694`)
 - `limit` (optional): Records per page (1-100, default: 50)
 - `cursor` (optional): Pagination cursor (Base64-encoded)
@@ -164,6 +172,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Example Response**:
+
 ```json
 {
   "data": [
@@ -209,6 +218,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Key Fields**:
+
 - `affected_weeks`: ISO weeks when product had sales **during this COGS period** (from `weekly_margin_fact` table)
 - `valid_to`: `null` means this is the **current active version**
 - `is_active`: `false` if soft-deleted (only visible with `include_deleted=true`)
@@ -216,17 +226,20 @@ X-Cabinet-Id: <cabinet_id>
 - `meta.total_versions`: Total count including soft-deleted records
 
 **Use Cases**:
+
 1. **Cost Auditing**: Review all historical COGS changes for a product
 2. **Margin Analysis**: See which weeks were affected by each COGS version
 3. **Data Validation**: Verify COGS assignments are correct
 4. **Error Investigation**: Find incorrect entries with `include_deleted=true`
 
 **Error Responses**:
+
 - `400 Bad Request`: Missing `nm_id` parameter
 - `403 Forbidden`: Product not found in user's cabinet (security - cabinet isolation)
 - `401 Unauthorized`: Invalid or missing JWT token
 
 **Documentation**:
+
 - Story Spec: `docs/stories/epic-5/story-5.1-view-cogs-history.md`
 - API Reference: `docs/API-PATHS-REFERENCE.md`
 
@@ -237,6 +250,7 @@ X-Cabinet-Id: <cabinet_id>
 #### How Margin is Calculated
 
 **Formula**:
+
 ```
 margin_percent = (gross_profit / revenue_net) × 100%
 where:
@@ -245,6 +259,7 @@ where:
 ```
 
 **Calculation Process**:
+
 1. **Weekly Aggregation**: System aggregates sales data by ISO week (Monday-Sunday, Europe/Moscow timezone)
 2. **COGS Lookup**: For each sale date, system finds COGS valid at that date using temporal versioning
 3. **Margin Calculation**: Calculates `gross_profit = revenue_net - cogs_rub` per week
@@ -261,6 +276,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Response**:
+
 ```json
 {
   "products": [
@@ -286,6 +302,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Key Fields**:
+
 - `current_margin_pct`: Margin % from **last completed week** (uses `IsoWeekService.getLastCompletedWeek()`)
 - `current_margin_period`: ISO week used for calculation (e.g., `2025-W46`)
 - `current_margin_sales_qty`: Sales quantity in that week
@@ -301,6 +318,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Response**:
+
 ```json
 {
   "data": [
@@ -325,6 +343,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Key Fields**:
+
 - `margin_pct`: Margin percentage for this specific week
 - `cogs`: Total COGS (quantity × unit_cost) for this week
 - `profit`: Gross profit (revenue_net - cogs)
@@ -339,6 +358,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Response**:
+
 ```json
 {
   "data": [
@@ -378,6 +398,7 @@ X-Cabinet-Id: <cabinet_id>
 **Meaning**: **One margin record per product per week per report type**.
 
 **Example Data**:
+
 ```sql
 -- Week 2025-W46, Product 321678606, основной report
 week          | cabinet_id | nm_id     | report_type | margin_pct | revenue_net | cogs
@@ -392,11 +413,13 @@ week          | cabinet_id | nm_id     | report_type | margin_pct | revenue_net 
 ```
 
 **Key Points**:
+
 1. ✅ **Margin is unique per week**: Each ISO week has its own margin calculation
 2. ✅ **Margin can differ by report_type**: `основной` (RUS) vs `по выкупам` (EAEU) have separate calculations
 3. ✅ **Margin changes over time**: Same product can have different margins in different weeks (due to price changes, COGS changes, or sales mix)
 
 **Why Week Uniqueness Matters**:
+
 - **COGS can change**: If COGS is updated (new `valid_from` date), future weeks use new COGS, but past weeks keep old COGS
 - **Sales mix varies**: Different weeks may have different product mix, affecting average margin
 - **Price changes**: Product prices may change week-to-week, affecting revenue and margin
@@ -407,15 +430,16 @@ week          | cabinet_id | nm_id     | report_type | margin_pct | revenue_net 
 
 When `current_margin_pct` is `null`, `missing_data_reason` explains why:
 
-| Reason | Description | When It Occurs |
-|--------|-------------|----------------|
-| `NO_SALES_IN_PERIOD` | Product had no sales in the last completed week | Product exists but no sales in margin period |
-| `COGS_NOT_ASSIGNED` | Product has sales but no COGS assigned | Sales exist but `cogs` table has no entry for this product |
-| `NO_SALES_DATA` | Product has never had any sales | Product exists in catalog but never sold |
-| `ANALYTICS_UNAVAILABLE` | Analytics service unavailable (graceful degradation) | Backend error (rare) |
-| `null` | Margin calculation in progress | COGS assigned, but margin recalculation task pending (Epic 20) |
+| Reason                  | Description                                          | When It Occurs                                                 |
+| ----------------------- | ---------------------------------------------------- | -------------------------------------------------------------- |
+| `NO_SALES_IN_PERIOD`    | Product had no sales in the last completed week      | Product exists but no sales in margin period                   |
+| `COGS_NOT_ASSIGNED`     | Product has sales but no COGS assigned               | Sales exist but `cogs` table has no entry for this product     |
+| `NO_SALES_DATA`         | Product has never had any sales                      | Product exists in catalog but never sold                       |
+| `ANALYTICS_UNAVAILABLE` | Analytics service unavailable (graceful degradation) | Backend error (rare)                                           |
+| `null`                  | Margin calculation in progress                       | COGS assigned, but margin recalculation task pending (Epic 20) |
 
 **Important**: If `missing_data_reason` is `null` and `current_margin_pct` is `null`, it means:
+
 - COGS is assigned ✅
 - Sales exist ✅
 - Margin calculation is in progress (task queued, will complete in 5-60 seconds)
@@ -467,11 +491,11 @@ async function getMarginForWeek(nmId: string, week: string): Promise<MarginData 
     }
   );
   const data = await response.json();
-  
+
   // Find product in results
   const product = data.data.find((item: any) => item.nm_id === nmId);
   if (!product) return null;
-  
+
   return {
     margin_pct: product.margin_pct,
     revenue: product.revenue_net,
@@ -497,7 +521,7 @@ async function getMarginTrends(nmId: string): Promise<MarginTrend[]> {
     }
   );
   const data = await response.json();
-  
+
   // Filter by nm_id if needed (or use by-sku endpoint with nm_id filter)
   return data.data.filter((item: any) => item.nm_id === nmId);
 }
@@ -572,12 +596,14 @@ API queries weekly_margin_fact for margin data
 ## Questions?
 
 If you need clarification on:
+
 - COGS temporal versioning logic
 - Margin calculation formulas
 - Week selection logic (completed weeks only)
 - API response structures
 
 Contact backend team or reference:
+
 - Backend API Swagger: `http://localhost:3000/api` (when API is running)
 - Database schema: `prisma/schema.prisma` (COGS and WeeklyMarginFact models)
 - Epic 20 Documentation: `docs/stories/epic-20/EPIC-20-OVERVIEW.md`
@@ -594,4 +620,3 @@ Contact backend team or reference:
 - **Resolution date**: 2025-11-26
 - **Summary**: Comprehensive documentation of COGS history and margin data structure, updated to include Story 5.1 COGS History endpoint (`GET /v1/cogs/history`). Covers temporal versioning, margin calculation flow, all relevant API endpoints, and TypeScript examples. This document serves as the authoritative reference for COGS/margin data structure.
 - **Remaining frontend action**: Use this guide as the primary reference for implementing COGS history UI and margin display components.
-

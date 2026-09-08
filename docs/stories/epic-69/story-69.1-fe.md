@@ -1,11 +1,11 @@
 # Story 69.1-FE: Types & API Layer
 
-| Field | Value |
-|-------|-------|
-| Epic | 69-FE Buyout Analytics |
-| Priority | P1 |
-| SP | 3 |
-| Status | ✅ Complete |
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Epic     | 69-FE Buyout Analytics |
+| Priority | P1                     |
+| SP       | 3                      |
+| Status   | ✅ Complete            |
 
 ## Description
 
@@ -23,14 +23,16 @@
 
 ## Files
 
-| File | Action | Lines |
-|------|--------|-------|
+| File                                 | Action           | Lines  |
+| ------------------------------------ | ---------------- | ------ |
 | `src/types/analytics-epics-68-71.ts` | Created (shared) | 218 ⚠️ |
-| `src/lib/api/buyout-analytics.ts` | Created | 91 |
+| `src/lib/api/buyout-analytics.ts`    | Created          | 91     |
 
 ## Known Issues
+
 - Types file exceeds 200-line limit (shared across Epics 68/69/71)
 - `BuyoutSummaryResponse.source`/`.confidence` typed as `string` not union types
 
 ## Dependencies
+
 - Blocks: 69.2, 69.3, 69.4

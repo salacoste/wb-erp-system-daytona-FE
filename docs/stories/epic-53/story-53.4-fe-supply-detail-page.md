@@ -72,13 +72,13 @@ The page dynamically adjusts its UI based on the supply status, enabling or disa
 
 ### AC5: Status-Based UI Configuration
 
-| Status | Color | Icon | Badge Style | Available Actions |
-|--------|-------|------|-------------|-------------------|
-| OPEN | Blue `#3B82F6` | `PackageOpen` | Blue bg/text | Add orders, Remove orders, Close supply |
-| CLOSED | Orange `#F59E0B` | `PackageCheck` | Orange bg/text | Generate stickers, Download docs |
-| DELIVERING | Purple `#7C4DFF` | `Truck` | Purple bg/text | View only |
-| DELIVERED | Green `#22C55E` | `CheckCircle` | Green bg/text | View only |
-| CANCELLED | Red `#EF4444` | `XCircle` | Red bg/text | View only |
+| Status     | Color            | Icon           | Badge Style    | Available Actions                       |
+| ---------- | ---------------- | -------------- | -------------- | --------------------------------------- |
+| OPEN       | Blue `#3B82F6`   | `PackageOpen`  | Blue bg/text   | Add orders, Remove orders, Close supply |
+| CLOSED     | Orange `#F59E0B` | `PackageCheck` | Orange bg/text | Generate stickers, Download docs        |
+| DELIVERING | Purple `#7C4DFF` | `Truck`        | Purple bg/text | View only                               |
+| DELIVERED  | Green `#22C55E`  | `CheckCircle`  | Green bg/text  | View only                               |
+| CANCELLED  | Red `#EF4444`    | `XCircle`      | Red bg/text    | View only                               |
 
 ### AC6: SupplyOrdersTable Component
 
@@ -248,31 +248,31 @@ CANCELLED status:
 
 ### Pages
 
-| File | Purpose |
-|------|---------|
-| `src/app/(dashboard)/supplies/[id]/page.tsx` | Main detail page |
-| `src/app/(dashboard)/supplies/[id]/loading.tsx` | Loading skeleton |
-| `src/app/(dashboard)/supplies/[id]/not-found.tsx` | 404 page |
+| File                                              | Purpose          |
+| ------------------------------------------------- | ---------------- |
+| `src/app/(dashboard)/supplies/[id]/page.tsx`      | Main detail page |
+| `src/app/(dashboard)/supplies/[id]/loading.tsx`   | Loading skeleton |
+| `src/app/(dashboard)/supplies/[id]/not-found.tsx` | 404 page         |
 
 ### Components
 
-| File | Purpose | Lines Est. |
-|------|---------|------------|
-| `src/app/(dashboard)/supplies/[id]/components/SupplyHeader.tsx` | Header with name, status, actions | ~100 |
-| `src/app/(dashboard)/supplies/[id]/components/SupplyStatusStepper.tsx` | Visual lifecycle progress | ~120 |
-| `src/app/(dashboard)/supplies/[id]/components/SupplyOrdersTable.tsx` | Orders list with remove action | ~150 |
-| `src/app/(dashboard)/supplies/[id]/components/SupplyOrderRow.tsx` | Single order row | ~60 |
-| `src/app/(dashboard)/supplies/[id]/components/SupplyDocumentsList.tsx` | Documents download list | ~80 |
-| `src/app/(dashboard)/supplies/[id]/components/RemoveOrderDialog.tsx` | Confirmation for remove | ~50 |
-| `src/app/(dashboard)/supplies/[id]/components/SupplyDetailSkeleton.tsx` | Loading skeleton | ~60 |
+| File                                                                    | Purpose                           | Lines Est. |
+| ----------------------------------------------------------------------- | --------------------------------- | ---------- |
+| `src/app/(dashboard)/supplies/[id]/components/SupplyHeader.tsx`         | Header with name, status, actions | ~100       |
+| `src/app/(dashboard)/supplies/[id]/components/SupplyStatusStepper.tsx`  | Visual lifecycle progress         | ~120       |
+| `src/app/(dashboard)/supplies/[id]/components/SupplyOrdersTable.tsx`    | Orders list with remove action    | ~150       |
+| `src/app/(dashboard)/supplies/[id]/components/SupplyOrderRow.tsx`       | Single order row                  | ~60        |
+| `src/app/(dashboard)/supplies/[id]/components/SupplyDocumentsList.tsx`  | Documents download list           | ~80        |
+| `src/app/(dashboard)/supplies/[id]/components/RemoveOrderDialog.tsx`    | Confirmation for remove           | ~50        |
+| `src/app/(dashboard)/supplies/[id]/components/SupplyDetailSkeleton.tsx` | Loading skeleton                  | ~60        |
 
 ### Hooks
 
-| Hook | File Path | Purpose |
-|------|-----------|---------|
-| `useSupplyDetail` | `src/hooks/useSupplyDetail.ts` | Fetch single supply |
-| `useRemoveOrders` | `src/hooks/useRemoveOrders.ts` | Remove orders mutation |
-| `useDownloadDocument` | `src/hooks/useDownloadDocument.ts` | Download document |
+| Hook                  | File Path                          | Purpose                |
+| --------------------- | ---------------------------------- | ---------------------- |
+| `useSupplyDetail`     | `src/hooks/useSupplyDetail.ts`     | Fetch single supply    |
+| `useRemoveOrders`     | `src/hooks/useRemoveOrders.ts`     | Remove orders mutation |
+| `useDownloadDocument` | `src/hooks/useDownloadDocument.ts` | Download document      |
 
 ---
 
@@ -573,15 +573,15 @@ export function useDownloadDocument() {
 
 ## Error Handling
 
-| HTTP Status | Error Message (Russian) | Action |
-|-------------|-------------------------|--------|
-| 400 | "Неверный запрос" | Show inline error |
-| 401 | "Сессия истекла" | Redirect to login |
-| 403 | "Нет доступа к этой поставке" | Show error page |
-| 404 | "Поставка не найдена" | Show 404 page |
-| 409 | "Невозможно удалить заказ из закрытой поставки" | Show toast |
-| 500 | "Ошибка сервера" | Show retry button |
-| Network | "Проверьте соединение" | Show retry button |
+| HTTP Status | Error Message (Russian)                         | Action            |
+| ----------- | ----------------------------------------------- | ----------------- |
+| 400         | "Неверный запрос"                               | Show inline error |
+| 401         | "Сессия истекла"                                | Redirect to login |
+| 403         | "Нет доступа к этой поставке"                   | Show error page   |
+| 404         | "Поставка не найдена"                           | Show 404 page     |
+| 409         | "Невозможно удалить заказ из закрытой поставки" | Show toast        |
+| 500         | "Ошибка сервера"                                | Show retry button |
+| Network     | "Проверьте соединение"                          | Show retry button |
 
 ---
 
@@ -595,12 +595,14 @@ export function useDownloadDocument() {
 ### Test Cases
 
 #### Page Rendering
+
 - [ ] Page renders with supply data
 - [ ] Loading skeleton shown while fetching
 - [ ] 404 page shown for missing supply
 - [ ] Error state with retry button
 
 #### SupplyHeader
+
 - [ ] Name displayed correctly
 - [ ] Status badge renders with correct color
 - [ ] Creation date formatted correctly
@@ -608,6 +610,7 @@ export function useDownloadDocument() {
 - [ ] Action buttons based on status
 
 #### SupplyStatusStepper
+
 - [ ] Correct step highlighted for OPEN
 - [ ] Correct step highlighted for CLOSED
 - [ ] Correct step highlighted for DELIVERING
@@ -617,6 +620,7 @@ export function useDownloadDocument() {
 - [ ] Future steps shown as gray
 
 #### SupplyOrdersTable
+
 - [ ] Orders displayed in table
 - [ ] Remove button shown for OPEN status
 - [ ] Remove button hidden for other statuses
@@ -625,12 +629,14 @@ export function useDownloadDocument() {
 - [ ] Optimistic update on remove
 
 #### SupplyDocumentsList
+
 - [ ] Documents shown for CLOSED status
 - [ ] Documents shown for DELIVERING/DELIVERED
 - [ ] Download button triggers download
 - [ ] Empty state when no documents
 
 #### Accessibility
+
 - [ ] Proper heading hierarchy
 - [ ] Stepper has navigation role
 - [ ] Current step announced
@@ -670,25 +676,25 @@ export function useDownloadDocument() {
 
 ### Required (Blocking)
 
-| Dependency | Story | Status | Notes |
-|------------|-------|--------|-------|
-| Types & API Client | 53.1-FE | Required | Types, API functions |
-| Supplies List Page | 53.2-FE | Required | Navigation context |
+| Dependency         | Story   | Status   | Notes                    |
+| ------------------ | ------- | -------- | ------------------------ |
+| Types & API Client | 53.1-FE | Required | Types, API functions     |
+| Supplies List Page | 53.2-FE | Required | Navigation context       |
 | Create Supply Flow | 53.3-FE | Required | Redirects here on create |
 
 ### Parallel (Non-Blocking)
 
-| Dependency | Story | Notes |
-|------------|-------|-------|
-| Order Picker Drawer | 53.5-FE | Button opens drawer |
+| Dependency              | Story   | Notes                |
+| ----------------------- | ------- | -------------------- |
+| Order Picker Drawer     | 53.5-FE | Button opens drawer  |
 | Close Supply & Stickers | 53.6-FE | Button opens dialogs |
 
 ### Backend
 
-| Dependency | Endpoint | Status |
-|------------|----------|--------|
-| Get Supply | `GET /v1/supplies/:id` | Complete |
-| Remove Orders | `DELETE /v1/supplies/:id/orders` | Complete |
+| Dependency        | Endpoint                               | Status   |
+| ----------------- | -------------------------------------- | -------- |
+| Get Supply        | `GET /v1/supplies/:id`                 | Complete |
+| Remove Orders     | `DELETE /v1/supplies/:id/orders`       | Complete |
 | Download Document | `GET /v1/supplies/:id/documents/:type` | Complete |
 
 ---
@@ -724,6 +730,7 @@ src/
 ### Design System Adherence
 
 Per Design Kit and README:
+
 - **Colors**: Status colors per AC5 table
 - **Icons**: Lucide only (PackageOpen, PackageCheck, Truck, CheckCircle, XCircle)
 - **Badges**: Use `Badge` from shadcn/ui with custom colors
@@ -787,9 +794,9 @@ export const SUPPLY_STATUS_CONFIG = {
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2026-01-29 | 1.0 | Initial story creation | Claude Code (PM Agent) |
+| Date       | Version | Description            | Author                 |
+| ---------- | ------- | ---------------------- | ---------------------- |
+| 2026-01-29 | 1.0     | Initial story creation | Claude Code (PM Agent) |
 
 ---
 

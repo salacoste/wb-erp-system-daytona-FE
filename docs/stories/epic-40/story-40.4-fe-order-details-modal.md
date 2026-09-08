@@ -159,12 +159,12 @@ Each tab fetches data on-demand to optimize performance and API usage.
 
 ### New Components
 
-| Component | File Path | Lines Est. | Purpose |
-|-----------|-----------|------------|---------|
-| `OrderDetailsModal` | `src/app/(dashboard)/orders/components/OrderDetailsModal.tsx` | ~150 | Main modal container with tabs |
-| `OrderModalHeader` | `src/app/(dashboard)/orders/components/OrderModalHeader.tsx` | ~80 | Order info header section |
-| `OrderHistoryTabs` | `src/app/(dashboard)/orders/components/OrderHistoryTabs.tsx` | ~100 | Tab navigation + content wrapper |
-| `ModalLoadingSkeleton` | `src/app/(dashboard)/orders/components/ModalLoadingSkeleton.tsx` | ~50 | Skeleton for modal content |
+| Component              | File Path                                                        | Lines Est. | Purpose                          |
+| ---------------------- | ---------------------------------------------------------------- | ---------- | -------------------------------- |
+| `OrderDetailsModal`    | `src/app/(dashboard)/orders/components/OrderDetailsModal.tsx`    | ~150       | Main modal container with tabs   |
+| `OrderModalHeader`     | `src/app/(dashboard)/orders/components/OrderModalHeader.tsx`     | ~80        | Order info header section        |
+| `OrderHistoryTabs`     | `src/app/(dashboard)/orders/components/OrderHistoryTabs.tsx`     | ~100       | Tab navigation + content wrapper |
+| `ModalLoadingSkeleton` | `src/app/(dashboard)/orders/components/ModalLoadingSkeleton.tsx` | ~50        | Skeleton for modal content       |
 
 ### Reused Components (from Story 40.5-FE)
 
@@ -269,14 +269,14 @@ const localHistory = useLocalHistory(orderId, {
 
 ## Error Handling
 
-| HTTP Status | Error Message (Russian) | Action |
-|-------------|-------------------------|--------|
-| 400 | "Неверный формат ID заказа" | Show inline error |
-| 401 | "Сессия истекла. Войдите снова." | Redirect to login |
-| 403 | "Нет доступа к этому заказу" | Show error, close modal |
-| 404 | "Заказ не найден" | Show error with close button |
-| 500 | "Ошибка сервера. Попробуйте позже." | Show retry button |
-| Network | "Не удалось загрузить данные. Проверьте соединение." | Show retry button |
+| HTTP Status | Error Message (Russian)                              | Action                       |
+| ----------- | ---------------------------------------------------- | ---------------------------- |
+| 400         | "Неверный формат ID заказа"                          | Show inline error            |
+| 401         | "Сессия истекла. Войдите снова."                     | Redirect to login            |
+| 403         | "Нет доступа к этому заказу"                         | Show error, close modal      |
+| 404         | "Заказ не найден"                                    | Show error with close button |
+| 500         | "Ошибка сервера. Попробуйте позже."                  | Show retry button            |
+| Network     | "Не удалось загрузить данные. Проверьте соединение." | Show retry button            |
 
 ---
 
@@ -290,6 +290,7 @@ const localHistory = useLocalHistory(orderId, {
 ### Test Cases
 
 #### Modal Behavior
+
 - [ ] Modal opens when trigger clicked
 - [ ] Modal closes on X button click
 - [ ] Modal closes on overlay click
@@ -298,6 +299,7 @@ const localHistory = useLocalHistory(orderId, {
 - [ ] Focus returns to trigger on close
 
 #### Header Display
+
 - [ ] Order ID displayed correctly
 - [ ] Product name truncated at 2 lines
 - [ ] Price formatting with currency
@@ -305,12 +307,14 @@ const localHistory = useLocalHistory(orderId, {
 - [ ] Creation date formatted as DD.MM.YYYY HH:mm
 
 #### Tab Navigation
+
 - [ ] Default tab is "Полная история"
 - [ ] Clicking tab switches content
 - [ ] Arrow keys navigate between tabs
 - [ ] Active tab visually highlighted
 
 #### Data Fetching
+
 - [ ] Full history fetched when tab active
 - [ ] WB history fetched only when tab selected
 - [ ] Local history fetched only when tab selected
@@ -319,6 +323,7 @@ const localHistory = useLocalHistory(orderId, {
 - [ ] Retry button triggers refetch
 
 #### Accessibility
+
 - [ ] Modal has role="dialog"
 - [ ] Modal has aria-modal="true"
 - [ ] Tabs have proper ARIA roles
@@ -352,26 +357,26 @@ const localHistory = useLocalHistory(orderId, {
 
 ### Required (Blocking)
 
-| Dependency | Story | Status | Notes |
-|------------|-------|--------|-------|
-| Types & API Client | 40.1-FE | Required | TypeScript interfaces, API functions |
-| React Query Hooks | 40.2-FE | Required | `useOrderDetails`, `useFullHistory`, etc. |
-| Orders List Page | 40.3-FE | Required | Provides modal trigger (row click) |
+| Dependency         | Story   | Status   | Notes                                     |
+| ------------------ | ------- | -------- | ----------------------------------------- |
+| Types & API Client | 40.1-FE | Required | TypeScript interfaces, API functions      |
+| React Query Hooks  | 40.2-FE | Required | `useOrderDetails`, `useFullHistory`, etc. |
+| Orders List Page   | 40.3-FE | Required | Provides modal trigger (row click)        |
 
 ### Parallel (Non-Blocking)
 
-| Dependency | Story | Status | Notes |
-|------------|-------|--------|-------|
+| Dependency                  | Story   | Status                  | Notes                            |
+| --------------------------- | ------- | ----------------------- | -------------------------------- |
 | History Timeline Components | 40.5-FE | Can develop in parallel | Use placeholder while developing |
 
 ### Backend
 
-| Dependency | Story | Status |
-|------------|-------|--------|
-| `GET /v1/orders/:orderId` | 40.5 | Complete |
-| `GET /v1/orders/:orderId/history` | 40.8 | Complete |
-| `GET /v1/orders/:orderId/wb-history` | 40.9 | Complete |
-| `GET /v1/orders/:orderId/full-history` | 40.9 | Complete |
+| Dependency                             | Story | Status   |
+| -------------------------------------- | ----- | -------- |
+| `GET /v1/orders/:orderId`              | 40.5  | Complete |
+| `GET /v1/orders/:orderId/history`      | 40.8  | Complete |
+| `GET /v1/orders/:orderId/wb-history`   | 40.9  | Complete |
+| `GET /v1/orders/:orderId/full-history` | 40.9  | Complete |
 
 ---
 
@@ -405,6 +410,7 @@ src/
 ### Design System Adherence
 
 Per Design Kit and README:
+
 - **Modal**: Use shadcn/ui Dialog component
 - **Tabs**: Use shadcn/ui Tabs component
 - **Icons**: Use Lucide icons only (X for close, Package for product fallback)
@@ -431,9 +437,9 @@ Per Design Kit and README:
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2026-01-29 | 1.0 | Initial story creation | Claude Code (PM Agent) |
+| Date       | Version | Description            | Author                 |
+| ---------- | ------- | ---------------------- | ---------------------- |
+| 2026-01-29 | 1.0     | Initial story creation | Claude Code (PM Agent) |
 
 ---
 

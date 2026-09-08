@@ -3,6 +3,7 @@
 ## Проблема
 
 Статическая валидация (lint, type-check) **не ловит runtime ошибки**:
+
 - React infinite re-render loops
 - Radix UI ref composition errors
 - Hydration mismatches
@@ -12,6 +13,7 @@
 ## Решение: 3-уровневая система тестирования
 
 ### Уровень 1: Статический анализ (Автоматический)
+
 ```bash
 npm run lint          # ESLint
 npm run type-check    # TypeScript
@@ -20,12 +22,14 @@ npm run type-check    # TypeScript
 ### Уровень 2: Runtime Browser Testing (Ручной/Агентный)
 
 #### Инструменты
+
 1. **Claude in Chrome MCP** - для интерактивного тестирования
 2. **Playwright E2E** - для автоматизированных тестов
 
 #### Claude in Chrome Workflow
 
 **Шаг 1: Подготовка**
+
 ```
 # Получить контекст вкладок
 mcp__claude-in-chrome__tabs_context_mcp
@@ -35,6 +39,7 @@ mcp__claude-in-chrome__tabs_create_mcp
 ```
 
 **Шаг 2: Навигация**
+
 ```
 # Перейти на тестируемую страницу
 mcp__claude-in-chrome__navigate(url, tabId)
@@ -44,6 +49,7 @@ mcp__claude-in-chrome__computer(action: "wait", duration: 3)
 ```
 
 **Шаг 3: Проверка Console Errors (КРИТИЧНО)**
+
 ```
 # Прочитать ошибки консоли
 mcp__claude-in-chrome__read_console_messages(tabId, onlyErrors: true)
@@ -52,12 +58,14 @@ mcp__claude-in-chrome__read_console_messages(tabId, onlyErrors: true)
 ```
 
 **Шаг 4: Визуальная проверка**
+
 ```
 # Сделать скриншот
 mcp__claude-in-chrome__computer(action: "screenshot", tabId)
 ```
 
 **Шаг 5: Интерактивное тестирование**
+
 ```
 # Найти элемент
 mcp__claude-in-chrome__find(query: "submit button", tabId)
@@ -102,6 +110,7 @@ npm run test:e2e:full -- e2e/price-calculator.spec.ts
 ## Команды для TEA Agent
 
 ### Вызов TEA для QA Gate:
+
 ```
 /bmad:bmm:agents:tea
 
@@ -115,6 +124,7 @@ npm run test:e2e:full -- e2e/price-calculator.spec.ts
 ```
 
 ### Стандартный QA Validation Flow:
+
 ```
 1. mcp__claude-in-chrome__tabs_context_mcp (createIfEmpty: true)
 2. mcp__claude-in-chrome__navigate (url: страница для теста)
@@ -164,13 +174,13 @@ read_console_messages(onlyErrors: true)
 
 ## Частые Runtime Ошибки и Как Их Ловить
 
-| Ошибка | Как обнаружить | Инструмент |
-|--------|----------------|------------|
-| Maximum update depth exceeded | Console errors | `read_console_messages` |
-| Hydration mismatch | Console warnings | `read_console_messages` |
-| API call failures | Network errors | `read_network_requests` |
-| Element not clickable | Click fails | `computer(action: left_click)` |
-| Form validation errors | UI feedback | `screenshot` + `find` |
+| Ошибка                        | Как обнаружить   | Инструмент                     |
+| ----------------------------- | ---------------- | ------------------------------ |
+| Maximum update depth exceeded | Console errors   | `read_console_messages`        |
+| Hydration mismatch            | Console warnings | `read_console_messages`        |
+| API call failures             | Network errors   | `read_network_requests`        |
+| Element not clickable         | Click fails      | `computer(action: left_click)` |
+| Form validation errors        | UI feedback      | `screenshot` + `find`          |
 
 ---
 

@@ -17,16 +17,19 @@
 ## Acceptance Criteria
 
 ### AC1: Display in Product Card
+
 - [ ] Show storage cost per day (₽/день)
 - [ ] Show storage cost per month estimate (₽/мес)
 - [ ] Display in COGS/Margin section
 
 ### AC2: Data Source
+
 - [ ] Use storage data from `/v1/analytics/storage/by-sku?nm_id={nmId}`
 - [ ] Show for last completed week
 - [ ] Handle missing data gracefully
 
 ### AC3: Visual Design
+
 - [ ] Match existing product card styling
 - [ ] Use warehouse icon (📦)
 - [ ] Tooltip with period info
@@ -48,6 +51,7 @@
 ### Component Location
 
 Add to existing product detail components:
+
 - `ProductList.tsx` - compact view in table
 - Product detail page (if exists)
 
@@ -154,11 +158,13 @@ function ProductStorageInfo({ nmId, weekStart, weekEnd }: ProductStorageInfoProp
 ## QA Results
 
 ### Review Date: 2025-11-29
+
 ### Reviewed By: Quinn (Test Architect)
 
 **Gate: PASS** | **Score: 92/100** → `docs/qa/gates/24.7-fe-product-card-storage.yml`
 
 **Strengths:**
+
 - Clean standalone component (91 lines)
 - Daily cost + monthly estimate with tooltip
 - Uses getLastCompletedWeek() for data fetching

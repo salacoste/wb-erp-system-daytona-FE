@@ -37,9 +37,10 @@ CABINET="f75836f7-c0bc-4b2c-823c-a1f3508cce8e"
 **Resolution date**: 2026-05-06
 **Summary**: Frontend empirical validation of backend reports #169 + #170. Found 5 falsifications where documentation contradicted actual API responses. All 5 confirmed by backend in #173. Documentation in #170 corrected. Key findings: tax preliminary response wrapped in `tax` object with snake_case, `cabinet-summary` path corrected, FBS REST endpoints verified.
 **Remaining frontend action**: Use corrected documentation from #173 for integration work.
-**Backend claim** (#169 §2.3): *"Endpoint: `GET /v1/analytics/cabinet-summary`"*
+**Backend claim** (#169 §2.3): _"Endpoint: `GET /v1/analytics/cabinet-summary`"_
 
 **Empirical reality**:
+
 ```bash
 curl -s "http://localhost:3000/v1/analytics/cabinet-summary?week=2026-W17" \
   -H "Authorization: Bearer $TOKEN" -H "X-Cabinet-Id: $CABINET"
@@ -55,6 +56,7 @@ Swagger inspection (`/api-json`) confirms actual path: **`/v1/analytics/weekly/c
 ### F2 — tax/preliminary RESPONSE SHAPE differs significantly from documented shape
 
 **Backend claim** (#170 §2):
+
 ```json
 {
   "from": "2026-05-05",
@@ -73,12 +75,14 @@ Swagger inspection (`/api-json`) confirms actual path: **`/v1/analytics/weekly/c
 ```
 
 **Empirical reality**:
+
 ```bash
 curl -s "http://localhost:3000/v1/analytics/tax/preliminary?from=2026-05-05&to=2026-05-11" \
   -H "Authorization: Bearer $TOKEN" -H "X-Cabinet-Id: $CABINET"
 ```
 
 Returns:
+
 ```json
 {
   "tax": {
@@ -101,6 +105,7 @@ Returns:
 ```
 
 **Differences**:
+
 - Wrapped in `{ "tax": {...} }` (not flat)
 - snake_case (`tax_system`, `vat_payer`) not camelCase (`taxSystem`, `vatPayer`)
 - Field renames: `preliminaryTax` → `tax_amount`; `taxRate` → `effective_tax_rate`
@@ -114,9 +119,10 @@ Returns:
 
 ### F3 — `viewBy` query parameter rejected; actual is `view_by` (snake_case)
 
-**Backend claim** (170-RESPONSE Q5 — final note): *"When `viewBy` is `'brand'`, `'category'`, or `'total'` (not `'sku'`), both fields are hardcoded to `null`. Only SKU-level views carry values."*
+**Backend claim** (170-RESPONSE Q5 — final note): _"When `viewBy` is `'brand'`, `'category'`, or `'total'` (not `'sku'`), both fields are hardcoded to `null`. Only SKU-level views carry values."_
 
 **Empirical reality**:
+
 ```bash
 curl -s "http://localhost:3000/v1/analytics/unit-economics?week=2026-W17&viewBy=sku" ...
 # → 400: "property viewBy should not exist"
@@ -134,19 +140,23 @@ The endpoint accepts `view_by` (snake_case), not `viewBy`. Documentation should 
 ### F4 — `cost_category_order` field NOT in unit-economics response
 
 **Backend claim** (#169 §2.4):
+
 > Updated waterfall ordering (`cost_category_order`):
+>
 > ```
 > cogs -> delivery_to_warehouse -> commission -> logistics_delivery -> logistics_return
 > -> storage -> paid_acceptance -> penalties -> other_deductions -> advertising
 > ```
 
 **Empirical reality**:
+
 ```bash
 curl -s "http://localhost:3000/v1/analytics/unit-economics?week=2026-W17" \
   -H "Authorization: Bearer $TOKEN" -H "X-Cabinet-Id: $CABINET" | jq '.data[0] | keys'
 ```
 
 Returns:
+
 ```json
 ["brand", "category", "costs_pct", "costs_rub", "latest_dcu", "latest_fcu",
  "missing_cogs", "net_margin_pct", "net_profit", "product_name",
@@ -162,21 +172,24 @@ Returns:
 ### F5 — `delivery_to_warehouse` is NESTED in `costs_rub`, not top-level
 
 **Backend claim** (#169 §2.4):
-> | Field | Type | Description |
-> |-------|------|-------------|
+
+> | Field                   | Type             | Description                                            |
+> | ----------------------- | ---------------- | ------------------------------------------------------ |
 > | `delivery_to_warehouse` | `number \| null` | 10th cost category — actual delivery-to-warehouse cost |
-> | `latest_fcu` | `number \| null` | Final Cost per Unit from latest confirmed shipment |
-> | `latest_dcu` | `number \| null` | Delivery Cost per Unit from latest confirmed shipment |
+> | `latest_fcu`            | `number \| null` | Final Cost per Unit from latest confirmed shipment     |
+> | `latest_dcu`            | `number \| null` | Delivery Cost per Unit from latest confirmed shipment  |
 
 The table format implies all three are top-level fields.
 
 **Empirical reality**:
+
 ```bash
 curl -s "http://localhost:3000/v1/analytics/unit-economics?week=2026-W17" \
   -H "Authorization: Bearer $TOKEN" -H "X-Cabinet-Id: $CABINET" | jq '.data[0].costs_rub | keys'
 ```
 
 Returns:
+
 ```json
 ["advertising", "cogs", "commission", "delivery_to_warehouse",
  "logistics_delivery", "logistics_return", "other_deductions",
@@ -196,6 +209,7 @@ Returns:
 **Background**: 170-RESPONSE Q4 admitted `commission_other` was a semantic alias of `commission` (NOT WB.Promotion+Dzham as #169 §2.3 claimed). Backend planned Story 107.1 to fix this. The new #170 update doesn't explicitly mention 107.1's status.
 
 **Validation attempts**:
+
 ```bash
 # At incorrect documented path:
 curl -s "http://localhost:3000/v1/analytics/cabinet-summary?week=2026-W17" ...
@@ -237,6 +251,7 @@ Frontend FE-side state: `commission_other` field is referenced in only 1 FE file
 **Background**: 170-RESPONSE Q7 admitted test-seed endpoints lack `CabinetGuard` (security gap — any authenticated `Owner` can seed for ANY cabinet). Backend planned Story 107.3. New #170 update doesn't explicitly mention status.
 
 **Validation attempts**:
+
 ```bash
 curl -X POST -s -o /dev/null -w "%{http_code}" "http://localhost:3000/v1/test/seed/dbw-order" \
   -H "Authorization: Bearer $TOKEN" -H "X-Cabinet-Id: $CABINET" \
@@ -254,31 +269,33 @@ Note: the cross-cabinet abuse vector from 170-RESPONSE Q7 is real if `CabinetGua
 
 For completeness:
 
-| # | Claim | Evidence |
-|---|---|---|
-| V1 | `/v1/acquiring/*` (without `analytics`) doesn't exist in FE codebase | `grep -rn "v1/acquiring/" src` — 0 refs (Q1 confirmed; no migration needed) |
-| V2 | Acquiring endpoints at `/v1/analytics/acquiring/*` from start | Swagger + FE consumers at this path |
-| V3 | All 13 listed endpoints exist (auth-gated) | curl probe — all returned 401 (not 404) |
-| V4 | `retail_price_total` field present in finance-summary | Returned `570975.62` for W17 |
-| V5 | `retail_price_total_combined` in summary_total | Returned `608574.22` for W17 |
-| V6 | `acquiring_total` field exists (3 occurrences: rus/eaeu/total) | finance-summary response (value null in test env) |
-| V7 | `acquiring_fee_total` (DB-sourced; Q2 source-of-truth) exists | Returned `16375.71` for W17 |
-| V8 | `usePreliminaryTax` + `tax-analytics.ts` exist in FE | grep — `DashboardContent.tsx:97` + `tax-analytics.ts:23` |
-| V9 | **Pipeline count = 17** (consolidation claim) | `pipeline-health-grid?cabinetId=...` returned exactly 17 entries |
-| V10 | New `returns_sync` pipeline present | enumerated in pipeline list |
-| V11 | Obsolete `fbo_return_classification_sync` + `buyout_reconciliation_sync` REMOVED | not in pipeline list |
-| V12 | FE FBS hooks consume `/v1/analytics/orders/*` (HistoricalAnalyticsController) | grep — `useFbsTrends/Seasonal/Compare` → `orders-analytics.ts` |
-| V13 | `latest_fcu` + `latest_dcu` at top level of unit-economics items | item keys grep — both present (null in test data) |
+| #   | Claim                                                                            | Evidence                                                                    |
+| --- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| V1  | `/v1/acquiring/*` (without `analytics`) doesn't exist in FE codebase             | `grep -rn "v1/acquiring/" src` — 0 refs (Q1 confirmed; no migration needed) |
+| V2  | Acquiring endpoints at `/v1/analytics/acquiring/*` from start                    | Swagger + FE consumers at this path                                         |
+| V3  | All 13 listed endpoints exist (auth-gated)                                       | curl probe — all returned 401 (not 404)                                     |
+| V4  | `retail_price_total` field present in finance-summary                            | Returned `570975.62` for W17                                                |
+| V5  | `retail_price_total_combined` in summary_total                                   | Returned `608574.22` for W17                                                |
+| V6  | `acquiring_total` field exists (3 occurrences: rus/eaeu/total)                   | finance-summary response (value null in test env)                           |
+| V7  | `acquiring_fee_total` (DB-sourced; Q2 source-of-truth) exists                    | Returned `16375.71` for W17                                                 |
+| V8  | `usePreliminaryTax` + `tax-analytics.ts` exist in FE                             | grep — `DashboardContent.tsx:97` + `tax-analytics.ts:23`                    |
+| V9  | **Pipeline count = 17** (consolidation claim)                                    | `pipeline-health-grid?cabinetId=...` returned exactly 17 entries            |
+| V10 | New `returns_sync` pipeline present                                              | enumerated in pipeline list                                                 |
+| V11 | Obsolete `fbo_return_classification_sync` + `buyout_reconciliation_sync` REMOVED | not in pipeline list                                                        |
+| V12 | FE FBS hooks consume `/v1/analytics/orders/*` (HistoricalAnalyticsController)    | grep — `useFbsTrends/Seasonal/Compare` → `orders-analytics.ts`              |
+| V13 | `latest_fcu` + `latest_dcu` at top level of unit-economics items                 | item keys grep — both present (null in test data)                           |
 
 ---
 
 ## Recommended response format
 
 Backend can reply by either:
+
 - **Option A**: Inline replies in this file under each F# / Q-I# block (preferred — single artifact for grep-ability).
 - **Option B**: Separate `docs/request-backend/172-RESPONSE-VALIDATION-FINDINGS.md` mirroring the structure with corrections.
 
 **Priority for fixes**:
+
 1. **CRITICAL (block FE Epic 96 stories)**: F1 (cabinet-summary path), F2 (tax/preliminary shape — frontend types need to match canonical), I1 (commission_other status)
 2. **HIGH (significantly affects FE story design)**: F3 (viewBy vs view_by), F4 (cost_category_order), F5 (delivery_to_warehouse path)
 3. **MEDIUM (security/test infrastructure)**: I4 (Story 107.3 CabinetGuard status)

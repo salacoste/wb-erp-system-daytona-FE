@@ -14,6 +14,7 @@
 ### Проблема, которую решаем
 
 **До Epic 36** (текущая ситуация):
+
 ```
 ter-09:   spend=0₽, revenue=1,105₽  →  ROAS=—, status=🔵 Нет данных ❌
 ter-10:   spend=0₽, revenue=1,489₽  →  ROAS=—, status=🔵 Нет данных ❌
@@ -23,6 +24,7 @@ ter-13-1: spend=11,337₽, revenue=31,464₽  →  ROAS=2.78 ✅
 **Почему**: WB объединяет карточки товаров (склейки), реклама показывается на основной карточке, но продажи идут на все товары группы. У дочерних товаров `spend=0` но `revenue>0` → невозможно рассчитать ROAS.
 
 **После Epic 36**:
+
 ```
 Группа #328632 (ter-09 + ter-10 + ter-13-1):
   Total spend:   11,337₽
@@ -49,9 +51,11 @@ ter-13-1: spend=11,337₽, revenue=31,464₽  →  ROAS=2.78 ✅
 ## 📚 Документация (читать по порядку)
 
 ### 1️⃣ **Начать здесь** - Integration Guide
+
 📄 **Файл**: [`request-backend/84-epic-36-frontend-integration-guide.md`](./request-backend/84-epic-36-frontend-integration-guide.md)
 
 **Содержание**:
+
 - TL;DR что делать
 - Список файлов для изменения
 - Quick start (3 шага)
@@ -63,9 +67,11 @@ ter-13-1: spend=11,337₽, revenue=31,464₽  →  ROAS=2.78 ✅
 ---
 
 ### 2️⃣ **Технический контракт** - API Contract
+
 📄 **Файл**: [`request-backend/83-epic-36-api-contract.md`](./request-backend/83-epic-36-api-contract.md)
 
 **Содержание**:
+
 - TypeScript типы (`GroupByMode`, `MergedProduct`, `AdvertisingItem`)
 - API request/response примеры
 - Edge cases и поведение
@@ -74,6 +80,7 @@ ter-13-1: spend=11,337₽, revenue=31,464₽  →  ROAS=2.78 ✅
 **Время на чтение**: 15 минут
 
 **Ключевой код**:
+
 ```typescript
 export type GroupByMode = 'sku' | 'imtId';
 
@@ -88,9 +95,11 @@ export interface AdvertisingItem {
 ---
 
 ### 3️⃣ **Пошаговый план** - Implementation Plan
+
 📄 **Файл**: [`implementation-plans/epic-36-frontend-integration.md`](./implementation-plans/epic-36-frontend-integration.md)
 
 **Содержание**:
+
 - 6 шагов с точными code snippets
 - Testing checklist (unit, integration, E2E)
 - Performance considerations
@@ -99,6 +108,7 @@ export interface AdvertisingItem {
 **Время на реализацию**: 3-4 часа
 
 **Шаги**:
+
 1. Update TypeScript Types (15 min)
 2. Update API Client (10 min)
 3. Update React Query Hooks (5 min)
@@ -109,9 +119,11 @@ export interface AdvertisingItem {
 ---
 
 ### 4️⃣ **Визуальный дизайн** - UI Mockup
+
 📄 **Файл**: [`wireframes/epic-36-ui-mockup.md`](./wireframes/epic-36-ui-mockup.md)
 
 **Содержание**:
+
 - Before/After UI comparison
 - Component specs (toggle, badge, tooltip)
 - Responsive design (desktop, tablet, mobile)
@@ -121,6 +133,7 @@ export interface AdvertisingItem {
 **Время на изучение**: 10 минут
 
 **Ключевые компоненты**:
+
 ```
 [По артикулам] [По склейкам]  ← Toggle
 Группа #328632  🔗 Склейка (3) ⓘ  ← Badge + Tooltip
@@ -129,9 +142,11 @@ export interface AdvertisingItem {
 ---
 
 ### 5️⃣ **Контекст проблемы** (опционально) - Request #82
+
 📄 **Файл**: [`request-backend/82-card-linking-product-bundles.md`](./request-backend/82-card-linking-product-bundles.md)
 
 **Содержание**:
+
 - Исходный вопрос от Frontend Team
 - Объяснение механизма склеек WB
 - Backend research результаты
@@ -146,21 +161,21 @@ export interface AdvertisingItem {
 
 ### Изменения в файлах (6 файлов)
 
-| Файл | Что менять | Время |
-|------|------------|-------|
-| `src/types/advertising-analytics.ts` | Добавить `GroupByMode`, `MergedProduct`, расширить `AdvertisingItem` | 15 min |
-| `src/lib/api/advertising-analytics.ts` | Добавить `group_by` parameter, обновить response mapping | 10 min |
-| `src/hooks/useAdvertisingAnalytics.ts` | Добавить `useAdvertisingMergedGroups` hook | 5 min |
-| `src/app/(dashboard)/analytics/advertising/page.tsx` | Добавить toggle, обновить table rendering | 30 min |
-| `src/components/analytics/PerformanceMetricsTable.tsx` | Обновить rows для merged groups | 15 min |
-| `src/components/analytics/AdvertisingFilters.tsx` | Добавить group_by filter (optional) | 15 min |
+| Файл                                                   | Что менять                                                           | Время  |
+| ------------------------------------------------------ | -------------------------------------------------------------------- | ------ |
+| `src/types/advertising-analytics.ts`                   | Добавить `GroupByMode`, `MergedProduct`, расширить `AdvertisingItem` | 15 min |
+| `src/lib/api/advertising-analytics.ts`                 | Добавить `group_by` parameter, обновить response mapping             | 10 min |
+| `src/hooks/useAdvertisingAnalytics.ts`                 | Добавить `useAdvertisingMergedGroups` hook                           | 5 min  |
+| `src/app/(dashboard)/analytics/advertising/page.tsx`   | Добавить toggle, обновить table rendering                            | 30 min |
+| `src/components/analytics/PerformanceMetricsTable.tsx` | Обновить rows для merged groups                                      | 15 min |
+| `src/components/analytics/AdvertisingFilters.tsx`      | Добавить group_by filter (optional)                                  | 15 min |
 
 ### Новые компоненты (2 файла)
 
-| Файл | Описание | Время |
-|------|----------|-------|
-| `src/components/analytics/MergedProductBadge.tsx` | Badge с tooltip для склеек | 20 min |
-| `src/components/analytics/MergedProductBadge.test.tsx` | Unit tests для badge | 15 min |
+| Файл                                                   | Описание                   | Время  |
+| ------------------------------------------------------ | -------------------------- | ------ |
+| `src/components/analytics/MergedProductBadge.tsx`      | Badge с tooltip для склеек | 20 min |
+| `src/components/analytics/MergedProductBadge.test.tsx` | Unit tests для badge       | 15 min |
 
 ---
 
@@ -186,6 +201,7 @@ export interface AdvertisingItem {
 ```
 
 **Tooltip**:
+
 ```
 ┌─────────────────────────────────────┐
 │ Объединённая карточка #328632       │
@@ -205,6 +221,7 @@ export interface AdvertisingItem {
 ## 📊 Backend API Example
 
 ### Request
+
 ```http
 GET /v1/analytics/advertising?from=2025-12-01&to=2025-12-21&group_by=imtId
 Authorization: Bearer {jwt}
@@ -212,6 +229,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 ### Response
+
 ```json
 {
   "items": [
@@ -239,7 +257,9 @@ X-Cabinet-Id: {cabinet_id}
 ## ⚡ Quick Implementation Path
 
 ### Path A: Minimal MVP (2 hours)
+
 **Достаточно для демо**:
+
 - ✅ Обновить types
 - ✅ Обновить API client
 - ✅ Добавить toggle
@@ -247,12 +267,15 @@ X-Cabinet-Id: {cabinet_id}
 - ✅ Обновить table rendering
 
 **Пропустить**:
+
 - ❌ Fancy tooltip (можно позже)
 - ❌ Filters integration
 - ❌ E2E tests (можно позже)
 
 ### Path B: Full Implementation (4 hours)
+
 **Production-ready**:
+
 - ✅ Всё из Path A
 - ✅ Tooltip с деталями продуктов
 - ✅ Filters integration
@@ -267,6 +290,7 @@ X-Cabinet-Id: {cabinet_id}
 ## 🧪 Testing Strategy
 
 ### Before Starting
+
 ```bash
 # Verify backend is running
 curl http://localhost:3000/v1/analytics/advertising?from=2025-12-01&to=2025-12-21&group_by=imtId \
@@ -277,6 +301,7 @@ curl http://localhost:3000/v1/analytics/advertising?from=2025-12-01&to=2025-12-2
 **Expected**: JSON response с `type='merged_group'` items.
 
 ### During Development
+
 ```bash
 # Type check after each step
 npm run type-check
@@ -289,6 +314,7 @@ npm run test -- MergedProductBadge
 ```
 
 ### After Completion
+
 ```bash
 # Full test suite
 npm run test
@@ -303,15 +329,18 @@ npm run build
 ## 🎓 Learning Resources
 
 ### shadcn/ui Components
+
 - **Badge**: https://ui.shadcn.com/docs/components/badge
 - **Tooltip**: https://ui.shadcn.com/docs/components/tooltip
 - **Button**: https://ui.shadcn.com/docs/components/button
 
 ### TanStack React Query
+
 - **useQuery**: https://tanstack.com/query/latest/docs/react/guides/queries
 - **Query Keys**: https://tanstack.com/query/latest/docs/react/guides/query-keys
 
 ### TypeScript
+
 - **Type Narrowing**: https://www.typescriptlang.org/docs/handbook/2/narrowing.html
 - **Discriminated Unions**: https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions
 
@@ -346,17 +375,20 @@ code frontend/src/types/advertising-analytics.ts
 ## 📞 Нужна помощь?
 
 ### Документация
+
 - **Integration Guide**: [`request-backend/84-epic-36-frontend-integration-guide.md`](./request-backend/84-epic-36-frontend-integration-guide.md)
 - **API Contract**: [`request-backend/83-epic-36-api-contract.md`](./request-backend/83-epic-36-api-contract.md)
 - **Implementation Plan**: [`implementation-plans/epic-36-frontend-integration.md`](./implementation-plans/epic-36-frontend-integration.md)
 - **UI Mockup**: [`wireframes/epic-36-ui-mockup.md`](./wireframes/epic-36-ui-mockup.md)
 
 ### Backend Resources
+
 - **API Docs**: `/docs/API-PATHS-REFERENCE.md` (lines 986-1102)
 - **Swagger**: `http://localhost:3000/api`
 - **Grafana**: `/monitoring/grafana/dashboards/epic-36-product-card-linking.json`
 
 ### Контакты
+
 - **Backend Team**: Epic 36 backend ready, API stable
 - **Slack**: #epic-36-product-linking
 
@@ -384,17 +416,18 @@ Backend ждёт! Все API готовы, документация полная
 
 ### ✅ Completed Stories
 
-| Story | Description | Status |
-|-------|-------------|--------|
-| 36.1 | TypeScript Types & Interfaces | ✅ Complete |
-| 36.2 | API Client & React Query Hooks | ✅ Complete |
-| 36.3 | MergedProductBadge Component | ✅ Complete |
-| 36.4 | Page Layout & Toggle UI Integration | ✅ Complete |
-| 36.5 | Testing & Documentation | ✅ Complete |
+| Story | Description                         | Status      |
+| ----- | ----------------------------------- | ----------- |
+| 36.1  | TypeScript Types & Interfaces       | ✅ Complete |
+| 36.2  | API Client & React Query Hooks      | ✅ Complete |
+| 36.3  | MergedProductBadge Component        | ✅ Complete |
+| 36.4  | Page Layout & Toggle UI Integration | ✅ Complete |
+| 36.5  | Testing & Documentation             | ✅ Complete |
 
 ### 📦 Deliverables
 
 **Modified Files** (6):
+
 - `src/types/advertising-analytics.ts` - Added Epic 36 types
 - `src/lib/api/advertising-analytics.ts` - Updated API client
 - `src/hooks/useAdvertisingAnalytics.ts` - Added convenience hook
@@ -403,21 +436,25 @@ Backend ждёт! Все API готовы, документация полная
 - `src/app/(dashboard)/analytics/advertising/components/GroupByToggle.tsx` - NEW
 
 **New Components** (2):
+
 - `src/components/analytics/MergedProductBadge.tsx` - Badge with tooltip
 - `src/app/(dashboard)/analytics/advertising/components/GroupByToggle.tsx` - Toggle buttons
 
 **Test Files** (3):
+
 - `e2e/advertising-analytics-epic-36.spec.ts` - 5 E2E scenarios
 - `src/lib/api/__tests__/advertising-analytics-epic-36.test.ts` - 21 integration tests
 - `src/components/analytics/__tests__/MergedProductBadge.test.tsx` - 40 unit tests
 - `src/app/(dashboard)/analytics/advertising/components/__tests__/GroupByToggle.test.tsx` - 25 unit tests
 
 **Documentation** (1):
+
 - `docs/CHANGELOG-EPIC-36-FE.md` - Complete changelog
 
 ### 🎯 Test Results
 
 **Total Coverage**: 91 tests
+
 - ✅ E2E Tests: 5 scenarios (toggle switching, badge display, URL persistence, backward compatibility, mobile)
 - ✅ Integration Tests: 21 tests (API client, group_by parameter, response mapping)
 - ✅ Unit Tests: 65 tests (MergedProductBadge 40 tests, GroupByToggle 25 tests)
@@ -425,12 +462,14 @@ Backend ждёт! Все API готовы, документация полная
 ### 🚀 Deployment Ready
 
 **Next Steps**:
+
 1. ✅ Code reviewed and approved
 2. ✅ All tests passing
 3. ✅ Documentation complete
 4. 📦 Ready for commit and deployment
 
 **See Also**:
+
 - [`CHANGELOG-EPIC-36-FE.md`](./CHANGELOG-EPIC-36-FE.md) - Full changelog with breaking changes
 - [`request-backend/84-epic-36-frontend-integration-guide.md`](./request-backend/84-epic-36-frontend-integration-guide.md) - Integration guide
 - [`stories/epic-36/`](./stories/epic-36/) - Story documentation

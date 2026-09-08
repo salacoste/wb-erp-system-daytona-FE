@@ -1,13 +1,13 @@
 # Epic 70-FE: Validation Fixes (Исправления по результатам валидации)
 
-| Field | Value |
-|-------|-------|
-| Status | ✅ Complete |
-| Priority | P1 |
-| Story Points | 13 |
-| Sprint | Sprint 12 (2026-02-27) |
-| Source | `docs/FRONTEND-VALIDATION-REPORT.md` |
-| Validation Date | 2026-02-27 |
+| Field           | Value                                |
+| --------------- | ------------------------------------ |
+| Status          | ✅ Complete                          |
+| Priority        | P1                                   |
+| Story Points    | 13                                   |
+| Sprint          | Sprint 12 (2026-02-27)               |
+| Source          | `docs/FRONTEND-VALIDATION-REPORT.md` |
+| Validation Date | 2026-02-27                           |
 
 ## Overview
 
@@ -18,34 +18,34 @@ by design или minor, не требуют code changes.
 
 ## Discrepancy Summary
 
-| Group | Discrepancies | Root Cause | Side |
-|-------|---------------|------------|------|
-| **A** | D-1, D-2, D-4 | summary_total vs summary_rus fallback | Frontend |
-| **B** | D-5, D-16 | Inconsistent profit definitions / tooltips | Frontend |
-| **C** | D-12, D-14 | Backend API issues | Backend |
-| **D** | D-7, D-9, D-13 | Frontend UX/calculation bugs | Frontend |
+| Group | Discrepancies  | Root Cause                                 | Side     |
+| ----- | -------------- | ------------------------------------------ | -------- |
+| **A** | D-1, D-2, D-4  | summary_total vs summary_rus fallback      | Frontend |
+| **B** | D-5, D-16      | Inconsistent profit definitions / tooltips | Frontend |
+| **C** | D-12, D-14     | Backend API issues                         | Backend  |
+| **D** | D-7, D-9, D-13 | Frontend UX/calculation bugs               | Frontend |
 
 ### Not in scope (by design / minor)
 
-| ID | Description | Resolution |
-|----|-------------|------------|
-| D-3 | COGS coverage 77% vs 100% | Different base: catalog vs active SKUs — add tooltip |
-| D-6 | 27 vs 23 products on SKU page | Includes expense-only SKUs — correct behavior |
-| D-8 | Operating profit SKU sum +958₽ | Includes zero-revenue SKUs in sum — minor |
-| D-10 | Returns 9 vs 16 | FBS-only vs FBS+FBO — add UX note |
-| D-11 | Estimated FBO shows "—" not "~" | Code correct, dev server stale — restart |
-| D-15 | 3 routes → 404 | Placeholder routes for future features |
+| ID   | Description                     | Resolution                                           |
+| ---- | ------------------------------- | ---------------------------------------------------- |
+| D-3  | COGS coverage 77% vs 100%       | Different base: catalog vs active SKUs — add tooltip |
+| D-6  | 27 vs 23 products on SKU page   | Includes expense-only SKUs — correct behavior        |
+| D-8  | Operating profit SKU sum +958₽  | Includes zero-revenue SKUs in sum — minor            |
+| D-10 | Returns 9 vs 16                 | FBS-only vs FBS+FBO — add UX note                    |
+| D-11 | Estimated FBO shows "—" not "~" | Code correct, dev server stale — restart             |
+| D-15 | 3 routes → 404                  | Placeholder routes for future features               |
 
 ## Stories
 
-| Story | Title | SP | Status | Group |
-|-------|-------|----|--------|-------|
-| 70.1-FE | Fix summary_total vs summary_rus fallback | 3 | ✅ Done | A |
-| 70.2-FE | Clarify profit definitions and tooltips | 3 | ✅ Done | B |
-| 70.3-FE | Fix margin calculations (weighted avg, denominators) | 2 | ✅ Done | D |
-| 70.4-FE | Fix NaN guard in supply planning formatter | 1 | ✅ Done | D |
-| 70.5-FE | [Backend Request] Funnel buyout data JOIN | 2 | ✅ Done | C |
-| 70.6-FE | [Backend Request] Liquidity API param alignment | 2 | ✅ Done | C |
+| Story   | Title                                                | SP  | Status  | Group |
+| ------- | ---------------------------------------------------- | --- | ------- | ----- |
+| 70.1-FE | Fix summary_total vs summary_rus fallback            | 3   | ✅ Done | A     |
+| 70.2-FE | Clarify profit definitions and tooltips              | 3   | ✅ Done | B     |
+| 70.3-FE | Fix margin calculations (weighted avg, denominators) | 2   | ✅ Done | D     |
+| 70.4-FE | Fix NaN guard in supply planning formatter           | 1   | ✅ Done | D     |
+| 70.5-FE | [Backend Request] Funnel buyout data JOIN            | 2   | ✅ Done | C     |
+| 70.6-FE | [Backend Request] Liquidity API param alignment      | 2   | ✅ Done | C     |
 
 ## Dependencies
 

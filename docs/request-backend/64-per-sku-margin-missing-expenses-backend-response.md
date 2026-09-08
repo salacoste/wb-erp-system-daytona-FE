@@ -1,9 +1,11 @@
 # Request #64: Per-SKU Margin Missing Expense Components - Backend Response
 
 ## Date
+
 2025-12-18
 
 ## Status
+
 ✅ **IMPLEMENTED** - Epic 31: Complete Per-SKU Financial Analytics
 
 ## Summary
@@ -11,6 +13,7 @@
 Request #64 о недостающих компонентах расходов в per-SKU маржинальной аналитике **полностью решён** новым endpoint'ом `/v1/analytics/sku-financials` (Epic 31).
 
 **Ключевые решения**:
+
 1. ✅ Storage из `paid_storage_daily` (не 0!)
 2. ✅ Commission/acquiring как visibility поля (уже в net_for_pay)
 3. ✅ Operating profit с правильной формулой
@@ -24,6 +27,7 @@ Request #64 о недостающих компонентах расходов в
 > **Backend должен быть перезапущен для активации нового endpoint.**
 >
 > Если endpoint вернёт **404 Not Found**, необходимо перезапустить backend сервер:
+>
 > ```bash
 > # PM2
 > pm2 restart wb-repricer-backend
@@ -51,21 +55,23 @@ X-Cabinet-Id: <cabinet-uuid>
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
 ### Query Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `week` | string | ✅ | - | ISO week (2025-W50) |
-| `nm_ids` | string | - | all | Comma-separated SKU IDs |
-| `sortBy` | enum | - | `operatingProfit` | See sorting options |
-| `order` | enum | - | `desc` | `asc` \| `desc` |
-| `includeVisibility` | boolean | - | `true` | Include commission/acquiring |
-| `limit` | number | - | 50 | Max 500 |
-| `offset` | number | - | 0 | Pagination offset |
+| Parameter           | Type    | Required | Default           | Description                  |
+| ------------------- | ------- | -------- | ----------------- | ---------------------------- |
+| `week`              | string  | ✅       | -                 | ISO week (2025-W50)          |
+| `nm_ids`            | string  | -        | all               | Comma-separated SKU IDs      |
+| `sortBy`            | enum    | -        | `operatingProfit` | See sorting options          |
+| `order`             | enum    | -        | `desc`            | `asc` \| `desc`              |
+| `includeVisibility` | boolean | -        | `true`            | Include commission/acquiring |
+| `limit`             | number  | -        | 50                | Max 500                      |
+| `offset`            | number  | -        | 0                 | Pagination offset            |
 
 **Sorting Options** (`sortBy`):
+
 - `operatingProfit` - Операционная прибыль
 - `operatingMarginPct` - Операционная маржа %
 - `storageCost` - Затраты на хранение
@@ -157,20 +163,22 @@ operatingProfit = grossProfit - logisticsCost - storageCost - penalties - paidAc
 
 ## Источники данных
 
-| Поле | Источник | Notes |
-|------|----------|-------|
-| Транзакции | `wb_finance_raw` | sales, returns, logistics, fees |
-| Storage | `paid_storage_daily` | **Epic 24** (LEFT JOIN by nm_id + date range) |
-| COGS | `cogs` table | Week Midpoint Strategy (Thursday) |
+| Поле       | Источник             | Notes                                         |
+| ---------- | -------------------- | --------------------------------------------- |
+| Транзакции | `wb_finance_raw`     | sales, returns, logistics, fees               |
+| Storage    | `paid_storage_daily` | **Epic 24** (LEFT JOIN by nm_id + date range) |
+| COGS       | `cogs` table         | Week Midpoint Strategy (Thursday)             |
 
 ### Storage из paid_storage_daily
 
 **Было (Request #64 проблема)**:
+
 ```
 storageCostRub: 0.00  ❌ Из wb_finance_raw (service rows без nm_id)
 ```
 
 **Стало (Epic 31 решение)**:
+
 ```sql
 LEFT JOIN paid_storage_daily psd
   ON psd.nm_id::text = wfr.nm_id
@@ -183,31 +191,37 @@ LEFT JOIN paid_storage_daily psd
 ## Примеры запросов
 
 ### 1. Все SKU за неделю
+
 ```http
 GET /v1/analytics/sku-financials?week=2025-W50
 ```
 
 ### 2. Конкретные SKU
+
 ```http
 GET /v1/analytics/sku-financials?week=2025-W50&nm_ids=148190182,148190095
 ```
 
 ### 3. Сортировка по хранению (самые дорогие)
+
 ```http
 GET /v1/analytics/sku-financials?week=2025-W50&sortBy=storageCost&order=desc&limit=20
 ```
 
 ### 4. Наименее прибыльные SKU
+
 ```http
 GET /v1/analytics/sku-financials?week=2025-W50&sortBy=operatingMarginPct&order=asc&limit=20
 ```
 
 ### 5. Без visibility (компактный ответ)
+
 ```http
 GET /v1/analytics/sku-financials?week=2025-W50&includeVisibility=false
 ```
 
 ### 6. Пагинация
+
 ```http
 # Page 1
 GET /v1/analytics/sku-financials?week=2025-W50&limit=25&offset=0
@@ -275,14 +289,14 @@ GET /v1/analytics/sku-financials?week=2025-W50&limit=25&offset=25
 
 ## Сравнение с Request #64
 
-| Поле | Request #64 (было) | Epic 31 (стало) |
-|------|-------------------|-----------------|
-| logisticsCostRub | 3790.23 ✅ | `costs.logistics: 3790.23` ✅ |
-| storageCostRub | 0.00 ❌ | `costs.storage: 6.44` ✅ |
-| commissionRub | 0.00 ❌ | `visibility.commission: 2525.77` ✅ |
-| acquiringFeeRub | 0.00 ❌ | `visibility.acquiring: 505.12` ✅ |
-| operatingProfitRub | 14234.76 (завышено) | `profit.operating: 14228.32` ✅ |
-| operatingMarginPercent | 49.63% (завышено) | `operatingMarginPct: 49.61%` ✅ |
+| Поле                   | Request #64 (было)  | Epic 31 (стало)                     |
+| ---------------------- | ------------------- | ----------------------------------- |
+| logisticsCostRub       | 3790.23 ✅          | `costs.logistics: 3790.23` ✅       |
+| storageCostRub         | 0.00 ❌             | `costs.storage: 6.44` ✅            |
+| commissionRub          | 0.00 ❌             | `visibility.commission: 2525.77` ✅ |
+| acquiringFeeRub        | 0.00 ❌             | `visibility.acquiring: 505.12` ✅   |
+| operatingProfitRub     | 14234.76 (завышено) | `profit.operating: 14228.32` ✅     |
+| operatingMarginPercent | 49.63% (завышено)   | `operatingMarginPct: 49.61%` ✅     |
 
 **Примечание**: Небольшая разница в operating profit (~6₽) из-за того, что commission/acquiring теперь **НЕ вычитаются** (они visibility only).
 
@@ -290,14 +304,14 @@ GET /v1/analytics/sku-financials?week=2025-W50&limit=25&offset=25
 
 ## Классификация прибыльности
 
-| Status | Operating Margin % | Color (Frontend) | Hex |
-|--------|-------------------|------------------|-----|
-| `excellent` | > 25% | Green | `#22C55E` |
-| `good` | 15-25% | Light Green | `#84CC16` |
-| `warning` | 5-15% | Yellow | `#EAB308` |
-| `critical` | 0-5% | Orange | `#F97316` |
-| `loss` | < 0% | Red | `#EF4444` |
-| `unknown` | N/A (no COGS) | Gray | `#9CA3AF` |
+| Status      | Operating Margin % | Color (Frontend) | Hex       |
+| ----------- | ------------------ | ---------------- | --------- |
+| `excellent` | > 25%              | Green            | `#22C55E` |
+| `good`      | 15-25%             | Light Green      | `#84CC16` |
+| `warning`   | 5-15%              | Yellow           | `#EAB308` |
+| `critical`  | 0-5%               | Orange           | `#F97316` |
+| `loss`      | < 0%               | Red              | `#EF4444` |
+| `unknown`   | N/A (no COGS)      | Gray             | `#9CA3AF` |
 
 ---
 
@@ -504,6 +518,7 @@ export function SkuFinancialsTable({ week }: { week: string }) {
 ### Cache Invalidation Events
 
 Кэш автоматически инвалидируется при:
+
 - `import.completed` — новые данные импорта
 - `cogs.assigned` / `cogs.updated` / `cogs.deleted` — изменения COGS
 - `paid-storage.imported` — новые данные о хранении
@@ -512,11 +527,11 @@ export function SkuFinancialsTable({ week }: { week: string }) {
 
 ## Отличие от существующих endpoints
 
-| Endpoint | Storage Source | Commission/Acquiring | Use Case |
-|----------|---------------|---------------------|----------|
-| `/weekly/by-sku` (Epic 30) | `paid_storage_daily` | В расходах (net_profit) | Quick overview |
-| **`/sku-financials` (Epic 31)** | `paid_storage_daily` | **Visibility only** | **Full P&L analysis** |
-| `/unit-economics` (Epic 27) | `weekly_margin_fact` | В расходах (costs_pct) | Cost breakdown % |
+| Endpoint                        | Storage Source       | Commission/Acquiring    | Use Case              |
+| ------------------------------- | -------------------- | ----------------------- | --------------------- |
+| `/weekly/by-sku` (Epic 30)      | `paid_storage_daily` | В расходах (net_profit) | Quick overview        |
+| **`/sku-financials` (Epic 31)** | `paid_storage_daily` | **Visibility only**     | **Full P&L analysis** |
+| `/unit-economics` (Epic 27)     | `weekly_margin_fact` | В расходах (costs_pct)  | Cost breakdown %      |
 
 **Epic 31 (`/sku-financials`)** — рекомендуемый endpoint для детального финансового анализа по SKU.
 

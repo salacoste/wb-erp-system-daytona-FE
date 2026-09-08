@@ -25,11 +25,13 @@ The `/supplies` page returned HTTP 400 because the frontend sent `sort_by` and `
 ## Acceptance Criteria
 
 ### AC1: Page loads without errors
+
 Given I navigate to /supplies
 When the page loads
 Then the supplies list displays correctly
 
 ### AC2: Client-side sorting works
+
 Given the supplies page is loaded
 When I click a sortable column header
 Then the data sorts locally without API call
@@ -39,18 +41,20 @@ Then the data sorts locally without API call
 ## Technical Implementation
 
 ### Files Modified
-| File | Change |
-|------|--------|
-| `src/types/supplies.ts` | Removed `sort_by` and `sort_order` from `SuppliesListParams` |
+
+| File                                    | Change                                                                                                 |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `src/types/supplies.ts`                 | Removed `sort_by` and `sort_order` from `SuppliesListParams`                                           |
 | `src/app/(dashboard)/supplies/page.tsx` | Removed sort params from API call, added `sortSupplies()` client-side sort, removed sort from URL sync |
-| `src/test/fixtures/supplies.ts` | Removed sort params from mock fixtures |
+| `src/test/fixtures/supplies.ts`         | Removed sort params from mock fixtures                                                                 |
 
 ---
 
 ## Definition of Done
+
 - [x] TypeScript compiles without errors
 - [x] ESLint passes
 - [x] /supplies page loads successfully
 - [x] Column sorting works client-side
 
-*Created: 2026-02-21*
+_Created: 2026-02-21_

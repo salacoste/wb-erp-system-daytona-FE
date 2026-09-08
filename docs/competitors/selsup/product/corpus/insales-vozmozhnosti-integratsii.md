@@ -16,7 +16,7 @@ chars: 5003
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojki-integratsii" rel="nofollow">Настройки интеграции</a>
 - <a href="#import-kartochek" rel="nofollow">Импорт карточек</a>
 - <a href="#upravlenie-kartochkami-cherez-selsup" rel="nofollow">Управление карточками через Selsup</a>
@@ -88,7 +88,7 @@ API inSales не позволяет редактировать карточки 
 
 ## Как бренд косметики вышел на Wildberries и Ozon за неделю
 
-**Компания:** *BeautyLine* (натуральная косметика, сайт на inSales)
+**Компания:** _BeautyLine_ (натуральная косметика, сайт на inSales)
 
 **Проблема:**
 

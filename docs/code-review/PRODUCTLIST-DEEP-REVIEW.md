@@ -9,21 +9,22 @@
 
 ## 📊 Overall Assessment
 
-| Category | Score | Status |
-|----------|-------|--------|
-| **TypeScript Safety** | 10/10 | ✅ Excellent |
-| **Performance** | 7/10 | ⚠️ Can improve |
-| **Accessibility** | 6/10 | ⚠️ Needs work |
-| **Error Handling** | 9/10 | ✅ Good |
-| **Test Coverage** | 0/10 | ❌ No tests |
-| **Code Organization** | 9/10 | ✅ Excellent |
-| **Overall** | **6.8/10** | ⚠️ Good with improvements needed |
+| Category              | Score      | Status                           |
+| --------------------- | ---------- | -------------------------------- |
+| **TypeScript Safety** | 10/10      | ✅ Excellent                     |
+| **Performance**       | 7/10       | ⚠️ Can improve                   |
+| **Accessibility**     | 6/10       | ⚠️ Needs work                    |
+| **Error Handling**    | 9/10       | ✅ Good                          |
+| **Test Coverage**     | 0/10       | ❌ No tests                      |
+| **Code Organization** | 9/10       | ✅ Excellent                     |
+| **Overall**           | **6.8/10** | ⚠️ Good with improvements needed |
 
 ---
 
 ## 1. TypeScript Type Analysis ✅ EXCELLENT
 
 ### Strengths:
+
 - ✅ **No `any` types** - Strict TypeScript compliance
 - ✅ **Proper interface definitions** - `ProductListProps` well-typed
 - ✅ **Type imports** - Uses `ProductListItem` from `@/types/api`
@@ -31,6 +32,7 @@
 - ✅ **Null safety** - Proper optional chaining (`data?.products`, `data?.pagination?.next_cursor`)
 
 ### Type Safety Examples:
+
 ```typescript
 // ✅ Proper interface definition
 export interface ProductListProps {
@@ -63,6 +65,7 @@ const { data, isLoading, isError, error, refetch } = useProducts({
 ## 2. Performance Optimization ⚠️ CAN IMPROVE
 
 ### Current State:
+
 - ❌ **No useMemo** for computed values
 - ❌ **No useCallback** for event handlers
 - ✅ Debounced search (500ms) implemented correctly
@@ -71,10 +74,12 @@ const { data, isLoading, isError, error, refetch } = useProducts({
 ### Issues Identified:
 
 #### Issue 2.1: Handler Functions Re-created on Every Render
+
 **Lines**: 94-126
 **Impact**: Medium (causes child component re-renders)
 
 **Current Code**:
+
 ```typescript
 const handleSearchChange = (value: string) => {
   setSearchInput(value)
@@ -99,11 +104,13 @@ const handleNextPage = () => { /* ... */ }
 ```
 
 **Problem**: These functions are re-created on **every render**, causing:
+
 - ProductSearchFilter to re-render unnecessarily
 - ProductTableRow (25+ instances) to re-render
 - ProductPagination to re-render
 
 **Recommendation**:
+
 ```typescript
 const handleSearchChange = useCallback((value: string) => {
   setSearchInput(value)
@@ -145,10 +152,12 @@ const handleNextPage = useCallback(() => {
 ---
 
 #### Issue 2.2: Computed Values Re-calculated on Every Render
+
 **Lines**: 129-131
 **Impact**: Low (simple boolean checks, but still wasteful)
 
 **Current Code**:
+
 ```typescript
 const hasPrevious = prevCursors.length > 0 || cursor !== undefined
 const hasNext = Boolean(data?.pagination?.next_cursor)
@@ -156,6 +165,7 @@ const filterLabel = has_cogs === undefined ? 'Все товары' : has_cogs ? 
 ```
 
 **Recommendation**:
+
 ```typescript
 const hasPrevious = useMemo(
   () => prevCursors.length > 0 || cursor !== undefined,
@@ -178,7 +188,9 @@ const filterLabel = useMemo(() => {
 ---
 
 ### Performance Score: 7/10
+
 **Deductions**:
+
 - -2 points: Missing useCallback for handlers
 - -1 point: Missing useMemo for computed values
 
@@ -189,6 +201,7 @@ const filterLabel = useMemo(() => {
 ## 3. Accessibility Audit ⚠️ NEEDS WORK
 
 ### Current State:
+
 - ❌ **No ARIA labels** on interactive elements
 - ❌ **No keyboard navigation** support beyond default
 - ⚠️ **Search input** lacks aria-describedby
@@ -198,10 +211,12 @@ const filterLabel = useMemo(() => {
 ### Issues Identified:
 
 #### Issue 3.1: Search Input Missing ARIA Attributes
+
 **Component**: ProductSearchFilter (passed from ProductList)
 **Impact**: High (screen readers can't announce search purpose)
 
 **Recommendation**:
+
 ```typescript
 // In ProductSearchFilter component (should be checked separately)
 <Input
@@ -220,10 +235,12 @@ const filterLabel = useMemo(() => {
 ---
 
 #### Issue 3.2: Filter Toggle Button Missing ARIA
+
 **Component**: ProductSearchFilter
 **Impact**: High (screen readers can't announce filter state)
 
 **Recommendation**:
+
 ```typescript
 <Button
   variant="outline"
@@ -238,10 +255,12 @@ const filterLabel = useMemo(() => {
 ---
 
 #### Issue 3.3: Table Missing Caption
+
 **Lines**: 176-226
 **Impact**: Medium (assistive tech can't understand table purpose)
 
 **Current Code**:
+
 ```typescript
 <Table className="table-fixed">
   <TableHeader>
@@ -254,6 +273,7 @@ const filterLabel = useMemo(() => {
 ```
 
 **Recommendation**:
+
 ```typescript
 <Table className="table-fixed">
   <caption className="sr-only">
@@ -271,10 +291,12 @@ const filterLabel = useMemo(() => {
 ---
 
 #### Issue 3.4: Pagination Buttons Missing ARIA
+
 **Component**: ProductPagination
 **Impact**: Medium (unclear navigation for screen readers)
 
 **Recommendation** (check ProductPagination.tsx):
+
 ```typescript
 <Button
   onClick={onPrevious}
@@ -296,7 +318,9 @@ const filterLabel = useMemo(() => {
 ---
 
 ### Accessibility Score: 6/10
+
 **Deductions**:
+
 - -2 points: Missing ARIA labels on search/filter
 - -1 point: Missing table caption
 - -1 point: Missing pagination ARIA labels
@@ -308,6 +332,7 @@ const filterLabel = useMemo(() => {
 ## 4. Error Handling Review ✅ GOOD
 
 ### Strengths:
+
 - ✅ **Proper error state** rendering (lines 137-149)
 - ✅ **Retry mechanism** with refetch button
 - ✅ **Error message** extraction (`error instanceof Error ? error.message : '...'`)
@@ -315,6 +340,7 @@ const filterLabel = useMemo(() => {
 - ✅ **Empty state** handled properly
 
 ### Error State Implementation:
+
 ```typescript
 if (isError) {
   return (
@@ -339,6 +365,7 @@ if (isError) {
 **Impact**: Low (errors propagate to page-level boundary)
 
 **Recommendation** (optional):
+
 ```typescript
 // In parent component (cogs/page.tsx)
 import { ErrorBoundary } from 'react-error-boundary'
@@ -363,6 +390,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
 ```
 
 ### Error Handling Score: 9/10
+
 **Deduction**: -1 point for missing error boundary (optional enhancement)
 
 ---
@@ -370,6 +398,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
 ## 5. Test Coverage Analysis ❌ CRITICAL GAP
 
 ### Current State:
+
 - ❌ **No test file** exists for ProductList.tsx
 - ❌ **No unit tests** for component logic
 - ❌ **No integration tests** for API interactions
@@ -382,6 +411,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
 **What should be tested**:
 
 #### Unit Tests (ProductList.test.tsx):
+
 1. **Rendering**:
    - [ ] Renders loading state on first load
    - [ ] Renders error state with retry button
@@ -416,6 +446,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
    - [ ] Polling integration works
 
 #### Integration Tests:
+
 1. **API Integration**:
    - [ ] useProducts hook called with correct filters
    - [ ] API response transformed correctly
@@ -428,6 +459,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
    - [ ] useColumnWidths persistence works
 
 #### E2E Tests (Playwright):
+
 1. **User Workflows**:
    - [ ] Search for product by nmId
    - [ ] Filter products without COGS
@@ -442,6 +474,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
 ---
 
 ### Test Coverage Score: 0/10
+
 **Critical**: Component has **no tests** despite being core functionality
 
 **Recommendation**: Create test suite with ≥20 test cases (estimated 2-3h)
@@ -451,6 +484,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
 ## 6. Refactoring Suggestions 🔧 MEDIUM PRIORITY
 
 ### Current Organization: ✅ Good
+
 - Component decomposition is excellent
 - Extracted: ProductSearchFilter, ProductTableRow, ProductPagination, etc.
 - Clear separation of concerns
@@ -458,10 +492,12 @@ function ErrorFallback({ error, resetErrorBoundary }) {
 ### Refactoring Opportunities:
 
 #### Refactoring 6.1: Extract Pagination Logic to Custom Hook
+
 **Current**: Pagination state managed in component (lines 57-126)
 **Impact**: Medium (reduces component complexity)
 
 **Suggestion**:
+
 ```typescript
 // New hook: src/hooks/useCursorPagination.ts
 export function useCursorPagination(initialLimit = 25) {
@@ -497,6 +533,7 @@ const pagination = useCursorPagination(25)
 ```
 
 **Benefits**:
+
 - Reusable pagination logic
 - Easier to test in isolation
 - Reduces ProductList.tsx complexity by ~40 lines
@@ -504,10 +541,12 @@ const pagination = useCursorPagination(25)
 ---
 
 #### Refactoring 6.2: Extract Filter Logic to Custom Hook
+
 **Current**: Filter state managed inline (lines 54-106)
 **Impact**: Low (already simple, but improves testability)
 
 **Suggestion**:
+
 ```typescript
 // New hook: src/hooks/useProductFilters.ts
 export function useProductFilters(initialShowWithoutCogs = false) {
@@ -546,6 +585,7 @@ export function useProductFilters(initialShowWithoutCogs = false) {
 ```
 
 **Benefits**:
+
 - Easier to test filter logic
 - Reusable for other product lists
 - Cleaner component code
@@ -553,10 +593,12 @@ export function useProductFilters(initialShowWithoutCogs = false) {
 ---
 
 #### Refactoring 6.3: Add PropTypes/JSDoc for Better DX
+
 **Current**: Basic interface, no JSDoc
 **Impact**: Low (improves developer experience)
 
 **Suggestion**:
+
 ```typescript
 export interface ProductListProps {
   /**
@@ -591,6 +633,7 @@ export interface ProductListProps {
 ```
 
 **Benefits**:
+
 - Better IntelliSense in IDE
 - Self-documenting API
 - Easier onboarding for new devs
@@ -616,6 +659,7 @@ export interface ProductListProps {
 ## 8. Dependencies Analysis
 
 ### Hooks Used:
+
 1. `useProducts` - ✅ Proper React Query integration
 2. `useMarginPollingStore` - ✅ Zustand store
 3. `usePendingMarginProducts` - ✅ Domain logic hook
@@ -623,6 +667,7 @@ export interface ProductListProps {
 5. `useColumnWidths` - ✅ localStorage persistence
 
 ### Component Dependencies:
+
 - ProductSearchFilter ✅
 - ProductEmptyState ✅
 - ProductLoadingSkeleton ✅
@@ -651,6 +696,7 @@ export interface ProductListProps {
 ## 10. Bundle Size & Imports
 
 ### Imports Analysis:
+
 ```typescript
 import { useState, useEffect } from 'react'           // Core React hooks
 import { useProducts } from '@/hooks/useProducts'     // ✅ Custom hook
@@ -670,13 +716,16 @@ import { AlertCircle } from 'lucide-react'            // ✅ Icon (tree-shakable
 ## Summary & Recommendations
 
 ### Critical Issues (Must Fix):
+
 1. ❌ **No test coverage** - Create ProductList.test.tsx (2-3h)
 
 ### Important Improvements (Should Fix):
+
 2. ⚠️ **Performance**: Add useCallback to handlers (30 min)
 3. ⚠️ **Accessibility**: Add ARIA labels and table caption (30 min)
 
 ### Nice-to-Have (Can Defer):
+
 4. 🔵 Extract pagination logic to useCursorPagination hook (1h)
 5. 🔵 Extract filter logic to useProductFilters hook (45 min)
 6. 🔵 Add JSDoc comments to ProductListProps (15 min)
@@ -688,9 +737,11 @@ import { AlertCircle } from 'lucide-react'            // ✅ Icon (tree-shakable
 ### Phase 1: Performance Optimization (30 min) ⭐ QUICK WIN
 
 **Files to modify**:
+
 - `src/components/custom/ProductList.tsx`
 
 **Changes**:
+
 1. Add `useCallback` imports
 2. Wrap all 5 handlers in useCallback
 3. Add useMemo for computed values (hasPrevious, hasNext, filterLabel)
@@ -702,11 +753,13 @@ import { AlertCircle } from 'lucide-react'            // ✅ Icon (tree-shakable
 ### Phase 2: Accessibility Improvements (30 min) ⭐ QUICK WIN
 
 **Files to modify**:
+
 - `src/components/custom/ProductList.tsx` (add table caption)
 - `src/components/custom/ProductSearchFilter.tsx` (add ARIA labels)
 - `src/components/custom/ProductPagination.tsx` (add ARIA labels)
 
 **Changes**:
+
 1. Add `<caption className="sr-only">` to Table
 2. Add aria-label to search input
 3. Add aria-pressed to filter button
@@ -719,9 +772,11 @@ import { AlertCircle } from 'lucide-react'            // ✅ Icon (tree-shakable
 ### Phase 3: Test Coverage (2-3h) 🔴 CRITICAL
 
 **File to create**:
+
 - `src/components/custom/__tests__/ProductList.test.tsx`
 
 **Test Structure**:
+
 ```typescript
 describe('ProductList', () => {
   describe('Rendering States', () => {
@@ -770,10 +825,12 @@ describe('ProductList', () => {
 ### Phase 4: Extract Custom Hooks (1h 45min) 🔵 OPTIONAL
 
 **New hooks to create**:
+
 1. `src/hooks/useCursorPagination.ts` (reusable pagination logic)
 2. `src/hooks/useProductFilters.ts` (reusable filter logic)
 
 **Benefits**:
+
 - Easier to test
 - Reusable across components
 - Cleaner component code
@@ -783,13 +840,16 @@ describe('ProductList', () => {
 ## Priority Recommendations
 
 ### Immediate (Do First):
+
 1. ⭐ **Performance optimization** (30 min) - Quick win, noticeable UX improvement
 2. ⭐ **Accessibility improvements** (30 min) - Quick win, WCAG compliance
 
 ### Important (Do Soon):
+
 3. 🔴 **Test coverage** (2-3h) - Critical for maintainability
 
 ### Optional (Can Defer):
+
 4. 🔵 **Extract hooks** (1h 45min) - Nice-to-have refactoring
 5. 🔵 **JSDoc comments** (15 min) - Improves DX
 
@@ -797,15 +857,15 @@ describe('ProductList', () => {
 
 ## Code Quality Score Breakdown
 
-| Category | Current Score | Potential Score | Gap |
-|----------|--------------|----------------|-----|
-| TypeScript Safety | 10/10 | 10/10 | 0 |
-| Performance | 7/10 | 9/10 | +2 |
-| Accessibility | 6/10 | 9/10 | +3 |
-| Error Handling | 9/10 | 10/10 | +1 |
-| Test Coverage | 0/10 | 9/10 | +9 |
-| Code Organization | 9/10 | 10/10 | +1 |
-| **Overall** | **6.8/10** | **9.5/10** | **+2.7** |
+| Category          | Current Score | Potential Score | Gap      |
+| ----------------- | ------------- | --------------- | -------- |
+| TypeScript Safety | 10/10         | 10/10           | 0        |
+| Performance       | 7/10          | 9/10            | +2       |
+| Accessibility     | 6/10          | 9/10            | +3       |
+| Error Handling    | 9/10          | 10/10           | +1       |
+| Test Coverage     | 0/10          | 9/10            | +9       |
+| Code Organization | 9/10          | 10/10           | +1       |
+| **Overall**       | **6.8/10**    | **9.5/10**      | **+2.7** |
 
 **Potential Improvement**: +2.7 points (40% improvement) with all recommendations
 
@@ -815,14 +875,14 @@ describe('ProductList', () => {
 
 ### ProductList.tsx vs MergedGroupTable.tsx:
 
-| Feature | ProductList | MergedGroupTable | Winner |
-|---------|-------------|------------------|---------|
-| **Test Coverage** | 0% ❌ | 100% ✅ (77 tests) | MergedGroupTable |
-| **Accessibility** | Partial ⚠️ | Full ✅ (WCAG AA) | MergedGroupTable |
-| **Performance** | No optimization ⚠️ | useMemo/useCallback ✅ | MergedGroupTable |
-| **TypeScript** | Excellent ✅ | Excellent ✅ | Tie |
-| **Error Handling** | Good ✅ | Good ✅ | Tie |
-| **Code Organization** | Excellent ✅ | Excellent ✅ | Tie |
+| Feature               | ProductList        | MergedGroupTable       | Winner           |
+| --------------------- | ------------------ | ---------------------- | ---------------- |
+| **Test Coverage**     | 0% ❌              | 100% ✅ (77 tests)     | MergedGroupTable |
+| **Accessibility**     | Partial ⚠️         | Full ✅ (WCAG AA)      | MergedGroupTable |
+| **Performance**       | No optimization ⚠️ | useMemo/useCallback ✅ | MergedGroupTable |
+| **TypeScript**        | Excellent ✅       | Excellent ✅           | Tie              |
+| **Error Handling**    | Good ✅            | Good ✅                | Tie              |
+| **Code Organization** | Excellent ✅       | Excellent ✅           | Tie              |
 
 **Takeaway**: ProductList.tsx can learn from Epic 37 patterns (testing, accessibility, performance)
 
@@ -831,17 +891,20 @@ describe('ProductList', () => {
 ## Next Steps
 
 ### Option 1: Apply All Quick Wins (1h total) ⭐ RECOMMENDED
+
 - Performance optimization (30 min)
 - Accessibility improvements (30 min)
-**Result**: Score 6.8/10 → 7.5/10
+  **Result**: Score 6.8/10 → 7.5/10
 
 ### Option 2: Add Test Coverage (2-3h)
+
 - Create ProductList.test.tsx with 20-25 tests
-**Result**: Score 6.8/10 → 8.5/10
+  **Result**: Score 6.8/10 → 8.5/10
 
 ### Option 3: Full Improvements (4-5h)
+
 - Quick wins (1h) + Test coverage (2-3h) + Extract hooks (1h 45min)
-**Result**: Score 6.8/10 → 9.5/10
+  **Result**: Score 6.8/10 → 9.5/10
 
 ---
 

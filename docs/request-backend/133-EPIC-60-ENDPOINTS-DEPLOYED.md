@@ -46,41 +46,44 @@ curl "http://localhost:3000/api-json" | jq '.paths | keys | .[] | select(contain
 **Resolution date**: 2026-02-01
 **Summary**: Frontend 404 errors were caused by testing before backend deployment. All 11 Epic 60 endpoints confirmed deployed and registered in Swagger. Verification curl command provided.
 **Remaining frontend action**: None - endpoints available and working.
+
 ### Fulfillment Analytics
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/v1/analytics/fulfillment/summary` | FBO/FBS/Total metrics summary |
-| GET | `/v1/analytics/fulfillment/trends` | Daily breakdown by fulfillment type |
-| GET | `/v1/analytics/fulfillment/sync-status` | Sync status with timestamps |
+| Method | Path                                    | Description                         |
+| ------ | --------------------------------------- | ----------------------------------- |
+| GET    | `/v1/analytics/fulfillment/summary`     | FBO/FBS/Total metrics summary       |
+| GET    | `/v1/analytics/fulfillment/trends`      | Daily breakdown by fulfillment type |
+| GET    | `/v1/analytics/fulfillment/sync-status` | Sync status with timestamps         |
 
 ### FBO Orders
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/v1/orders/fbo` | List FBO orders (paginated) |
-| GET | `/v1/orders/fbo/:orderId` | Single order details |
-| GET | `/v1/orders/fbo/aggregate` | Aggregated statistics |
-| GET | `/v1/orders/fbo/sync-status` | FBO sync status |
-| POST | `/v1/orders/fbo/sync` | Manual sync trigger |
-| POST | `/v1/orders/fbo/backfill` | Historical backfill |
+| Method | Path                         | Description                 |
+| ------ | ---------------------------- | --------------------------- |
+| GET    | `/v1/orders/fbo`             | List FBO orders (paginated) |
+| GET    | `/v1/orders/fbo/:orderId`    | Single order details        |
+| GET    | `/v1/orders/fbo/aggregate`   | Aggregated statistics       |
+| GET    | `/v1/orders/fbo/sync-status` | FBO sync status             |
+| POST   | `/v1/orders/fbo/sync`        | Manual sync trigger         |
+| POST   | `/v1/orders/fbo/backfill`    | Historical backfill         |
 
 ### FBO Sales
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/v1/sales/fbo` | List FBO sales (paginated) |
-| GET | `/v1/sales/fbo/aggregate` | Aggregated sales statistics |
+| Method | Path                      | Description                 |
+| ------ | ------------------------- | --------------------------- |
+| GET    | `/v1/sales/fbo`           | List FBO sales (paginated)  |
+| GET    | `/v1/sales/fbo/aggregate` | Aggregated sales statistics |
 
 ---
 
 ## Authentication Required
 
 All endpoints require:
+
 - `Authorization: Bearer {JWT_TOKEN}`
 - `X-Cabinet-Id: {cabinet_id}`
 
 Example:
+
 ```bash
 curl -X GET "http://localhost:3000/v1/analytics/fulfillment/summary?from=2026-01-19&to=2026-01-25" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
@@ -92,16 +95,18 @@ curl -X GET "http://localhost:3000/v1/analytics/fulfillment/summary?from=2026-01
 ## Query Parameters
 
 ### Date Filtering
-| Param | Format | Example | Description |
-|-------|--------|---------|-------------|
+
+| Param  | Format   | Example      | Description            |
+| ------ | -------- | ------------ | ---------------------- |
 | `from` | ISO date | `2026-01-19` | Start date (inclusive) |
-| `to` | ISO date | `2026-01-25` | End date (inclusive) |
+| `to`   | ISO date | `2026-01-25` | End date (inclusive)   |
 
 ### Pagination
-| Param | Type | Default | Max | Description |
-|-------|------|---------|-----|-------------|
-| `offset` | number | 0 | - | Skip N records |
-| `limit` | number | 100 | 1000 | Records per page |
+
+| Param    | Type   | Default | Max  | Description      |
+| -------- | ------ | ------- | ---- | ---------------- |
+| `offset` | number | 0       | -    | Skip N records   |
+| `limit`  | number | 100     | 1000 | Records per page |
 
 ---
 
@@ -110,6 +115,7 @@ curl -X GET "http://localhost:3000/v1/analytics/fulfillment/summary?from=2026-01
 > **Note**: Response format aligned with doc 131-EPIC-60-FBO-FBS-API-COMPLETE-GUIDE.md
 
 ### Summary Response (`/v1/analytics/fulfillment/summary`)
+
 ```json
 {
   "summary": {

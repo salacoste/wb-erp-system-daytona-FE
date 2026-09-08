@@ -15,15 +15,15 @@ Frontend implementation for managing Wildberries global tariff settings. Integra
 
 ## Stories
 
-| Story | Title | SP | Status | Depends On |
-|-------|-------|-----|--------|------------|
-| [52-FE.1](./story-52-fe.1-version-history-table.md) | Version History Table | 3 | ✅ Complete | 52-FE.7 |
-| [52-FE.2](./story-52-fe.2-tariff-settings-edit-form.md) | Tariff Settings Edit Form | 8 | ✅ Complete | 52-FE.7, 52-FE.1 |
-| [52-FE.3](./story-52-fe.3-schedule-future-version.md) | Schedule Future Version | 5 | ✅ Complete | 52-FE.7, 52-FE.2 |
-| [52-FE.4](./story-52-fe.4-audit-log-viewer.md) | Audit Log Viewer | 4 | ✅ Complete | 52-FE.7 |
-| [52-FE.5](./story-52-fe.5-delete-scheduled-version.md) | Delete Scheduled Version | 2 | ✅ Complete | 52-FE.1 |
-| [52-FE.6](./story-52-fe.6-rate-limit-ux.md) | Rate Limit UX & Error Handling | 2 | ✅ Complete | 52-FE.7 |
-| [52-FE.7](./story-52-fe.7-page-layout-types.md) | Page Layout, Types & Integration | 2 | ✅ Complete | None |
+| Story                                                   | Title                            | SP  | Status      | Depends On       |
+| ------------------------------------------------------- | -------------------------------- | --- | ----------- | ---------------- |
+| [52-FE.1](./story-52-fe.1-version-history-table.md)     | Version History Table            | 3   | ✅ Complete | 52-FE.7          |
+| [52-FE.2](./story-52-fe.2-tariff-settings-edit-form.md) | Tariff Settings Edit Form        | 8   | ✅ Complete | 52-FE.7, 52-FE.1 |
+| [52-FE.3](./story-52-fe.3-schedule-future-version.md)   | Schedule Future Version          | 5   | ✅ Complete | 52-FE.7, 52-FE.2 |
+| [52-FE.4](./story-52-fe.4-audit-log-viewer.md)          | Audit Log Viewer                 | 4   | ✅ Complete | 52-FE.7          |
+| [52-FE.5](./story-52-fe.5-delete-scheduled-version.md)  | Delete Scheduled Version         | 2   | ✅ Complete | 52-FE.1          |
+| [52-FE.6](./story-52-fe.6-rate-limit-ux.md)             | Rate Limit UX & Error Handling   | 2   | ✅ Complete | 52-FE.7          |
+| [52-FE.7](./story-52-fe.7-page-layout-types.md)         | Page Layout, Types & Integration | 2   | ✅ Complete | None             |
 
 ---
 
@@ -48,15 +48,15 @@ Sprint 3 (7 SP) - Advanced Features
 
 ## API Endpoints
 
-| Endpoint | Method | Used In |
-|----------|--------|---------|
-| `/v1/tariffs/settings` | GET | 52-FE.2, 52-FE.7 |
-| `/v1/tariffs/settings` | PUT | 52-FE.2 |
-| `/v1/tariffs/settings` | PATCH | 52-FE.2 |
-| `/v1/tariffs/settings/history` | GET | 52-FE.1 |
-| `/v1/tariffs/settings/schedule` | POST | 52-FE.3 |
-| `/v1/tariffs/settings/:id` | DELETE | 52-FE.5 |
-| `/v1/tariffs/settings/audit` | GET | 52-FE.4 |
+| Endpoint                        | Method | Used In          |
+| ------------------------------- | ------ | ---------------- |
+| `/v1/tariffs/settings`          | GET    | 52-FE.2, 52-FE.7 |
+| `/v1/tariffs/settings`          | PUT    | 52-FE.2          |
+| `/v1/tariffs/settings`          | PATCH  | 52-FE.2          |
+| `/v1/tariffs/settings/history`  | GET    | 52-FE.1          |
+| `/v1/tariffs/settings/schedule` | POST   | 52-FE.3          |
+| `/v1/tariffs/settings/:id`      | DELETE | 52-FE.5          |
+| `/v1/tariffs/settings/audit`    | GET    | 52-FE.4          |
 
 ---
 
@@ -134,6 +134,7 @@ All 7 stories implemented with comprehensive test coverage.
 **Page**: `src/app/(dashboard)/settings/tariffs/page.tsx`
 
 **Components** (`src/components/custom/tariffs-admin/`):
+
 - `TariffSettingsForm.tsx` - Main form container with 6 collapsible sections
 - `AcceptanceRatesSection.tsx` - Acceptance rate fields
 - `LogisticsRatesSection.tsx` - Logistics rate fields + volume tiers
@@ -157,6 +158,7 @@ All 7 stories implemented with comprehensive test coverage.
 - `SaveConfirmDialog.tsx` - Confirmation before save
 
 **Hooks** (`src/hooks/`):
+
 - `useTariffSettings.ts` - Fetch current settings
 - `useTariffVersionHistory.ts` - Fetch version list
 - `useTariffAuditLog.ts` - Fetch audit log with pagination
@@ -166,6 +168,7 @@ All 7 stories implemented with comprehensive test coverage.
 - `tariff-query-keys.ts` - Query key factory
 
 **Supporting Files**:
+
 - `src/types/tariffs-admin.ts` - 21 field types, DTOs, enums
 - `src/lib/api/tariffs-admin.ts` - API client functions
 - `src/lib/tariff-error-handler.ts` - Error handling utilities

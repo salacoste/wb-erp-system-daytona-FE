@@ -6,6 +6,7 @@
 **Effort**: 5 SP
 **Parent Story**: 44.26-FE (split for independent delivery)
 **Depends On**:
+
 - Story 44.26a-FE ⏳ (Product Search & Date Picker - must complete first)
 - Story 44.7 ✅ (Dimension Volume Calculation)
 - **Backend Request #99** ✅ IMPLEMENTED (Epic 45 Backend)
@@ -23,6 +24,7 @@
 ## Scope Clarification
 
 **This story covers:**
+
 - Auto-fill dimensions from product (mm → cm conversion)
 - Auto-fill category from product (with commission lookup)
 - AutoFillBadge component ("Автозаполнено", "Изменено")
@@ -31,6 +33,7 @@
 - Product dimensions display in search dropdown
 
 **Prerequisites from 44.26a:**
+
 - ProductSearchSelect component ✅
 - Product selection state management ✅
 - Form integration for product selection ✅
@@ -50,6 +53,7 @@
 ### Request #99: Product Dimensions & Category in API ✅ IMPLEMENTED
 
 **API Endpoint:**
+
 ```http
 GET /v1/products?include_dimensions=true&limit=100
 Authorization: Bearer {token}
@@ -57,6 +61,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Actual Response (Epic 45 Backend):**
+
 ```json
 {
   "products": [
@@ -92,14 +97,15 @@ X-Cabinet-Id: {cabinet_id}
 
 **CRITICAL Implementation Differences from Original Request #99:**
 
-| Field | Original Request | Actual Implementation | Notes |
-|-------|------------------|----------------------|-------|
-| `nm_id` | `number` | `string` | Backend returns STRING! |
-| Product name | `title` | `sa_name` | WB uses sa_name |
-| Category | `category` | `category_hierarchy` | Different field name |
-| Volume | calculated | `volume_liters` | Pre-calculated by backend |
+| Field        | Original Request | Actual Implementation | Notes                     |
+| ------------ | ---------------- | --------------------- | ------------------------- |
+| `nm_id`      | `number`         | `string`              | Backend returns STRING!   |
+| Product name | `title`          | `sa_name`             | WB uses sa_name           |
+| Category     | `category`       | `category_hierarchy`  | Different field name      |
+| Volume       | calculated       | `volume_liters`       | Pre-calculated by backend |
 
 **Implementation Notes:**
+
 - **`nm_id` is STRING** - Must use `string` type, not `number`
 - Field name is `category_hierarchy` (not `category`)
 - `volume_liters` is pre-calculated by backend (no frontend calculation needed!)
@@ -112,6 +118,7 @@ X-Cabinet-Id: {cabinet_id}
 ## Acceptance Criteria
 
 ### AC1: Auto-fill Dimensions from Product
+
 - [ ] When product selected: auto-fill dimensions from `product.dimensions`
   - `length_cm` ← `product.dimensions.length_mm / 10`
   - `width_cm` ← `product.dimensions.width_mm / 10`
@@ -124,6 +131,7 @@ X-Cabinet-Id: {cabinet_id}
 - [ ] Restore button resets to original auto-filled values
 
 ### AC2: Auto-fill Category from Product
+
 - [ ] When product selected: auto-fill category from `product.category_hierarchy`
   - Set `selectedCategory.parentID` ← `product.category_hierarchy.parent_id`
   - Set `selectedCategory.subjectID` ← `product.category_hierarchy.subject_id`
@@ -138,6 +146,7 @@ X-Cabinet-Id: {cabinet_id}
 **Note**: Backend field is `category_hierarchy`, NOT `category`!
 
 ### AC3: Mode Switching (Product Selected vs Manual)
+
 - [ ] **Mode A (Product Selected)**:
   - Dimensions: auto-filled, editable with restore
   - Category: auto-filled, locked (user sees selected category but cannot change)
@@ -152,6 +161,7 @@ X-Cabinet-Id: {cabinet_id}
   - Reset dimension/category sources to 'manual'
 
 ### AC4: AutoFillBadge Component
+
 - [ ] Create reusable AutoFillBadge component
 - [ ] Badge variants:
   - "Автозаполнено" (green) - values from product
@@ -161,6 +171,7 @@ X-Cabinet-Id: {cabinet_id}
 - [ ] Smooth transition animations between states
 
 ### AC5: Product Dimensions in Search Dropdown (Enhancement to 44.26a)
+
 - [ ] Show dimensions in product search results: "📐 40×30×5 см (6.0 л)"
   - Dimensions: `dimensions.length_mm/10 × dimensions.width_mm/10 × dimensions.height_mm/10 см`
   - Volume: `dimensions.volume_liters` (pre-calculated by backend!)
@@ -170,6 +181,7 @@ X-Cabinet-Id: {cabinet_id}
 - [ ] Handle missing category (`category_hierarchy === null`): show "Категория не указана"
 
 ### AC6: Error Handling for Missing Data
+
 - [ ] If product has no dimensions:
   - Show warning: "Габариты не указаны в карточке WB"
   - Keep dimensions in manual mode (user must enter)
@@ -359,6 +371,7 @@ const handleRestoreDimensions = useCallback(() => {
 ### Mode A: Product Selected (Auto-fill Active)
 
 **Product Card (enhanced from 44.26a)**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Товар                                              [× Очистить] │
@@ -374,6 +387,7 @@ const handleRestoreDimensions = useCallback(() => {
 **Note**: Volume (6.0 л) comes from backend `dimensions.volume_liters`, NOT calculated on frontend.
 
 **Category (Locked)**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Категория товара                           [Автозаполнено]  │
@@ -386,6 +400,7 @@ const handleRestoreDimensions = useCallback(() => {
 ```
 
 **Dimensions (Auto-filled, Not Edited)**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Габариты товара                            [Автозаполнено]  │
@@ -399,6 +414,7 @@ const handleRestoreDimensions = useCallback(() => {
 ```
 
 **Dimensions (Auto-filled, User Edited)**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Габариты товара                    [Изменено] [🔁 Восстановить] │
@@ -414,6 +430,7 @@ const handleRestoreDimensions = useCallback(() => {
 ### Mode B: Manual Entry (No Product)
 
 **Category (Unlocked)**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Категория товара                                         [?] │
@@ -427,6 +444,7 @@ const handleRestoreDimensions = useCallback(() => {
 ### Warning States
 
 **Product Without Dimensions**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ ⚠️ Габариты не указаны в карточке WB                     [×] │
@@ -435,6 +453,7 @@ const handleRestoreDimensions = useCallback(() => {
 ```
 
 **Product Without Category**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ ⚠️ Категория не указана в карточке WB                    [×] │
@@ -544,6 +563,7 @@ export function useProductsWithDimensions(search: string) {
 ```
 
 **Performance Notes (from Epic 45)**:
+
 - Cache miss: ~350-550ms (WB API call)
 - Cache hit: ~150ms (Redis, 24h TTL)
 - Combined with include_cogs: +150ms
@@ -553,20 +573,20 @@ export function useProductsWithDimensions(search: string) {
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| Product without dimensions (`dimensions === null`) | Show warning, manual input mode for dimensions |
-| Product without category (`category_hierarchy === null`) | Show warning, CategorySelector unlocked |
-| Product has partial dimensions | Show warning, fill what's available, manual for rest |
-| User edits one dimension | Show "Изменено" badge, enable restore for all (including volume) |
-| User clicks restore | All dimensions + volume reset to original auto-filled values from backend |
-| User clears product | All auto-fill cleared, manual mode activated |
-| Product changed to another | New product's data auto-fills, replaces previous |
-| API returns dimensions as 0 | Treat as valid (0mm is possible), calculate volume |
-| Commission lookup fails | Show commission as "N/A", allow form submission |
-| `nm_id` type handling | Always treat as STRING (backend returns "147205694", not 147205694) |
-| `parent_id` is null | Top-level category, display only subject_name |
-| Cache miss (skip_cache=true) | API call takes ~350-550ms, show loading state |
+| Scenario                                                 | Expected Behavior                                                         |
+| -------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Product without dimensions (`dimensions === null`)       | Show warning, manual input mode for dimensions                            |
+| Product without category (`category_hierarchy === null`) | Show warning, CategorySelector unlocked                                   |
+| Product has partial dimensions                           | Show warning, fill what's available, manual for rest                      |
+| User edits one dimension                                 | Show "Изменено" badge, enable restore for all (including volume)          |
+| User clicks restore                                      | All dimensions + volume reset to original auto-filled values from backend |
+| User clears product                                      | All auto-fill cleared, manual mode activated                              |
+| Product changed to another                               | New product's data auto-fills, replaces previous                          |
+| API returns dimensions as 0                              | Treat as valid (0mm is possible), calculate volume                        |
+| Commission lookup fails                                  | Show commission as "N/A", allow form submission                           |
+| `nm_id` type handling                                    | Always treat as STRING (backend returns "147205694", not 147205694)       |
+| `parent_id` is null                                      | Top-level category, display only subject_name                             |
+| Cache miss (skip_cache=true)                             | API call takes ~350-550ms, show loading state                             |
 
 ---
 
@@ -612,25 +632,27 @@ export function useProductsWithDimensions(search: string) {
 ## QA Checklist
 
 ### Functional Verification
-| Test Case | Expected Result | Status |
-|-----------|-----------------|--------|
-| Select product with dimensions | Dimensions auto-filled in cm | [ ] |
-| Select product with category | Category auto-filled, locked | [ ] |
-| Edit auto-filled dimension | Badge changes to "Изменено" | [ ] |
-| Click "Восстановить" | Original values restored | [ ] |
-| Clear product | Mode B activated, fields unlocked | [ ] |
-| Product without dimensions | Warning shown, manual mode | [ ] |
-| Product without category | Warning shown, selector unlocked | [ ] |
-| Select new product | Previous auto-fill replaced | [ ] |
-| Form reset | All auto-fill cleared | [ ] |
+
+| Test Case                      | Expected Result                   | Status |
+| ------------------------------ | --------------------------------- | ------ |
+| Select product with dimensions | Dimensions auto-filled in cm      | [ ]    |
+| Select product with category   | Category auto-filled, locked      | [ ]    |
+| Edit auto-filled dimension     | Badge changes to "Изменено"       | [ ]    |
+| Click "Восстановить"           | Original values restored          | [ ]    |
+| Clear product                  | Mode B activated, fields unlocked | [ ]    |
+| Product without dimensions     | Warning shown, manual mode        | [ ]    |
+| Product without category       | Warning shown, selector unlocked  | [ ]    |
+| Select new product             | Previous auto-fill replaced       | [ ]    |
+| Form reset                     | All auto-fill cleared             | [ ]    |
 
 ### Accessibility Verification
-| Check | Status |
-|-------|--------|
-| Screen reader announcements for auto-fill | [ ] |
-| Restore button accessible | [ ] |
-| Lock icon explained | [ ] |
-| Warning alerts announced | [ ] |
+
+| Check                                     | Status |
+| ----------------------------------------- | ------ |
+| Screen reader announcements for auto-fill | [ ]    |
+| Restore button accessible                 | [ ]    |
+| Lock icon explained                       | [ ]    |
+| Warning alerts announced                  | [ ]    |
 
 ---
 

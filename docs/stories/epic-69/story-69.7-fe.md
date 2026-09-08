@@ -1,11 +1,11 @@
 # Story 69.7-FE: Unit & Integration Tests
 
-| Field | Value |
-|-------|-------|
-| Epic | 69-FE Buyout Analytics |
-| Priority | P3 |
-| SP | 3 |
-| Status | 📋 Planned |
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Epic     | 69-FE Buyout Analytics |
+| Priority | P3                     |
+| SP       | 3                      |
+| Status   | 📋 Planned             |
 
 ## Description
 
@@ -26,12 +26,13 @@
 
 ## Files
 
-| File | Action |
-|------|--------|
-| `src/hooks/__tests__/use-buyout-analytics.test.ts` | Create |
+| File                                                                                     | Action |
+| ---------------------------------------------------------------------------------------- | ------ |
+| `src/hooks/__tests__/use-buyout-analytics.test.ts`                                       | Create |
 | `src/app/(dashboard)/analytics/buyout/components/__tests__/BuyoutSummaryWidget.test.tsx` | Create |
-| `src/app/(dashboard)/analytics/buyout/components/__tests__/BuyoutTable.test.tsx` | Create |
-| `src/lib/api/__tests__/buyout-analytics.test.ts` | Create |
+| `src/app/(dashboard)/analytics/buyout/components/__tests__/BuyoutTable.test.tsx`         | Create |
+| `src/lib/api/__tests__/buyout-analytics.test.ts`                                         | Create |
 
 ## Dependencies
+
 - Blocked by: 69.1-69.6

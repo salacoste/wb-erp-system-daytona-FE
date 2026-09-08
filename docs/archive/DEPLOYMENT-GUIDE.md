@@ -40,6 +40,7 @@ NEXT_PUBLIC_APP_VERSION=1.0.0
 ```
 
 **⚠️ ВАЖНО**:
+
 - `NEXT_PUBLIC_API_URL` должен быть **БЕЗ** `/api` на конце (endpoints начинаются с `/v1/`)
 - Все `NEXT_PUBLIC_*` переменные встраиваются в код при билде
 - Если меняете переменные → нужен rebuild
@@ -47,6 +48,7 @@ NEXT_PUBLIC_APP_VERSION=1.0.0
 ### 3. Backend Readiness
 
 **Проверьте что бэкенд готов:**
+
 - ✅ Epic 34 (Request #73) - Telegram Notifications API deployed
 - ✅ JWT authentication работает
 - ✅ Rate limiting настроен (600 req/min)
@@ -66,6 +68,7 @@ curl https://your-backend-api.com/v1/health
 ### Option 1: PM2 (Recommended) ⭐
 
 **Преимущества:**
+
 - ✅ Auto-restart on crashes
 - ✅ Log management
 - ✅ Zero-downtime reload
@@ -155,6 +158,7 @@ pm2 logs wb-repricer-frontend --lines 20
 ### Option 2: Docker
 
 **Преимущества:**
+
 - ✅ Isolated environment
 - ✅ Reproducible builds
 - ✅ Easy rollback
@@ -219,6 +223,7 @@ npm run start
 ```
 
 **⚠️ Недостатки:**
+
 - ❌ No auto-restart on crash
 - ❌ No log management
 - ❌ Process killed on SSH disconnect (используйте `nohup` или `screen`)
@@ -335,10 +340,12 @@ pm2 list
 ### Log Files Location
 
 **PM2:**
+
 - Stdout: `~/.pm2/logs/wb-repricer-frontend-out.log`
 - Stderr: `~/.pm2/logs/wb-repricer-frontend-error.log`
 
 **Docker:**
+
 - Access via: `docker logs wb-repricer-frontend`
 
 ### Log Rotation (PM2)
@@ -403,11 +410,13 @@ docker logs wb-repricer-frontend
 ### Issue 1: Port 3100 Already in Use
 
 **Симптомы:**
+
 ```
 Error: listen EADDRINUSE: address already in use :::3100
 ```
 
 **Решение:**
+
 ```bash
 # Найти процесс на порту 3100
 lsof -i :3100
@@ -423,11 +432,13 @@ kill -9 <PID>
 ### Issue 2: Build Fails
 
 **Симптомы:**
+
 ```
 Error: Command "build" exited with 1
 ```
 
 **Решение:**
+
 ```bash
 # 1. Проверить TypeScript errors
 npm run type-check
@@ -447,10 +458,12 @@ npm run build
 ### Issue 3: 401 Unauthorized from Backend
 
 **Симптомы:**
+
 - Login fails
 - API requests return 401
 
 **Решение:**
+
 ```bash
 # 1. Проверить backend logs
 # (бэкенд должен быть перезапущен если JWT secret изменился)
@@ -467,10 +480,12 @@ echo $NEXT_PUBLIC_API_URL
 ### Issue 4: Telegram Bot Not Working
 
 **Симптомы:**
+
 - Deep link не открывает бот
 - Binding code не работает
 
 **Решение:**
+
 ```bash
 # 1. Проверить environment variable
 echo $NEXT_PUBLIC_TELEGRAM_BOT_USERNAME
@@ -489,10 +504,12 @@ pm2 reload wb-repricer-frontend
 ### Issue 5: Analytics Events Not Sending
 
 **Симптомы:**
+
 - No POST requests to `/v1/analytics/events`
 - Console errors about analytics
 
 **Решение:**
+
 ```bash
 # 1. Проверить browser console (F12)
 # Должны быть логи: "📊 Analytics: Sending batch of X events"
@@ -513,11 +530,13 @@ curl -X POST https://your-backend-api.com/v1/analytics/events \
 ### Issue 6: High Memory Usage
 
 **Симптомы:**
+
 ```
 PM2 показывает >500MB memory usage
 ```
 
 **Решение:**
+
 ```bash
 # 1. Enable memory limit в PM2
 pm2 delete wb-repricer-frontend
@@ -540,10 +559,12 @@ pm2 start ecosystem.config.js --only wb-repricer-frontend \
 ### Issue 7: Slow Page Load
 
 **Симптомы:**
+
 - First load >5 seconds
 - Subsequent loads slow
 
 **Решение:**
+
 ```bash
 # 1. Проверить что используется production build
 pm2 info wb-repricer-frontend | grep NODE_ENV
@@ -611,18 +632,21 @@ server {
 ## 📝 Deployment Checklist Summary
 
 ### Pre-Deployment
+
 - [ ] Code quality checks passed (type-check, lint, tests)
 - [ ] `.env.local` configured with production values
 - [ ] Backend API available and healthy
 - [ ] Telegram bot configured (`@Kernel_crypto_bot`)
 
 ### Deployment
+
 - [ ] Dependencies installed (`npm install --production`)
 - [ ] Application built successfully (`npm run build`)
 - [ ] PM2/Docker process started
 - [ ] Auto-restart configured (`pm2 save && pm2 startup`)
 
 ### Post-Deployment
+
 - [ ] Health check passed (HTTP 200)
 - [ ] Login flow works
 - [ ] All navigation links accessible
@@ -632,6 +656,7 @@ server {
 - [ ] Performance acceptable (Lighthouse >90)
 
 ### Monitoring
+
 - [ ] PM2/Docker monitoring active
 - [ ] Log rotation configured
 - [ ] Memory/CPU usage normal
@@ -643,13 +668,13 @@ server {
 
 ### Common Issues Resolution Time
 
-| Issue | Expected Fix Time |
-|-------|------------------|
-| Port conflict | 5 minutes |
-| Build failure | 15-30 minutes |
-| Backend 401 | 10 minutes (backend restart) |
-| Memory leak | 1-2 hours (investigation) |
-| Slow performance | 30-60 minutes |
+| Issue            | Expected Fix Time            |
+| ---------------- | ---------------------------- |
+| Port conflict    | 5 minutes                    |
+| Build failure    | 15-30 minutes                |
+| Backend 401      | 10 minutes (backend restart) |
+| Memory leak      | 1-2 hours (investigation)    |
+| Slow performance | 30-60 minutes                |
 
 ### Escalation Path
 
@@ -674,5 +699,6 @@ server {
 **Maintained by**: Frontend Team
 
 **Production Deployment History:**
+
 - 2025-12-30: Initial production deployment guide created
 - Epic 34-FE (Telegram Notifications) ready for production
