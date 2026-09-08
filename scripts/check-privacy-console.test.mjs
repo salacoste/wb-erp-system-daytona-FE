@@ -6,7 +6,12 @@ import path from 'node:path'
 import test from 'node:test'
 import { promisify } from 'node:util'
 
-import { PRIVACY_SCAN_ROOTS, runPrivacyCheck, scanPrivacyFiles } from './check-privacy-console.mjs'
+import {
+  EXCLUDED_CHANGE_SET_PREFIXES,
+  PRIVACY_SCAN_ROOTS,
+  runPrivacyCheck,
+  scanPrivacyFiles,
+} from './check-privacy-console.mjs'
 
 const execFileAsync = promisify(execFile)
 
@@ -172,6 +177,56 @@ test('credential-looking test and dummy prefixes remain detected in unrelated Gi
     ])
     assert.equal(JSON.stringify(result).includes(testLikeValue), false)
     assert.equal(JSON.stringify(result).includes(dummyLikeValue), false)
+  })
+})
+
+test('excludes vendored BMAD knowledge dirs from Git change-set scanning only', async () => {
+  await withRoot(async root => {
+    await execFileAsync('git', ['init', '--quiet'], { cwd: root })
+    const excludedDirs = [...EXCLUDED_CHANGE_SET_PREFIXES].map(prefix => prefix.replace(/\/$/, ''))
+    assert.deepEqual([...excludedDirs].sort(), [
+      '.agent',
+      '.agents',
+      '.gemini',
+      '.opencode',
+      '_bmad',
+    ])
+    const value = ['wb_', "token = 'constructedCredential123'"].join('')
+    for (const dir of excludedDirs) {
+      await mkdir(path.join(root, dir), { recursive: true })
+      await writeFile(path.join(root, dir, 'template.md'), `${value}\n`)
+    }
+    await mkdir(path.join(root, 'outside'))
+    await writeFile(path.join(root, 'outside', 'changed.ts'), `${value}\n`)
+
+    const result = await scanPrivacyFiles({ root, scanRoots: ['fixtures'] })
+    assert.equal(result.valid, false)
+    assert.deepEqual(result.violations, [
+      { file: 'outside/changed.ts', line: 1, rule: 'token-value' },
+    ])
+    assert.equal(
+      result.scanned.some(file => excludedDirs.some(dir => file.startsWith(`${dir}/`))),
+      false
+    )
+    assert.equal(JSON.stringify(result).includes('constructedCredential123'), false)
+  })
+})
+
+test('scan-roots walk still scans vendored BMAD knowledge paths inside maintained roots', async () => {
+  await withRoot(async root => {
+    await mkdir(path.join(root, '_bmad'), { recursive: true })
+    const value = ['wb_', 'token', " = 'constructedCredential123'"].join('')
+    await writeFile(path.join(root, '_bmad', 'template.md'), `${value}\n`)
+
+    const result = await scanPrivacyFiles({
+      root,
+      scanRoots: ['_bmad'],
+      includeGitChanges: false,
+    })
+    assert.equal(result.valid, false)
+    assert.deepEqual(result.violations, [
+      { file: '_bmad/template.md', line: 1, rule: 'token-value' },
+    ])
   })
 })
 
