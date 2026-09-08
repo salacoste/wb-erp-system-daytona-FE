@@ -1,6 +1,6 @@
 # Debt P3: CABINET-BROWSER-02 pre-existing red — root-cause + re-pin (сессия-9, V19)
 
-> **Status**: done · **PR**: pending (второй коммит) · **Branch**: `debt/cabinet-browser-02-repin` @ `d03123fa` (worktree /private/tmp/cabinet-browser-02)
+> **Status**: done · **PR**: [#421](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/421) · **Branch**: `debt/cabinet-browser-02-repin` @ `d03123fa` (worktree /private/tmp/cabinet-browser-02)
 > **Источник**: HANDOFF-2026-09-06-V18 §3.0 №7 + реестр §12 residual FE-D5; исполнен оркестратором сессии-9 (2026-09-08)
 > **Класс**: e2e spec re-pin (test assertions → обязательные 2 ревью-прохода по CLAUDE.md)
 
