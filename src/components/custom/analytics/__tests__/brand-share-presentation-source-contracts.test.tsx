@@ -67,9 +67,10 @@ describe('brand-share owned files: no hex, no Tailwind palette classes', () => {
 
 describe('brand-share catalog pin (172.10 exact-array, per-root)', () => {
   /**
-   * components/custom/analytics is shared: the FBS-trends / shared chart-frame
-   * surface owns these files, so the brand-share disk discovery excludes them.
-   * `period-presets/` is a directory (dropped by the isFile filter).
+   * components/custom/analytics is shared: these six files are an unowned
+   * shared surface — no sibling presentation guard pins them yet (pre-existing
+   * gap, debt registry §20) — so brand-share excludes them to keep its pin
+   * scoped to owned files. `period-presets/` is a directory (isFile filter).
    */
   const SIBLING_SURFACE_FILES = new Set([
     'DataSourceIndicator.tsx',

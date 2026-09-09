@@ -129,6 +129,15 @@ describe('Story 173.13 supply detail presentation source contracts', () => {
       'order-picker-constants.ts',
       'useOrderPickerSelection.ts',
     ])
+
+    // Readability guard (restored post-172.10 conversion): every owned file
+    // must stay non-empty — the 173.12 hash pins cover only 3 shared files.
+    for (const file of [
+      ...prodFilesUnder(routeDirectory).map(n => join(routeDirectory, n)),
+      ...detailOwnedFiles().map(n => join(suppliesCustomRoot, n)),
+    ]) {
+      expect(readFileSync(file, 'utf8').length, file).toBeGreaterThan(0)
+    }
   })
 
   it('keeps Story 173.12 shared surfaces outside the detail-owned manifest', () => {
