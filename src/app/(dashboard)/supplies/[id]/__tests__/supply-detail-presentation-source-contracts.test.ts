@@ -1,40 +1,71 @@
+/**
+ * Story 173.13 supply detail presentation source contracts.
+ *
+ * 172.10 exact-array catalog pins (per-root discovery vs literal): the owned
+ * surface spans TWO roots — the [id] route dir (4 files) and the
+ * DETAIL-EXCLUSIVE slice of src/components/custom/supplies (18 files). The
+ * remaining 12 shared/list files of that directory belong to the sibling
+ * Story 173.12 guard (cross-restraint; see its DETAIL_EXCLUDED mirror) and
+ * are excluded EXPLICITLY — dropping the exclusion would double-scan and
+ * double-fail those files. Literals = live disk enumeration, relative,
+ * forward slashes, sorted. The Story 173.12 SHA-256 pins below are a
+ * byte-identity contract with the 173.12 guard and are untouched by this
+ * conversion. All reads anchor to import.meta.url (170.6 canon) — no
+ * process.cwd() dependence.
+ */
 import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { readdirSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { dirname, join, resolve } from 'node:path'
 import { createHash } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 
-const DETAIL_OWNED_PRODUCTION_FILES = [
-  'src/app/(dashboard)/supplies/[id]/page.tsx',
-  'src/app/(dashboard)/supplies/[id]/SupplyDetailSkeleton.tsx',
-  'src/app/(dashboard)/supplies/[id]/SupplyDetailError.tsx',
-  'src/app/(dashboard)/supplies/[id]/loading.tsx',
-  'src/components/custom/supplies/AcceptanceActSection.tsx',
-  'src/components/custom/supplies/CloseSupplyDialog.tsx',
-  'src/components/custom/supplies/GenerateStickersModal.tsx',
-  'src/components/custom/supplies/OrderPickerContent.tsx',
-  'src/components/custom/supplies/OrderPickerDrawer.tsx',
-  'src/components/custom/supplies/OrderPickerFilters.tsx',
-  'src/components/custom/supplies/OrderPickerFooter.tsx',
-  'src/components/custom/supplies/OrderPickerRow.tsx',
-  'src/components/custom/supplies/OrderPickerTable.tsx',
-  'src/components/custom/supplies/RemoveOrderDialog.tsx',
-  'src/components/custom/supplies/StickerFormatSelector.tsx',
-  'src/components/custom/supplies/StickerPreview.tsx',
-  'src/components/custom/supplies/SupplyDocumentsList.tsx',
-  'src/components/custom/supplies/SupplyHeader.tsx',
-  'src/components/custom/supplies/SupplyOrdersTable.tsx',
-  'src/components/custom/supplies/SupplyStatusStepper.tsx',
-  'src/components/custom/supplies/order-picker-constants.ts',
-  'src/components/custom/supplies/useOrderPickerSelection.ts',
-] as const
+const testDirectory = dirname(fileURLToPath(import.meta.url))
+const routeDirectory = resolve(testDirectory, '..')
+const srcRoot = resolve(routeDirectory, '..', '..', '..', '..')
+const suppliesCustomRoot = join(srcRoot, 'components', 'custom', 'supplies')
 
+/** Flat production-file discovery: relative, forward slashes, sorted. */
+function prodFilesUnder(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true })
+    .filter(entry => entry.isFile() && /\.tsx?$/.test(entry.name))
+    .filter(entry => !/\.(?:test|spec)\.[jt]sx?$/.test(entry.name))
+    .map(entry => entry.name)
+    .map(name =>
+      join(dir, name)
+        .slice(dir.length + 1)
+        .replace(/\\/g, '/')
+    )
+    .sort()
+}
+
+/**
+ * LIST/SHARED files owned by the Story 173.12 supplies-list guard — excluded
+ * from this Story's detail catalog AND scans (cross-restraint; includes the
+ * 2 hash-pinned production files below).
+ */
 const STORY_173_12_SHARED_FILES = [
+  'CreateSupplyButton.tsx',
+  'CreateSupplyModal.tsx',
+  'SuppliesEmptyState.tsx',
+  'SuppliesFilters.tsx',
+  'SuppliesLoadingSkeleton.tsx',
+  'SuppliesPageHeader.tsx',
+  'SuppliesPagination.tsx',
+  'SuppliesTable.tsx',
+  'SuppliesTableRow.tsx',
+  'SupplyStatusBadge.tsx',
+  'SyncStatusIndicator.tsx',
+  'index.ts',
+]
+
+const STORY_173_12_HASH_PINNED = [
   'src/components/custom/supplies/SupplyStatusBadge.tsx',
   'src/components/custom/supplies/index.ts',
   'src/app/(dashboard)/supplies/__tests__/supplies-list-presentation-source-contracts.test.ts',
 ] as const
 
-const STORY_173_12_SHARED_SHA256: Record<(typeof STORY_173_12_SHARED_FILES)[number], string> = {
+const STORY_173_12_SHARED_SHA256: Record<(typeof STORY_173_12_HASH_PINNED)[number], string> = {
   'src/components/custom/supplies/SupplyStatusBadge.tsx':
     'dad90d3de45a9f903fa99378391e78ac55cb703ccf14360a2436ec93939b5705',
   'src/components/custom/supplies/index.ts':
@@ -48,26 +79,64 @@ const LEGACY_PALETTE =
 const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
-type DetailFile = (typeof DETAIL_OWNED_PRODUCTION_FILES)[number]
+/** Absolute path of a src-rooted repo path (import.meta.url anchored). */
+function srcPath(srcRootedPath: string): string {
+  return join(srcRoot, srcRootedPath.replace(/^src\//, ''))
+}
 
-function source(file: DetailFile): string {
-  return readFileSync(resolve(process.cwd(), file), 'utf8')
+function routeSource(name: string): string {
+  return readFileSync(join(routeDirectory, name), 'utf8')
+}
+
+function detailSource(name: string): string {
+  return readFileSync(join(suppliesCustomRoot, name), 'utf8')
+}
+
+function detailOwnedFiles(): string[] {
+  return prodFilesUnder(suppliesCustomRoot).filter(
+    name => !STORY_173_12_SHARED_FILES.includes(name)
+  )
 }
 
 describe('Story 173.13 supply detail presentation source contracts', () => {
   it('pins the exact 4-route plus 18-component production manifest', () => {
-    expect(DETAIL_OWNED_PRODUCTION_FILES).toHaveLength(22)
-    expect(new Set(DETAIL_OWNED_PRODUCTION_FILES)).toHaveLength(22)
-
-    for (const file of DETAIL_OWNED_PRODUCTION_FILES) {
-      expect(source(file).length, file).toBeGreaterThan(0)
-    }
+    // Exact relative-path equality (172.10 canon): a rename or add/remove
+    // must FAIL these pins (upgrades the former toHaveLength(22) + Set-dedup
+    // checks over one flat hand-maintained list).
+    expect(prodFilesUnder(routeDirectory)).toEqual([
+      'SupplyDetailError.tsx',
+      'SupplyDetailSkeleton.tsx',
+      'loading.tsx',
+      'page.tsx',
+    ])
+    expect(detailOwnedFiles()).toEqual([
+      'AcceptanceActSection.tsx',
+      'CloseSupplyDialog.tsx',
+      'GenerateStickersModal.tsx',
+      'OrderPickerContent.tsx',
+      'OrderPickerDrawer.tsx',
+      'OrderPickerFilters.tsx',
+      'OrderPickerFooter.tsx',
+      'OrderPickerRow.tsx',
+      'OrderPickerTable.tsx',
+      'RemoveOrderDialog.tsx',
+      'StickerFormatSelector.tsx',
+      'StickerPreview.tsx',
+      'SupplyDocumentsList.tsx',
+      'SupplyHeader.tsx',
+      'SupplyOrdersTable.tsx',
+      'SupplyStatusStepper.tsx',
+      'order-picker-constants.ts',
+      'useOrderPickerSelection.ts',
+    ])
   })
 
   it('keeps Story 173.12 shared surfaces outside the detail-owned manifest', () => {
-    for (const file of STORY_173_12_SHARED_FILES) {
-      expect(DETAIL_OWNED_PRODUCTION_FILES).not.toContain(file)
-      const contents = readFileSync(resolve(process.cwd(), file), 'utf8')
+    // Byte-identity contract with the 173.12 guard — hashes and paths are
+    // untouched by the 172.10 conversion.
+    for (const file of STORY_173_12_HASH_PINNED) {
+      expect(detailOwnedFiles()).not.toContain(file.split('/').pop())
+      const contents = readFileSync(srcPath(file), 'utf8')
       expect(contents.length, file).toBeGreaterThan(0)
       expect(createHash('sha256').update(contents).digest('hex'), file).toBe(
         STORY_173_12_SHARED_SHA256[file]
@@ -75,22 +144,26 @@ describe('Story 173.13 supply detail presentation source contracts', () => {
     }
   })
 
-  it('contains no legacy palette classes or contextual hex literals', () => {
+  it('contains no legacy palette classes or contextual hex literals (both roots)', () => {
     expect(LEGACY_PALETTE.test('text-yellow-600 bg-red-50')).toBe(true)
     expect(LEGACY_PALETTE.test('text-status-warning bg-status-error/10')).toBe(false)
     expect(CONTEXTUAL_HEX.test("color: '#F59E0B'")).toBe(true)
     expect(CONTEXTUAL_HEX.test('see ticket #17313')).toBe(false)
 
-    for (const file of DETAIL_OWNED_PRODUCTION_FILES) {
-      expect(source(file), file).not.toMatch(LEGACY_PALETTE)
-      expect(source(file), file).not.toMatch(CONTEXTUAL_HEX)
+    const owned = [
+      ...prodFilesUnder(routeDirectory).map(n => join(routeDirectory, n)),
+      ...detailOwnedFiles().map(n => join(suppliesCustomRoot, n)),
+    ]
+    for (const file of owned) {
+      expect(readFileSync(file, 'utf8'), file).not.toMatch(LEGACY_PALETTE)
+      expect(readFileSync(file, 'utf8'), file).not.toMatch(CONTEXTUAL_HEX)
     }
   })
 
   it('identifies the dynamic route with shared PageHeader and truthful PageState surfaces', () => {
-    const page = source('src/app/(dashboard)/supplies/[id]/page.tsx')
-    const skeleton = source('src/app/(dashboard)/supplies/[id]/SupplyDetailSkeleton.tsx')
-    const error = source('src/app/(dashboard)/supplies/[id]/SupplyDetailError.tsx')
+    const page = routeSource('page.tsx')
+    const skeleton = routeSource('SupplyDetailSkeleton.tsx')
+    const error = routeSource('SupplyDetailError.tsx')
 
     expect(`${page}\n${skeleton}`).toMatch(/PageHeader/)
     expect(page).toMatch(/PageState/)
@@ -101,10 +174,10 @@ describe('Story 173.13 supply detail presentation source contracts', () => {
   })
 
   it('keeps lifecycle meaning semantic, textual, and independent of color alone', () => {
-    const stepper = source('src/components/custom/supplies/SupplyStatusStepper.tsx')
+    const stepper = detailSource('SupplyStatusStepper.tsx')
     const orderRows = [
-      source('src/components/custom/supplies/SupplyOrdersTable.tsx'),
-      source('src/components/custom/supplies/OrderPickerRow.tsx'),
+      detailSource('SupplyOrdersTable.tsx'),
+      detailSource('OrderPickerRow.tsx'),
     ].join('\n')
 
     expect(stepper).toMatch(/aria-label=["']Статус поставки["']/)
@@ -120,8 +193,8 @@ describe('Story 173.13 supply detail presentation source contracts', () => {
   })
 
   it('preserves the orders table navigation, removal, and responsive semantics', () => {
-    const page = source('src/app/(dashboard)/supplies/[id]/page.tsx')
-    const table = source('src/components/custom/supplies/SupplyOrdersTable.tsx')
+    const page = routeSource('page.tsx')
+    const table = detailSource('SupplyOrdersTable.tsx')
 
     expect(page).toMatch(/router\.push\(`\/orders\?search=\$\{order\.orderId\}`\)/)
     expect(page).toMatch(/removeOrdersMutation\.mutate\(orderIds,\s*\{\s*onSuccess\s*\}\)/)
@@ -131,9 +204,9 @@ describe('Story 173.13 supply detail presentation source contracts', () => {
   })
 
   it('preserves virtualized picker behavior and selection limits', () => {
-    const table = source('src/components/custom/supplies/OrderPickerTable.tsx')
-    const constants = source('src/components/custom/supplies/order-picker-constants.ts')
-    const selection = source('src/components/custom/supplies/useOrderPickerSelection.ts')
+    const table = detailSource('OrderPickerTable.tsx')
+    const constants = detailSource('order-picker-constants.ts')
+    const selection = detailSource('useOrderPickerSelection.ts')
 
     expect(table).toMatch(/from ['"]react-window['"]/)
     expect(table).toMatch(/<List/)
@@ -145,16 +218,16 @@ describe('Story 173.13 supply detail presentation source contracts', () => {
   })
 
   it('keeps each Sheet or Dialog named, focus-restoring, and announcement-capable', () => {
-    const picker = source('src/components/custom/supplies/OrderPickerDrawer.tsx')
-    const close = source('src/components/custom/supplies/CloseSupplyDialog.tsx')
-    const stickers = source('src/components/custom/supplies/GenerateStickersModal.tsx')
-    const remove = source('src/components/custom/supplies/RemoveOrderDialog.tsx')
+    const picker = detailSource('OrderPickerDrawer.tsx')
+    const close = detailSource('CloseSupplyDialog.tsx')
+    const stickers = detailSource('GenerateStickersModal.tsx')
+    const remove = detailSource('RemoveOrderDialog.tsx')
     const overlays = [picker, close, stickers, remove].join('\n')
     const announcementSurfaces = [
       overlays,
-      source('src/components/custom/supplies/OrderPickerContent.tsx'),
-      source('src/components/custom/supplies/StickerPreview.tsx'),
-      source('src/components/custom/supplies/AcceptanceActSection.tsx'),
+      detailSource('OrderPickerContent.tsx'),
+      detailSource('StickerPreview.tsx'),
+      detailSource('AcceptanceActSection.tsx'),
     ].join('\n')
 
     expect(picker).toMatch(/<SheetTitle>/)
