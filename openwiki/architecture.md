@@ -275,5 +275,3 @@ Local runtime truth: the Next.js dev/start servers bind to **port 3100** (`next 
 | `components.json` | shadcn/ui CLI metadata aligned to Tailwind v4 (`config: ""`, CSS variables, new-york style) |
 | `src/config/features.ts` | Feature-flag registry — `epic37MergedGroups` (enabled / `useRealApi` mock-vs-real API switch / debug) and `jamUrls`; driven by `NEXT_PUBLIC_EPIC_37_*` and `NEXT_PUBLIC_JAM_*` variables |
 | `.env.example` | Environment variable names (see [Testing & Operations](testing-and-ops.md)) |
- and `NEXT_PUBLIC_JAM_*` variables |
-| `.env.example` | Environment variable names (see [Testing & Operations](testing-and-ops.md)) |

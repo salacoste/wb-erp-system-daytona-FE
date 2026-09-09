@@ -570,5 +570,4 @@ From `.env.example` (names only — never commit actual values):
 | `E2E_MANAGER_EMAIL` / `E2E_MANAGER_PASSWORD` | Optional Manager pair; set both or leave both blank |
 | `E2E_WB_TOKEN` | Optional token for legacy fixture integration scenarios |
 | `E2E_ENABLE_MUTATIONS` / `E2E_MUTATION_TARGET` / `E2E_MUTATION_ACK` | Three-part opt-in to un-gate `@mutating` specs (see [Local E2E Preflight](#local-e2e-preflight)) |
-eflight)) |
-ng` specs (see [Local E2E Preflight](#local-e2e-preflight)) |
+

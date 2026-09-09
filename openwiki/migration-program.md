@@ -1,7 +1,7 @@
 ---
 type: "Reference"
 title: "Migration Program (Epics 166-174)"
-openwiki_generated: true
+description: "Status ledger and process history for the Epics 166-174 shadcn/Tailwind design-system migration, the Story 174.3 inclusive visual matrix, debt-execution sessions, and cross-repository contract lanes."
 sources:
   - id: openwiki-source-9e7c9f2a75e8c54131fe45ec
     resource: repo://_bmad-output/implementation-artifacts/174-1-fe-prove-bmad-route-ledger-and-omx-plan-parity.md
@@ -96,6 +96,8 @@ verified:
 
 # Migration Program (Epics 166-174)
 
+<!-- openwiki: broken internal link [/openwiki/conventions-and-quality.md] file "/openwiki/conventions-and-quality.md" does not exist. Fix the href or restore the target, then delete this comment. -->
+<!-- openwiki: broken internal link [/openwiki/design-system.md] file "/openwiki/design-system.md" does not exist. Fix the href or restore the target, then delete this comment. -->
 This page is the canonical wiki home for the shadcn full-UI migration **program**: the master plan, the story pipeline, the current status ledger, and the handoff/orchestration process. Per-story migration status lives here (not in `design-system.md` or `quickstart.md`) so status churn is isolated from stable conventions. See [/openwiki/conventions-and-quality.md](/openwiki/conventions-and-quality.md) for coding standards and [/openwiki/design-system.md](/openwiki/design-system.md) for the token/component layers this program delivers.
 
 ## Program goal and invariants
