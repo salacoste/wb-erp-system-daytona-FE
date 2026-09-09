@@ -1,6 +1,20 @@
 import { readdirSync, readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
+
+// 170.6 canon: anchor at the repo root via import.meta.url — NEVER the
+// process working directory. This spec lives at
+// src/app/(dashboard)/shipments/sku-packaging/__tests__/ → six levels up = repo root.
+const repoRoot = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+  '..',
+  '..',
+  '..',
+  '..'
+)
 
 const OWNED_PRODUCTION_FILES = [
   'src/app/(dashboard)/shipments/sku-packaging/page.tsx',
@@ -29,16 +43,16 @@ const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
 function source(file: string): string {
-  return readFileSync(resolve(process.cwd(), file), 'utf8')
+  return readFileSync(resolve(repoRoot, file), 'utf8')
 }
 
 function discoverOwnedProductionFiles(): string[] {
   const routeRoot = 'src/app/(dashboard)/shipments/sku-packaging'
   const componentRoot = 'src/components/custom/sku-packaging'
-  const routeFiles = readdirSync(resolve(process.cwd(), routeRoot), { withFileTypes: true })
+  const routeFiles = readdirSync(resolve(repoRoot, routeRoot), { withFileTypes: true })
     .filter(entry => entry.isFile() && /\.[jt]sx?$/.test(entry.name))
     .map(entry => `${routeRoot}/${entry.name}`)
-  const componentFiles = readdirSync(resolve(process.cwd(), componentRoot), {
+  const componentFiles = readdirSync(resolve(repoRoot, componentRoot), {
     withFileTypes: true,
   })
     .filter(
