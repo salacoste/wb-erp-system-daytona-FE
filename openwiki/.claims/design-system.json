@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:47a8bfbff3e8eaafca1b3fd64a9f92ee7a9f3fac07809064cada8ff27570e419",
+  "pageVersion": "sha256:95450fb313b6594458705dcbed21fe122898990640ead29c772cde2d1235fc7b",
   "claims": [
     {
       "id": "claim_633e3a28dfd14bdc90dc2ba40c9dfdd4",
@@ -108,7 +108,7 @@
     },
     {
       "id": "claim_12cb3fbbcc314d0f97169faa64a63920",
-      "statement": "Story 174.2 enforces a repository-wide design-system boundary: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt, whose current value is 118 (523 at 174.2 close → 459 by 174.4's live re-run → 401 by P2 wave 1 financial-summary → 372 by wave 2 margin → 267 by wave 4 component-families (−105, PR #407) → 118 by wave 5 lib-residue (−149, PR #408, 2026-09-05), each drop lowering the baseline same-commit; waves 3/6 and the /80-sweep held it unchanged); it exits 0 at-or-below the baseline and 1 only on increase, and suppression requires a BOUNDARY_EXCEPTIONS entry with an owner/debt ID mirrored in the classification manifest — 3 entries remain (C5 waterfall categorical hex and two historical #7C3AED chart marks, 22 suppressed matches) after the F-10 FeedbackButtons exception was lifted 2026-09-02; the scanner has a 10-case self-test suite. The boundary track is complete: the entire 118 residue (95 chart-hex + 23 legacy-palette classes: lib 61 + components 37 + app 17 + types 3) is blocked on the C5 chart-palette owner decision — no further boundary wave is possible without it.",
+      "statement": "Story 174.2 enforces a repository-wide design-system boundary: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt, whose current value is 118 (523 at 174.2 close → 459 by 174.4's live re-run → 401 by P2 wave 1 financial-summary → 372 by wave 2 margin → 267 by wave 4 component-families (−105, PR #407) → 118 by wave 5 lib-residue (−149, PR #408, 2026-09-05), each drop lowering the baseline same-commit; waves 3/6 and the /80-sweep held it unchanged); it exits 0 at-or-below the baseline and 1 only on increase, and suppression requires a BOUNDARY_EXCEPTIONS entry with an owner/debt ID mirrored in the classification manifest — 3 entries remain (C5 waterfall categorical hex and two historical #7C3AED chart marks, 22 suppressed matches) after the F-10 FeedbackButtons exception was lifted 2026-09-02; the scanner has a 10-case self-test suite. The boundary track is complete (reconfirmed on main 0b95e963, 2026-09-06: boundary 118 = baseline, 3 exceptions): the entire 118 residue (95 chart-hex + 23 legacy-palette classes: lib 61 + components 37 + app 17 + types 3) is blocked on the C5 chart-palette owner decision — no further boundary wave is possible without it.",
       "evidence": [
         {
           "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-w4-component-families.md",
@@ -119,8 +119,8 @@
           "version": "repo-file-v1:sha256:e7c636a29211c07e6e7e57b91ca4985d13ad327fbfc87a5e22bf07371ca1323d"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-09-05-V16-SESSION4-5-EXECUTION-AND-REMAINING-BACKLOG.md",
-          "version": "repo-file-v1:sha256:d01998e8303a8985460ea2cc5268850f08653de14023cea9090f520b7a3f0fdb"
+          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:7fbcf0890522e8786b8ea390d121e5ab7349e465bb48c92a3f621fe0d6e1588a"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
@@ -319,6 +319,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-06T08:47:51.668Z"
+    "at": "2026-09-09T08:47:58.907Z"
   }
 }

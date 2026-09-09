@@ -22,6 +22,8 @@ sources:
     resource: repo://scripts/check-max-lines.sh
   - id: openwiki-source-a33125899c73194a4c9f0b33
     resource: repo://scripts/check-privacy-console.mjs
+  - id: openwiki-source-3fc9b964144940fb8134d0bd
+    resource: repo://scripts/check-privacy-console.test.mjs
   - id: openwiki-source-63d46e41978bcf9c4a46a1d7
     resource: repo://scripts/check-shadcn-migration-parity.mjs
   - id: openwiki-source-bdeb846005a65a32b569a6d3
@@ -54,10 +56,10 @@ sources:
     resource: repo://src/lib/sanitize-fallback-message.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-09T08:47:58.907Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-06T08:47:51.668Z
+    at: 2026-09-09T08:47:58.907Z
 ---
 
 # Conventions & Quality Gates
@@ -202,12 +204,13 @@ Ratchet gates (check:docs, check:locale-percent, check:anti-pattern-8-normalizer
 
 ### Privacy console guard (`scripts/check-privacy-console.mjs`)
 
-`npm run check:privacy` runs `scripts/check-privacy-console.mjs`, a local privacy/PII scanner that replaced the privacy step that previously ran in CI. It works in two layers:
+`npm run check:privacy` runs `scripts/check-privacy-console.mjs`, a local privacy/PII scanner that replaced the privacy step that previously ran in CI. It works in three layers:
 
 - **PII-file console ban** — the exported `PII_FILES` list (six paths: the orders client-info API + its test, `useClientInfo.ts` + its test, `orders-client-info.ts`, and the OrdersTable client-column test) is parsed with `@typescript-eslint/parser`, and any `console.<method>` call whose argument text matches a sensitive-material regex (`authorization`, `token`, `cookie`, `headers`, `payload`, `fingerprint`, `email`, `phone`, …) is a violation. Computed member access (`console['log']`) and static template-literal keys are detected too.
 - **Repository-wide secret scan** — `PRIVACY_SCAN_ROOTS` (`src`, `e2e`, `scripts`, `tests`, `test-utils`, `.omx/ultragoal/evidence`) are walked (symlinks rejected, `node_modules`/`.next`/`dist`/`coverage`/reports ignored) over an allowlist of text extensions — including `.http` REST-client examples (owner-approved D-4 / SEC-DOC-1, 2026-09-02) — and each file's text is matched against `SECRET_RULES`: authorization/cookie/token values, browser-storage of secrets, fingerprint material, sensitive raw URLs, unsanitized payloads, and raw browser capture/diagnostics (`page.screenshot(`, logging `msg.text()` / `response.url()`).
+- **Git change-set scan** — when no explicit `files` are passed, the scanner additionally collects the working-tree change set (`git diff`, `git diff --cached`, and untracked `ls-files --others`; on an empty change set it falls back to the `HEAD` merge-diff via `diff-tree -m`, filtered on the **raw** change set so an excluded-only dirty tree does not fall through to stale HEAD candidates) and scans those files in strict mode. The vendored BMAD/IDE tool directories (`_bmad/`, `.gemini/`, `.agent/`, `.agents/`, `.opencode/`) are excluded from the **change-set scan only** via `EXCLUDED_CHANGE_SET_PREFIXES` (owner decision 2026-09-08): `npx bmad-method install` regenerates them so redactions would not stick, and they held 630 scanner findings in regenerated template examples. The scan-roots walk and `PII_FILES` are deliberately unaffected by this exclusion; accepted residual: secrets inside those five directories are invisible to the change-set gate, and strict fail-closed type errors there are suppressed (otherwise `bmad install` would break the gate on ~143 benign files).
 
-The accepted state is **exactly 3 pre-existing findings** (two in `api-client-401-refresh.test.ts`, one in `tasks-enqueue-role-contract.test.ts`) and 0 new; a story that adds findings fails its privacy gate. The guard's own `node:test` self-suite runs together with the diagnostic-capture-policy tests under `npm run test:privacy` (`node --test scripts/check-privacy-console.test.mjs scripts/privacy/diagnostic-capture-policy.test.mjs`), and both self-suite files are excluded from the Vitest run (`vitest.config.ts`). Full details: [Testing & Operations — Privacy Console Check](testing-and-ops.md#privacy-console-check).
+Because the fallback reads the `HEAD` merge-diff, pre-existing content can "surface" at merge time — this quirk motivated the 2026-09-09 docs-example redaction (fake Bearer tokens in `request-backend/*.md` shortened below the 12-char matcher). The accepted state on `main` is a **clean exit 0** (the former "exactly 3 pre-existing findings" debt — two in the since-deleted `api-client-401-refresh.test.ts`, one in `tasks-enqueue-role-contract.test.ts` — no longer exists); a story that adds findings fails its privacy gate. The guard's own `node:test` self-suite runs together with the diagnostic-capture-policy tests under `npm run test:privacy` (`node --test scripts/check-privacy-console.test.mjs scripts/privacy/diagnostic-capture-policy.test.mjs`; 27 tests, including mutationally verified pins of `EXCLUDED_CHANGE_SET_PREFIXES` and the change-set filter), and both self-suite files are excluded from the Vitest run (`vitest.config.ts`). Full details: [Testing & Operations — Privacy Console Check](testing-and-ops.md#privacy-console-check).
 
 ## shadcn Gate Scripts (Stories 174.1 / 174.2)
 

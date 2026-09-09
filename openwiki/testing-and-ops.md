@@ -70,10 +70,10 @@ sources:
     resource: repo://test-utils/outbound-network-policy.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-09T08:47:58.907Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-06T08:47:51.668Z
+    at: 2026-09-09T08:47:58.907Z
 ---
 # Testing & Operations
 
@@ -570,4 +570,5 @@ From `.env.example` (names only — never commit actual values):
 | `E2E_MANAGER_EMAIL` / `E2E_MANAGER_PASSWORD` | Optional Manager pair; set both or leave both blank |
 | `E2E_WB_TOKEN` | Optional token for legacy fixture integration scenarios |
 | `E2E_ENABLE_MUTATIONS` / `E2E_MUTATION_TARGET` / `E2E_MUTATION_ACK` | Three-part opt-in to un-gate `@mutating` specs (see [Local E2E Preflight](#local-e2e-preflight)) |
+eflight)) |
 ng` specs (see [Local E2E Preflight](#local-e2e-preflight)) |

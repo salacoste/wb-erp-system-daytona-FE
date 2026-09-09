@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:3d125ccef94e71fdcf1c6f1563ef90825c0522f8d86b7288d8dc9a63694cfe25",
+  "pageVersion": "sha256:ee829dc49db9525508052b73e7c4570cda221a876fa83846384e38507b94cd6c",
   "claims": [
     {
       "id": "claim_47ae5092df88459d932915ee945c35e6",
@@ -258,19 +258,23 @@
     },
     {
       "id": "claim_e8eb2902a1064d738e0c49b5a23a775c",
-      "statement": "npm run check:privacy runs scripts/check-privacy-console.mjs, which bans forbidden console.* calls carrying sensitive material (AST-parsed via @typescript-eslint/parser) in the six exported PII_FILES paths and scans PRIVACY_SCAN_ROOTS (src, e2e, scripts, tests, test-utils, .omx/ultragoal/evidence) against SECRET_RULES (authorization/cookie/token values, browser-storage secrets, fingerprint material, sensitive URLs, unsanitized payloads, raw browser capture); the accepted repository state is exactly 3 pre-existing findings and 0 new.",
+      "statement": "npm run check:privacy runs scripts/check-privacy-console.mjs, which (1) bans forbidden console.* calls carrying sensitive material (AST-parsed via @typescript-eslint/parser) in the six exported PII_FILES paths, (2) walks PRIVACY_SCAN_ROOTS (src, e2e, scripts, tests, test-utils, .omx/ultragoal/evidence) against SECRET_RULES (authorization/cookie/token values, browser-storage secrets, fingerprint material, sensitive URLs, unsanitized payloads, raw browser capture and raw browser diagnostics), and (3) also scans the Git change set (diff, cached, untracked; HEAD merge-diff fallback decided on the raw change set) in strict mode, excluding the vendored BMAD/IDE tool directories (EXCLUDED_CHANGE_SET_PREFIXES: _bmad/, .gemini/, .agent/, .agents/, .opencode/) from the change-set scan only while leaving scan-roots and PII_FILES unaffected; the accepted repository state is a clean exit 0 on main (the former 3 pre-existing findings were resolved).",
       "evidence": [
         {
-          "resource": "repo://package.json#L25-L41",
-          "version": "repo-lines-v1:sha256:4169a323f8e5c99712f9e896889dcded6413bd062a008e2694803431eb21f998:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1NTQ0ZWJkYzUyYTZkNDZjYzJmN2RlNGM3NjJhOTU4Y2NiMTgxY2MyNzFiNjMxZWFjOGY3MTIyOWNiODhkMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5ZTgxMDE0NGY2MDVkYjgyMzU3Y2JkODAwYjM0NjJjOWRmZDIzOGFlMjVkMzc3ZTkxMjJkNmE5M2VjOWNkZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwOTUxMzk2ODEwMzY1OTM0NjliNzUwNDRlYTllNDBiNTk4MzZkMmQ2YTc1ZjI1MDkzNTA0Y2U4NjNmYjlkMDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0MGUzZTc3ZmJkYTdiZmRmZjhjMzE2MDg0YmMwZmY5ZTM0MTA5OTVjNzM5MmQzODhiZTc5MjE5Y2QyNTMwZWIifQ"
+          "resource": "repo://scripts/check-privacy-console.mjs#L10-L43",
+          "version": "repo-lines-v1:sha256:ba43b1b91d582d0c18d0e11a07f8edc8ffb33615cebabb653f03148e7cd6e2f5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlOWQwYzZhZjkxNGFjMTliOTIwNDg1YWIxMjlkZjcwNmVjYWZjOGJkNDJiZTZkYThhNTllZDFhZjc4YzkzNDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwYjY4MjFmZTU3OTkwNjkxN2IyNzkxNzk4NGE4YmM2ZjA2MDhlNmIyOGJmNzY2M2MwZjY1MjRkMTE4MDIwNTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkNzA1YTMwOGVhMWIyOTE5OTJhMDNjY2VhMmM1MDVmZTdmNTliMjlmZmE4OTkzYWFjMTJhNjBkMzVjZGNhMWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlZWIzMzc0YzRjOTdjMjBhZmU5NzJkODZjNzNkMWM1NzI4ZDgzZGE3NWU4YWM5NGRjZDdhMmQ2YzhkYmI0ZjIifQ"
         },
         {
-          "resource": "repo://scripts/check-privacy-console.mjs#L10-L50",
-          "version": "repo-lines-v1:sha256:ef399cf90d7c08552540ce0161d1ba2d368d297467f4e38ec5e6d49e93718463:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlOWQwYzZhZjkxNGFjMTliOTIwNDg1YWIxMjlkZjcwNmVjYWZjOGJkNDJiZTZkYThhNTllZDFhZjc4YzkzNDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2M2FhZTM5YWQ1OWZhZjMyZDNhMDQ1OGI4OTM0NmU4ZTg4ZTkxZmRkNDA0NTQwM2E4OGEwNjdlYjU2Mjk5NjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkNzA1YTMwOGVhMWIyOTE5OTJhMDNjY2VhMmM1MDVmZTdmNTliMjlmZmE4OTkzYWFjMTJhNjBkMzVjZGNhMWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4ZGE3NGFjOGQyZGYzNTYzZjRmYmQzMDEyYTE4ZTMzMmZkNTQ0OTk4ZWE3YTBlNzljY2NjMzIwZTIzNDEzZDkifQ"
+          "resource": "repo://scripts/check-privacy-console.mjs#L304-L375",
+          "version": "repo-lines-v1:sha256:140363f727ced61e8ac26b775c231aa7b7d1f2933edcf45bee0af943f6781076:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiOTEwYTM0ZjZmOTgwOTA2M2QxYjRmYjM3OGM2ZTZhNTc1NTg2NDg1MjQ3ZWIwZjVlYTY4NjUzMDY3NjRhNDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4ZjA2N2E1YzhhOGUzYzhmYjYyMDk5ZGE3YjRmYjhkY2ZjNzk4NmJhYWY3Y2FjY2FlN2UzYzcyZGE5MWNiNGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyN2NjZDhjNWVkZjliYzkzNjgyYzI4OTM1NGE1YjUxZTAyOTllNTFlNDJjYzA0MzYzNzBkYTdlMWVlOTBjZWYifQ"
         },
         {
-          "resource": "repo://scripts/check-privacy-console.mjs#L98-L241",
-          "version": "repo-lines-v1:sha256:99c23b619f8382f24c5b8144a1122239acf044e6bb3dbcb9f635c45385a7552b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQ0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2NjBmZjliYzRkNDA1ZGM4NGJlZjVhMGEwNDFhNzdlYzkzMmQ1MmI0ZDRkMTEzOTY2ZGZmODZhNWM3OTVkNDMxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiYjUxZGI4NjM2ZGY5MzZhZGI4NTJkM2ZlZjBhMzM0OWIwMTJjMDA3MzEzN2FmM2M2MGNmMjRjZjNkMWI4N2YwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI4ZWVmNjllZmUxODJjODk0NjVlMmFiMzhiNmQ5NjNlMmRhNDI1NzM3NzU5MjY4OTU0YWE2YTU3Yjc1NGVhMDhmIn0"
+          "resource": "repo://scripts/check-privacy-console.mjs#L88-L224",
+          "version": "repo-lines-v1:sha256:1633b509b8e2e113bad036a072c682a5bb7508cd3dedad572e4d975a5faa52d2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOTZmODJmNTc1YTJmMmRhNDM4MjdiNDMxY2ExZWZlZWE0MjQyYTEyNDQyNWJkMmM2MTk2NTFhNzljMThhN2Y4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhNjNhYWUzOWFkNTlmYWYzMmQzYTA0NThiODkzNDZlOGU4OGU5MWZkZDQwNDU0MDNhODhhMDY3ZWI1NjI5OTYzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwZTQ5YWE1MDI3MTIyMDQ0YzI3NjRiZDU2YWYwNGI4ZDEwY2Q0NmIyNmZlOGIxZTk1M2NkNGI1ZTVjZjA0YzhmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkYTA5YzBmNWRmZTE2MmMyYmY4YTRjMDVjOTE5MTQyZWM5MTAzZDZlYjY0YTRlNDRhYjA4MTllYWZhNjQyMjYyIn0"
+        },
+        {
+          "resource": "repo://scripts/check-privacy-console.test.mjs#L9-L15",
+          "version": "repo-lines-v1:sha256:d1ae7c2565dc73f1b5ac0b1a170931d391af1d346e9c7d39fbc292443fc77884:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTgyMDA5NjRhOTc4NjM1NTIyYjJhYjA5MGM2NTA2NWQ4ZWY4ZTg1YzQ3MzBiYjJlYjA0NjBkMzRjNjc3ZGRiYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2EwZDNkYjRlYTlhMDM5YWQ5MmY3Njk2NzdhNmQyMmJlYWRiODIzM2RhZjI2YjdlMjk1MzA5NmY5NjAxNjEyOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmM5NWM0MWJiNTcxNjQwMzM2NzMwMDkxODAzNGVkNWNiYWY1YTY0ZmFmOGMwZDc0ZDU1YTcwMTFiZmM3MmFjOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmQ3MDVhMzA4ZWExYjI5MTk5MmEwM2NjZWEyYzUwNWZlN2Y1OWIyOWZmYTg5OTNhYWMxMmE2MGQzNWNkY2ExYiJ9"
         }
       ]
     },
@@ -305,6 +309,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-06T08:47:51.668Z"
+    "at": "2026-09-09T08:47:58.907Z"
   }
 }

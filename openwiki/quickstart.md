@@ -28,10 +28,10 @@ sources:
     resource: repo://scripts/run-story-174-3-real-browser-zoom.mjs
   - id: openwiki-source-1bbe76f55f6efa9d2465f6c5
     resource: repo://scripts/run-story-174-3-state-evidence.mjs
-generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-09T08:47:58.907Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-06T08:47:51.668Z
+    at: 2026-09-09T08:47:58.907Z
 ---
 
 # WB ERP System — Frontend OpenWiki
@@ -67,11 +67,24 @@ After the 94/94 closeout, debt-session waves landed on main (`docs/HANDOFF-2026-
 
 - **D-1 (PB-1, silent cabinet create)** — PR #390: initiation-mint `ensureSessionNonce`, indeterminate recovery-alert, `finishRecoveryOperation` release, and a two-tab nonce-nulling e2e. Test floor 19,363 → 19,421.
 - **D-2 (PB-3, reactive 401 refresh)** — backend contract agreed (request-backend #230: `POST /v1/auth/refresh`, sliding rotation, expired JWT never refreshes); frontend executed on `debt/d2-pb3-reactive-refresh` — api-client interceptor (single-flight refresh reading the token from the store, replay ×1), nonce-preserving `refreshToken` in the auth store. Live-verified locally 2026-09-03 (refresh 200 / revocation 401); remote BE publish is an open backend follow-up.
-- **Boundary waves 1-2** (PRs #394/#395): financial-summary (58 sites) and margin-family (29 sites) palette → semantic tokens; boundary ratchet **459 → 401 → 372** (current baseline in `scripts/.shadcn-ui-boundary-baseline.txt`; 3 owner-accepted exceptions — do not touch).
+- **Boundary waves 1-2** (PRs #394/#395): financial-summary (58 sites) and margin-family (29 sites) palette → semantic tokens; boundary ratchet **459 → 401 → 372** (baseline in `scripts/.shadcn-ui-boundary-baseline.txt`; 3 owner-accepted exceptions — do not touch).
 - Quality wave (PR #392/#393): AcceptanceStatusBadge solid pairs, GapsTable SR dedup, `ScenarioUrgencyTier` single classification source. Vitest floor 19,424; lint 0/0, tsc 0, build 0.
 - **P2 wave-3 "AA-quick-wins"** (2026-09-05, session-3): `/15→/5` and `/10→/5` solid-pair fixes across `unit-economics-config.ts`, CashflowRowPrimitives, pnl-waterfall, and the price-calculator family; Vitest floor **19,424 → ≥ 19,439**. The layered-compositing model was falsified (over-card); artifact `_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md` is the new canon.
 
-Remaining backlog (boundary waves 4-5 from the 372 residual — chart-hex files gated on the C5 owner decision, `/80` sweep, FE-D1/D3/D5, logger-redact) is prioritized in the session handoff above (§3.2-3.5, live gate state §2: main `c5ca2669`).
+Subsequent sessions (handoff chain V16→V18, ending at `docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md`) executed further waves; the boundary ratchet continued down to the current baseline **118** in `scripts/.shadcn-ui-boundary-baseline.txt`.
+
+### Session-8 (2026-09-06) state — latest handoff entry point
+
+Four PRs merged (cleanup 0/0/0 ×4), live main `0b95e963`:
+
+- **FE-D5 cross-tab cabinet-create → Web Locks** (PR #415): `src/lib/cabinetCreationLock.ts` (navigator.locks + localStorage claim + in-lock re-checks); the key is minted in the lock and reused on wire-ambiguous takeover (BE replay verified via `@@unique([userId, operationId])`); three-state reporter (clean / failed-ambiguous / uncertain-tombstone); cross-tab e2e green. Vitest 19,492 → 19,521.
+- **fe-d3-family hook-fallback sanitization** (PR #416): `sanitizeFallbackMessage` moved byte-identically to `src/lib/sanitize-fallback-message.ts` with a SHA-pinned re-export (no manifest regeneration). Vitest → 19,537.
+- **WCAG wave-6** (PR #417): warn-on-warn/10 + selected-row text failures fixed with fg-on-tint / warning-foreground / underline; post-remedy worst kept 4.87. Vitest → 19,559.
+- **P3 quickwin**: dead `queryClient.ts` deleted (0 importers).
+
+Live gate state: Vitest full **19,559 / 0** (1,287 files) · lint 0/0 · tsc 0 · build `--webpack` 0 · **boundary 118 = baseline** · 3 exceptions · docs 95 · locale 4 · lessons 0 · privacy exit 0 · 174.3 contracts green. Environment: Node **24.18.0** (PATH-pinned; Node 26 breaks webpack), PM2 frontend on :3100, backend on :3000.
+
+Remaining backlog is P3-window work (prettier-md ~1,189 files, ~25 route-guards, harness restart-per-run, FR-7 / AT-matrix / Manager-creds, docs-95 split, `pm2 delete 5`, and the pre-existing CABINET-BROWSER-02 red on main) plus the owner decision ledger (C5 chart-palette gating the 118 residual, WCAG 1.4.11 valence channels, A2 OrganicTab /80, apiClient-wide sanitization, financial tokens / logger-redact). Backend follow-ups to monitor: remote publish of the D-2 refresh branch, FE-D3-residual NestJS filters. Route backend-blocking work to `docs/request-backend/` (e.g. `docs/request-backend/230-auth-refresh-endpoint-missing.md`).
 
 ## Overview
 
@@ -117,7 +130,7 @@ Migration and Story 174.3 gates have **no `npm run` alias** — invoke them dire
 
 ```bash
 node scripts/check-shadcn-migration-parity.mjs   # Story 174.1: BMAD ↔ route ledger ↔ OMX plan parity (94 = 94, 76 = 76)
-node scripts/check-shadcn-ui-boundary.mjs        # Story 174.2: design-system boundary ratchet (final baseline 459, fails only on increase)
+node scripts/check-shadcn-ui-boundary.mjs        # Story 174.2: design-system boundary ratchet (current baseline 118, fails only on increase)
 node scripts/run-story-174-3-state-evidence.mjs  # Story 174.3: fail-closed state-evidence runner (modes: --owner-units / --owner-browsers / --dedicated-routes / --owners / --defaults / --all)
 node scripts/run-story-174-3-real-browser-zoom.mjs  # Story 174.3: headed macOS real-browser 200% zoom orchestrator (all 76 routes × both themes)
 node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate the expanded-scope register from origin/main
@@ -128,7 +141,7 @@ node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate 
 | Task | Go to |
 |------|-------|
 | Route migration work (Stories 166–174, route ledger, worktrees, handoffs), the Story 174.3 evidence pipeline (execution manifest, contract tests, scope register) | [Migration Program (Epics 166–174)](migration-program.md) |
-| Token / component / primitive work, design-system boundary canon (`LEGACY_PALETTE` / `CONTEXTUAL_HEX`), the WCAG 2.2 AA inclusive visual matrix, and the debt-session boundary waves / contrast sweeps (ratchet 372) | [Design System](design-system.md) |
+| Token / component / primitive work, design-system boundary canon (`LEGACY_PALETTE` / `CONTEXTUAL_HEX`), the WCAG 2.2 AA inclusive visual matrix, and the debt-session boundary waves / contrast sweeps (ratchet 118) | [Design System](design-system.md) |
 | App structure / route groups / auth store (including D-1 `ensureSessionNonce`, D-2 nonce-preserving `refreshToken`, and FE-D5 `cabinetCreationLock` Web Locks) / environment & API configuration | [Architecture](architecture.md) |
 | api-client transport, error semantics, the D-2 reactive 401 single-flight refresh interceptor, and the FE-D3/fe-d3-family `sanitizeFallbackMessage` fallback sanitization | [API Client and Normalizers](api-and-normalizers.md) |
 | Financial summary math, margin/liquidity calculations, cabinet creation and settlement flows, task-role semantics (including the quality-wave `ScenarioUrgencyTier` work) | [Domain Logic](domain-logic.md) |
@@ -151,3 +164,4 @@ ki Map
 - **[Domain Logic](domain-logic.md)** — financial-summary math, margin/liquidity calculations, cabinet creation/settlement, and task-role semantics.
 - **[Migration Program (Epics 166–174)](migration-program.md)** — per-epic/story status ledger, route ledger (76/76 verified), parity validation, Story 174.3 evidence pipeline, orchestration process, and the final 94/94 closeout.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174-3 evidence runners.
+174-3 evidence runners.

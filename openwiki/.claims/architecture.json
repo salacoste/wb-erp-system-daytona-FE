@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:532faede32ddf1d75fcd83250a2e21f8de6be317e44b7948d6d48d191c8dcb22",
+  "pageVersion": "sha256:e4ec447f7f7bcd26da0f61b5e586ee803e96675dc924c0797f8f14433eb778e2",
   "claims": [
     {
       "id": "claim_2c9c1829b6b846cd913111aee59b6f27",
@@ -303,10 +303,30 @@
           "version": "repo-lines-v1:sha256:a328cf0a9cd4fb428a20f341dc858ee621d7c093bee50703891de5bfd26c56b1:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxNTI2M2M0YTdiYmMxZTlmNTlmZGFhZjA5Mzc1NTYzMTdmNjI3ZGFlMGU3YjQ0OTBmZDk4OTk4ZWNhMDUxMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMTJiYzg1MWJlYWZjY2MxMTI2NTJhOTY1MmM1NmQ4MTFmOTc2N2NmNDk5MzJmNjgwMTczY2ZhOGE4NGI4NjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiMDRiNTQyZWI0MzdmMjM5NmZjYWE4Y2JlODRlNTE3NjMyYWQ3OTM4ZDExNWIyODhiOWI1ZmExNjg0YmY1NDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3ZTUzNTIyZmM1YzI2MTU1ZGNkNzFkZmMyNjk5M2Y1NWYxZmJkMzVjYzE3ZDRmOWEzMmZiZDZjMjVmMjRhMDMifQ"
         }
       ]
+    },
+    {
+      "id": "claim_c25debb19d4b4d2fa7717f137a041d4d",
+      "statement": "next.config.ts reflects Next.js 16 realities: Turbopack is the default dev bundler (the old webpack-cache workaround was removed), build-time ESLint integration is gone (linting is solely the explicit npm run lint gate), outputFileTracingRoot points at the monorepo parent, security headers (X-Content-Type-Options, X-Frame-Options DENY, X-XSS-Protection) apply to all routes, and dev-only onDemandEntries tuning plus AVIF/WebP image formats are configured.",
+      "evidence": [
+        {
+          "resource": "repo://next.config.ts",
+          "version": "repo-file-v1:sha256:1bdd4806e85f4c243416345605559fc2a5d37fa67ce8516f4cbb0a6762a2e594"
+        }
+      ]
+    },
+    {
+      "id": "claim_d1afcb8f8edd4e2e837c0a1431be0625",
+      "statement": ".env.example additionally declares NEXT_PUBLIC_MIXPANEL_TOKEN (Epic 37 analytics — empty disables tracking, events log to console in dev) and NEXT_PUBLIC_TELEGRAM_BOT_USERNAME (Epic 34-FE bot deep-link generation, code fallback Kernel_crypto_bot); the Telegram bot token is explicitly a backend-only variable.",
+      "evidence": [
+        {
+          "resource": "repo://.env.example#L26-L50",
+          "version": "repo-lines-v1:sha256:be62be7449778b34b53afd4f5f298c14382a50e7eff32755f3b52bdbf75fb50e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViNDkyM2Y3ZWQxMDM2MjAzMzUzYWRjNWQxODI3YWNkNTkwOGI0NWE1MTY2Mjc3MmUzMDdiYjc4NTcyYjA0MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYTdjYmFjYTExYzlmNTE3M2E1NzAzNjA1ZjIzOTAzZDYyMjgyM2E3YmNhYTVkZGUyNzRlMzFlODAxNGIyYzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRiODJjYThhMDNlZTlhY2Y5YjMzMTRkNjkzMzU1NzU4YjUyNDVjODY4MTdmNmZmNGY1NjVjNGE2NTMwZjZlZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-06T08:47:51.668Z"
+    "at": "2026-09-09T08:47:58.907Z"
   }
 }

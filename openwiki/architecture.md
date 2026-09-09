@@ -58,10 +58,10 @@ sources:
     resource: repo://src/stores/authStore.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-09T08:47:58.907Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-06T08:47:51.668Z
+    at: 2026-09-09T08:47:58.907Z
 ---
 # Architecture
 
@@ -259,7 +259,7 @@ See [Design System](design-system.md) for the token contract, primitive hardenin
 
 ## Environment Configuration
 
-`src/lib/env.ts` exposes a single `env` object reading `NEXT_PUBLIC_*` variables at build time: `apiUrl` (`NEXT_PUBLIC_API_URL`, defaulting to the local backend at `http://localhost:3000`), `appName` / `appVersion`, boolean flags `enableAnalytics`, `enableWebSocket`, `enableDevTools` (each `=== 'true'`), plus `isProduction`/`isDevelopment`. `env.enableDevTools` conditionally mounts `ReactQueryDevtools` inside `Providers`, and the API client constructor warns if a production `apiUrl` uses plain `http://` outside localhost.
+`src/lib/env.ts` exposes a single `env` object reading `NEXT_PUBLIC_*` variables at build time: `apiUrl` (`NEXT_PUBLIC_API_URL`, defaulting to the local backend at `http://localhost:3000`), `appName` / `appVersion`, boolean flags `enableAnalytics`, `enableWebSocket`, `enableDevTools` (each `=== 'true'`), plus `isProduction`/`isDevelopment`. `env.enableDevTools` conditionally mounts `ReactQueryDevtools` inside `Providers`, and the API client constructor warns if a production `apiUrl` uses plain `http://` outside localhost. `.env.example` additionally declares `NEXT_PUBLIC_MIXPANEL_TOKEN` (Epic 37 analytics, empty disables tracking) and `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME` (Epic 34-FE bot deep links, code fallback `Kernel_crypto_bot`); the Telegram bot token itself is a backend-only variable.
 
 Local runtime truth: the Next.js dev/start servers bind to **port 3100** (`next dev -p 3100` / `next start -p 3100` in `package.json`), while the backend API serves on **port 3000** (`NEXT_PUBLIC_API_URL=http://localhost:3000` — endpoints start with `/v1/`, no `/api` suffix). There is no deployment target; this is a self-hosted setup. `eslint.config.js` (ESLint 9 flat config) is the actual enforcement path for `npm run lint` and CI; the legacy `.eslintrc.json` is kept only for IDE/editor integration and is ignored by ESLint 9+ when both exist.
 
@@ -274,4 +274,6 @@ Local runtime truth: the Next.js dev/start servers bind to **port 3100** (`next 
 | `postcss.config.js` | `@tailwindcss/postcss` + autoprefixer (Tailwind v4 compiler contract) |
 | `components.json` | shadcn/ui CLI metadata aligned to Tailwind v4 (`config: ""`, CSS variables, new-york style) |
 | `src/config/features.ts` | Feature-flag registry — `epic37MergedGroups` (enabled / `useRealApi` mock-vs-real API switch / debug) and `jamUrls`; driven by `NEXT_PUBLIC_EPIC_37_*` and `NEXT_PUBLIC_JAM_*` variables |
+| `.env.example` | Environment variable names (see [Testing & Operations](testing-and-ops.md)) |
+ and `NEXT_PUBLIC_JAM_*` variables |
 | `.env.example` | Environment variable names (see [Testing & Operations](testing-and-ops.md)) |

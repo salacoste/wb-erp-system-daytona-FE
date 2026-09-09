@@ -3,6 +3,8 @@ type: "Domain Reference"
 title: "Domain Logic"
 description: "Financial and business-logic pure functions in src/lib/ (theoretical profit, margin/COGS temporal logic, ROI/profit-per-unit and efficiency status tiers + filter chips, profitability status, unit economics, liquidity with trends, coefficient status tiers, two-level pricing, account finances + document download, seller communications with gated write-back, backfill retry, ISO-week/Moscow-timezone handling, null/decimal helpers), the per-week financial series hook, the cabinet-creation cross-tab lock and account-scoped recovery state machine, returns-analytics and sku-financials type contracts, route-local monitor/monitoring domain helpers, and the price-calculator cost-breakdown and margin-status modules."
 sources:
+  - id: openwiki-source-ee5f1c25126203a1b15fbabe
+    resource: repo://docs/request-backend/145-THEORETICAL-PROFIT-FORMULA-DOCUMENTATION.md
   - id: openwiki-source-91faab5d81883f34499f73f4
     resource: repo://e2e/onboarding-cabinet-create-nonce-mint.spec.ts
   - id: openwiki-source-1550d5500fee77a878edfd70
@@ -87,10 +89,10 @@ sources:
     resource: repo://src/types/analytics-returns.ts
   - id: openwiki-source-dbb29a8befd1ef6fd6b187fb
     resource: repo://src/types/sku-financials/core.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-09T08:47:58.907Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-06T08:47:51.668Z
+    at: 2026-09-09T08:47:58.907Z
 ---
 # Domain Logic
 
@@ -104,10 +106,12 @@ The core profitability formula:
 
 > **Теор. прибыль = Выкупы − COGS − реклама − логистика − хранение**
 
+The backend contract (`docs/request-backend/145-THEORETICAL-PROFIT-FORMULA-DOCUMENTATION.md`) fixes the same formula and the field mapping: sales/COGS/logistics/storage from `GET /v1/analytics/weekly/finance-summary` (`wb_sales_gross_total`, `cogs_total`, `logistics_cost_total`, `storage_cost_total`) and advertising from `GET /v1/analytics/advertising` (`summary.totalSpend`).
+
 Key design decisions:
-- Uses **sales (выкупы)**, not orders, as the revenue base — orders include items that may be returned.
+- Uses **sales (выкупы)**, not orders, as the revenue base — orders include items that may be returned (per QA report 128, orders FBS can be 0 early while sales are always available).
 - Returns a `TheoreticalProfitResult` with a breakdown of each cost component and tracking of missing fields.
-- Missing COGS or tariff data results in `null` profit, not a fabricated zero — consistent with [Anti-Pattern #8](api-and-normalizers.md#anti-pattern-8-preserve-null-money-and-ratio-values).
+- **Divergence from [Anti-Pattern #8](api-and-normalizers.md#anti-pattern-8-preserve-null-money-and-ratio-values) — flag, don't invent**: `calculateTheoreticalProfit` coerces null inputs to `0` inside the arithmetic, so `result.value` is a number even with missing COGS/tariff data. Completeness is carried out-of-band: `isComplete === false` plus the `missingFields` list. Consumers MUST gate display on `isComplete` (rendering the value as an estimate/incomplete) rather than treating `value` as nullable. The companion `calculateTheoreticalMarginPct(profit, sales)` returns `null` only when `sales === 0`.
 
 ## Margin & COGS
 

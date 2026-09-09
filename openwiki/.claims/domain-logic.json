@@ -1,14 +1,18 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4cf463af37e6def4846c4ac43a4424e3156554c542fe61d95d7303cd7dcaa4b1",
+  "pageVersion": "sha256:68aed5b147f351a92657796cc9b186ccf7555729bb4248e1b959e0d3fe0c79e2",
   "claims": [
     {
       "id": "claim_9bfdc04061f14b3bb2bb441081e614c3",
-      "statement": "Theoretical profit is computed as sales (выкупы) minus COGS, advertising, logistics, and storage; missing COGS/tariff data yields a null profit result rather than zero, per AP#8 null-money semantics.",
+      "statement": "Theoretical profit follows the backend contract formula sales (vykupy) minus COGS, advertising, logistics, and storage (field mapping from weekly finance-summary + advertising endpoints per docs/request-backend/145). Divergence from AP#8 at the module boundary: calculateTheoreticalProfit coerces null inputs to 0 so result.value is always a number; completeness is carried out-of-band via isComplete and missingFields, which consumers must gate display on, while calculateTheoreticalMarginPct returns null only when sales is 0.",
       "evidence": [
         {
-          "resource": "repo://src/lib/theoretical-profit.ts",
-          "version": "repo-file-v1:sha256:fed7824db6c3fc5261edb6781a5afa391ab7a0737b8eddc26e38f4bfce95ec51"
+          "resource": "repo://docs/request-backend/145-THEORETICAL-PROFIT-FORMULA-DOCUMENTATION.md",
+          "version": "repo-file-v1:sha256:2ba8af1492bc953af723bb4fe1c57d10c4e8ccef233587122cf81417e19be904"
+        },
+        {
+          "resource": "repo://src/lib/theoretical-profit.ts#L100-L122",
+          "version": "repo-lines-v1:sha256:13b442da3d2b70a38e19831280ea0058f78840f45974f90974da7264f2781cf9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2YjYyNmNjMzY1OWYxZmNkNTUwZGNkNzA4NzJjYTcxZWYyNzE1MzAxNDU4NmM5YTUzZWUwY2Y5MzFjMDVjOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxYTQwYzlhMGUwZGZlMGJiMjUwMDJkMjkyOTczYmU2OWY0MGIxY2Q2ODI0YTMwY2U1NzM4MzBiZmJkNmEyM2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlZjkzNGIwZGZhYWUyMDAyMGZkNDUwMWU2YjUwZWU4MDI5ZjA5NDhmMjBjZTY3MGQxNjhlZjA5NzAyZmFkM2YifQ"
         }
       ]
     },
@@ -387,6 +391,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-06T08:47:51.668Z"
+    "at": "2026-09-09T08:47:58.907Z"
   }
 }

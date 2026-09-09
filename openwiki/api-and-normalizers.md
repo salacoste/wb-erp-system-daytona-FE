@@ -5,7 +5,7 @@ description: "API client singleton with auto-injected auth and cabinet headers, 
 tags: [api-client, boundary-normalizer, reactive-401-refresh, mutation-retry, anti-pattern-8, paid-storage-import, csv-export, finances-documents]
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-06T08:47:51.668Z
+    at: 2026-09-09T08:47:58.907Z
 sources:
   - id: openwiki-source-8d0f263ceba491caec34db6c
     resource: repo://src/app/providers.tsx

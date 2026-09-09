@@ -35,7 +35,8 @@ openwiki:
     - _bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md
     - _bmad-output/implementation-artifacts/debt-p2-w4-component-families.md
     - _bmad-output/implementation-artifacts/debt-p2-w5-lib-residue.md
-    - docs/HANDOFF-2026-09-05-V16-SESSION4-5-EXECUTION-AND-REMAINING-BACKLOG.md
+    - _bmad-output/implementation-artifacts/debt-p2-w6-warn-on-warn-cluster.md
+    - docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md
   symbols:
     - PageHeader
     - Breadcrumbs
@@ -97,8 +98,8 @@ sources:
     resource: repo://_bmad-output/planning-artifacts/ux-design-specification.md
   - id: openwiki-source-61e0371a06d746820bb42371
     resource: repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md
-  - id: openwiki-source-ff359a6c9fc43921192adbff
-    resource: repo://docs/HANDOFF-2026-09-05-V16-SESSION4-5-EXECUTION-AND-REMAINING-BACKLOG.md
+  - id: openwiki-source-7825c41e82ca828e4e955736
+    resource: repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md
   - id: openwiki-source-18c74d6f5373cdfcebe82221
     resource: repo://e2e/fixtures/story-174-3/chart-inventory.ts
   - id: openwiki-source-f2a4582a0a553ed13286aad6
@@ -165,10 +166,10 @@ sources:
     resource: repo://src/styles/__tests__/globals-token-contract.test.ts
   - id: openwiki-source-13697ff46e81b49dcb27ba68
     resource: repo://src/styles/globals.css
-generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-09T08:47:58.907Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-06T08:47:51.668Z
+    at: 2026-09-09T08:47:58.907Z
 ---
 
 # Design System
@@ -513,7 +514,7 @@ Per `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.m
 | Debt | Owner / due |
 |------|-------------|
 | Boundary category-1 residue: the counted violations registered in the classification manifest (372 after P2 waves 1–2; mostly `src/lib` class-maps and legacy chart widgets — waves 4–6 pending) — swept by the ratchet at the owning surface's next touch; category-2 `ScheduleVersionForm.tsx` residue reverified at next tariffs owner touch | Ratchet owner-sweep (C14), continuous |
-| Boundary ratchet semantics: "registered" = baseline-grandfathered (372, lowered from 523 by 174.4 and P2 waves 1–2; wave 3 held it unchanged), exit-1 only on increase (locale-percent precedent); comment-only category-6 noise stays counted | Accepted exception, continuous |
+| Boundary ratchet semantics: "registered" = baseline-grandfathered (**118**, lowered 523→459→401→372→267→118 by 174.4 and P2 waves 1–5; waves 3/6 and the /80-sweep held it unchanged), exit-1 only on increase (locale-percent precedent); comment-only category-6 noise stays counted | Accepted exception, continuous |
 | locale-percent ratchet at 4; docs check citation-state drift | Continuous ratchets, not blockers |
 
 ## When to consult this page
@@ -535,12 +536,6 @@ npx vitest run src/styles/__tests__ src/components/ui/__tests__ src/components/p
 Token edits additionally require `npm run build` because the compiled CSS is what the contrast test parses. Primitive hardening must preserve every existing export, variant, portal, and compatibility prop — check the four updated consumer modal tests when changing close-control or focus behavior. Composition-family changes must keep the family's discriminated-union props exhaustive (a new state kind has to extend the union and the tests together) and keep the family's source-contract manifest in sync with its file list. Any change that adds a legacy palette class or contextual hex/color literal to production source must either migrate it to semantic tokens or register it in `BOUNDARY_EXCEPTIONS` (owner/debt ID + manifest mirror) — otherwise the boundary gate fails:
 
 ```bash
-node scripts/check-shadcn-ui-boundary.mjs                          # exit 1 only on increase past 372
-node --test scripts/__tests__/check-shadcn-ui-boundary.test.mjs   # scanner self-suite (10 cases)
-```
-e the boundary gate fails:
-
-```bash
-node scripts/check-shadcn-ui-boundary.mjs                          # exit 1 only on increase past 372
+node scripts/check-shadcn-ui-boundary.mjs                          # exit 1 only on increase past 118
 node --test scripts/__tests__/check-shadcn-ui-boundary.test.mjs   # scanner self-suite (10 cases)
 ```

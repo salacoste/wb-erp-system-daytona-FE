@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:67c2b285f3f0ee57a717aa3bcf5b99169d0cb71a34776b07e81070dadcf53775",
+  "pageVersion": "sha256:3c85eacf663c51dbf500ac4506722115ed6d3b12c56ebded130b5e04319c5624",
   "claims": [
     {
       "id": "claim_7146a57eacad4db2bf7552b903072ad9",
@@ -198,7 +198,7 @@
       "evidence": [
         {
           "resource": "repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md#L56-L75",
-          "version": "repo-lines-v1:sha256:baf2dd4a01d77ff1dea97006157862ea325d49b403bec087643167bb44b8692d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2YzM3MzMxMWNiYTdjNDJmZGVjNDE0YTkyMjc5OGEzMTRjMmUyYTEzY2U4ZDMwMjExMWJkZWVjNDNjNDQ0MmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMTQ5NjdkMTI0Nzk0MjVkZWY1NzFiNjg2ODlmYzA3YTZkOTA5ZTI4OTM2NDUyMTM5Mzg4ZWZlYzA2OGQ4YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0MThiZTIyMjYzYjhhNzRiNTY0M2Q1N2UwZWY5NzE1MWExN2Q0NWUwNWUzZmFlMmRiYWU2NTEzOWM2NzhlOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYTVkOGFhNDVmMmFlYWE1NjIyNmMxMGViYzkwOTA0YzI2MTFhMjhmNmYyMzJjMmQwMWI5NGYyOTMyZWM3NTQifQ"
+          "version": "repo-lines-v1:sha256:554b877c86ce9d9488df06b78a503daaf395f58b721a1cdd57846cdd2b3979d2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2YzM3MzMxMWNiYTdjNDJmZGVjNDE0YTkyMjc5OGEzMTRjMmUyYTEzY2U4ZDMwMjExMWJkZWVjNDNjNDQ0MmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMTQ5NjdkMTI0Nzk0MjVkZWY1NzFiNjg2ODlmYzA3YTZkOTA5ZTI4OTM2NDUyMTM5Mzg4ZWZlYzA2OGQ4YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0MThiZTIyMjYzYjhhNzRiNTY0M2Q1N2UwZWY5NzE1MWExN2Q0NWUwNWUzZmFlMmRiYWU2NTEzOWM2NzhlOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYTVkOGFhNDVmMmFlYWE1NjIyNmMxMGViYzkwOTA0YzI2MTFhMjhmNmYyMzJjMmQwMWI5NGYyOTMyZWM3NTQifQ"
         },
         {
           "resource": "repo://scripts/check-shadcn-migration-parity.mjs#L8-L11",
@@ -219,12 +219,8 @@
           "version": "repo-file-v1:sha256:ab81f039f8e08747d4af457febf75673727a1668c2320b8fe9d35af4ad96e441"
         },
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-sec-doc-1-redact-creds.md",
-          "version": "repo-file-v1:sha256:4617f7a73d9f8cf2762076137105182a6a06c9f43fc0b186f404f9d1fb5a43c5"
-        },
-        {
           "resource": "repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md#L77-L100",
-          "version": "repo-lines-v1:sha256:b60257b1191590e01fbfe7f7ddd1e2ab1b5498aa9748055aaafcfa8602365b1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMzYxZjkyZjkzOTJiMGJjMTg2N2Y1NjkyMDZlNGRhY2ZlNTY4NDc3NDY2ZTljODkzODM5MDRiNjRiNmRlNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4YjNiNTVlZDY3M2IzYTQxY2JmMzY0NzdlOGRlOWU2MDZlZjFmNTY2ZWQ1ZWIzMzkyYWE2OTA4NGE5NDIxMDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0MmNhNTA5NTNjMDE3MzA1MDg1OWU4YjRhNGUwNmRiMmRiNWQyMWQ5YzcwNDkyNGYyNTQ0NDk5YzI2MDJiOGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3YjM5MTJhNjcxNWRiMzE5ZjU0ZTBjYzQ2NDI5OTJmZGQ5OTczM2I1NjYwNjFhYTMyMDJkZWFjYzEyZTUxMTcifQ"
+          "version": "repo-lines-v1:sha256:c0c132b097cea58c0ee66aee1fd88eb3b59217783ab3dd9dd20966d820cb8321:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMzYxZjkyZjkzOTJiMGJjMTg2N2Y1NjkyMDZlNGRhY2ZlNTY4NDc3NDY2ZTljODkzODM5MDRiNjRiNmRlNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxZGEwNzUyMGMwYWU5YmRjYzI2N2QwZTRiYWU3MjIxYjhiMzJhZjU1YTdiZDMxYTdmOTNkMGVmNTc5MmY0NjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0MmNhNTA5NTNjMDE3MzA1MDg1OWU4YjRhNGUwNmRiMmRiNWQyMWQ5YzcwNDkyNGYyNTQ0NDk5YzI2MDJiOGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc0MDljNDc4ODhlZjI3NjVmZGI3OGY0NGQ5OWU4YTg1MjM0NTdiZDI4NjhjZDllNmFlODhmMjMzOTQyNGE2YjQifQ"
         }
       ]
     },
@@ -260,29 +256,7 @@
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L10-L31",
-          "version": "repo-lines-v1:sha256:dc6a8e073e9e74e06332abdd32e35c6cbe744a29c1f8bb5c5f1444e8221de707:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNjNmMDUyYmY4ZWZiZjM3OTAyNjZiZGFkOGU5MDU5OWEyODMzODI4OGRmMjJhNGFlYzMwOTJjOWM0YmJkMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMDEwOWI0OWQ0ZjQxZmYxOTMyNGRiZGVmMDllYjlhYjY5ZjIxNzA4NDdjNGVhYjhkOTMzMmY1MDU3MWZkNzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4NmU5ZmQ1NDhlNTAwMjI5MjkwZDJkMTBkZWUzZjU2YjI2OTczYzg1NDEzNjQzNzczMWYyMGJhOGE5OTYyMzQifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_c6c0477b28b941bd8093982ec1808fc8",
-      "statement": "The V16 orchestrator prompt (2026-09-03) remains the session-3 entry point — OMC sub-agent delegation matrix (explicit model tiers, reviewer ≠ author, sub-agents never commit), per-item control loop ending in closeout artifact + registry flip + 0/0/0 cleanup, live gate runs as final authority over doc numbers — but its work order has advanced: wave-3 AA quick-wins is DONE (2026-09-05, PR #404, 3 review passes, floor →19,439, boundary unchanged at 372; discovery: the over-card contrast model was falsified by real gradient/nested-tint DOM stacks, replaced by the layered-compositing canon with structural fg-on-tint/solid-pair remedies, and a WCAG 1.4.11 sub-3:1 valence-channel follow-up was registered) and the D-2 re-scope was executed (owner-approved, live-verified 02:02Z). Next items: boundary waves 4-5 over the 372 residue, the /80-sweep, FE-D3/D1/D5, then P3.",
-      "evidence": [
-        {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md",
-          "version": "repo-file-v1:sha256:afe612e6399d7946156828f868bab7f3e859a814ca4bf10d89ded6ac3e4f7b9e"
-        },
-        {
-          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L34-L66",
-          "version": "repo-lines-v1:sha256:585ed92eef41bc9ab05923485f38e447bfbd4e762db49fdcd1626e48545dd470:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhNDNkNGU3NDJjZDY0MzI3MTRjZDRiZTRlMzFhYWIxNWU5MTNjMTMzZTliNjA1M2ZiN2JlOTQ3YzU0ODJiMTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxZDU2YzllMjUyN2JmMDljMmVmYzcwZTBjNmJkN2ZmOTI4NjViMGY2NjQ1M2M0ZDdhNTViZDhmZDkyY2QyODMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYzY2NlZWVkNGNjZGNiZDAyYmZmOTA5YjAzYjcwN2ZmOTAzZDViODk3YmQ1MDA5OWJjZjIzNTc4ZWQ0N2Q2MDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlNzM3Zjc5M2E2MjlhNjhhYTMyYjM1MzJkNmE0YmFhYTQ2YzNiMjNjNDc4NTdjNDI4YWYxZTk4N2I1MWY0ZDMifQ"
-        },
-        {
-          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L36-L51",
-          "version": "repo-lines-v1:sha256:f5e7b113988fdb1e407bde623f6a46d0a56dab824047db3512a59cd57b48dbac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyNDA1YzM0NzM4Y2NkZTZlMGI1NjZmMzZiNDg0OTUzYmNmOTk0N2I1M2E0MDg2NDU2N2E4NGFmMzE0YmYwNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4YWEzZTVjYmIwOTYyYmY0MzRmYzZlOTk1NzBhYzQyODgzYWYxYjYxZTRmMzdiMWE0YWMxYWFmMWFkYTMxMDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkNjhmNjI4MGVjZGRiOGEyYjE2MTk5ZjQ5Zjg5YzYzMjEyOTA5NDUyNGViYTcwYWU2ZmYyNjc1ZTE0ZTM4NjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmODdjY2U1MjE2YjQ0ZGU1MmZjZWM5OTRkMWYzN2EyZmRlZWFkMTBhM2Y3N2RkNjhjMzQ2NzhmODgxYTg3N2EifQ"
-        },
-        {
-          "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-09-03-V16-SESSION3-CONTINUATION-OMC.md#L12-L23",
-          "version": "repo-lines-v1:sha256:a70bd18f4ad6f83cbd19e6dd3c8f361f1db484b8c8c60455b87e97ba6a65d473:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlYWRjOTc2ZjVjY2M4MWI2NjJkN2M0OTBmYjhkZDViZDUwMzkxODVlNTMyMTVkMDU0M2I3ZGRiMjBiYzA1MDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5YTRmNTVlOTdhOTU4ZDVmOTZiMGQ1ZDY1NjNlYmEwNGQ4MjBmZmFhNjEzZTZiZWZmNWY4NWYwOGY3YjMwYWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlN2M1NzRmZmQxZjQxOTQ0NTJiZWMyYWI5NDc3ZDk4MWYyODYzYjRjYWRmZTg2N2ZlNjc1NjBjZWFmZWIzNjIifQ"
+          "version": "repo-lines-v1:sha256:71565a72e0d5aacaa05d0ff37b6fbb9660fa821b3a1901f4a700d89ebc2af9d7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNjNmMDUyYmY4ZWZiZjM3OTAyNjZiZGFkOGU5MDU5OWEyODMzODI4OGRmMjJhNGFlYzMwOTJjOWM0YmJkMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMDEwOWI0OWQ0ZjQxZmYxOTMyNGRiZGVmMDllYjlhYjY5ZjIxNzA4NDdjNGVhYjhkOTMzMmY1MDU3MWZkNzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4NmU5ZmQ1NDhlNTAwMjI5MjkwZDJkMTBkZWUzZjU2YjI2OTczYzg1NDEzNjQzNzczMWYyMGJhOGE5OTYyMzQifQ"
         }
       ]
     },
@@ -298,11 +272,15 @@
     },
     {
       "id": "claim_a4cf70ffe9eb43369c05117007eabdc3",
-      "statement": "As of the V18 session-8 handoff (2026-09-06), main is at `0b95e963` with the full Vitest suite at 19,559 passed / 0 failed across 1,287 files, lint 0/0, tsc 0, webpack build clean, boundary 118 = baseline with 3 exceptions, docs 95, locale 4, lessons 0, and the 174.3 contract tests green; this is the current session baseline and entry point for the next (V19) orchestrator prompt.",
+      "statement": "The V18 session-8 handoff recorded main at `0b95e963` with the full Vitest suite at 19,559 passed / 0 failed across 1,287 files, lint 0/0, tsc 0, webpack build clean, boundary 118 = baseline with 3 exceptions, docs 95, locale 4, lessons 0, and the 174.3 contract tests green; it served as the session-9 entry baseline and is now superseded as the current baseline by the V19 handoff (main `be325f2a`, same gate numbers plus privacy exit 0 and treewide prettier-md check exit 0).",
       "evidence": [
         {
           "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
-          "version": "repo-file-v1:sha256:ef8e1855ea01f9100048832c8ff3d8ec5b3af7f790e9a11df3080f6629802aab"
+          "version": "repo-file-v1:sha256:7fbcf0890522e8786b8ea390d121e5ab7349e465bb48c92a3f621fe0d6e1588a"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md#L19-L23",
+          "version": "repo-lines-v1:sha256:442c58c5ec0b9d3bc0f3ea7fe7f65621f325626ce384587e891a7137575ffef4:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGE0ZmI0YTE4MDVjYzA2Yjc4MTEwMWUzYTY5OGFkZjhlMmM2MGZlMDI4NzIxNDdmNjc2Yzg4MDQ4M2M2NmE4MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzdmOGY3NzgwOTFmYWRlN2IyN2Y5MmVhNWZjYmQ2NDM4YjJjOGE4OWQyNmIyOWQwOTIxNWZlOTNkNTZlMjIyMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzJiMDlkNjFiNWYyMTIwYjRkZWY0OTBkNGUxZDU5YTcxNzA5M2Y3ZTQ4MGQ0YTM2ODAzYTQ2ZmNiOTQ4Zjg2MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjU0NzQzOGM2ZjhiZWY2Y2ViMzA5MDA3ZjgyMDE2YmQ2NjM4YmYzMzc3NDQzYTFkOWMzYzc3MjZmODVlMTczZCJ9"
         }
       ]
     },
@@ -320,7 +298,7 @@
         },
         {
           "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-09-06-V18-DEBT-CONTINUATION-OMC-SUBAGENTS.md",
-          "version": "repo-file-v1:sha256:bcfa3368cc9ae350a521be8c12ca1bd683b54b63cf95a89f7edc1c2b0b91088c"
+          "version": "repo-file-v1:sha256:20a2b36f9fa4cd1d1b6f7daeeebcc3edfebfb83f0c92feed1c92c644120a621b"
         }
       ]
     },
@@ -330,11 +308,11 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:4ac3ea33d4cd9083662bd85b76a6473ab321a3004abfece0242c254f3da8503b"
+          "version": "repo-file-v1:sha256:5e465c4775bb8a6766be0097ce8fba8e7f72e3d66fa468d2dda8d7bb4d80f503"
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
-          "version": "repo-file-v1:sha256:ef8e1855ea01f9100048832c8ff3d8ec5b3af7f790e9a11df3080f6629802aab"
+          "version": "repo-file-v1:sha256:7fbcf0890522e8786b8ea390d121e5ab7349e465bb48c92a3f621fe0d6e1588a"
         },
         {
           "resource": "repo://src/lib/cabinetCreationLock.ts",
@@ -370,7 +348,7 @@
         },
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:4ac3ea33d4cd9083662bd85b76a6473ab321a3004abfece0242c254f3da8503b"
+          "version": "repo-file-v1:sha256:5e465c4775bb8a6766be0097ce8fba8e7f72e3d66fa468d2dda8d7bb4d80f503"
         }
       ]
     },
@@ -384,7 +362,7 @@
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-05-V17-SESSION6-80-SWEEP-AND-FE-D3-EXECUTION-AND-REMAINING-BACKLOG.md",
-          "version": "repo-file-v1:sha256:72dc43bafb31cf122568701551eba3bc391a86179e9fded3d59763d0442a735e"
+          "version": "repo-file-v1:sha256:a67379f31b988631b145863458024e357111d55ebb69219a1e9b6a0911dbaa14"
         }
       ]
     },
@@ -398,7 +376,7 @@
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
-          "version": "repo-file-v1:sha256:ef8e1855ea01f9100048832c8ff3d8ec5b3af7f790e9a11df3080f6629802aab"
+          "version": "repo-file-v1:sha256:7fbcf0890522e8786b8ea390d121e5ab7349e465bb48c92a3f621fe0d6e1588a"
         }
       ]
     },
@@ -408,21 +386,21 @@
       "evidence": [
         {
           "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
-          "version": "repo-file-v1:sha256:ef8e1855ea01f9100048832c8ff3d8ec5b3af7f790e9a11df3080f6629802aab"
+          "version": "repo-file-v1:sha256:7fbcf0890522e8786b8ea390d121e5ab7349e465bb48c92a3f621fe0d6e1588a"
         },
         {
           "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-09-06-V18-DEBT-CONTINUATION-OMC-SUBAGENTS.md",
-          "version": "repo-file-v1:sha256:bcfa3368cc9ae350a521be8c12ca1bd683b54b63cf95a89f7edc1c2b0b91088c"
+          "version": "repo-file-v1:sha256:20a2b36f9fa4cd1d1b6f7daeeebcc3edfebfb83f0c92feed1c92c644120a621b"
         }
       ]
     },
     {
       "id": "claim_43672677d15b4342a07b8eea3b5ff723",
-      "statement": "After session-8 the remaining backlog is: P3 window items (prettier md ~1,189 files, ~25 route guards, harness restart-per-run, FR-7/AT-matrix/Manager-creds test epics, docs-95 split, pm2 id-5 deletion, and the CABINET-BROWSER-02 pre-existing red on main — bisect-verified 2026-09-06 and likely interacting with FE-D1 retry semantics), the owner-decision ledger (C5 chart palette, WCAG 1.4.11 valence channels + warn/40 rider, A2 OrganicTab /80-tier, apiClient-egress sanitization), and BE questions (D-2 remote publish + request-backend #230 annex, NestJS raw pg/redis error reachability).",
+      "statement": "After session-9 the remaining backlog is: P3 window items (~25 route guards — the largest live item, harness restart-per-run, the FR-7/AT-matrix/Manager-creds test epics, docs-95 split, and pm2 stale-process deletion re-identified because pm2 id 5 is now the live wb-repricer-frontend-dev process), the owner-decision ledger (C5 chart palette, WCAG 1.4.11 valence channels + warn/40 rider, A2 OrganicTab /80-tier, apiClient-egress sanitization; the privacy route-constant quirk resolved-deferred via the exclusion), and BE questions (D-2 remote publish + request-backend #230 annex, NestJS raw pg/redis error reachability). Prettier-md and CABINET-BROWSER-02 were resolved in session-9.",
       "evidence": [
         {
-          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
-          "version": "repo-file-v1:sha256:ef8e1855ea01f9100048832c8ff3d8ec5b3af7f790e9a11df3080f6629802aab"
+          "resource": "repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md#L28-L50",
+          "version": "repo-lines-v1:sha256:ebed57f51e4371935f81df1494ef8ecfce140b47187647f7dad29bdcfe848560:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNjc0MmRiMWFkYjczMDdmZjY0YTgwN2RmYzkxNGVkMDQyN2I5N2FiZjc4YjNhMmZiZDJhNTRiOWU3NTYzYjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1NmQ1NGY0ZjAwYjE5Y2RlMzUxMmE0MWExZmU0MTJlYWFmMjVjODY4OGE4MDVhZWEzMmMwMzQ1NTQxOGYwZGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzZDlmMWVjMDc2OGQ4MDZlZDBmNTU4ZDE4ZWRkMjdkMmJmOTk4ZWE2MmJmMzg5OThiYjhlZmUwMDhjY2ExOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjNjhhNjhlZTdkMGQwZjM1NmMzNGExZTI1OTA5NzVlNmRmYTE4YWMxY2RiYmVjN2QzYjgwMTQ4NmQwYWEzNGIifQ"
         }
       ]
     },
@@ -436,13 +414,69 @@
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
-          "version": "repo-file-v1:sha256:ef8e1855ea01f9100048832c8ff3d8ec5b3af7f790e9a11df3080f6629802aab"
+          "version": "repo-file-v1:sha256:7fbcf0890522e8786b8ea390d121e5ab7349e465bb48c92a3f621fe0d6e1588a"
+        }
+      ]
+    },
+    {
+      "id": "claim_54262bc261af4e9c8bf12791503d3941",
+      "statement": "Debt session-9 (V19, 2026-09-08/09) executed 4 items / 6 PRs (#420-#425), all merged with 0/0/0 cleanup: prettier-md (strict `--embedded-language-formatting=off`, 1,189 docs files, fences byte-preserved after an opus REJECT→fix-wave→APPROVE cycle, commit-immediately protocol after a /tmp worktree loss); CABINET-BROWSER-02 root-caused as a stale twin spec pin with the FE-D1 hypothesis falsified and re-pinned to MARGIN_RECOVERY_MESSAGE with live e2e green; privacy docs-example redaction of fake Bearer tokens exposed by the HEAD merge-diff scan semantics; and the owner-approved exclusion of 5 vendored BMAD knowledge directories (630 real violations, 4.7× the prior estimate) from the privacy scanner's change-set path.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-cabinet-browser-02-repin.md",
+          "version": "repo-file-v1:sha256:82a177a0aef6ee60a65ecc004a87f53ebd82ffa5d4fa6251e69061e6083ce640"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-prettier-md-docs.md",
+          "version": "repo-file-v1:sha256:61dba56017ea098708dbb9ed3f735fe13b7f5acb59b8aad781e5874a25c049bf"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-privacy-scanner-tool-dir-exclusion.md",
+          "version": "repo-file-v1:sha256:6374258047f31f953587073d61dbcf3d0651769c09b709756d138001e69d5f9a"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md#L10-L24",
+          "version": "repo-lines-v1:sha256:d8b0b72c094e29693143762d07bac409b3bc897692dc12207fa9d5dbb57e9236:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNDZlODU5YjJkNmI3YzU4MzVmOTc4MzQ2ODQxNDEzYjBkNzUxNjI2NmJhMmRkZjZmZGIyNDI2ODlmMWQ1YTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmOGIzZjFlZmIxZWQwMWFhYjQwMzVhN2U0YzQ0MTQzNDkwNzJlNTI2MzcxNzFiNDhjZWQ0ZmI1ZjBiNzJiYTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzZDlmMWVjMDc2OGQ4MDZlZDBmNTU4ZDE4ZWRkMjdkMmJmOTk4ZWE2MmJmMzg5OThiYjhlZmUwMDhjY2ExOTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a1cc03a9174b4feabdbe6192643656bf",
+      "statement": "The privacy-scanner exclusion (PR #425) filters the 5 BMAD tool-directory prefixes only in `collectGitChangeFiles` of `scripts/check-privacy-console.mjs` (`EXCLUDED_CHANGE_SET_PREFIXES`, root-anchored, case-sensitive), decides the stale-HEAD fallback on the raw change-set, and leaves PRIVACY_SCAN_ROOTS walks, PII files, and `IGNORED_DIRECTORIES` untouched; `node --test` grew 24→27 with mutation-verified pins. Accepted residual: secrets in those 4,865 vendor files are invisible to the change-set gate, strict fail-closed errors are suppressed there (else `bmad install` would fail the gate on 143 benign files), and `git mv` into the directories hides files.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-privacy-scanner-tool-dir-exclusion.md#L15-L24",
+          "version": "repo-lines-v1:sha256:63d1c2705169ba6902aa2b0ccc57df549970bf48e96efaf59a48cc5fed9b5eb4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxOTUyM2M5NTM5NWM3YTA2YTI2ZWIzNGY3ODdlZGVlNmMyZTNmYzkxZjY0YTFkNGFmMDU2ZmU1YzhkYjMwYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5MDBkN2IzYTk2MWVkOWYxN2RmMTcxMjg1Nzg3NjZkYjRlNzcwZTFmNDJmZTEyOWJiZWZiN2MzYjQwYWNhN2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1MWRkOTY3YjUyYWY2ZjUwN2JmODRiNWRmMjMxNGFiYzkyMTIwMjliOTI0YjFkMmRiZDMyNTI0NmY1ODEzZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4MGYxYThiNDliODVhMGQ4YWNkMmE1ODI3ZjM4NTEwYzczNjQ1YTVlNDUwNTQzOGRlYTM5MTEzNTMwOTc5Y2MifQ"
+        },
+        {
+          "resource": "repo://scripts/check-privacy-console.mjs",
+          "version": "repo-file-v1:sha256:27ad49664fb28e7d1b758a61697984292c112736fbaee9f026b73da444d0d58f"
+        }
+      ]
+    },
+    {
+      "id": "claim_7259aa1d532f4f78b02e6dc39809bfa3",
+      "statement": "The privacy gate on a clean tree scans the HEAD merge-diff (fallback `-m`), so pre-existing repository content surfaces as new findings at the moment of a merge — this exposed fake-Bearer doc examples on the #420 docs merge (fixed in PRs #423/#424 by shortening 4 request-backend lines below the trigger length, and by fixing the registry text itself, which had quoted the trigger pattern).",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md#L16-L16",
+          "version": "repo-lines-v1:sha256:fb70c603331dff4a7d817f9bc583d5f2f094008dbdbe3f51e2babc795f4e40ef:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmI3MGM2MDMzMzFkZmY0YTdkODE3ZjliYzU4M2Q1ZjJmMDk0MDA4ZGJkYmUzZjUxZTJiYWJjNzk1ZjRlNDBlZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmI3MGM2MDMzMzFkZmY0YTdkODE3ZjliYzU4M2Q1ZjJmMDk0MDA4ZGJkYmUzZjUxZTJiYWJjNzk1ZjRlNDBlZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDRlZTc1MDQwNzE1ZjI3ZjBhZjZhMDA5MjMyYTFjYmUyNDBlZjYxMDQ4ZGVlZjIwY2VmMDk4M2NlZTI0MDAzMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTMzNjg3NTU2YTUwOWQzMjkxY2Q5MGI1MGQ0YTY5ODM1YzcxMTk2YTY3YTcwZGUxMmFhYTUzOTk4YmMzYzVhZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_56c662727e23477bafe1a8b4441919db",
+      "statement": "CABINET-BROWSER-02 was a stale spec pin, not a product regression: the failing assertion was the second of two identical `toHaveCount(0)` twins in e2e/onboarding.spec.ts (the first re-pinned by 174.4 commit `6ac32024`); the margin alert persists by documented product semantics (onSubmit never clears recoveryError, quiet-guard, unmount only via PUT#2-success navigation), both flow mutations have explicit `retry: false` so the FE-D1 retry predicate is never consulted, and the old pin was never green. The fix re-pins to `toHaveText(MARGIN_RECOVERY_MESSAGE)` (commit `d03123fa`); onboarding.spec has 0 manifest pins so no 174.3 regeneration was needed.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-cabinet-browser-02-repin.md#L9-L25",
+          "version": "repo-lines-v1:sha256:f9c5415c544682ea4e426573e6b0dbac4adbce7b50af8f8cddc0237f2c500865:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyN2ZkZmRkMzM0ZmRjNTcxNTk5ZTYyMjc4MWRlNDMzNjAzNjAxNTUxNzY3NThhNzAxZGI1YmViYzU4Zjk2NzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1MGUwYTc0OTNiODhmYThiYjRhYzEwOTc2NjBiNWYxYTA0NDZhZmFjZDU3ZDA1YjAzMjZlNTY3MGJhMGE3NTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkMTQ4NTc5M2RkNTJiNTNiMjVlYzk2OGUyODgwNjQ3MDcyNGIzYThmZDI3NTMzODBlMzE0M2Y1MmJjYWMwZWIifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-06T08:47:51.668Z"
+    "at": "2026-09-09T08:47:58.907Z"
   }
 }

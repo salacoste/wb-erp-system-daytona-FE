@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e0c3c63ed474c0730c2ddfb0fa30e099443d84ecfdd45e020d7f7c888c4240f2",
+  "pageVersion": "sha256:d3aec86b518b283c3c4ed4c0adceded60b954cbd44b1af17d2e09d2b0d34ad83",
   "claims": [
     {
       "id": "claim_07e85bb249e745f69c550323b16664e1",
@@ -172,17 +172,17 @@
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md#L58-L75",
-          "version": "repo-lines-v1:sha256:c02a8a41d0effbccf80d92278ef1de47ec9ce162580a3598432d4b04f4561ec8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0ZDc4Njk1YTljMDViZGQzYWE0YmQwZGJjYzIzZDBmZmI1ZjNiMmYwNjM4ZmEyNTU3YTIxYTIxNGViY2JlYWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMTQ5NjdkMTI0Nzk0MjVkZWY1NzFiNjg2ODlmYzA3YTZkOTA5ZTI4OTM2NDUyMTM5Mzg4ZWZlYzA2OGQ4YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4OTYwOTNiODA5Y2MwODE3MjU5MjU4NDY2NzI5ODAzN2QyODVlM2ZlYWQ1NmY0NTk5YTE5MWExZWIxMDg1ZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYTVkOGFhNDVmMmFlYWE1NjIyNmMxMGViYzkwOTA0YzI2MTFhMjhmNmYyMzJjMmQwMWI5NGYyOTMyZWM3NTQifQ"
+          "version": "repo-lines-v1:sha256:2de370182e5589b5cb3d036befd7116e9d539577d41bad3b26a10efd4ee9746e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhMmJlZmE4Yjc3MWZmOTgwZGYzOTBlOTY0NDJkNDk0ODVkNjdmYzQxMDkyNGIzZDczMWZiZDgwN2NlM2FjYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMTQ5NjdkMTI0Nzk0MjVkZWY1NzFiNjg2ODlmYzA3YTZkOTA5ZTI4OTM2NDUyMTM5Mzg4ZWZlYzA2OGQ4YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4OTYwOTNiODA5Y2MwODE3MjU5MjU4NDY2NzI5ODAzN2QyODVlM2ZlYWQ1NmY0NTk5YTE5MWExZWIxMDg1ZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYTVkOGFhNDVmMmFlYWE1NjIyNmMxMGViYzkwOTA0YzI2MTFhMjhmNmYyMzJjMmQwMWI5NGYyOTMyZWM3NTQifQ"
         }
       ]
     },
     {
       "id": "claim_4958142d47e14e34b6e37c73b4789c0d",
-      "statement": "Debt item D-1 (PB-1 silent cabinet create, PR #390) added initiation-mint ensureSessionNonce, an indeterminate recovery-alert, finishRecoveryOperation release, and a two-tab nonce-nulling e2e, raising the Vitest floor from 19,363 to 19,421.",
+      "statement": "Debt item D-1 (PB-1 silent cabinet create, PR #390) added initiation-mint ensureSessionNonce, an indeterminate recovery-alert, finishRecoveryOperation release, and a two-tab nonce-nulling e2e, raising the Vitest floor from 19,415 to 19,421.",
       "evidence": [
         {
-          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L12-L15",
-          "version": "repo-lines-v1:sha256:9aa5d9ea648d7206260971dc673555e8a94454470bff68f6648c1c30f6e7a20b:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWMzYTE2NmQyYmU1NjRkMjQ5YThkNTk0YWRiMjA5OWU0NTgwNmU1MWIxMzlmOWJkZjNhYjMzNmRiY2FkOTllMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWJkNTg4MjFjMjE0ZjlkZTNiZmMwNDc1NzUxN2UzMzJiOTJhYjIyYWRjYTk5ODRmY2YyYjhjMzE1NDk4ZTMxYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmQ3N2M2MTVmYWM5ZmQ5YTY5Zjg1OWYyZWJhNzRlM2Q5MzhmZWU3OTY0NDIwNWJjNTM2OTdlZTFmYzM2ZjQxZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzQ0NWMzMjZmMDk2MmEzODBlZjkxYWY3ZDQwYjk1ZjcyYmJjMTQ5YjkwNzg2MDBmNzFmZmRlOTAxMDgyNmRlZCJ9"
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L14-L21",
+          "version": "repo-lines-v1:sha256:7bff75df33375ad652af2c6d4df7aad5a350c70b619a3bb3a4cdaddd5f00b482:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTQ3YTFmN2Q4MDNlNTJmNjdiY2FjZGQzOTIwMTNlY2IwOGNhZTJlMmQ4YjY0ZWNkYWJiYTcyNTE0NmRhZTBiNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjgwMTljOTFiOWQ0NGRlZTk3ZDM5ZGYxNGRlYTM5MDZjMjhhMjIyYTFmNzBiOTYxNWY2NWU3MzVlNmRjMjdiYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmQ3N2M2MTVmYWM5ZmQ5YTY5Zjg1OWYyZWJhNzRlM2Q5MzhmZWU3OTY0NDIwNWJjNTM2OTdlZTFmYzM2ZjQxZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmY4NjkxNWQyODg0NGZkM2E2M2VlMGVjMjk5Mzk0ZjgwYjdmMmIwNWFhZjA3ZGI0ZDg1NzFhN2ZkZWNiMTVkOCJ9"
         }
       ]
     },
@@ -192,25 +192,29 @@
       "evidence": [
         {
           "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L51-L60",
-          "version": "repo-lines-v1:sha256:2681a81a09535094315fb4411f2d28617276c7f99e27f2f9c70824e18f3f3751:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4YWEzZTVjYmIwOTYyYmY0MzRmYzZlOTk1NzBhYzQyODgzYWYxYjYxZTRmMzdiMWE0YWMxYWFmMWFkYTMxMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkMTRhODI0NTE1ZDk3NzMwZWQzYmYwMWQxYzBiMmZmYjc0NzcxY2E4MDU0ODkwMDhhNmRhZTJkZDZmZWFhOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmNWZkZDU1YTY2ZTBiZTc3ZjFiMTg3NzRmODFmYmNmMGFjYjFlYTE1MzAxMjFjNGQzZmQ5MDgzMjM4MjIwNTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OGQxMWM4YjFjYjUwZWIxNzZiNDU0NWU3NjE2ZDk1ZGQ4OGZhNDFkOTFlMjU1OTM0Y2FmNjIxOGE1NjlhNjYifQ"
+          "version": "repo-lines-v1:sha256:abbe2f3406d5a0975bf285816a3967ff3e0e9075e8075e616e9193ac6cd66aab:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4YWEzZTVjYmIwOTYyYmY0MzRmYzZlOTk1NzBhYzQyODgzYWYxYjYxZTRmMzdiMWE0YWMxYWFmMWFkYTMxMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkMTRhODI0NTE1ZDk3NzMwZWQzYmYwMWQxYzBiMmZmYjc0NzcxY2E4MDU0ODkwMDhhNmRhZTJkZDZmZWFhOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmNWZkZDU1YTY2ZTBiZTc3ZjFiMTg3NzRmODFmYmNmMGFjYjFlYTE1MzAxMjFjNGQzZmQ5MDgzMjM4MjIwNTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OGQxMWM4YjFjYjUwZWIxNzZiNDU0NWU3NjE2ZDk1ZGQ4OGZhNDFkOTFlMjU1OTM0Y2FmNjIxOGE1NjlhNjYifQ"
         },
         {
           "resource": "repo://docs/request-backend/230-auth-refresh-endpoint-missing.md",
-          "version": "repo-file-v1:sha256:fb6d85cbbf982e5cc6c3d90690086a9e992d31f3d554e11edc79a73b86d73dc8"
+          "version": "repo-file-v1:sha256:50e8a355b9214603809f34c260b1d431456297a8a7aadd1c41328abdc4cd1cd1"
         }
       ]
     },
     {
       "id": "claim_dddeaa0fe9de402aaeee3fe79bb6eb74",
-      "statement": "Debt-session boundary waves 1-2 (PRs #394/#395) converted financial-summary (58 sites) and margin-family (29 sites) palette usage to semantic tokens, ratcheting the shadcn UI boundary count from 459 to the current baseline 372 with 3 owner-accepted exceptions.",
+      "statement": "Debt-session boundary waves 1-2 (PRs #394/#395) converted financial-summary (58 sites) and margin-family (29 sites) palette usage to semantic tokens, ratcheting the shadcn UI boundary count from 459 to 401 to 372 with 3 owner-accepted exceptions; later waves (through session-8, 2026-09-06) continued the ratchet down to the current baseline 118 in scripts/.shadcn-ui-boundary-baseline.txt.",
       "evidence": [
         {
-          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L18-L19",
-          "version": "repo-lines-v1:sha256:cb8d6827a0a1f458ce63383ac757d6e77dc027e8b0fdb722352ce8188f543f29:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYzZjc2ZmJjZjk4OWUxN2Q3MGVkZDFlOGRiYzcwMzEyODg2N2FlMmUxZWUxMTQwNmQ4MzM5ZDcyMzI0NDgyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWM2ZWQyMDg5NDA3MTdkMjg1ZDdmN2VmZDBiMDgzZjFiYzExNDA3OTJlYjA4ZGU2Mjk2MmI3ZGEyMGFkOGU1OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjA2OGRjNzgxYmVkNjhlMWNjM2UxODNjYzFiZDg0YTJlNGRiM2I5MjAxNTZkZmUyMTdjNTc2ODhjZGRmYThjNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzcwZmJmNTRmNjU5Mjg1ODUwOTI1MDBhZjUwMjc2ZGQ4OGM3ZTNhNDg5MjVjZjRkNjk2YzJmNWYzNjIzYTgzOSJ9"
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L18-L21",
+          "version": "repo-lines-v1:sha256:de324e365c41d6c8cca314254fde6982aa9229f351bf1d62e0ac6429843d3498:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjk2Y2Q2NmIwNTc3ZGY0YTM0MjUxODhjZTdjMzE0NmI4MzM1YjIzNDI2ZjBiMWQ4NmU2ODYxNzEyZGJhZWRkZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjgwMTljOTFiOWQ0NGRlZTk3ZDM5ZGYxNGRlYTM5MDZjMjhhMjIyYTFmNzBiOTYxNWY2NWU3MzVlNmRjMjdiYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGUxNDljYTM4MWU5ZTM5YTgwZjcyMTczMTI2MjNlNmZhMGJjZTk5OTgxMzMwNzliODYwYzMzZDZhNTcxNTU4NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmY4NjkxNWQyODg0NGZkM2E2M2VlMGVjMjk5Mzk0ZjgwYjdmMmIwNWFhZjA3ZGI0ZDg1NzFhN2ZkZWNiMTVkOCJ9"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L27-L29",
-          "version": "repo-lines-v1:sha256:1a529ff7d117e5eac91bc766a71cf4113e625eaabbe32e0c4b28b4832ee51f7f:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmNkOTc3ZDM2ZWEzNzlhNWE0MDhkNTcyOTJiMDJmNTEyNTAyMDQ5NTExYTc5Y2FkODYyNjEyOGEwNjlhOTQ5ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2EwYjZlZDNjMTA3MDVkNTQxZDUyNjk3Y2FkMDk2ODAzY2I4OWE4YTA1MTcwYmZmOGE0MWM5YjQ5ZjQ5OTQ5YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWQ3YmY4NDY4OThlZDBhZjk1OWI4ZmQ2MjY3NTE2N2QxYmFlMDYzODJhMDQ5MDBmYTI2ZDZjYjk4ZjAzMzY2YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGMwNzY5YTRiMzdkMTRjNjUzZjFlNWMxYzMxMTRhOWQyMTY0NzVjMWJjMTcyODA4MzFmOTI5YzAzYWYyYjI2YSJ9"
+          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md#L21-L24",
+          "version": "repo-lines-v1:sha256:cc6e354c815789bb3466359f8e662ca51093e8cffae9563d76b270976ad577af:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjY3MzMwZDQwN2Y5ODVhYzNhYjk2ODEyM2QxYzU3NjQxODg3ZTdhNGIyZThkZjFkMGRmZDE2MTVhZjZhZWMzZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGFkZjc4NGJiNGU1ZWY2NzhhZTI4NzU2ZWYyMmY2YWIyOTZiNzExZmIyNTlkMTIzNTgyYTkwMGVjMGNjY2UwOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmJiMjAyZDkyZGRiMjUzMzI3MmEzMWU4N2FiMGMzYzE1NWIxNjFkOTJmYmNkM2YxZjU0MjViZjM5MDU1ZDA5YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTA2Zjk5OTU0NmI2YmI0MTIyNjBmNDA0MzlhMzk2NjFkNWM3MDBhZDNkMTQyYjFmY2YzNTg1NTI0OTY3OGY4YSJ9"
+        },
+        {
+          "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
+          "version": "repo-file-v1:sha256:f10f7170eeb4986f69d764a4cb97c3f8e9337963222188a647fc4c0ac289d0e4"
         }
       ]
     },
@@ -230,7 +234,7 @@
       "evidence": [
         {
           "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L36-L49",
-          "version": "repo-lines-v1:sha256:38c33f210a0b03a36566d31d0e75c505ea73bbb20ae95b970e4147642d7b53e9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyNDA1YzM0NzM4Y2NkZTZlMGI1NjZmMzZiNDg0OTUzYmNmOTk0N2I1M2E0MDg2NDU2N2E4NGFmMzE0YmYwNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1YTA4ZGY1YzIyMzU2NDEyMWNkZWZlNDA3NzZhOWNlMjlkYWZkZWM3ZTFmZWYzN2U5MThiOWY0NDZiYWU2ZDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkNjhmNjI4MGVjZGRiOGEyYjE2MTk5ZjQ5Zjg5YzYzMjEyOTA5NDUyNGViYTcwYWU2ZmYyNjc1ZTE0ZTM4NjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM4NTFjZDMyZTY4ZmM4NTU2NjFlYjFhMTNkYmNhMDVkM2E0OWIxODg4NDJiNGEwNzVhMDA2NzczNWJmOWRjNzgifQ"
+          "version": "repo-lines-v1:sha256:83c7050d695a3ea246c2433d189f03cee7b90aec8ab225e8e044146402f36336:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyNDA1YzM0NzM4Y2NkZTZlMGI1NjZmMzZiNDg0OTUzYmNmOTk0N2I1M2E0MDg2NDU2N2E4NGFmMzE0YmYwNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1YTA4ZGY1YzIyMzU2NDEyMWNkZWZlNDA3NzZhOWNlMjlkYWZkZWM3ZTFmZWYzN2U5MThiOWY0NDZiYWU2ZDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkNjhmNjI4MGVjZGRiOGEyYjE2MTk5ZjQ5Zjg5YzYzMjEyOTA5NDUyNGViYTcwYWU2ZmYyNjc1ZTE0ZTM4NjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM4NTFjZDMyZTY4ZmM4NTU2NjFlYjFhMTNkYmNhMDVkM2E0OWIxODg4NDJiNGEwNzVhMDA2NzczNWJmOWRjNzgifQ"
         }
       ]
     },
@@ -240,7 +244,7 @@
       "evidence": [
         {
           "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L51-L59",
-          "version": "repo-lines-v1:sha256:ca7671130ec5d982a1a0b963cc2bfbc7de5478e6d999026f21969e2513213d52:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzhhYTNlNWNiYjA5NjJiZjQzNGZjNmU5OTU3MGFjNDI4ODNhZjFiNjFlNGYzN2IxYTRhYzFhYWYxYWRhMzEwMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTlmMzE5Y2Q3MDNhM2M5ODg0NTQ3MWViZTlhN2JkODRjNWIyM2I5NTA3MWNkNmE5ZmMwZjBjY2FkY2FlOTZhNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGY1ZmRkNTVhNjZlMGJlNzdmMWIxODc3NGY4MWZiY2YwYWNiMWVhMTUzMDEyMWM0ZDNmZDkwODMyMzgyMjA1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOThlMjFkZmZmOWYxNTlhZWY2ZDgyYTk3YzA3MGE2YmZjODA4OGYwNzNiNGY3YzJhNWExOTFkMzczMTFmMjdmZiJ9"
+          "version": "repo-lines-v1:sha256:75cb3621e2f54784663f0733f16d9eceb2777b3163ddc81126561390770c2e55:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4YWEzZTVjYmIwOTYyYmY0MzRmYzZlOTk1NzBhYzQyODgzYWYxYjYxZTRmMzdiMWE0YWMxYWFmMWFkYTMxMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5ZjMxOWNkNzAzYTNjOTg4NDU0NzFlYmU5YTdiZDg0YzViMjNiOTUwNzFjZDZhOWZjMGYwY2NhZGNhZTk2YTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmNWZkZDU1YTY2ZTBiZTc3ZjFiMTg3NzRmODFmYmNmMGFjYjFlYTE1MzAxMjFjNGQzZmQ5MDgzMjM4MjIwNTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4ZTIxZGZmZjlmMTU5YWVmNmQ4MmE5N2MwNzBhNmJmYzgwODhmMDczYjRmN2MyYTVhMTkxZDM3MzExZjI3ZmYifQ"
         }
       ]
     },
@@ -249,18 +253,28 @@
       "statement": "After the debt sessions through 2026-09-06 (handoff chain ending in HANDOFF-2026-09-06-V18-SESSION8), the boundary track is complete: the whole 118 residual (95 chart-hex + 23 legacy classes) is gated on the C5 chart-palette owner decision, with boundary baseline 118 in scripts/.shadcn-ui-boundary-baseline.txt; the remaining backlog is P3-window work (prettier md, route guards, harness restart-per-run, FR-7/AT-matrix/Manager-creds, docs-95 split, pm2 delete 5, CABINET-BROWSER-02 red) plus the owner ledger, per session-8 handoff sections 3.0-3.2.",
       "evidence": [
         {
-          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md#L19-L52",
-          "version": "repo-lines-v1:sha256:604170c6b6876c40b7c40897d514976485c0064fc4ee06bc86ee56859c63bce6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkNmM1ZjU5ZGQ3NWM2MzA3ODk2OTg4ZjdjOGE4NWZjZjkyMzVhYjhmZmYzYWRkYjgzNDM3ZjgwOTI2YjhhYWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhYWUzNDAwYTZjYzQ4MWU0ZjJhMDUwYzFkYzI5MTU4NjNlZGY0OTc0OGU3ZjZjZDViN2U0MGI4YWYyNTdhMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZiZGFhMDdhNDJhYWIxZjA3MjRhZjI4NjRhNmE5NGI1YjEzMGZmMzk0YjBkYmI3ZTcxMTU2NDdkZmE2NGY1MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjNjhhNjhlZTdkMGQwZjM1NmMzNGExZTI1OTA5NzVlNmRmYTE4YWMxY2RiYmVjN2QzYjgwMTQ4NmQwYWEzNGIifQ"
+          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md#L28-L52",
+          "version": "repo-lines-v1:sha256:4cd949bcdeaff8169275ebaaec5cf97ff94bd41d4aa2099ba8eb2c8a28b6f4e4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjMjIxMzEwOWY4Njc0ZWM3NTVmZWQwMjZiNzYyMmFmODcxOWQ5ODhlOWNjN2NmOWIyMjAzYWY4MzYwOGMyZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhYWUzNDAwYTZjYzQ4MWU0ZjJhMDUwYzFkYzI5MTU4NjNlZGY0OTc0OGU3ZjZjZDViN2U0MGI4YWYyNTdhMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwNmY5OTk1NDZiNmJiNDEyMjYwZjQwNDM5YTM5NjYxZDVjNzAwYWQzZDE0MmIxZmNmMzU4NTUyNDk2NzhmOGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjNjhhNjhlZTdkMGQwZjM1NmMzNGExZTI1OTA5NzVlNmRmYTE4YWMxY2RiYmVjN2QzYjgwMTQ4NmQwYWEzNGIifQ"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
           "version": "repo-file-v1:sha256:f10f7170eeb4986f69d764a4cb97c3f8e9337963222188a647fc4c0ac289d0e4"
         }
       ]
+    },
+    {
+      "id": "claim_9563a4073e7c4a98986f174db25a1e2d",
+      "statement": "Session-8 (2026-09-06) executed on main 0b95e963: FE-D5 cross-tab cabinet-create Web Locks (cabinetCreationLock.ts, PR #415), fe-d3-family sanitizeFallbackMessage extraction with SHA-pinned re-export (PR #416), WCAG wave-6 contrast fixes (PR #417), and dead queryClient.ts deletion (PR #418), leaving live gates at Vitest 19,559/0, lint 0/0, tsc 0, build --webpack 0, boundary 118 = baseline, docs 95, locale 4.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md#L10-L27",
+          "version": "repo-lines-v1:sha256:0812c5ac14b57013ffb98331084be5853095c9f75365f605f9b0f6635929d64c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3OTRhOWIzNTQ4MjQ5NzA0NDUyMjQyNTRkMzIxNDllYjgyYTgwYjkzMzM3NDMxYzYxMDE3MTU0ZDMxNDQwZGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkYWZkM2Q1MWZkYmYwYTFhOWY2Yzc2OWM4ZTNmYTJkY2QyYjQwMjUyODI5ZGIyYzk5ZmY5ZGNhN2MxZWY1ZTcifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-06T08:47:51.668Z"
+    "at": "2026-09-09T08:47:58.907Z"
   }
 }
