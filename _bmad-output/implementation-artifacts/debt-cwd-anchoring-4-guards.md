@@ -3,7 +3,7 @@
 | Поле | Значение |
 |---|---|
 | **Status** | review (обе ревью-прохода завершены APPROVE; flip → done пост-merge) |
-| **PR** | pending (заполнится вторым коммитом после `gh pr create`) |
+| **PR** | [#430](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/430) |
 | **Head-SHA** | `105f06ca` (ветка `debt/cwd-anchoring-4-presentation-guards`, база `ae803f87` = main) |
 | **Класс** | test-infra механика (не behavior): анкор-свитч в 4 гардах, 0 логических изменений |
 | **Источник** | V20 §4 п.1; V19-handoff §3.0 №1; реестр §20 residual |
