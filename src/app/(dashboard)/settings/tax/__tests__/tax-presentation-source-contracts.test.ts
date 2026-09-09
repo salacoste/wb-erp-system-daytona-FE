@@ -1,6 +1,20 @@
 import { readdirSync, readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
+
+// 170.6 canon: anchor at the repo root via import.meta.url — NEVER the
+// process working directory. This spec lives at
+// src/app/(dashboard)/settings/tax/__tests__/ → six levels up = repo root.
+const repoRoot = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+  '..',
+  '..',
+  '..',
+  '..'
+)
 
 const OWNED_PRODUCTION_FILES = [
   'src/app/(dashboard)/settings/tax/page.tsx',
@@ -17,11 +31,11 @@ const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
 function source(file: (typeof OWNED_PRODUCTION_FILES)[number]): string {
-  return readFileSync(resolve(process.cwd(), file), 'utf8')
+  return readFileSync(resolve(repoRoot, file), 'utf8')
 }
 
 function discoverProductionFiles(root: string, ownsFile: (name: string) => boolean): string[] {
-  return readdirSync(resolve(process.cwd(), root), {
+  return readdirSync(resolve(repoRoot, root), {
     withFileTypes: true,
   }).flatMap(entry => {
     const file = `${root}/${entry.name}`
