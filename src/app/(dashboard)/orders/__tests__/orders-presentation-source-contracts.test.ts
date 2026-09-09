@@ -57,28 +57,74 @@ describe('Story 172.14 orders presentation source contracts', () => {
       'useOrdersFilterHandlers.ts',
       'useOrdersPageState.ts',
     ])
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former toHaveLength(55) + spot-checks).
+    // Root exclusions are EXPLICIT and stay: the route-local `fbo/` and
+    // `integrity/` subtrees belong to the sibling 172.15/172.16 guards —
+    // dropping the exclusion would double-scan and double-fail those files.
+    // The SHARED root has no such subtrees on disk (verified 2026-09-09: only
+    // analytics/ + timeline/ subdirs, all owned here); the exact literal below
+    // is the gate — a new shared subdir must be consciously pinned.
     const sharedFiles = prodFiles(sharedDirectory).map(f =>
       f.slice(sharedDirectory.length + 1).replace(/\\/g, '/')
     )
-    expect(sharedFiles).toHaveLength(55)
-    for (const name of [
-      'OrderStatusBadge.tsx',
-      'OperationalStatusBadge.tsx',
-      'OrdersRowHelpers.tsx',
-      'OrdersTableRow.tsx',
-      'OrdersEmptyState.tsx',
-      'OrdersErrorBoundary.tsx',
+    expect(sharedFiles).toEqual([
+      'CancelOrderDialog.tsx',
+      'ClientInfoCell.tsx',
+      'EditOrderMetaDialog.tsx',
       'FullHistoryTab.tsx',
       'LocalHistoryEntryItem.tsx',
+      'LocalHistoryTab.tsx',
+      'ModalLoadingSkeleton.tsx',
+      'OperationalStatusBadge.tsx',
+      'OperationalStatusSelect.tsx',
+      'OrderActionsCell.tsx',
+      'OrderDetailsModal.tsx',
+      'OrderExpirationSection.tsx',
+      'OrderHistoryTabs.tsx',
+      'OrderModalHeader.tsx',
+      'OrderStatusBadge.tsx',
+      'OrdersEmptyState.tsx',
+      'OrdersErrorBoundary.tsx',
+      'OrdersFilterOptions.ts',
+      'OrdersFilters.tsx',
+      'OrdersLoadingSkeleton.tsx',
+      'OrdersPageHeader.tsx',
+      'OrdersPagination.tsx',
+      'OrdersRowHelpers.tsx',
+      'OrdersSuspenseFallback.tsx',
+      'OrdersTable.tsx',
+      'OrdersTableRow.tsx',
+      'WbHistoryTab.tsx',
       'WbHistoryTabParts.tsx',
-      'timeline/WbStatusBadge.tsx',
-      'timeline/HistorySourceBadge.tsx',
       'analytics/AtRiskOrderRow.tsx',
-      'analytics/SlaComplianceWidget.tsx',
+      'analytics/AtRiskOrdersCard.tsx',
       'analytics/OrderSyncStatus.tsx',
-    ]) {
-      expect(sharedFiles, name).toContain(name)
-    }
+      'analytics/OrdersAnalyticsDashboard.tsx',
+      'analytics/SlaComplianceWidget.tsx',
+      'analytics/VelocityMetricsWidget.tsx',
+      'analytics/VelocityWidgetParts.tsx',
+      'analytics/VolumeMetricsWidget.tsx',
+      'analytics/index.ts',
+      'history-utils.tsx',
+      'index.ts',
+      'timeline/DurationDisplay.tsx',
+      'timeline/HistoryEntryCard.tsx',
+      'timeline/HistorySourceBadge.tsx',
+      'timeline/LocalHistoryTimeline.tsx',
+      'timeline/LocalTimelineEntry.tsx',
+      'timeline/LocalTimelineHelpers.tsx',
+      'timeline/OrderHistoryTimeline.tsx',
+      'timeline/TimelineEmptyState.tsx',
+      'timeline/TimelineSummary.tsx',
+      'timeline/TimelineViews.tsx',
+      'timeline/WbHistoryTimeline.tsx',
+      'timeline/WbStatusBadge.tsx',
+      'timeline/WbTimelineEntry.tsx',
+      'timeline/timeline-utils.ts',
+      'useOrderActions.ts',
+      'useOrderOperationalStatus.ts',
+    ])
   })
 
   it('no legacy palette classes in any production file (both roots)', () => {

@@ -38,18 +38,22 @@ const CONTEXTUAL_HEX =
 
 describe('Story 171.7 route presentation source contracts', () => {
   it('production catalog pinned (5 files, sku-accuracy/** excluded)', () => {
-    const files = productionFiles()
-    expect(files).toHaveLength(5)
-    // self-check: catalog is real
-    expect(files.some(f => f.endsWith(join('evaluations', 'page.tsx')))).toBe(true)
-    expect(files.some(f => f.endsWith('EvaluationsList.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('EvaluationsHeaderCard.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('EvaluationsTable.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('evaluations-list-helpers.ts'))).toBe(true)
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + endsWith self-checks).
+    const relative = productionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual([
+      'components/EvaluationsHeaderCard.tsx',
+      'components/EvaluationsList.tsx',
+      'components/EvaluationsTable.tsx',
+      'components/evaluations-list-helpers.ts',
+      'page.tsx',
+    ])
     // sku-accuracy/** must never leak into the catalog (Story 171.8's surface).
     // Anchor-safe: the joined path segment, not a bare substring — the 171.8 worktree
     // name itself carries the sku-accuracy substring (same lesson as productionFiles()).
-    expect(files.every(f => !f.includes(join('evaluations', 'sku-accuracy')))).toBe(true)
+    expect(relative.every(f => !f.includes(join('evaluations', 'sku-accuracy')))).toBe(true)
   })
 
   it('no legacy palette classes in any production file', () => {

@@ -1,6 +1,20 @@
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { readFileSync, readdirSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
+
+// 170.6 canon: anchor at the repo root via import.meta.url — NEVER
+// process.cwd(). This spec lives at
+// src/app/(dashboard)/shipments/[id]/__tests__/ → six levels up = repo root.
+const repoRoot = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+  '..',
+  '..',
+  '..',
+  '..'
+)
 
 const DETAIL_OWNED_PRODUCTION_FILES = [
   'src/app/(dashboard)/shipments/[id]/page.tsx',
@@ -29,10 +43,64 @@ const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
 function source(file: (typeof DETAIL_OWNED_PRODUCTION_FILES)[number]): string {
-  return readFileSync(resolve(process.cwd(), file), 'utf8')
+  return readFileSync(resolve(repoRoot, file), 'utf8')
+}
+
+/**
+ * components/custom/shipments is shared: the shipments-LIST guard (Story
+ * 173.8) owns these files, so the detail-guard disk discovery excludes them
+ * (plus the barrel) before comparing against the detail-owned literal.
+ */
+const LIST_GUARD_OWNED_FILES = new Set([
+  'CreateShipmentDialog.tsx',
+  'ShipmentFormFields.tsx',
+  'ShipmentQueueCards.tsx',
+  'ShipmentStatusBadge.tsx',
+  'ShipmentsEmptyState.tsx',
+  'ShipmentsFilterToolbar.tsx',
+  'ShipmentsPagination.tsx',
+  'ShipmentsTable.tsx',
+  'shipments-columns.ts',
+  'index.ts',
+])
+
+/** Flat production-file discovery (172.10): relative, forward slashes, sorted. */
+function prodFilesUnder(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true })
+    .filter(entry => entry.isFile() && /\.tsx?$/.test(entry.name))
+    .filter(entry => !/\.(?:test|spec)\.[jt]sx?$/.test(entry.name))
+    .map(entry => entry.name)
+    .map(name =>
+      join(dir, name)
+        .slice(dir.length + 1)
+        .replace(/\\/g, '/')
+    )
+    .sort()
 }
 
 describe('Story 173.9 shipment detail presentation source contracts', () => {
+  it('pins the exact detail-owned catalog on disk (per-root, 172.10)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove
+    // must FAIL this pin (upgrades the former existence-only identity).
+    const componentPrefix = 'src/components/custom/shipments/'
+    const routePrefix = 'src/app/(dashboard)/shipments/[id]/'
+    const expectedComponents = DETAIL_OWNED_PRODUCTION_FILES.filter(f =>
+      f.startsWith(componentPrefix)
+    )
+      .map(f => f.slice(componentPrefix.length))
+      .sort()
+    const expectedRoute = DETAIL_OWNED_PRODUCTION_FILES.filter(f => f.startsWith(routePrefix))
+      .map(f => f.slice(routePrefix.length))
+      .sort()
+    const componentRoot = resolve(repoRoot, 'src/components/custom/shipments')
+    const routeRoot = resolve(repoRoot, 'src/app/(dashboard)/shipments/[id]')
+    expect(prodFilesUnder(componentRoot).filter(name => !LIST_GUARD_OWNED_FILES.has(name))).toEqual(
+      expectedComponents
+    )
+    // Route root: the whole [id] tree is detail-owned (no sibling split).
+    expect(prodFilesUnder(routeRoot)).toEqual(expectedRoute)
+  })
+
   it('keeps the exact detail-owned production catalog readable', () => {
     for (const file of DETAIL_OWNED_PRODUCTION_FILES) {
       expect(source(file).length, file).toBeGreaterThan(0)

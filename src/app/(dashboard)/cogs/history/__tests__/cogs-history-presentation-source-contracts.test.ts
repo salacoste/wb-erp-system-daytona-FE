@@ -52,21 +52,19 @@ const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
 describe('Story 172.7 cogs-history presentation source contracts', () => {
-  it('catalog pinned (5 route files + 5 widget files, per-file identity)', () => {
-    const route = routeProdFiles()
-    expect(route).toHaveLength(5)
-    for (const name of [
-      'page.tsx',
-      'CogsHistoryPageStates.tsx',
+  it('catalog pinned (5 route files, exact relative paths + 5 widget files by path)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + endsWith identity loop).
+    const relative = routeProdFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual([
       'CogsHistoryBreadcrumbs.tsx',
+      'CogsHistoryPageStates.tsx',
       'cogs-history-utils.tsx',
+      'page.tsx',
       'useCogsHistoryPageState.ts',
-    ]) {
-      expect(
-        route.some(f => f.endsWith(name)),
-        name
-      ).toBe(true)
-    }
+    ])
     for (const f of widgetFiles) {
       expect(existsSync(f), f).toBe(true)
     }

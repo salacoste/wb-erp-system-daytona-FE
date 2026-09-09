@@ -35,9 +35,13 @@ function component(name: string): string {
 
 describe('Story 172.15 fbo presentation source contracts', () => {
   it('catalog pinned (7 route files, per-file identity)', () => {
-    const route = routeProdFiles()
-    expect(route).toHaveLength(7)
-    const expected = [
+    // Exact relative-path equality (172.10 canon): the toEqual literal (disk
+    // enumeration, sorted) is the SOLE pin — a rename or add/remove must FAIL
+    // here; the former toHaveLength(7) count pin is subsumed by it.
+    const relative = routeProdFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual([
       'components/FboAggregateCards.tsx',
       'components/FboOrdersPageContent.tsx',
       'components/FboOrdersTable.tsx',
@@ -45,9 +49,7 @@ describe('Story 172.15 fbo presentation source contracts', () => {
       'components/FboSalesTable.tsx',
       'components/FboSyncControls.tsx',
       'page.tsx',
-    ]
-    const relative = route.map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/')).sort()
-    expect(relative).toEqual(expected)
+    ])
   })
 
   it('no legacy palette classes in any production file', () => {

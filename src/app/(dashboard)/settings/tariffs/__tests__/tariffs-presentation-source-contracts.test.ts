@@ -1,71 +1,107 @@
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+/**
+ * Story 173.6 tariff presentation source contracts.
+ *
+ * 172.10 exact-array catalog pins (per-root discovery vs literal): the owned
+ * surface spans TWO roots — the route dir (page.tsx) and the wholly-owned
+ * src/components/custom/tariffs-admin/ directory (no sibling guard scans
+ * it). Literals = live disk enumeration, relative, forward slashes, sorted.
+ * FINDING (wave-3 conversion, 2026-09-09): the former toHaveLength(29) pin
+ * had gone stale — disk enumerated 31 tariffs-admin files (+ScheduleVersion*
+ * form/fields/modal, shipped via the index.ts barrel after the pin was
+ * written and clean of palette/hex). Pure catalog pin → literal adjusted to
+ * disk reality (32 total), strengthening the palette/hex scan coverage.
+ * All reads anchor to import.meta.url (170.6 canon) — no process.cwd()
+ * dependence.
+ */
+import { readFileSync, readdirSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { dirname, join, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-const ROUTE_REACHABLE_PRODUCTION_FILES = [
-  'src/app/(dashboard)/settings/tariffs/page.tsx',
-  'src/components/custom/tariffs-admin/AcceptanceRatesSection.tsx',
-  'src/components/custom/tariffs-admin/AuditActionBadge.tsx',
-  'src/components/custom/tariffs-admin/AuditFieldFilter.tsx',
-  'src/components/custom/tariffs-admin/AuditLogTable.tsx',
-  'src/components/custom/tariffs-admin/AuditLogTableParts.tsx',
-  'src/components/custom/tariffs-admin/AuditValueDisplay.tsx',
-  'src/components/custom/tariffs-admin/CommissionRatesSection.tsx',
-  'src/components/custom/tariffs-admin/DeleteVersionDialog.tsx',
-  'src/components/custom/tariffs-admin/FbsSettingsSection.tsx',
-  'src/components/custom/tariffs-admin/LogisticsRatesSection.tsx',
-  'src/components/custom/tariffs-admin/LogisticsTierRow.tsx',
-  'src/components/custom/tariffs-admin/LogisticsTiersEditor.tsx',
-  'src/components/custom/tariffs-admin/RateLimitIndicator.tsx',
-  'src/components/custom/tariffs-admin/ReturnsRatesSection.tsx',
-  'src/components/custom/tariffs-admin/SaveConfirmDialog.tsx',
-  'src/components/custom/tariffs-admin/StorageSettingsSection.tsx',
-  'src/components/custom/tariffs-admin/TariffFieldInput.tsx',
-  'src/components/custom/tariffs-admin/TariffFormActions.tsx',
-  'src/components/custom/tariffs-admin/TariffFormSkeleton.tsx',
-  'src/components/custom/tariffs-admin/TariffFormStatus.tsx',
-  'src/components/custom/tariffs-admin/TariffSectionWrapper.tsx',
-  'src/components/custom/tariffs-admin/TariffSettingsForm.tsx',
-  'src/components/custom/tariffs-admin/VersionHistoryTable.tsx',
-  'src/components/custom/tariffs-admin/VersionHistoryTableStates.tsx',
-  'src/components/custom/tariffs-admin/VersionStatusBadge.tsx',
-  'src/components/custom/tariffs-admin/tariffSettingsSchema.ts',
-  'src/components/custom/tariffs-admin/useTariffSettingsForm.ts',
-  'src/components/custom/tariffs-admin/index.ts',
-] as const
+const testDirectory = dirname(fileURLToPath(import.meta.url))
+const routeDirectory = resolve(testDirectory, '..')
+const srcRoot = resolve(routeDirectory, '..', '..', '..', '..')
+const tariffsAdminRoot = join(srcRoot, 'components', 'custom', 'tariffs-admin')
+
+/** Flat production-file discovery: relative, forward slashes, sorted. */
+function prodFilesUnder(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true })
+    .filter(entry => entry.isFile() && /\.tsx?$/.test(entry.name))
+    .filter(entry => !/\.(?:test|spec)\.[jt]sx?$/.test(entry.name))
+    .map(entry => entry.name)
+    .map(name =>
+      join(dir, name)
+        .slice(dir.length + 1)
+        .replace(/\\/g, '/')
+    )
+    .sort()
+}
 
 const LEGACY_PALETTE =
   /\b(?:text|bg|border|ring|fill|stroke|from|to|via|divide|outline|accent|caret|decoration|shadow)-(?:gray|grey|blue|green|red|amber|orange|yellow|purple|lime|rose|sky|slate|zinc|neutral|stone|indigo|violet|teal|cyan|pink|fuchsia|emerald)-(?:50|100|200|300|400|500|600|700|800|900|950)\b/
 const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
-function source(file: (typeof ROUTE_REACHABLE_PRODUCTION_FILES)[number]): string {
-  return readFileSync(resolve(process.cwd(), file), 'utf8')
-}
-
 describe('Story 173.6 tariff presentation source contracts', () => {
-  it('pins the exact route-reachable tariff production catalog', () => {
-    expect(ROUTE_REACHABLE_PRODUCTION_FILES).toHaveLength(29)
-    expect(new Set(ROUTE_REACHABLE_PRODUCTION_FILES).size).toBe(
-      ROUTE_REACHABLE_PRODUCTION_FILES.length
-    )
+  it('pins the exact route-reachable tariff production catalog (1 route + 31 admin)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove
+    // must FAIL these pins (upgrades the former toHaveLength(29) + Set-unique
+    // checks over one flat hand-maintained list).
+    expect(prodFilesUnder(routeDirectory)).toEqual(['page.tsx'])
+    expect(prodFilesUnder(tariffsAdminRoot)).toEqual([
+      'AcceptanceRatesSection.tsx',
+      'AuditActionBadge.tsx',
+      'AuditFieldFilter.tsx',
+      'AuditLogTable.tsx',
+      'AuditLogTableParts.tsx',
+      'AuditValueDisplay.tsx',
+      'CommissionRatesSection.tsx',
+      'DeleteVersionDialog.tsx',
+      'FbsSettingsSection.tsx',
+      'LogisticsRatesSection.tsx',
+      'LogisticsTierRow.tsx',
+      'LogisticsTiersEditor.tsx',
+      'RateLimitIndicator.tsx',
+      'ReturnsRatesSection.tsx',
+      'SaveConfirmDialog.tsx',
+      'ScheduleVersionForm.tsx',
+      'ScheduleVersionFormFields.tsx',
+      'ScheduleVersionModal.tsx',
+      'StorageSettingsSection.tsx',
+      'TariffFieldInput.tsx',
+      'TariffFormActions.tsx',
+      'TariffFormSkeleton.tsx',
+      'TariffFormStatus.tsx',
+      'TariffSectionWrapper.tsx',
+      'TariffSettingsForm.tsx',
+      'VersionHistoryTable.tsx',
+      'VersionHistoryTableStates.tsx',
+      'VersionStatusBadge.tsx',
+      'index.ts',
+      'tariffSettingsSchema.ts',
+      'useTariffSettingsForm.ts',
+    ])
   })
 
-  it('contains no legacy palette classes or contextual hex literals', () => {
+  it('contains no legacy palette classes or contextual hex literals (both roots)', () => {
     expect(CONTEXTUAL_HEX.test("color: '#3B82F6'")).toBe(true)
     expect(CONTEXTUAL_HEX.test('Story 173.6')).toBe(false)
 
-    for (const file of ROUTE_REACHABLE_PRODUCTION_FILES) {
-      expect(source(file), file).not.toMatch(LEGACY_PALETTE)
-      expect(source(file), file).not.toMatch(CONTEXTUAL_HEX)
+    const owned = [
+      ...prodFilesUnder(routeDirectory).map(n => join(routeDirectory, n)),
+      ...prodFilesUnder(tariffsAdminRoot).map(n => join(tariffsAdminRoot, n)),
+    ]
+    for (const file of owned) {
+      expect(readFileSync(file, 'utf8'), file).not.toMatch(LEGACY_PALETTE)
+      expect(readFileSync(file, 'utf8'), file).not.toMatch(CONTEXTUAL_HEX)
     }
   })
 
   it('uses shared page context and exposes semantic form lifecycle feedback', () => {
-    const page = source('src/app/(dashboard)/settings/tariffs/page.tsx')
-    const form = source('src/components/custom/tariffs-admin/TariffSettingsForm.tsx')
-    const formStatus = source('src/components/custom/tariffs-admin/TariffFormStatus.tsx')
-    const fields = source('src/components/custom/tariffs-admin/TariffFieldInput.tsx')
+    const page = readFileSync(join(routeDirectory, 'page.tsx'), 'utf8')
+    const form = readFileSync(join(tariffsAdminRoot, 'TariffSettingsForm.tsx'), 'utf8')
+    const formStatus = readFileSync(join(tariffsAdminRoot, 'TariffFormStatus.tsx'), 'utf8')
+    const fields = readFileSync(join(tariffsAdminRoot, 'TariffFieldInput.tsx'), 'utf8')
 
     expect(page).toMatch(/PageHeader/)
     expect(page).toMatch(/ContextBar/)

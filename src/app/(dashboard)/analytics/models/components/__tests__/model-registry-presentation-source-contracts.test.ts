@@ -37,13 +37,20 @@ const CONTEXTUAL_HEX =
 
 describe('Story 171.6 route presentation source contracts', () => {
   it('production catalog pinned (4 files, [id]/** excluded)', () => {
-    const files = productionFiles()
-    expect(files).toHaveLength(4)
-    // self-check: catalog is real
-    expect(files.some(f => f.endsWith('ModelListSection.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('model-list-helpers.ts'))).toBe(true)
-    expect(files.some(f => f.endsWith('TrainModelButton.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith(join('models', 'page.tsx')))).toBe(true)
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former toHaveLength(4) count pin).
+    // The `[id]` exclusion above is load-bearing history: the dynamic
+    // subroutes (evaluations / sku-accuracy / performance) belong to Stories
+    // 171.7-171.9 and carry their OWN guards — they must never leak in here.
+    const relative = productionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual([
+      'components/ModelListSection.tsx',
+      'components/TrainModelButton.tsx',
+      'components/model-list-helpers.ts',
+      'page.tsx',
+    ])
   })
 
   it('no legacy palette classes in any production file', () => {

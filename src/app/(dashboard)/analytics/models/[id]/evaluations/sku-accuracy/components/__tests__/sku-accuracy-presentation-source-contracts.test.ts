@@ -34,15 +34,19 @@ const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
 describe('Story 171.8 route presentation source contracts', () => {
-  it('production catalog pinned (5 files)', () => {
-    const files = productionFiles()
-    expect(files).toHaveLength(5)
-    // self-check: catalog is real
-    expect(files.some(f => f.endsWith(join('sku-accuracy', 'page.tsx')))).toBe(true)
-    expect(files.some(f => f.endsWith('SkuAccuracyDetail.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('SkuAccuracyOverview.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('SkuAccuracyTable.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('sku-accuracy-helpers.ts'))).toBe(true)
+  it('production catalog pinned (5 files, exact relative paths)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + endsWith self-checks).
+    const relative = productionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual([
+      'components/SkuAccuracyDetail.tsx',
+      'components/SkuAccuracyOverview.tsx',
+      'components/SkuAccuracyTable.tsx',
+      'components/sku-accuracy-helpers.ts',
+      'page.tsx',
+    ])
   })
 
   it('no legacy palette classes in any production file', () => {

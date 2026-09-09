@@ -26,7 +26,7 @@
  */
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
@@ -51,6 +51,9 @@ import type { AdvertisingDailyItem } from '@/types/advertising-analytics'
 const testDirectory = dirname(fileURLToPath(import.meta.url))
 const componentsDirectory = join(testDirectory, '..')
 const routeDirectory = join(componentsDirectory, '..')
+// src/ anchor (170.6 canon) — replaces the former process.cwd() join so the
+// forbidden-file existence check is cwd-independent.
+const srcRoot = resolve(routeDirectory, '..', '..', '..', '..')
 
 function withoutComments(source: string): string {
   return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
@@ -73,9 +76,80 @@ function ownedProductionFiles(): string[] {
     .sort()
 }
 
-/** Pinned post-migration count (was 62 pre-migration; +advertising-tokens,
- * +DailyTrendSrTable). Update consciously when files are added/extracted. */
-const PINNED_PRODUCTION_FILE_COUNT = 64
+/**
+ * 172.10 exact-array catalog pin (was a toHaveLength(64) count pin; was 62
+ * pre-migration, +advertising-tokens, +DailyTrendSrTable): literal = live
+ * disk enumeration of ownedProductionFiles(), relative to the route
+ * directory, forward slashes, sorted. A rename or add/remove must FAIL this
+ * pin. The `campaigns` subtree is a sibling guard's surface
+ * (campaigns/[advertId] detail — epic VC note) and is excluded above.
+ */
+const PINNED_OWNED_CATALOG = [
+  'components/AdCostDiscrepancyCard.tsx',
+  'components/AdCostDiscrepancyChart.tsx',
+  'components/AdCostDiscrepancySection.tsx',
+  'components/AdvertisingEmptyState.tsx',
+  'components/AdvertisingFilters.tsx',
+  'components/AdvertisingMainContent.tsx',
+  'components/AdvertisingPageHeader.tsx',
+  'components/AdvertisingSummaryCards.tsx',
+  'components/CampaignBadges.tsx',
+  'components/CampaignList.tsx',
+  'components/CampaignSelector.tsx',
+  'components/CampaignStatusBadge.tsx',
+  'components/CannibalizationSection.tsx',
+  'components/DailyTrendChart.tsx',
+  'components/DailyTrendLegend.tsx',
+  'components/DailyTrendSrTable.tsx',
+  'components/DailyTrendTooltip.tsx',
+  'components/EfficiencyAlertBanner.tsx',
+  'components/EfficiencyBadge.tsx',
+  'components/EfficiencyFilterDropdown.tsx',
+  'components/GroupByToggle.tsx',
+  'components/MergedGroupRows.tsx',
+  'components/MergedGroupTable.tsx',
+  'components/MergedGroupTableHeader.tsx',
+  'components/MultiCampaignWarningBadge.tsx',
+  'components/MultiCampaignWarningBanner.tsx',
+  'components/OrganicSalesRenderer.tsx',
+  'components/OverAttributionBanner.tsx',
+  'components/PerformanceMetricsTable.tsx',
+  'components/PlacementBadges.tsx',
+  'components/ProductRowBadge.tsx',
+  'components/SyncGapsTimeline.tsx',
+  'components/SyncStatusIndicator.tsx',
+  'components/ViewByToggle.tsx',
+  'components/ad-cost-discrepancy-config.ts',
+  'components/advertising-card-utils.ts',
+  'components/advertising-filter-handlers.ts',
+  'components/advertising-page-state-helpers.ts',
+  'components/advertising-tokens.ts',
+  'components/daily-trend-config.ts',
+  'components/performance-table/PerformanceMetricsTable.tsx',
+  'components/performance-table/PerformanceTableHeader.tsx',
+  'components/performance-table/PerformanceTableRow.tsx',
+  'components/performance-table/PerformanceTableSkeleton.tsx',
+  'components/performance-table/SortableHeader.tsx',
+  'components/performance-table/performance-table-columns.tsx',
+  'components/performance-table/performance-table-formatters.ts',
+  'components/performance-table/performance-table-metric-cells.tsx',
+  'components/performance-table/performance-table-tooltip-renderers.tsx',
+  'components/performance-table/performance-table.types.ts',
+  'components/sync-status-config.ts',
+  'components/useAdvertisingComparison.ts',
+  'components/useAdvertisingFilters.ts',
+  'components/useAdvertisingHandlers.ts',
+  'components/useAdvertisingPageState.ts',
+  'components/useCampaignSelectorState.ts',
+  'error.tsx',
+  'loading.tsx',
+  'page.tsx',
+  'utils/comparison-delta-utils.ts',
+  'utils/formatters.ts',
+  'utils/metrics-calculator.ts',
+  'utils/over-attribution-utils.ts',
+  'utils/sync-gaps-utils.ts',
+]
 
 /** Story 170.1 E-1: stray colocated tests live OUTSIDE __tests__/ — the guard
  * glob (and any test enumeration) must include them so they cannot silently
@@ -106,10 +180,10 @@ const RGBA_HSL = /(?:rgba?\(|hsla?\()\s*\d/
 describe('Story 170.1 route presentation source contracts', () => {
   it('ownedProductionFiles() recursively enumerates exactly the pinned owned file set', () => {
     const files = ownedProductionFiles()
-    expect(files.length).toBe(PINNED_PRODUCTION_FILE_COUNT)
-    expect(files).toContain(join(routeDirectory, 'page.tsx'))
-    expect(files).toContain(join(componentsDirectory, 'advertising-tokens.ts'))
-    expect(files).toContain(join(componentsDirectory, 'DailyTrendSrTable.tsx'))
+    // Exact relative-path equality (172.10 canon): a rename or add/remove
+    // must FAIL this pin (upgrades the former toHaveLength(64) count pin).
+    const relative = files.map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/')).sort()
+    expect(relative).toEqual(PINNED_OWNED_CATALOG)
     // Nested campaign detail route is NOT owned — must not appear.
     expect(files.some(f => f.includes('campaigns'))).toBe(false)
   })
@@ -177,9 +251,7 @@ describe('Story 170.1 route presentation source contracts', () => {
     // Forbidden surfaces still exist on disk (zero-diff, not deleted).
     expect(existsSync(join(routeDirectory, 'campaigns/[advertId]/page.tsx'))).toBe(true)
     expect(
-      existsSync(
-        join(process.cwd(), 'src/components/custom/advertising/BidRecommendationsCard.tsx')
-      )
+      existsSync(join(srcRoot, 'components', 'custom', 'advertising', 'BidRecommendationsCard.tsx'))
     ).toBe(true)
   })
 

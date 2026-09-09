@@ -1,62 +1,134 @@
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+/**
+ * Story 173.5 notification presentation source contracts.
+ *
+ * 172.10 exact-array catalog pins (Flavor C — per-root discovery vs literal):
+ * the owned surface spans THREE roots — the route dir, the order-notification
+ * slice of components/custom/settings, and components/notifications (wholly
+ * owned). Literals = live disk enumeration, relative, forward slashes,
+ * sorted. Sibling exclusions are EXPLICIT: components/custom/settings is
+ * shared with the cabinet guard (CabinetInfoCard/JamStatusBadge/
+ * SellerRatingCard/TargetMarginSettingsCard) and the tax guard (the
+ * TaxSettings family + tax-settings-* helpers). All reads anchor to
+ * import.meta.url (170.6 canon) — no process.cwd() dependence.
+ */
+import { readFileSync, readdirSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { dirname, join, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-const OWNED_PRODUCTION_FILES = [
-  'src/app/(dashboard)/settings/notifications/NotificationsDisabledPanel.tsx',
-  'src/app/(dashboard)/settings/notifications/NotificationsHeroBanner.tsx',
-  'src/app/(dashboard)/settings/notifications/page.tsx',
-  'src/components/custom/settings/OrderNotifInputs.tsx',
-  'src/components/custom/settings/OrderNotificationSettings.tsx',
-  'src/components/notifications/BindingCodeStep.tsx',
-  'src/components/notifications/EventTypeCard.tsx',
-  'src/components/notifications/LanguageRadio.tsx',
-  'src/components/notifications/NotificationPreferencesPanel.tsx',
-  'src/components/notifications/PreferencesActionBar.tsx',
-  'src/components/notifications/QuietHoursPanel.tsx',
-  'src/components/notifications/QuietHoursScheduleDisplay.tsx',
-  'src/components/notifications/QuietHoursTimePickers.tsx',
-  'src/components/notifications/TelegramBindingCard.tsx',
-  'src/components/notifications/TelegramBindingModal.tsx',
-  'src/components/notifications/TimezoneSelect.tsx',
-  'src/components/notifications/UnbindConfirmationDialog.tsx',
-  'src/components/notifications/index.ts',
-  'src/components/notifications/preferencesSaveHandler.ts',
-  'src/components/notifications/usePreferencesPanelState.ts',
-  'src/components/notifications/useQuietHoursPanel.ts',
-  'src/components/notifications/useTelegramBindingModal.helpers.ts',
-  'src/components/notifications/useTelegramBindingModal.ts',
-] as const
+const testDirectory = dirname(fileURLToPath(import.meta.url))
+const routeDirectory = resolve(testDirectory, '..')
+const srcRoot = resolve(routeDirectory, '..', '..', '..', '..')
+const settingsCustomRoot = join(srcRoot, 'components', 'custom', 'settings')
+const notificationsRoot = join(srcRoot, 'components', 'notifications')
+
+/** Flat production-file discovery: relative, forward slashes, sorted. */
+function prodFilesUnder(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true })
+    .filter(entry => entry.isFile() && /\.tsx?$/.test(entry.name))
+    .filter(entry => !/\.(?:test|spec)\.[jt]sx?$/.test(entry.name))
+    .map(entry => entry.name)
+    .map(name =>
+      join(dir, name)
+        .slice(dir.length + 1)
+        .replace(/\\/g, '/')
+    )
+    .sort()
+}
+
+/**
+ * components/custom/settings is SHARED: these 9 files belong to sibling
+ * guards (4 cabinet + 5 tax) and are excluded from this Story's discovery
+ * AND scans.
+ */
+const SIBLING_GUARD_OWNED_FILES = new Set([
+  'CabinetInfoCard.tsx',
+  'JamStatusBadge.tsx',
+  'SellerRatingCard.tsx',
+  'TargetMarginSettingsCard.tsx',
+  'TaxSettingsForm.tsx',
+  'TaxSettingsFormStates.tsx',
+  'TaxSettingsWarningDialog.tsx',
+  'tax-settings-form-model.ts',
+  'tax-settings-sections.tsx',
+])
 
 const LEGACY_PALETTE =
   /\b(?:text|bg|border|ring|fill|stroke|from|to|via|divide|outline|accent|caret|decoration|shadow)-(?:gray|grey|blue|green|red|amber|orange|yellow|purple|lime|rose|sky|slate|zinc|neutral|stone|indigo|violet|teal|cyan|pink|fuchsia|emerald)-(?:50|100|200|300|400|500|600|700|800|900|950)\b/
 const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
-function source(file: (typeof OWNED_PRODUCTION_FILES)[number]): string {
-  return readFileSync(resolve(process.cwd(), file), 'utf8')
+function routeSource(name: string): string {
+  return readFileSync(join(routeDirectory, name), 'utf8')
+}
+
+function notificationsSource(name: string): string {
+  return readFileSync(join(notificationsRoot, name), 'utf8')
 }
 
 describe('Story 173.5 notification presentation source contracts', () => {
-  it('pins the complete route-owned notification production catalog', () => {
-    expect(OWNED_PRODUCTION_FILES).toHaveLength(23)
-    expect(new Set(OWNED_PRODUCTION_FILES).size).toBe(OWNED_PRODUCTION_FILES.length)
+  it('pins the route-local catalog (3 files)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove
+    // must FAIL this pin (upgrades the former toHaveLength(23) + Set-unique
+    // checks over one flat 3-root list).
+    expect(prodFilesUnder(routeDirectory)).toEqual([
+      'NotificationsDisabledPanel.tsx',
+      'NotificationsHeroBanner.tsx',
+      'page.tsx',
+    ])
   })
 
-  it('contains no legacy palette classes or contextual hex literals', () => {
+  it('pins the order-notification slice of components/custom/settings (2 files)', () => {
+    const discovered = prodFilesUnder(settingsCustomRoot).filter(
+      name => !SIBLING_GUARD_OWNED_FILES.has(name)
+    )
+    expect(discovered).toEqual(['OrderNotifInputs.tsx', 'OrderNotificationSettings.tsx'])
+  })
+
+  it('pins the shared notification components catalog (18 files; root wholly owned)', () => {
+    expect(prodFilesUnder(notificationsRoot)).toEqual([
+      'BindingCodeStep.tsx',
+      'EventTypeCard.tsx',
+      'LanguageRadio.tsx',
+      'NotificationPreferencesPanel.tsx',
+      'PreferencesActionBar.tsx',
+      'QuietHoursPanel.tsx',
+      'QuietHoursScheduleDisplay.tsx',
+      'QuietHoursTimePickers.tsx',
+      'TelegramBindingCard.tsx',
+      'TelegramBindingModal.tsx',
+      'TimezoneSelect.tsx',
+      'UnbindConfirmationDialog.tsx',
+      'index.ts',
+      'preferencesSaveHandler.ts',
+      'usePreferencesPanelState.ts',
+      'useQuietHoursPanel.ts',
+      'useTelegramBindingModal.helpers.ts',
+      'useTelegramBindingModal.ts',
+    ])
+  })
+
+  it('contains no legacy palette classes or contextual hex literals (all 3 roots)', () => {
     expect(CONTEXTUAL_HEX.test("color: '#0088CC'")).toBe(true)
     expect(CONTEXTUAL_HEX.test('Story 173.5')).toBe(false)
 
-    for (const file of OWNED_PRODUCTION_FILES) {
-      expect(source(file), file).not.toMatch(LEGACY_PALETTE)
-      expect(source(file), file).not.toMatch(CONTEXTUAL_HEX)
+    const owned = [
+      ...prodFilesUnder(routeDirectory).map(n => join(routeDirectory, n)),
+      ...prodFilesUnder(settingsCustomRoot)
+        .filter(name => !SIBLING_GUARD_OWNED_FILES.has(name))
+        .map(n => join(settingsCustomRoot, n)),
+      ...prodFilesUnder(notificationsRoot).map(n => join(notificationsRoot, n)),
+    ]
+    for (const file of owned) {
+      expect(readFileSync(file, 'utf8'), file).not.toMatch(LEGACY_PALETTE)
+      expect(readFileSync(file, 'utf8'), file).not.toMatch(CONTEXTUAL_HEX)
     }
   })
 
   it('uses shared route compositions and registered semantic channel tokens', () => {
-    const page = source('src/app/(dashboard)/settings/notifications/page.tsx')
-    const hero = source('src/app/(dashboard)/settings/notifications/NotificationsHeroBanner.tsx')
-    const binding = source('src/components/notifications/BindingCodeStep.tsx')
+    const page = routeSource('page.tsx')
+    const hero = routeSource('NotificationsHeroBanner.tsx')
+    const binding = notificationsSource('BindingCodeStep.tsx')
 
     expect(page).toMatch(/PageHeader/)
     expect(page).toMatch(/ContextBar/)

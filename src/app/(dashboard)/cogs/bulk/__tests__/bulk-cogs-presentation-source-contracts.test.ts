@@ -3,8 +3,8 @@
  * /cogs/bulk route page + the BulkCogsForm re-export shim + the
  * bulk-cogs/** component tree; the single-COGS surface belongs to 172.5,
  * history = 172.7, price-calculator = 172.8 — excluded by construction).
- * Catalog: route page + shim pinned by path; bulk-cogs tree enumerated
- * (pinned count, per-file identity); no-palette/no-hex over the whole
+ * Catalog: route page + shim pinned by path; bulk-cogs tree pinned as an
+ * exact relative-path array (172.10 canon); no-palette/no-hex over the whole
  * catalog; valence/state pins (alerts summary tiles, selected rows,
  * form-validation destructive, preview/primary button). 169.11 regex canon;
  * anchor-safe relative-first enumeration (171.8/172.3 lessons).
@@ -47,10 +47,13 @@ const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
 describe('Story 172.6 bulk-COGS presentation source contracts', () => {
-  it('bulk-cogs tree catalog pinned (11 files + shim + route page)', () => {
+  it('bulk-cogs tree catalog pinned (11 files, exact relative paths; shim + route page by path)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + endsWith identity loop).
     const tree = bulkTreeProdFiles()
-    expect(tree).toHaveLength(11)
-    for (const name of [
+      .map(f => f.slice(bulkTree.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(tree).toEqual([
       'BulkCogsAlerts.tsx',
       'BulkCogsForm.tsx',
       'BulkCogsFormInputs.tsx',
@@ -62,12 +65,7 @@ describe('Story 172.6 bulk-COGS presentation source contracts', () => {
       'useBulkCogsSelection.ts',
       'useBulkCogsSubmit.ts',
       'useCursorPagination.ts',
-    ]) {
-      expect(
-        tree.some(f => f.endsWith(name)),
-        name
-      ).toBe(true)
-    }
+    ])
     expect(() => readFileSync(formShim, 'utf8')).not.toThrow()
     expect(() => readFileSync(routePage, 'utf8')).not.toThrow()
   })
