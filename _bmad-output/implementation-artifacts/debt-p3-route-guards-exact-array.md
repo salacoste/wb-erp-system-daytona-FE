@@ -1,6 +1,6 @@
 # Debt P3: route-гарды — унификация на exact-array (172.10 canon) (сессия-9, V19)
 
-> **Status**: done · **PR**: pending (второй коммит) · **Branch**: `debt/route-guards-exact-array` @ `18fed504` (worktree /private/tmp/route-guards)
+> **Status**: done · **PR**: [#427](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/427) · **Branch**: `debt/route-guards-exact-array` @ `18fed504` (worktree /private/tmp/route-guards)
 > **Источник**: V14 handoff §3 «~25 route-гардов унификация exact-array» + FINAL §123/181; исполнен оркестратором сессии-9 (2026-09-09)
 > **Класс**: test-assertion волны → обязательные 2 ревью-прохода (CLAUDE.md); 3 волны executor (opus/sonnet/opus)
 
