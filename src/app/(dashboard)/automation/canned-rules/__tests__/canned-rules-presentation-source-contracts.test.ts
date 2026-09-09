@@ -48,9 +48,12 @@ const CONTEXTUAL_HEX =
 
 describe('Story 172.2 canned-rules presentation source contracts', () => {
   it('production catalog pinned (1 route file; gallery widget pinned by path)', () => {
-    const files = productionFiles()
-    expect(files).toHaveLength(1)
-    expect(files.some(f => f.endsWith(join('canned-rules', 'page.tsx')))).toBe(true)
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + endsWith assertion).
+    const relative = productionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual(['page.tsx'])
   })
 
   it('no legacy palette classes in page or gallery', () => {

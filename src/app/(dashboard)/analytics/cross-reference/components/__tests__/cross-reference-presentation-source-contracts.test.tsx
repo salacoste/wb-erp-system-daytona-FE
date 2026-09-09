@@ -64,10 +64,12 @@ const CONTEXTUAL_HEX = new RegExp(
 const RGBA_HSL = /(?:rgba?\(|hsla?\()\s*\d/
 
 describe('Story 170.6 cross-reference presentation source contracts', () => {
-  it('owned production surface is exactly 14 files (pinned file count, post-deletion)', () => {
+  it('owned production surface is exactly 14 files (exact-array pin, post-deletion)', () => {
+    // OWNED_SOURCES tuples are index-referenced by the token pins below, so the
+    // list-length tie stays load-bearing; the catalog pin itself upgrades to
+    // exact relative-path equality (172.10 canon) against the REAL tree
+    // (recursive) — a rename or add/remove must FAIL this pin.
     expect(OWNED_SOURCES).toHaveLength(14)
-    // The pinned count must track the REAL tree (recursive) — catches silent
-    // additions/deletions of production files in the owned route.
     const root = resolve(TEST_DIR, '../..')
     const realFiles: string[] = []
     const walk = (dir: string) => {
@@ -78,7 +80,23 @@ describe('Story 170.6 cross-reference presentation source contracts', () => {
       }
     }
     walk(root)
-    expect(realFiles, realFiles.join(', ')).toHaveLength(14)
+    const relative = realFiles.map(f => f.slice(root.length + 1).replace(/\\/g, '/')).sort()
+    expect(relative, realFiles.join(', ')).toEqual([
+      'components/AdOrganicOverlapTable.tsx',
+      'components/CannibalizationAnalysis.tsx',
+      'components/CrossReferencePageContent.tsx',
+      'components/CrossReferenceStates.tsx',
+      'components/CrossReferenceTable.tsx',
+      'components/InsightsCards.tsx',
+      'components/OrganicVsAdScatter.tsx',
+      'components/OverlapSummaryCards.tsx',
+      'components/PositionSpendChart.tsx',
+      'components/SortButton.tsx',
+      'components/channel-styling.ts',
+      'page.tsx',
+      'utils/ad-search-correlation-utils.ts',
+      'utils/cross-reference-utils.ts',
+    ])
   })
 
   it('owned production sources contain no legacy Tailwind palette utilities', () => {

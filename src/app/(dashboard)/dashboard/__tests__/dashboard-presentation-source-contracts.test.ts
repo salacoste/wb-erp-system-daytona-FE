@@ -35,17 +35,29 @@ const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
 describe('Story 172.1 route presentation source contracts', () => {
-  it('production catalog pinned (15 files)', () => {
-    const files = productionFiles()
-    expect(files).toHaveLength(15)
-    // self-check: catalog is real
-    expect(files.some(f => f.endsWith(join('dashboard', 'page.tsx')))).toBe(true)
-    expect(files.some(f => f.endsWith('DashboardContent.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('DashboardStatusStrip.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('DashboardAlerts.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('ReportPendingBanner.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('DashboardLazyCharts.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('useDashboardData.ts'))).toBe(true)
+  it('production catalog pinned (15 files, exact relative paths)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + endsWith self-checks).
+    const relative = productionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual([
+      'components/AnalyticalDisclosure.tsx',
+      'components/DashboardAlerts.tsx',
+      'components/DashboardContent.tsx',
+      'components/DashboardLazyCharts.tsx',
+      'components/DashboardSkeleton.tsx',
+      'components/DashboardStatusBanners.tsx',
+      'components/DashboardStatusStrip.tsx',
+      'components/ReportPendingBanner.tsx',
+      'components/StorageSection.tsx',
+      'components/UnitEconomicsSection.tsx',
+      'components/dashboard-status.ts',
+      'components/dashboardGridProps.ts',
+      'components/useDashboardData.helpers.ts',
+      'components/useDashboardData.ts',
+      'page.tsx',
+    ])
   })
 
   it('no legacy palette classes in any production file', () => {

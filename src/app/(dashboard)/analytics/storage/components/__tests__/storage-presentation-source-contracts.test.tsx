@@ -67,14 +67,6 @@ function productionFiles(): string[] {
     .sort()
 }
 
-/**
- * Pinned post-migration count (Story 169.12): 26 legacy production files,
- * minus dead ProductNameCell.tsx, plus storage-format.ts and
- * StorageTrendSrTable.tsx = 27. Update consciously when files are
- * added/extracted/deleted.
- */
-const PINNED_PRODUCTION_FILE_COUNT = 27
-
 // Story 169.11 regex canon (letter-lookahead #197-exempt): a hex literal must
 // be quoted or in a Tailwind arbitrary-value bracket.
 const CONTEXTUAL_HEX =
@@ -89,15 +81,47 @@ const CONTEXTUAL_FUNC_COLOR = /['"\x60]\s*(?:rgba?|hsla?)\(/
 
 describe('Story 169.12 route presentation source contracts', () => {
   it('productionFiles() recursively enumerates exactly the pinned owned file set', () => {
-    const files = productionFiles()
-    expect(files.length).toBe(PINNED_PRODUCTION_FILE_COUNT)
-    expect(files).toContain(join(routeDirectory, 'page.tsx'))
-    expect(files).toContain(join(routeDirectory, 'loading.tsx'))
-    expect(files).toContain(join(componentsDirectory, 'storage-format.ts'))
-    expect(files).toContain(join(componentsDirectory, 'StorageTrendSrTable.tsx'))
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + contains assertions). Catalog
+    // derivation (Story 169.12): 26 legacy production files, minus dead
+    // ProductNameCell.tsx, plus storage-format.ts and StorageTrendSrTable.tsx
+    // = 27.
+    const relative = productionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual([
+      'components/PaidStorageImportDialog.tsx',
+      'components/PaidStorageImportStatus.tsx',
+      'components/StorageAlertBanner.tsx',
+      'components/StorageBySkuTable.tsx',
+      'components/StorageFilters.tsx',
+      'components/StoragePageContent.tsx',
+      'components/StoragePageHeader.tsx',
+      'components/StoragePageTableSection.tsx',
+      'components/StorageSkuTableHeader.tsx',
+      'components/StorageSummaryCards.tsx',
+      'components/StorageTrendSrTable.tsx',
+      'components/StorageTrendsChart.tsx',
+      'components/StorageTrendsChartParts.tsx',
+      'components/TopConsumersHelpers.tsx',
+      'components/TopConsumersWidget.tsx',
+      'components/WarehouseBadges.tsx',
+      'components/WeekFilterBadge.tsx',
+      'components/storage-format.ts',
+      'components/storage-import-utils.ts',
+      'components/storage-sku-table-utils.ts',
+      'components/storage-trends-config.ts',
+      'components/useStorageBySkuTable.ts',
+      'components/useStorageImport.ts',
+      'components/useStoragePageState.ts',
+      'components/useStorageUrlSync.ts',
+      'loading.tsx',
+      'page.tsx',
+    ])
     // Dead code removed (Story 169.12)
-    expect(files.some(f => f.endsWith('ProductNameCell.tsx'))).toBe(false)
-    expect(files.some(f => f.includes('__tests__') || /\.(?:test|spec)\./.test(f))).toBe(false)
+    expect(relative.some(f => f.endsWith('ProductNameCell.tsx'))).toBe(false)
+    // Anchor-safe negative (relative paths cannot collide with a worktree name).
+    expect(relative.every(f => !f.includes('__tests__') && !/\.(?:test|spec)\./.test(f))).toBe(true)
   })
 
   it('owned production sources contain no legacy Tailwind palette utilities', () => {

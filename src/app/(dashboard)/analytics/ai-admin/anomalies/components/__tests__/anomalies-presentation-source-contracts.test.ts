@@ -36,9 +36,6 @@ function productionFiles(): string[] {
     .sort()
 }
 
-/** Pinned owned set (Story 171.1): 4 production files, route born clean. */
-const PINNED_PRODUCTION_FILE_COUNT = 4
-
 // Story 169.11 regex canon (letter-lookahead #197-exempt)
 const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
@@ -50,13 +47,19 @@ const CONTEXTUAL_FUNC_COLOR = /['"\x60]\s*(?:rgba?|hsla?)\(/
 
 describe('Story 171.1 route presentation source contracts', () => {
   it('productionFiles() recursively enumerates exactly the pinned owned file set', () => {
-    const files = productionFiles()
-    expect(files.length).toBe(PINNED_PRODUCTION_FILE_COUNT)
-    expect(files).toContain(join(routeDirectory, 'page.tsx'))
-    expect(files).toContain(join(componentsDirectory, 'AnomaliesList.tsx'))
-    expect(files).toContain(join(componentsDirectory, 'ResolveAnomalyDialog.tsx'))
-    expect(files).toContain(join(componentsDirectory, 'anomalies-helpers.ts'))
-    expect(files.some(f => f.includes('__tests__') || /\.(?:test|spec)\./.test(f))).toBe(false)
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + contains assertions).
+    const relative = productionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual([
+      'components/AnomaliesList.tsx',
+      'components/ResolveAnomalyDialog.tsx',
+      'components/anomalies-helpers.ts',
+      'page.tsx',
+    ])
+    // Anchor-safe negative (relative paths cannot collide with a worktree name).
+    expect(relative.every(f => !f.includes('__tests__') && !/\.(?:test|spec)\./.test(f))).toBe(true)
   })
 
   it('owned production sources contain no legacy Tailwind palette utilities', () => {

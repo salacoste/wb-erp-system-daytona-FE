@@ -73,9 +73,6 @@ function productionFiles(): string[] {
     .sort()
 }
 
-/** Pinned post-extraction count — update consciously when files are added/extracted (F4). */
-const PINNED_PRODUCTION_FILE_COUNT = 14
-
 // Story 169.11 contextual hex guard: a hex literal must be quoted or in a
 // Tailwind arbitrary-value bracket — catches '#333', '#000', '#000000', and
 // bg-[#1A2B3C] while ignoring ticket prose such as "запрос #197" (no quote or
@@ -85,13 +82,30 @@ const CONTEXTUAL_HEX =
 
 describe('Story 169.11 route presentation source contracts', () => {
   it('productionFiles() recursively enumerates exactly the pinned owned file set (round-1 review F4)', () => {
-    const files = productionFiles()
-    // Pinned count — update consciously when files are added/extracted.
-    expect(files.length).toBe(PINNED_PRODUCTION_FILE_COUNT)
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + contains assertions).
+    const relative = productionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
     // page.tsx + the extracted sr-table are both present; no test files leak in.
-    expect(files).toContain(join(routeDirectory, 'page.tsx'))
-    expect(files).toContain(join(componentsDirectory, 'ReturnTrendSrTable.tsx'))
-    expect(files.some(f => f.includes('__tests__') || /\.(?:test|spec)\./.test(f))).toBe(false)
+    expect(relative).toEqual([
+      'components/DeltaIndicator.tsx',
+      'components/ReturnReasonsChartParts.tsx',
+      'components/ReturnReasonsPieChart.tsx',
+      'components/ReturnTrendChart.tsx',
+      'components/ReturnTrendChartTooltip.tsx',
+      'components/ReturnTrendSrTable.tsx',
+      'components/ReturnsPageContent.tsx',
+      'components/ReturnsSummaryCards.tsx',
+      'components/ReturnsTable.tsx',
+      'components/ReturnsTableHelpers.tsx',
+      'components/ReturnsTableRow.tsx',
+      'components/returns-comparison-utils.ts',
+      'components/returns-daily-trend-config.ts',
+      'page.tsx',
+    ])
+    // Anchor-safe negative (relative paths cannot collide with a worktree name).
+    expect(relative.every(f => !f.includes('__tests__') && !/\.(?:test|spec)\./.test(f))).toBe(true)
   })
 
   it('owned production sources contain no legacy Tailwind palette utilities', () => {

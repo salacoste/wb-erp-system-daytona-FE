@@ -43,7 +43,35 @@ const sources = productionFiles()
 
 describe('Story 169.13 supply-planning presentation source contracts', () => {
   it('production surface is pinned (page + components, no silent growth)', () => {
-    expect(sources.length).toBe(24)
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count-only assertion).
+    const relative = sources.map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/')).sort()
+    expect(relative).toEqual([
+      'components/SupplyDetailCostAnalysis.tsx',
+      'components/SupplyDetailLeftColumn.tsx',
+      'components/SupplyDetailRightColumn.tsx',
+      'components/SupplyDetailTrendSection.tsx',
+      'components/SupplyMetricsBar.tsx',
+      'components/SupplyPlanningDetail.tsx',
+      'components/SupplyPlanningEmpty.tsx',
+      'components/SupplyPlanningHeader.tsx',
+      'components/SupplyPlanningLoading.tsx',
+      'components/SupplyPlanningRow.tsx',
+      'components/SupplyPlanningRowCells.tsx',
+      'components/SupplyPlanningRowCellsA.tsx',
+      'components/SupplyPlanningTable.tsx',
+      'components/SupplyRiskCards.tsx',
+      'components/SupplyTableHeader.tsx',
+      'components/SupplyTablePagination.tsx',
+      'components/supply-detail-calculations.ts',
+      'components/supply-planning-row-constants.ts',
+      'components/supply-risk-card-styles.ts',
+      'components/supply-risk-tokens.ts',
+      'components/supply-table-export.ts',
+      'components/useSupplyTableFilters.ts',
+      'components/useSupplyTablePagination.ts',
+      'page.tsx',
+    ])
   })
 
   it('owned production sources contain no legacy Tailwind palette utilities', () => {

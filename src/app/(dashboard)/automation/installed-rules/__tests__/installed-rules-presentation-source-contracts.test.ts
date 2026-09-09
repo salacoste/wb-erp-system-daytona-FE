@@ -55,10 +55,12 @@ const CONTEXTUAL_HEX =
 
 describe('Story 172.3 installed-rules-list presentation source contracts', () => {
   it('route catalog pinned (2 list files; editor tree excluded — owned by 172.4)', () => {
-    const files = routeProductionFiles()
-    expect(files).toHaveLength(2)
-    expect(files.some(f => f.endsWith('InstalledRulesPageContent.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith(join('installed-rules', 'page.tsx')))).toBe(true)
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + endsWith assertions).
+    const relative = routeProductionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual(['InstalledRulesPageContent.tsx', 'page.tsx'])
   })
 
   it('no legacy palette classes in route files or list widgets', () => {

@@ -36,24 +36,24 @@ const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
 describe('Story 172.4 installed-rule-editor presentation source contracts', () => {
-  it('production catalog pinned (7 editor files + [id] shell)', () => {
-    const files = productionFiles()
-    expect(files).toHaveLength(8)
-    for (const name of [
-      'InstalledRuleEditor.tsx',
-      'EditorFields.tsx',
-      'UnsavedChangesGuard.tsx',
-      'WritebackSafetyAcknowledgement.tsx',
-      'editor-states.tsx',
-      'validation.ts',
-      'form-controls.tsx',
-    ]) {
-      expect(
-        files.some(f => f.endsWith(name)),
-        name
-      ).toBe(true)
-    }
-    expect(files.some(f => f.endsWith(join('[id]', 'page.tsx')))).toBe(true)
+  it('production catalog pinned (7 editor files + [id] shell, exact relative paths)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + endsWith identity loop).
+    // Paths are relative to the installed-rules route dir so both discovery
+    // roots (editor/ tree + [id] shell) share one literal.
+    const relative = productionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual([
+      '[id]/page.tsx',
+      'editor/EditorFields.tsx',
+      'editor/InstalledRuleEditor.tsx',
+      'editor/UnsavedChangesGuard.tsx',
+      'editor/WritebackSafetyAcknowledgement.tsx',
+      'editor/editor-states.tsx',
+      'editor/form-controls.tsx',
+      'editor/validation.ts',
+    ])
   })
 
   it('no legacy palette classes in any production file', () => {

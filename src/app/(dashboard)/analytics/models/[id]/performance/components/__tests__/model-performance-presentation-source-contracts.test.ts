@@ -35,15 +35,19 @@ const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
 describe('Story 171.9 route presentation source contracts', () => {
-  it('production catalog pinned (5 files)', () => {
-    const files = productionFiles()
-    expect(files).toHaveLength(5)
-    // self-check: catalog is real
-    expect(files.some(f => f.endsWith(join('performance', 'page.tsx')))).toBe(true)
-    expect(files.some(f => f.endsWith('ModelPerformanceDetail.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('MapeTrendChart.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('EvaluationHistoryTable.tsx'))).toBe(true)
-    expect(files.some(f => f.endsWith('model-performance-helpers.ts'))).toBe(true)
+  it('production catalog pinned (5 files, exact relative paths)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + endsWith self-checks).
+    const relative = productionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual([
+      'components/EvaluationHistoryTable.tsx',
+      'components/MapeTrendChart.tsx',
+      'components/ModelPerformanceDetail.tsx',
+      'components/model-performance-helpers.ts',
+      'page.tsx',
+    ])
   })
 
   it('no legacy palette classes in any production file', () => {

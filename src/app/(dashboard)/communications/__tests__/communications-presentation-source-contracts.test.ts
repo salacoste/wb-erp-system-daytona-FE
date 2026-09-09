@@ -41,34 +41,32 @@ function component(name: string): string {
 }
 
 describe('Story 172.9 communications presentation source contracts', () => {
-  it('catalog pinned (18 route files, per-file identity)', () => {
-    const route = routeProdFiles()
-    expect(route).toHaveLength(18)
-    for (const name of [
+  it('catalog pinned (18 route files, exact relative paths)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove must
+    // FAIL this pin (upgrades the former count + endsWith identity loop).
+    const relative = routeProdFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual([
+      'components/ChatComposer.tsx',
+      'components/ChatMessages.tsx',
+      'components/ChatsSection.tsx',
+      'components/ClaimsSection.tsx',
+      'components/ConfirmAction.tsx',
+      'components/FeedbackRow.tsx',
+      'components/FeedbackWriteControls.tsx',
+      'components/FeedbacksSection.tsx',
+      'components/PinnedReviewsSection.tsx',
+      'components/PinnedWriteControls.tsx',
+      'components/QuestionRow.tsx',
+      'components/QuestionWriteControls.tsx',
+      'components/QuestionsSection.tsx',
+      'components/ReplyForm.tsx',
+      'components/SectionState.tsx',
+      'components/UnreadBadge.tsx',
+      'components/WritebackStatus.tsx',
       'page.tsx',
-      'ChatComposer.tsx',
-      'ChatMessages.tsx',
-      'ChatsSection.tsx',
-      'ClaimsSection.tsx',
-      'ConfirmAction.tsx',
-      'FeedbackRow.tsx',
-      'FeedbacksSection.tsx',
-      'FeedbackWriteControls.tsx',
-      'PinnedReviewsSection.tsx',
-      'PinnedWriteControls.tsx',
-      'QuestionRow.tsx',
-      'QuestionsSection.tsx',
-      'QuestionWriteControls.tsx',
-      'ReplyForm.tsx',
-      'SectionState.tsx',
-      'UnreadBadge.tsx',
-      'WritebackStatus.tsx',
-    ]) {
-      expect(
-        route.some(f => f.endsWith(name)),
-        name
-      ).toBe(true)
-    }
+    ])
   })
 
   it('no legacy palette classes in any production file', () => {

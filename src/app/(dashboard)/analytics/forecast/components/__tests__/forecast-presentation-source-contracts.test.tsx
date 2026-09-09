@@ -65,7 +65,11 @@ const TABLE = () => withoutComments(OWNED_SOURCES[4][1])
 const SR_TABLE = () => withoutComments(OWNED_SOURCES[2][1])
 
 describe('Story 171.4 forecast presentation source contracts', () => {
-  it('owned production surface is exactly 18 files (pinned, post-migration incl. sr-table)', () => {
+  it('owned production surface is exactly 18 files (exact-array pin, post-migration incl. sr-table)', () => {
+    // OWNED_SOURCES tuples are index-referenced by the token pins below, so the
+    // list-length tie stays load-bearing; the catalog pin itself upgrades to
+    // exact relative-path equality (172.10 canon) against the REAL tree
+    // (recursive) — a rename or add/remove must FAIL this pin.
     expect(OWNED_SOURCES).toHaveLength(18)
     const root = resolve(TEST_DIR, '../..')
     const realFiles: string[] = []
@@ -77,7 +81,27 @@ describe('Story 171.4 forecast presentation source contracts', () => {
       }
     }
     walk(root)
-    expect(realFiles, realFiles.join(', ')).toHaveLength(18)
+    const relative = realFiles.map(f => f.slice(root.length + 1).replace(/\\/g, '/')).sort()
+    expect(relative, realFiles.join(', ')).toEqual([
+      'components/AiEngineStatusBadge.tsx',
+      'components/AiPreferencesToggle.tsx',
+      'components/CollectingProgressTracker.tsx',
+      'components/ForecastChart.tsx',
+      'components/ForecastChartSrTable.tsx',
+      'components/ForecastMetrics.tsx',
+      'components/ForecastPageContent.tsx',
+      'components/ForecastPageHeader.tsx',
+      'components/ForecastParamsCard.tsx',
+      'components/ForecastReadyStates.tsx',
+      'components/ForecastTable.tsx',
+      'components/ModelTypeSelector.tsx',
+      'components/SneakPreviewSection.tsx',
+      'components/TopSkusTable.tsx',
+      'components/forecast-chart-helpers.ts',
+      'components/forecast-query-helpers.ts',
+      'components/readiness-router.ts',
+      'page.tsx',
+    ])
   })
 
   it('owned production sources contain no legacy Tailwind palette utilities', () => {
