@@ -2,13 +2,14 @@
  * Story 172.5 micro-guards — single-product COGS management (owned surface:
  * the /cogs route page + the ProductList-family, SingleCogs and Cogs custom
  * components; bulk route = 172.6, history = 172.7, price-calculator = 172.8).
- * Pinned root-file catalog + full no-palette/no-hex scans over the pinned
+ * 172.10 exact-array catalog pins (root family + per-subdir literals, disk
+ * discovery vs literal) + full no-palette/no-hex scans over the pinned
  * files and the single-cogs/product-margin-cell/products trees; valence and
  * state-token pins. 169.11 regex canon (contextual, prose-exempt hex);
  * anchor-safe relative-first enumeration (171.8/172.3 lessons:
  * separator-anchored exclusions, per-file catalog identity).
  */
-import { readFileSync, readdirSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
@@ -32,40 +33,91 @@ function prodFilesUnder(dir: string): string[] {
   )
 }
 
-/** Owned root-level custom files (single-COGS family; pinned identity). */
-const pinnedRootFiles = [
+/**
+ * components/custom/ is SHARED with sibling guards (bulk = 172.6, history =
+ * 172.7, price-calculator = 172.8, margin tables, dashboard widgets), so the
+ * single-COGS family root surface is scoped by name prefixes: on today's disk
+ * these prefixes match exactly the pinned root catalog — a NEW family file
+ * matching any prefix fails the pin; non-matching files belong to siblings.
+ */
+const SINGLE_COGS_FAMILY_PREFIXES = [
+  'Product',
+  'SingleCogs',
+  'CogsEdit',
+  'CogsDelete',
+  'CogsCoverage',
+  'CogsMissing',
+  'HistoricalMargin',
+  'MarginCalculationStatus',
+  'ResizableTableHead',
+  'useProductList',
+  'cogs-',
+]
+
+/** Owned root-level custom files (single-COGS family; 172.10 exact pin). */
+const ROOT_CATALOG = [
+  'CogsCoverageMetricCard.tsx',
+  'CogsDeleteDialog.tsx',
+  'CogsEditDialog.tsx',
+  // Review pass-1 addition: CogsMissingState is dead code today
+  // (MetricCardEnhanced ← ProductCountMetricCard has zero importers) but is
+  // pinned to prevent palette regression if re-wired.
+  'CogsMissingState.tsx',
+  // Review pass-1 addition: HistoricalMarginContext renders transitively on
+  // the /cogs surface (margin cell → NO_SALES_DATA branch).
+  'HistoricalMarginContext.tsx',
+  // Review pass-2 addition (transitive-audit finding): renders LIVE on /cogs
+  // — the polling status (SingleCogsFormStatus polling branch).
+  'MarginCalculationStatus.tsx',
+  'ProductCountMetricCard.tsx',
+  'ProductEmptyState.tsx',
   'ProductList.tsx',
   'ProductListStates.tsx',
   'ProductListTableHeader.tsx',
+  'ProductLoadingSkeleton.tsx',
+  'ProductMarginCell.tsx',
+  'ProductPagination.tsx',
   'ProductSearchFilter.tsx',
   'ProductTableRow.tsx',
-  'ProductCountMetricCard.tsx',
-  'ProductEmptyState.tsx',
-  'ProductLoadingSkeleton.tsx',
-  'ProductPagination.tsx',
-  'ProductMarginCell.tsx',
-  'SingleCogsForm.tsx',
-  'CogsEditDialog.tsx',
-  'CogsDeleteDialog.tsx',
-  'CogsCoverageMetricCard.tsx',
-  // Review pass-1 additions: HistoricalMarginContext renders transitively on
-  // the /cogs surface (margin cell → NO_SALES_DATA branch). CogsMissingState
-  // is dead code today (MetricCardEnhanced ← ProductCountMetricCard has zero
-  // importers) but is pinned to prevent palette regression if re-wired.
-  'CogsMissingState.tsx',
-  'HistoricalMarginContext.tsx',
-  // Review pass-2 additions (transitive-audit findings): both render LIVE on
-  // /cogs — the polling status (SingleCogsFormStatus polling branch) and the
-  // resize grip on every product-table column header. useProductListHandlers
-  // is in the live closure (clean today, pinned against drift).
-  'MarginCalculationStatus.tsx',
+  // Review pass-2 addition (transitive-audit finding): the resize grip on
+  // every product-table column header.
   'ResizableTableHead.tsx',
-  'useProductListHandlers.ts',
-  'cogs-missing-state-config.ts',
+  'SingleCogsForm.tsx',
   'cogs-edit-helpers.ts',
-].map(f => join(customRoot, f))
+  'cogs-missing-state-config.ts',
+  // Review pass-2 addition: in the live closure (clean today, pinned against
+  // drift).
+  'useProductListHandlers.ts',
+]
+
+const pinnedRootFiles = ROOT_CATALOG.map(f => join(customRoot, f))
 
 const routePage = join(routeDirectory, 'page.tsx')
+
+/** Per-subdir owned catalogs (172.10 exact pins; discovery helpers kept). */
+const SUBDIR_CATALOGS: Array<{ dir: string; files: string[] }> = [
+  {
+    dir: 'single-cogs',
+    files: [
+      'FutureDateWarning.tsx',
+      'ProductInfoCard.tsx',
+      'SingleCogsFormActions.tsx',
+      'SingleCogsFormFields.tsx',
+      'SingleCogsFormStatus.tsx',
+      'form-helpers.ts',
+    ],
+  },
+  {
+    dir: 'product-margin-cell',
+    files: [
+      'COGSNotAssignedContext.tsx',
+      'CalculationInProgressDisplay.tsx',
+      'MissingDataReasonDisplay.tsx',
+      'product-margin-utils.ts',
+    ],
+  },
+  { dir: 'products', files: ['BrandSubjectFilter.tsx'] },
+]
 
 function productionFiles(): string[] {
   return [
@@ -83,10 +135,32 @@ const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
 describe('Story 172.5 single-COGS presentation source contracts', () => {
-  it('pinned root-file catalog exists (21 custom files + the /cogs page)', () => {
-    for (const f of [...pinnedRootFiles, routePage]) {
-      expect(() => readFileSync(f, 'utf8'), f).not.toThrow()
-    }
+  it('root catalog pinned (21 single-COGS family files + the /cogs page)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove
+    // must FAIL this pin (upgrades the former existence-only assertion).
+    const expected = [...ROOT_CATALOG].sort()
+    const discovered = readdirSync(customRoot, { withFileTypes: true })
+      .filter(entry => entry.isFile() && /\.tsx?$/.test(entry.name))
+      .filter(entry => !/\.(?:test|spec)\.[jt]sx?$/.test(entry.name))
+      .map(entry => entry.name)
+      .filter(name => SINGLE_COGS_FAMILY_PREFIXES.some(prefix => name.startsWith(prefix)))
+      .map(name =>
+        join(customRoot, name)
+          .slice(customRoot.length + 1)
+          .replace(/\\/g, '/')
+      )
+      .sort()
+    expect(discovered).toEqual(expected)
+    expect(existsSync(routePage), 'src/app/(dashboard)/cogs/page.tsx').toBe(true)
+  })
+
+  it.each(SUBDIR_CATALOGS)('$dir/ catalog pinned (per-file identity)', ({ dir, files }) => {
+    // Exact relative-path equality (172.10 canon) per dynamic subdir.
+    const subdir = join(customRoot, dir)
+    const relative = prodFilesUnder(subdir)
+      .map(f => f.slice(subdir.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual([...files].sort())
   })
 
   it('no legacy palette classes in any production file', () => {

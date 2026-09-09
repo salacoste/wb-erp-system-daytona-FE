@@ -13,13 +13,37 @@ function withoutComments(source: string): string {
 }
 
 function productionFiles(): string[] {
-  const componentFiles = readdirSync(componentsDirectory)
-    .filter(file => /\.(?:ts|tsx)$/.test(file))
-    .map(file => join(componentsDirectory, file))
-  return [join(routeDirectory, 'page.tsx'), ...componentFiles]
+  return (
+    readdirSync(routeDirectory, { recursive: true })
+      .map(f => f as string)
+      // Anchor-safe (171.8/172.3): filter RELATIVE entries BEFORE join;
+      // separator-anchored test-dir exclusion (nested included).
+      .filter(f => !f.startsWith('__tests__/') && !f.includes('/__tests__/'))
+      .filter(f => !/\.(?:test|spec)\./.test(f))
+      .filter(f => /\.(?:ts|tsx)$/.test(f))
+      .map(f => join(routeDirectory, f))
+      .sort()
+  )
 }
 
 describe('Story 169.9 route presentation source contracts', () => {
+  it('catalog pinned (6 route files, per-file identity)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove
+    // must FAIL this pin.
+    const expected = [
+      'components/GapAnalysisDialog.tsx',
+      'components/GapsPageContent.tsx',
+      'components/GapsSummaryCards.tsx',
+      'components/GapsTable.tsx',
+      'components/useGapsPageState.ts',
+      'page.tsx',
+    ]
+    const relative = productionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual(expected)
+  })
+
   it('owned production sources contain no legacy Tailwind palette utilities', () => {
     const legacyPalette =
       /\b(?:text|bg|border|ring|fill|stroke)-(?:gray|blue|green|red|amber|orange|indigo|teal|emerald|purple|yellow)-\d{2,3}\b/

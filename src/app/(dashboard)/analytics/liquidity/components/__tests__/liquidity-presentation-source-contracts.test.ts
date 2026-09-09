@@ -12,15 +12,55 @@ function withoutComments(source: string): string {
   return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
 }
 
-/** Flat catalog: every production .ts/.tsx directly under components/ + page.tsx. */
+/** Canon catalog: route-tree recursive production .ts/.tsx, tests excluded. */
 function productionFiles(): string[] {
-  const componentFiles = readdirSync(componentsDirectory)
-    .filter(file => /\.(?:ts|tsx)$/.test(file))
-    .map(file => join(componentsDirectory, file))
-  return [join(routeDirectory, 'page.tsx'), ...componentFiles]
+  return (
+    readdirSync(routeDirectory, { recursive: true })
+      .map(f => f as string)
+      // Anchor-safe (171.8/172.3): filter RELATIVE entries BEFORE join;
+      // separator-anchored test-dir exclusion (nested included).
+      .filter(f => !f.startsWith('__tests__/') && !f.includes('/__tests__/'))
+      .filter(f => !/\.(?:test|spec)\./.test(f))
+      .filter(f => /\.(?:ts|tsx)$/.test(f))
+      .map(f => join(routeDirectory, f))
+      .sort()
+  )
 }
 
 describe('Story 169.10 route presentation source contracts', () => {
+  it('catalog pinned (22 route files, per-file identity)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove
+    // must FAIL this pin.
+    const expected = [
+      'components/LiquidationPlannerModal.tsx',
+      'components/LiquidationScenarioCard.tsx',
+      'components/LiquidityBenchmarks.tsx',
+      'components/LiquidityDistributionCards.tsx',
+      'components/LiquidityDistributionChart.tsx',
+      'components/LiquidityDistributionSummary.tsx',
+      'components/LiquidityDistributionTrendChart.tsx',
+      'components/LiquidityEmpty.tsx',
+      'components/LiquidityExpandedRow.tsx',
+      'components/LiquidityHeader.tsx',
+      'components/LiquidityLoading.tsx',
+      'components/LiquiditySummaryBar.tsx',
+      'components/LiquidityTable.tsx',
+      'components/LiquidityTableHeader.tsx',
+      'components/LiquidityTableRowCells.tsx',
+      'components/LiquidityTrendChart.tsx',
+      'components/LiquidityTrendSummary.tsx',
+      'components/LiquidityTrendTooltip.tsx',
+      'components/LiquidityTrendsSection.tsx',
+      'components/liquidity-category-tokens.ts',
+      'components/liquidity-trend-config.ts',
+      'page.tsx',
+    ]
+    const relative = productionFiles()
+      .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
+      .sort()
+    expect(relative).toEqual(expected)
+  })
+
   it('owned production sources contain no legacy Tailwind palette utilities', () => {
     const legacyPalette =
       /\b(?:text|bg|border|ring|fill|stroke)-(?:gray|blue|green|red|amber|orange|indigo|teal|emerald|purple|yellow|lime|rose|sky|slate|zinc|neutral|stone)-\d{2,3}\b/

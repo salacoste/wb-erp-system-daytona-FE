@@ -9,7 +9,7 @@
  * Also pins structural chart contracts that the recharts mock cannot express:
  * share-axis domain [0, 100] and rating-axis integer ticks.
  */
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
@@ -62,6 +62,60 @@ describe('brand-share owned files: no hex, no Tailwind palette classes', () => {
     const source = withoutComments(readFileSync(file, 'utf-8'))
     expect(HEX_RE.test(source), `hex found in ${file}`).toBe(false)
     expect(PALETTE_RE.test(source), `palette class found in ${file}`).toBe(false)
+  })
+})
+
+describe('brand-share catalog pin (172.10 exact-array, per-root)', () => {
+  /**
+   * components/custom/analytics is shared: the FBS-trends / shared chart-frame
+   * surface owns these files, so the brand-share disk discovery excludes them.
+   * `period-presets/` is a directory (dropped by the isFile filter).
+   */
+  const SIBLING_SURFACE_FILES = new Set([
+    'DataSourceIndicator.tsx',
+    'FbsTrendsChart.tsx',
+    'FbsTrendsChartStates.tsx',
+    'FbsTrendsLegend.tsx',
+    'FbsTrendsTooltip.tsx',
+    'ResponsiveChartFrame.tsx',
+  ])
+
+  /** Flat production-file discovery: relative, forward slashes, sorted. */
+  function prodFilesUnder(dir: string): string[] {
+    return readdirSync(dir, { withFileTypes: true })
+      .filter(entry => entry.isFile() && /\.tsx?$/.test(entry.name))
+      .filter(entry => !/\.(?:test|spec)\.[jt]sx?$/.test(entry.name))
+      .map(entry => entry.name)
+      .map(name =>
+        join(dir, name)
+          .slice(dir.length + 1)
+          .replace(/\\/g, '/')
+      )
+      .sort()
+  }
+
+  it('pins the analytics-directory brand-share catalog (8 files)', () => {
+    // Exact relative-path equality (172.10 canon): a rename or add/remove
+    // must FAIL this pin (upgrades the former un-compared OWNED_FILES list).
+    const expected = [
+      'BrandShareChart.tsx',
+      'BrandShareDateRangeFilter.tsx',
+      'BrandShareTooltip.tsx',
+      'BrandShareView.tsx',
+      'brand-share-chart-config.ts',
+      'brand-share-sr-table.tsx',
+      'brand-share-view-helpers.ts',
+      'brand-share-view-types.ts',
+    ]
+    const discovered = prodFilesUnder(analyticsDirectory).filter(
+      name => !SIBLING_SURFACE_FILES.has(name)
+    )
+    expect(discovered).toEqual(expected)
+  })
+
+  it('pins the brand-share route directory (1 file)', () => {
+    const routeDirectory = join(srcRoot, 'app', '(dashboard)', 'analytics', 'brand-share')
+    expect(prodFilesUnder(routeDirectory)).toEqual(['page.tsx'])
   })
 })
 
