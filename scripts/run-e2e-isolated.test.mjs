@@ -632,6 +632,468 @@ test('runIsolatedE2E records devSpawnError, still tears down, and exits non-zero
   assert.ok(stderr.join('\n').length > 0, 'readiness failure is reported')
 })
 
+test('runIsolatedE2E fast-fails readiness on a dev spawn error instead of burning the timeout (M3)', async () => {
+  const calls = []
+  let pm2Stopped = false
+  let pm2Restarted = false
+  const sh = (command, args = []) => {
+    calls.push([command, ...args].join(' '))
+    if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
+    if (command === 'pm2' && args[0] === 'jlist') {
+      return {
+        status: 0,
+        stdout: JSON.stringify([
+          { name: PM2_PROC_NAME, pid: 80620, pm2_env: { status: 'online' } },
+        ]),
+      }
+    }
+    if (command === 'lsof') {
+      return { status: 0, stdout: pm2Stopped && !pm2Restarted ? '' : '80725\n' }
+    }
+    if (command === 'ps') {
+      return { status: 0, stdout: ' 80620     1\n 80724  80620\n 80725  80724\n' }
+    }
+    if (command === 'pm2' && args[0] === 'stop') {
+      pm2Stopped = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'pm2' && args[0] === 'restart') {
+      pm2Restarted = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'git' && args[1] === 'remove') {
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    return { status: 0, stdout: '', stderr: '' }
+  }
+  const stdout = []
+  const stderr = []
+  const startedAtMs = Date.now()
+  const result = await runIsolatedE2E({
+    // 30s readiness budget: the spawn error must cut the poll off long before
+    // it elapses — measured below with Date.now(), not assumed.
+    argv: ['--ready-timeout-seconds', '30'],
+    sh,
+    spawnDev: (command, args) => {
+      calls.push(`spawnDev:${command} ${args.join(' ')}`)
+      return {
+        pid: 4242,
+        unref() {},
+        on(event, callback) {
+          if (event === 'error') callback(new Error('spawn npx ENOENT'))
+        },
+      }
+    },
+    probeUrl: async () => (pm2Restarted ? 200 : null),
+    waitMs: async () => {},
+    killGroup: pid => calls.push(`kill:${pid}`),
+    openLog: () => 3,
+    // Fake filesystem: env files exist; the fake worktree path NEVER does.
+    // buildPlan's exists(worktreeDir) must be false pre-run, and after a
+    // successful removal it stays false, so executeTeardown's !exists holds.
+    exists: target => {
+      if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
+      return !target.startsWith('/private/tmp/e2e-isolated-')
+    },
+    restoreTimeoutSeconds: 2,
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  const elapsedMs = Date.now() - startedAtMs
+  assert.ok(
+    elapsedMs < 10000,
+    `a spawn error must abort the readiness poll promptly; took ${elapsedMs}ms`
+  )
+  assert.equal(result.exitCode, 1)
+  assert.ok(calls.includes('kill:4242'), 'guaranteed teardown still killed the dev group')
+  assert.ok(!calls.some(call => call.startsWith('npm run test:e2e:full')), 'run never started')
+  const summary = JSON.parse(stdout.at(-1))
+  assert.match(summary.devSpawnError, /ENOENT/)
+  assert.ok(
+    stderr.join('\n').includes('spawn npx ENOENT'),
+    'the surfaced error names the spawn failure as the cause'
+  )
+  assert.ok(
+    !stderr.join('\n').includes('did not answer'),
+    'the generic readiness-timeout message must not replace the real cause'
+  )
+  assert.equal(summary.exitCode, 1)
+  assert.equal(summary.restoreVerified, true)
+  assert.equal(summary.portFreed, true)
+  assert.equal(summary.worktreeRemoved, true)
+  assert.deepEqual(summary.teardownErrors, [])
+})
+
+test('runIsolatedE2E fast-fails readiness when the dev server exits before becoming ready (M3)', async () => {
+  const calls = []
+  let pm2Stopped = false
+  let pm2Restarted = false
+  const sh = (command, args = []) => {
+    calls.push([command, ...args].join(' '))
+    if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
+    if (command === 'pm2' && args[0] === 'jlist') {
+      return {
+        status: 0,
+        stdout: JSON.stringify([
+          { name: PM2_PROC_NAME, pid: 80620, pm2_env: { status: 'online' } },
+        ]),
+      }
+    }
+    if (command === 'lsof') {
+      return { status: 0, stdout: pm2Stopped && !pm2Restarted ? '' : '80725\n' }
+    }
+    if (command === 'ps') {
+      return { status: 0, stdout: ' 80620     1\n 80724  80620\n 80725  80724\n' }
+    }
+    if (command === 'pm2' && args[0] === 'stop') {
+      pm2Stopped = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'pm2' && args[0] === 'restart') {
+      pm2Restarted = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'git' && args[1] === 'remove') {
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    return { status: 0, stdout: '', stderr: '' }
+  }
+  const stdout = []
+  const stderr = []
+  const startedAtMs = Date.now()
+  const result = await runIsolatedE2E({
+    // 30s readiness budget: a boot-then-die child must abort the poll long
+    // before it elapses — measured below with Date.now(), not assumed.
+    argv: ['--ready-timeout-seconds', '30'],
+    sh,
+    spawnDev: (command, args) => {
+      calls.push(`spawnDev:${command} ${args.join(' ')}`)
+      return {
+        pid: 4242,
+        unref() {},
+        on(event, callback) {
+          // The child spawns fine, then dies instantly with a non-zero code:
+          // 'exit' lands on a macrotask, like the real EventEmitter, while
+          // the readiness poll is waiting.
+          if (event === 'exit') setImmediate(() => callback(1))
+        },
+      }
+    },
+    probeUrl: async () => (pm2Restarted ? 200 : null),
+    // Real (tiny) waits so the macrotask 'exit' event can land mid-poll.
+    waitMs: () => new Promise(resolve => setTimeout(resolve, 1)),
+    killGroup: pid => calls.push(`kill:${pid}`),
+    openLog: () => 3,
+    // Fake filesystem: env files exist; the fake worktree path NEVER does.
+    // buildPlan's exists(worktreeDir) must be false pre-run, and after a
+    // successful removal it stays false, so executeTeardown's !exists holds.
+    exists: target => {
+      if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
+      return !target.startsWith('/private/tmp/e2e-isolated-')
+    },
+    restoreTimeoutSeconds: 2,
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  const elapsedMs = Date.now() - startedAtMs
+  assert.ok(
+    elapsedMs < 10000,
+    `an early exit must abort the readiness poll promptly; took ${elapsedMs}ms`
+  )
+  assert.equal(result.exitCode, 1)
+  assert.ok(calls.includes('kill:4242'), 'guaranteed teardown still killed the dev group')
+  assert.ok(!calls.some(call => call.startsWith('npm run test:e2e:full')), 'run never started')
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.devExitedBeforeReady, true)
+  assert.equal(summary.devExitCode, 1)
+  assert.ok(
+    stderr.join('\n').includes('exited (code 1) before becoming ready'),
+    'the surfaced error names the early exit and its code'
+  )
+  assert.ok(
+    !stderr.join('\n').includes('did not answer'),
+    'the generic readiness-timeout message must not replace the real cause'
+  )
+  assert.equal(summary.exitCode, 1)
+  assert.equal(summary.restoreVerified, true)
+  assert.deepEqual(summary.teardownErrors, [])
+})
+
+test('runIsolatedE2E does not attest devExitedBeforeReady when teardown kills the group after an abort (M3)', async () => {
+  const calls = []
+  let pm2Stopped = false
+  let pm2Restarted = false
+  let signalHandler = null
+  let exitCallback = null
+  let readinessPolls = 0
+  let interruptFired = false
+  const sh = (command, args = []) => {
+    calls.push([command, ...args].join(' '))
+    if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
+    if (command === 'pm2' && args[0] === 'jlist') {
+      return {
+        status: 0,
+        stdout: JSON.stringify([
+          { name: PM2_PROC_NAME, pid: 80620, pm2_env: { status: 'online' } },
+        ]),
+      }
+    }
+    if (command === 'lsof') {
+      return { status: 0, stdout: pm2Stopped && !pm2Restarted ? '' : '80725\n' }
+    }
+    if (command === 'ps') {
+      return { status: 0, stdout: ' 80620     1\n 80724  80620\n 80725  80724\n' }
+    }
+    if (command === 'pm2' && args[0] === 'stop') {
+      pm2Stopped = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'pm2' && args[0] === 'restart') {
+      pm2Restarted = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    return { status: 0, stdout: '', stderr: '' }
+  }
+  const stdout = []
+  const stderr = []
+  const result = await runIsolatedE2E({
+    // 30s readiness budget cut short by the interrupt — the killGroup-fired
+    // 'exit' must land AFTER the poll is over (gate closed).
+    argv: ['--ready-timeout-seconds', '30'],
+    sh,
+    spawnDev: (command, args) => {
+      calls.push(`spawnDev:${command} ${args.join(' ')}`)
+      return {
+        pid: 4242,
+        unref() {},
+        on(event, callback) {
+          if (event === 'exit') exitCallback = callback
+        },
+      }
+    },
+    probeUrl: async () => {
+      if (!interruptFired) {
+        readinessPolls += 1
+        if (readinessPolls === 2) {
+          interruptFired = true
+          signalHandler('SIGINT') // Ctrl+C lands mid-readiness
+        }
+      }
+      return null
+    },
+    waitMs: async () => {},
+    killGroup: pid => {
+      calls.push(`kill:${pid}`)
+      // The dying dev child's 'exit' event lands DURING teardown: the gate
+      // must already be closed, or it pollutes the boot-failure attestation.
+      exitCallback?.(1, null)
+    },
+    openLog: () => 3,
+    // Fake filesystem: env files exist; the fake worktree path NEVER does.
+    // buildPlan's exists(worktreeDir) must be false pre-run, and after a
+    // successful removal it stays false, so executeTeardown's !exists holds.
+    exists: target => {
+      if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
+      return !target.startsWith('/private/tmp/e2e-isolated-')
+    },
+    registerSignals: handler => {
+      signalHandler = handler
+      return () => {}
+    },
+    restoreTimeoutSeconds: 0.2,
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  assert.equal(result.exitCode, 1)
+  assert.equal(result.interrupted, 'SIGINT')
+  assert.ok(stderr.join('\n').includes('Interrupted (SIGINT)'))
+  assert.ok(calls.includes('kill:4242'), 'the teardown kill actually ran')
+  const summary = JSON.parse(stdout.at(-1))
+  assert.ok(
+    !('devExitedBeforeReady' in summary),
+    'the teardown kill must not pollute the boot-failure attestation'
+  )
+  assert.ok(!('devExitCode' in summary))
+  assert.ok(!('devExitSignal' in summary))
+  assert.equal(summary.interrupted, 'SIGINT')
+})
+
+test('runIsolatedE2E clears a mid-probe exit record when readiness is achieved anyway (M3)', async () => {
+  const calls = []
+  let pm2Stopped = false
+  let pm2Restarted = false
+  let exitCallback = null
+  let probeCalls = 0
+  const sh = (command, args = []) => {
+    calls.push([command, ...args].join(' '))
+    if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
+    if (command === 'pm2' && args[0] === 'jlist') {
+      return {
+        status: 0,
+        stdout: JSON.stringify([
+          { name: PM2_PROC_NAME, pid: 80620, pm2_env: { status: 'online' } },
+        ]),
+      }
+    }
+    if (command === 'lsof') {
+      return { status: 0, stdout: pm2Stopped && !pm2Restarted ? '' : '80725\n' }
+    }
+    if (command === 'ps') {
+      return { status: 0, stdout: ' 80620     1\n 80724  80620\n 80725  80724\n' }
+    }
+    if (command === 'pm2' && args[0] === 'stop') {
+      pm2Stopped = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'pm2' && args[0] === 'restart') {
+      pm2Restarted = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    return { status: 0, stdout: '', stderr: '' }
+  }
+  const stdout = []
+  const result = await runIsolatedE2E({
+    argv: ['--ready-timeout-seconds', '30'],
+    sh,
+    spawnDev: (command, args) => {
+      calls.push(`spawnDev:${command} ${args.join(' ')}`)
+      return {
+        pid: 4242,
+        unref() {},
+        on(event, callback) {
+          if (event === 'exit') exitCallback = callback
+        },
+      }
+    },
+    probeUrl: async () => {
+      probeCalls += 1
+      if (probeCalls === 1) return null
+      // The 'exit' macrotask lands mid-probe in the answering iteration —
+      // recorded AFTER that iteration's abort check, then the probe answers.
+      exitCallback?.(1, null)
+      return 200
+    },
+    waitMs: async () => {},
+    killGroup: pid => calls.push(`kill:${pid}`),
+    openLog: () => 3,
+    // Fake filesystem: env files exist; the fake worktree path NEVER does.
+    // buildPlan's exists(worktreeDir) must be false pre-run, and after a
+    // successful removal it stays false, so executeTeardown's !exists holds.
+    exists: target => {
+      if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
+      return !target.startsWith('/private/tmp/e2e-isolated-')
+    },
+    restoreTimeoutSeconds: 2,
+    writeStdout: message => stdout.push(message),
+    writeStderr: () => {},
+  })
+  assert.equal(result.exitCode, 0)
+  assert.ok(
+    calls.some(call => call.startsWith('npm run test:e2e:full')),
+    'the run proceeded'
+  )
+  const summary = JSON.parse(stdout.at(-1))
+  assert.ok(
+    !('devExitedBeforeReady' in summary),
+    'no contradictory boot-failure attestation on a run that proceeded'
+  )
+  assert.ok(!('devExitCode' in summary))
+  assert.ok(!('devExitSignal' in summary))
+  assert.equal(summary.restoreVerified, true)
+})
+
+test('runIsolatedE2E attests the exit signal when the dev server is signal-killed before readiness (M3)', async () => {
+  const calls = []
+  let pm2Stopped = false
+  let pm2Restarted = false
+  const sh = (command, args = []) => {
+    calls.push([command, ...args].join(' '))
+    if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
+    if (command === 'pm2' && args[0] === 'jlist') {
+      return {
+        status: 0,
+        stdout: JSON.stringify([
+          { name: PM2_PROC_NAME, pid: 80620, pm2_env: { status: 'online' } },
+        ]),
+      }
+    }
+    if (command === 'lsof') {
+      return { status: 0, stdout: pm2Stopped && !pm2Restarted ? '' : '80725\n' }
+    }
+    if (command === 'ps') {
+      return { status: 0, stdout: ' 80620     1\n 80724  80620\n 80725  80724\n' }
+    }
+    if (command === 'pm2' && args[0] === 'stop') {
+      pm2Stopped = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'pm2' && args[0] === 'restart') {
+      pm2Restarted = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'git' && args[1] === 'remove') {
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    return { status: 0, stdout: '', stderr: '' }
+  }
+  const stdout = []
+  const stderr = []
+  const startedAtMs = Date.now()
+  const result = await runIsolatedE2E({
+    argv: ['--ready-timeout-seconds', '30'],
+    sh,
+    spawnDev: (command, args) => {
+      calls.push(`spawnDev:${command} ${args.join(' ')}`)
+      return {
+        pid: 4242,
+        unref() {},
+        on(event, callback) {
+          // Signal-killed child: 'exit' carries a null code and the signal.
+          if (event === 'exit') setImmediate(() => callback(null, 'SIGKILL'))
+        },
+      }
+    },
+    probeUrl: async () => (pm2Restarted ? 200 : null),
+    // Real (tiny) waits so the macrotask 'exit' event can land mid-poll.
+    waitMs: () => new Promise(resolve => setTimeout(resolve, 1)),
+    killGroup: pid => calls.push(`kill:${pid}`),
+    openLog: () => 3,
+    // Fake filesystem: env files exist; the fake worktree path NEVER does.
+    // buildPlan's exists(worktreeDir) must be false pre-run, and after a
+    // successful removal it stays false, so executeTeardown's !exists holds.
+    exists: target => {
+      if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
+      return !target.startsWith('/private/tmp/e2e-isolated-')
+    },
+    restoreTimeoutSeconds: 2,
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  const elapsedMs = Date.now() - startedAtMs
+  assert.ok(
+    elapsedMs < 10000,
+    `a signal kill must abort the readiness poll promptly; took ${elapsedMs}ms`
+  )
+  assert.equal(result.exitCode, 1)
+  assert.ok(calls.includes('kill:4242'), 'guaranteed teardown still killed the dev group')
+  assert.ok(!calls.some(call => call.startsWith('npm run test:e2e:full')), 'run never started')
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.devExitedBeforeReady, true)
+  assert.equal(summary.devExitCode, null)
+  assert.equal(summary.devExitSignal, 'SIGKILL')
+  assert.ok(
+    stderr.join('\n').includes('exited by signal SIGKILL before becoming ready'),
+    'the surfaced error names the signal instead of a lossy "code null"'
+  )
+  assert.ok(!stderr.join('\n').includes('code null'))
+  assert.ok(
+    !stderr.join('\n').includes('did not answer'),
+    'the generic readiness-timeout message must not replace the real cause'
+  )
+  assert.equal(summary.restoreVerified, true)
+  assert.deepEqual(summary.teardownErrors, [])
+})
+
 test('runIsolatedE2E failed restore overrides exitCode in JSON and process exit (M7/M3)', async () => {
   let pm2Stopped = false
   const sh = (command, args = []) => {
@@ -1157,6 +1619,58 @@ test('runIsolatedE2E fails closed when lsof cannot be spawned (M1)', async () =>
   assert.ok(
     !harness.calls.some(call => call.startsWith('pm2 stop')),
     'a broken lsof must not be conflated with a free port'
+  )
+  assert.ok(!harness.calls.some(call => call.startsWith('git worktree add')))
+})
+
+test('runIsolatedE2E fails closed when the process table cannot be read (M1)', async () => {
+  const harness = createIsolatedHarness()
+  const stdout = []
+  const stderr = []
+  const result = await runIsolatedE2E({
+    ...harness,
+    sh: (command, args, options) => {
+      if (command === 'ps') return { status: null, stdout: '', stderr: 'spawn ENOENT' }
+      return harness.sh(command, args, options)
+    },
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  assert.equal(result.exitCode, 1)
+  assert.match(
+    stderr.join('\n'),
+    /Aborting before any state change: unable to read the process table \(ps -axo pid=,ppid=\)/
+  )
+  assert.ok(stdout.length === 0, 'pre-provision fail-closed aborts print no summary JSON')
+  assert.ok(
+    !harness.calls.some(call => call.startsWith('pm2 stop')),
+    'an unreadable process table must not reach the swap'
+  )
+  assert.ok(!harness.calls.some(call => call.startsWith('git worktree add')))
+})
+
+test('runIsolatedE2E fails closed when pm2 jlist returns corrupt JSON (L4)', async () => {
+  const harness = createIsolatedHarness()
+  const stdout = []
+  const stderr = []
+  const result = await runIsolatedE2E({
+    ...harness,
+    sh: (command, args, options) => {
+      if (command === 'pm2' && args[0] === 'jlist') {
+        return { status: 0, stdout: 'NOT_JSON{{', stderr: '' }
+      }
+      return harness.sh(command, args, options)
+    },
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  assert.equal(result.exitCode, 1)
+  assert.match(stderr.join('\n'), /Aborting before any state change/)
+  assert.match(stderr.join('\n'), /PM2 process not found: wb-repricer-frontend-dev/)
+  assert.ok(stdout.length === 0, 'pre-provision fail-closed aborts print no summary JSON')
+  assert.ok(
+    !harness.calls.some(call => call.startsWith('pm2 stop')),
+    'an unreadable pm2 registry must not reach the swap'
   )
   assert.ok(!harness.calls.some(call => call.startsWith('git worktree add')))
 })
