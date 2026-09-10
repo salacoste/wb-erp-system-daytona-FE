@@ -15,7 +15,8 @@
 # NOTE: `--update-baseline` regenerates this file FLAT and silently destroys these zones —
 # re-split after any regeneration. Canonical zone semantics: a NEW break of a CANONICAL-zone
 # citation = a real maintenance signal in a living doc; ARCHIVAL = frozen history (owner-
-# approved archival treatment 26a97561).
+# approved archival treatment 26a97561). Multi-host tie-break: ANY living-doc host puts the
+# entry in CANONICAL (most-alive host wins).
 
 # ============ CANONICAL (living docs; sole entry cites a permanently deleted src file) ============
 src/hooks-v1/useMarginTrends.ts:70 | file not found
