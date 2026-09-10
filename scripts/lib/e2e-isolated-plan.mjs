@@ -72,7 +72,7 @@ export function parseIsolatedArgv(argv, { defaultBase, defaultWorktreeDir }) {
     }
     if (VALUE_FLAGS.has(flag)) {
       const value = inlineValue ?? argv[++index]
-      if (value === undefined) {
+      if (value === undefined || value === '') {
         throw new Error(`Missing value for ${flag}\n${USAGE}`)
       }
       if (flag === '--base') parsed.base = value
@@ -149,6 +149,13 @@ const DEFAULT_PINS = resolvePins({})
  * Build the ordered execution plan. Fail-closed: throws ONE Error whose
  * message lists ALL problems, newline-joined, before anything is returned.
  * `exists` is the injected existence probe (purity seam for tests).
+ *
+ * Phase execution semantics: 'provision' and 'swap' are EXECUTED AS DATA by
+ * runIsolatedE2E (commands drive spawnSync/spawn). 'run', 'restore', and
+ * 'cleanup' are DESCRIPTIVE — they document intent and pin shapes, but their
+ * actual execution is owned by runIsolatedE2E (run, via the pins.npm seam)
+ * and executeTeardown (restore + cleanup, via teardownSteps); do not consume
+ * their commands elsewhere without updating that comment.
  */
 export function buildPlan({
   base,
@@ -230,12 +237,13 @@ export function buildPlan({
  * restore-verify (HTTP poll) → worktree removal (skippable) → artifacts
  * cleanup. Restore MUST precede worktree removal. Both removal AND artifacts
  * cleanup are skipped under --keep-worktree: the kept worktree IS the evidence
- * being preserved, so deleting e2e/.auth would destroy it.
+ * being preserved, so deleting e2e/.auth would destroy it. `pins` flow into
+ * the pm2/git commands so RUN_E2E_ISOLATED_PM2/_GIT hold at teardown too.
  */
-export function teardownSteps({ keepWorktree, worktreeDir }) {
+export function teardownSteps({ keepWorktree, worktreeDir, pins = DEFAULT_PINS }) {
   const steps = [
-    { step: 'stop-dev-kill', signals: ['SIGTERM', 'SIGKILL'], graceMs: 5000 },
-    { step: 'pm2-restart', command: ['pm2', 'restart', PM2_PROC_NAME], mandatory: true },
+    { step: 'stop-dev-kill', graceMs: 5000 },
+    { step: 'pm2-restart', command: [pins.pm2, 'restart', PM2_PROC_NAME] },
     {
       step: 'restore-verify',
       url: RESTORE_VERIFY_URL,
@@ -247,8 +255,8 @@ export function teardownSteps({ keepWorktree, worktreeDir }) {
     steps.push({
       step: 'worktree-remove',
       commands: [
-        ['git', 'worktree', 'remove', '--force', worktreeDir],
-        ['git', 'worktree', 'prune'],
+        [pins.git, 'worktree', 'remove', '--force', worktreeDir],
+        [pins.git, 'worktree', 'prune'],
       ],
       fallback: 'fs.rmSync(recursive, force) — symlink is unlinked, not followed',
     })

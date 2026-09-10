@@ -213,6 +213,9 @@ function planWith(overrides = {}) {
 }
 
 test('buildPlan emits the five phases in documented order', () => {
+  // Documented semantics (see buildPlan): provision/swap are executed as data
+  // by runIsolatedE2E; run/restore/cleanup are DESCRIPTIVE — their execution
+  // is owned by runIsolatedE2E (run) and executeTeardown (restore + cleanup).
   const phases = planWith()
   assert.deepEqual(
     phases.map(phase => phase.phase),
@@ -540,7 +543,6 @@ test('runIsolatedE2E records devSpawnError, still tears down, and exits non-zero
   const calls = []
   let pm2Stopped = false
   let pm2Restarted = false
-  let worktreeRemoved = false
   const sh = (command, args = []) => {
     calls.push([command, ...args].join(' '))
     if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
@@ -567,7 +569,6 @@ test('runIsolatedE2E records devSpawnError, still tears down, and exits non-zero
       return { status: 0, stdout: '', stderr: '' }
     }
     if (command === 'git' && args[1] === 'remove') {
-      worktreeRemoved = true
       return { status: 0, stdout: '', stderr: '' }
     }
     return { status: 0, stdout: '', stderr: '' }
@@ -591,10 +592,12 @@ test('runIsolatedE2E records devSpawnError, still tears down, and exits non-zero
     waitMs: async () => {},
     killGroup: pid => calls.push(`kill:${pid}`),
     openLog: () => 3,
+    // Fake filesystem: env files exist; the fake worktree path NEVER does.
+    // buildPlan's exists(worktreeDir) must be false pre-run, and after a
+    // successful removal it stays false, so executeTeardown's !exists holds.
     exists: target => {
       if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
-      if (target.startsWith('/private/tmp/e2e-isolated-')) return !worktreeRemoved
-      return true
+      return !target.startsWith('/private/tmp/e2e-isolated-')
     },
     restoreTimeoutSeconds: 2,
     writeStdout: message => stdout.push(message),
@@ -618,7 +621,6 @@ test('runIsolatedE2E records devSpawnError, still tears down, and exits non-zero
 
 test('runIsolatedE2E failed restore overrides exitCode in JSON and process exit (M7/M3)', async () => {
   let pm2Stopped = false
-  let worktreeRemoved = false
   const sh = (command, args = []) => {
     if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
     if (command === 'pm2' && args[0] === 'jlist') {
@@ -645,7 +647,6 @@ test('runIsolatedE2E failed restore overrides exitCode in JSON and process exit 
       return { status: 1, stdout: '', stderr: 'daemon down' }
     }
     if (command === 'git' && args[1] === 'remove') {
-      worktreeRemoved = true
       return { status: 0, stdout: '', stderr: '' }
     }
     return { status: 0, stdout: '', stderr: '' }
@@ -660,10 +661,12 @@ test('runIsolatedE2E failed restore overrides exitCode in JSON and process exit 
     waitMs: async () => {},
     killGroup: () => {},
     openLog: () => 3,
+    // Fake filesystem: env files exist; the fake worktree path NEVER does.
+    // buildPlan's exists(worktreeDir) must be false pre-run, and after a
+    // successful removal it stays false, so executeTeardown's !exists holds.
     exists: target => {
       if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
-      if (target.startsWith('/private/tmp/e2e-isolated-')) return !worktreeRemoved
-      return true
+      return !target.startsWith('/private/tmp/e2e-isolated-')
     },
     restoreTimeoutSeconds: 0.2,
     writeStdout: message => stdout.push(message),
@@ -676,4 +679,269 @@ test('runIsolatedE2E failed restore overrides exitCode in JSON and process exit 
   assert.equal(summary.worktreeRemoved, true, 'removal still ran after the failed restart (M5)')
   assert.ok(stderr.join('\n').includes('CRITICAL: PM2 restore NOT verified'))
   assert.ok(summary.teardownErrors.some(message => message.startsWith('pm2-restart:')))
+})
+
+test('parseIsolatedArgv rejects empty inline values for value flags (L10)', () => {
+  assert.throws(() => parseIsolatedArgv(['--base='], DEFAULTS), /Missing value for --base/)
+  assert.throws(() => parseIsolatedArgv(['--worktree-dir='], DEFAULTS), /Missing value/)
+  assert.throws(() => parseIsolatedArgv(['--ready-timeout-seconds='], DEFAULTS), /Missing value/)
+})
+
+test('teardownSteps embeds injected pin seams in pm2/git commands (M1)', () => {
+  const steps = teardownSteps({
+    keepWorktree: false,
+    worktreeDir: '/tmp/wt',
+    pins: resolvePins({ RUN_E2E_ISOLATED_PM2: '/custom/pm2', RUN_E2E_ISOLATED_GIT: '/custom/git' }),
+  })
+  assert.deepEqual(steps.find(step => step.step === 'pm2-restart').command, [
+    '/custom/pm2',
+    'restart',
+    PM2_PROC_NAME,
+  ])
+  const removal = steps.find(step => step.step === 'worktree-remove')
+  assert.deepEqual(removal.commands, [
+    ['/custom/git', 'worktree', 'remove', '--force', '/tmp/wt'],
+    ['/custom/git', 'worktree', 'prune'],
+  ])
+})
+
+test('runIsolatedE2E green path executes the full lifecycle with pin seams (M1/M5)', async () => {
+  const calls = []
+  let spawned = false
+  let pm2Stopped = false
+  let pm2Restarted = false
+  const pins = resolvePins({
+    RUN_E2E_ISOLATED_PM2: '/custom/pm2',
+    RUN_E2E_ISOLATED_LSOF: '/custom/lsof',
+    RUN_E2E_ISOLATED_GIT: '/custom/git',
+    RUN_E2E_ISOLATED_PS: '/custom/ps',
+    RUN_E2E_ISOLATED_NPM: '/custom/npm',
+  })
+  const sh = (command, args = []) => {
+    calls.push([command, ...args].join(' '))
+    if (command === '/custom/git' && args[0] === 'rev-parse') {
+      return { status: 0, stdout: 'abc1234def\n' }
+    }
+    if (command === '/custom/pm2' && args[0] === 'jlist') {
+      return {
+        status: 0,
+        stdout: JSON.stringify([
+          { name: PM2_PROC_NAME, pid: 80620, pm2_env: { status: 'online' } },
+        ]),
+      }
+    }
+    if (command === '/custom/lsof') {
+      return { status: 0, stdout: pm2Stopped && !pm2Restarted ? '' : '80725\n' }
+    }
+    if (command === '/custom/ps') {
+      return { status: 0, stdout: ' 80620     1\n 80724  80620\n 80725  80724\n' }
+    }
+    if (command === '/custom/pm2' && args[0] === 'stop') {
+      pm2Stopped = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === '/custom/npm') {
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === '/custom/pm2' && args[0] === 'restart') {
+      pm2Restarted = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === '/custom/git' && args[1] === 'remove') {
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    return { status: 0, stdout: '', stderr: '' }
+  }
+  const stdout = []
+  const result = await runIsolatedE2E({
+    argv: [],
+    pins,
+    sh,
+    spawnDev: (command, args) => {
+      spawned = true
+      calls.push(`spawnDev:${command} ${args.join(' ')}`)
+      return { pid: 4242, unref() {}, on() {} }
+    },
+    probeUrl: async () => (spawned ? 200 : null),
+    waitMs: async () => {},
+    killGroup: pid => calls.push(`kill:${pid}`),
+    openLog: () => 3,
+    // Fake filesystem: env files exist; the fake worktree path NEVER does.
+    // buildPlan's exists(worktreeDir) must be false pre-run, and after a
+    // successful removal it stays false, so executeTeardown's !exists holds.
+    exists: target => {
+      if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
+      return !target.startsWith('/private/tmp/e2e-isolated-')
+    },
+    restoreTimeoutSeconds: 2,
+    writeStdout: message => stdout.push(message),
+    writeStderr: () => {},
+  })
+  // Full happy-path ordering: provision → stop → spawn → ready → run →
+  // kill → restart → verify → removal.
+  const indexOf = prefix => calls.findIndex(call => call.startsWith(prefix))
+  for (const [earlier, later] of [
+    ['/custom/git worktree add', 'ln -s'],
+    ['ln -s', 'cp '],
+    ['cp ', '/custom/pm2 stop'],
+    ['/custom/pm2 stop', 'spawnDev:npx'],
+    ['spawnDev:npx', '/custom/npm run test:e2e:full'],
+    ['/custom/npm run test:e2e:full', 'kill:4242'],
+    ['kill:4242', '/custom/pm2 restart'],
+    ['/custom/pm2 restart', '/custom/git worktree remove'],
+  ]) {
+    assert.ok(indexOf(earlier) !== -1 && indexOf(earlier) < indexOf(later), `${earlier} < ${later}`)
+  }
+  assert.ok(calls.includes('/custom/lsof -ti tcp:3100'), 'lsof pin reaches port probes')
+  assert.ok(calls.includes('/custom/ps -axo pid=,ppid='), 'ps pin reaches pid-table reads')
+  assert.equal(result.exitCode, 0)
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.exitCode, 0)
+  assert.equal(summary.restoreVerified, true)
+  assert.equal(summary.portFreed, true)
+  assert.equal(summary.worktreeRemoved, true)
+  assert.ok(summary.phases.runMs >= 0)
+  assert.deepEqual(summary.teardownErrors, [])
+})
+
+test('runIsolatedE2E aborts promptly when interrupted during readiness (M3/M5b)', async () => {
+  const calls = []
+  let pm2Stopped = false
+  let pm2Restarted = false
+  let signalHandler = null
+  let readinessPolls = 0
+  let interruptFired = false
+  const sh = (command, args = []) => {
+    calls.push([command, ...args].join(' '))
+    if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
+    if (command === 'pm2' && args[0] === 'jlist') {
+      return {
+        status: 0,
+        stdout: JSON.stringify([
+          { name: PM2_PROC_NAME, pid: 80620, pm2_env: { status: 'online' } },
+        ]),
+      }
+    }
+    if (command === 'lsof') {
+      return { status: 0, stdout: pm2Stopped && !pm2Restarted ? '' : '80725\n' }
+    }
+    if (command === 'ps') {
+      return { status: 0, stdout: ' 80620     1\n 80724  80620\n 80725  80724\n' }
+    }
+    if (command === 'pm2' && args[0] === 'stop') {
+      pm2Stopped = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'pm2' && args[0] === 'restart') {
+      pm2Restarted = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'git' && args[1] === 'remove') {
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    return { status: 0, stdout: '', stderr: '' }
+  }
+  const stdout = []
+  const stderr = []
+  const result = await runIsolatedE2E({
+    // 30s readiness budget — the interrupt must cut the poll off long before.
+    argv: ['--ready-timeout-seconds', '30'],
+    sh,
+    spawnDev: () => ({ pid: 4242, unref() {}, on() {} }),
+    probeUrl: async () => {
+      // Count READINESS polls only — after the interrupt fires, the teardown
+      // restore-verify keeps busy-polling this probe for its own 0.2s budget,
+      // which must not contaminate the readiness-abort measurement.
+      if (!interruptFired) {
+        readinessPolls += 1
+        if (readinessPolls === 2) {
+          interruptFired = true
+          signalHandler('SIGINT') // Ctrl+C lands mid-readiness
+        }
+      }
+      return null
+    },
+    waitMs: async () => {},
+    killGroup: pid => calls.push(`kill:${pid}`),
+    openLog: () => 3,
+    // Fake filesystem: env files exist; the fake worktree path NEVER does.
+    // buildPlan's exists(worktreeDir) must be false pre-run, and after a
+    // successful removal it stays false, so executeTeardown's !exists holds.
+    exists: target => {
+      if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
+      return !target.startsWith('/private/tmp/e2e-isolated-')
+    },
+    registerSignals: handler => {
+      signalHandler = handler
+      return () => {}
+    },
+    restoreTimeoutSeconds: 0.2,
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  assert.equal(result.exitCode, 1)
+  assert.equal(result.interrupted, 'SIGINT', 're-raise is reported to the CLI layer only')
+  assert.ok(
+    readinessPolls <= 4 && interruptFired,
+    `readiness aborted after ${readinessPolls} polls, not the 30s budget`
+  )
+  assert.ok(calls.includes('kill:4242'), 'guaranteed teardown still killed the dev group')
+  assert.ok(calls.includes('pm2 restart wb-repricer-frontend-dev'))
+  assert.ok(
+    calls.some(call => call.startsWith('git worktree remove --force /private/tmp/e2e-isolated-'))
+  )
+  assert.ok(stderr.join('\n').includes('Interrupted (SIGINT)'))
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.exitCode, 1)
+  assert.equal(summary.restoreVerified, false, 'probe stays down, so attestation stays false')
+})
+
+test('runIsolatedE2E keeps portFreed false when no dev server was spawned (L7)', async () => {
+  let pm2Restarted = false
+  const sh = (command, args = []) => {
+    if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
+    if (command === 'pm2' && args[0] === 'jlist') {
+      return {
+        status: 0,
+        stdout: JSON.stringify([
+          { name: PM2_PROC_NAME, pid: 80620, pm2_env: { status: 'online' } },
+        ]),
+      }
+    }
+    if (command === 'lsof') return { status: 0, stdout: pm2Restarted ? '80725\n' : '' }
+    if (command === 'ps') {
+      return { status: 0, stdout: ' 80620     1\n 80724  80620\n 80725  80724\n' }
+    }
+    if (command === 'pm2' && args[0] === 'restart') {
+      pm2Restarted = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    return { status: 0, stdout: '', stderr: '' }
+  }
+  const stdout = []
+  const result = await runIsolatedE2E({
+    // Port starts free (portState 'free'): no pm2 stop, and the dev spawn
+    // fails immediately with no pid, so the stop-dev-kill step never runs.
+    argv: ['--ready-timeout-seconds', '1'],
+    sh,
+    spawnDev: () => ({ pid: undefined, unref() {}, on() {} }),
+    probeUrl: async () => (pm2Restarted ? 200 : null),
+    waitMs: async () => {},
+    killGroup: () => {},
+    openLog: () => 3,
+    exists: target => {
+      if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
+      return !target.startsWith('/private/tmp/e2e-isolated-')
+    },
+    restoreTimeoutSeconds: 2,
+    writeStdout: message => stdout.push(message),
+    writeStderr: () => {},
+  })
+  assert.equal(result.exitCode, 1)
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.restoreVerified, true)
+  assert.equal(summary.worktreeRemoved, true)
+  // L7: stop-dev-kill never ran (devPid null), so portFreed keeps its
+  // initialized false instead of being omitted from the summary.
+  assert.equal(summary.portFreed, false)
 })

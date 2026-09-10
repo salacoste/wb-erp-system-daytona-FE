@@ -12,13 +12,15 @@
  * Pin seams (precedent STORY_174_3_NPM_CLI): RUN_E2E_ISOLATED_PM2 / _LSOF /
  * _GIT / _PS / _NPM.
  *
- * Signal semantics: Ctrl+C (SIGINT/SIGTERM) is recorded and handled at phase
- * boundaries — during the e2e suite it is deferred until spawnSync returns
- * (safe: the suite finishes or fails on its own), then the guaranteed teardown
- * runs and the signal is re-raised. SIGKILL of this runner cannot run teardown
- * and orphans the detached worktree dev server; containment is structural —
- * the next runner run classifies :3100 as 'foreign' (the orphan is outside
- * the pm2 process tree) and aborts fail-closed.
+ * Signal semantics: Ctrl+C (SIGINT/SIGTERM) is recorded and handled promptly
+ * at phase boundaries AND inside the dev-boot readiness poll (an interrupt
+ * during readiness throws into guaranteed teardown within one poll tick).
+ * During the e2e suite it is deferred until spawnSync returns (safe: the suite
+ * finishes or fails on its own), then the guaranteed teardown runs and the
+ * signal is re-raised. SIGKILL of this runner cannot run teardown and orphans
+ * the detached worktree dev server; containment is structural — the next
+ * runner run classifies :3100 as 'foreign' (the orphan is outside the pm2
+ * process tree) and aborts fail-closed.
  *
  * Restore semantics: teardown's `pm2 restart` restores the shared dev server
  * to ONLINE even when it was 'stopped' before the run (restore-to-online, not
@@ -90,6 +92,15 @@ export async function runIsolatedE2E({
   killGroup = killProcessGroup,
   exists = defaultExists,
   openLog = logPath => openSync(logPath, 'a'),
+  envFiles = ENV_FILES,
+  registerSignals = onSignal => {
+    process.on('SIGINT', onSignal)
+    process.on('SIGTERM', onSignal)
+    return () => {
+      process.off('SIGINT', onSignal)
+      process.off('SIGTERM', onSignal)
+    }
+  },
   restoreTimeoutSeconds = null,
   writeStdout = message => process.stdout.write(`${message}\n`),
   writeStderr = message => process.stderr.write(`${message}\n`),
@@ -119,9 +130,12 @@ export async function runIsolatedE2E({
     return parsePidTable(result.stdout)
   }
 
-  async function waitFor(predicate, timeoutSeconds, intervalMs = 500) {
+  async function waitFor(predicate, timeoutSeconds, intervalMs = 500, shouldAbort = null) {
     const deadline = Date.now() + timeoutSeconds * 1000
     while (Date.now() < deadline) {
+      if (shouldAbort?.()) {
+        throw new Error(`Interrupted (${interrupted}); entering guaranteed teardown.`)
+      }
       if (await predicate()) return true
       await waitMs(intervalMs)
     }
@@ -181,17 +195,20 @@ export async function runIsolatedE2E({
   })
 
   // Fail-closed BEFORE any state change: buildPlan aggregates every problem.
+  // pins/exists/envFiles flow through so the seams hold at plan build time.
   let plan
   try {
     plan = buildPlan({
       base: parsed.base,
       worktreeDir: parsed.worktreeDir,
       primaryRoot: PRIMARY_ROOT,
-      envFiles: ENV_FILES,
+      envFiles,
       pm2ProcName: PM2_PROC_NAME,
       pm2ProcNames: proc ? [proc.name] : [],
       portState,
       readyTimeoutSeconds: parsed.readyTimeoutSeconds,
+      exists,
+      pins,
     })
   } catch (error) {
     writeStderr(`[run-e2e-isolated] Aborting before any state change:\n${error.message}`)
@@ -204,17 +221,16 @@ export async function runIsolatedE2E({
     durationMs: 0,
     phases: {},
     restoreVerified: false,
+    portFreed: false,
     worktreeKept: parsed.keepWorktree,
     startedAtMs: Date.now(),
   }
   let devPid = null
   let finalExitCode = 1
   let interrupted = null
-  const onSignal = signal => {
+  const unregisterSignals = registerSignals(signal => {
     interrupted = signal
-  }
-  process.on('SIGINT', onSignal)
-  process.on('SIGTERM', onSignal)
+  })
 
   try {
     const provisionStart = Date.now()
@@ -251,9 +267,16 @@ export async function runIsolatedE2E({
       summary.devSpawnError = error instanceof Error ? error.message : String(error)
     })
     devPid = child.pid ?? null
+    // Readiness intentionally accepts ANY HTTP status (including 404/500):
+    // next dev compiles lazily and can answer non-2xx while warming up, so
+    // socket-alive is the only requirement here. Deeper health checking is
+    // the preflight wrapper's job (SERVICE_CONFIGURATION probes + handshake).
+    // shouldAbort makes Ctrl+C exit the poll into teardown immediately.
     const ready = await waitFor(
       async () => (await probeUrl(RESTORE_VERIFY_URL)) !== null,
-      parsed.readyTimeoutSeconds
+      parsed.readyTimeoutSeconds,
+      500,
+      () => interrupted !== null
     )
     if (!ready) {
       throw new Error(
@@ -276,10 +299,9 @@ export async function runIsolatedE2E({
     writeStderr(`[run-e2e-isolated] ${error instanceof Error ? error.message : String(error)}`)
     finalExitCode = 1
   } finally {
-    process.off('SIGINT', onSignal)
-    process.off('SIGTERM', onSignal)
+    unregisterSignals()
     await executeTeardown({
-      steps: teardownSteps({ keepWorktree: parsed.keepWorktree, worktreeDir }),
+      steps: teardownSteps({ keepWorktree: parsed.keepWorktree, worktreeDir, pins }),
       devPid,
       summary,
       sh,
@@ -309,6 +331,9 @@ export async function runIsolatedE2E({
   return { exitCode: finalExitCode, interrupted }
 }
 
+// CLI gating compares URL strings, not realpaths: a symlinked bin alias
+// pointing at this file would NOT match and would not auto-run — a known gap,
+// accepted for a repo-local script (documented, not a security boundary).
 const isCli = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href
 if (isCli) {
   const { exitCode, interrupted } = await runIsolatedE2E()
