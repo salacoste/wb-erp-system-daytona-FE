@@ -4,7 +4,7 @@
 |---|---|
 | Status | done |
 | Date | 2026-09-10 (сессия-11, follow-up FU-4 из HANDOFF-2026-09-10 §3.4) |
-| PR | TBD |
+| PR | [#435](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/435) |
 | Branch | `debt/fu4-w26-stale-comment` @ `051839f7` (база `4967d91c`) |
 | Class | doc-only (комментарий), 1 ревью-проход по owner-прецеденту #420/#423 |
 | Реестр | §26 |
@@ -65,5 +65,10 @@ Week-agnostic: событие (FR-7 re-pin) + артефакт вместо не
 ## Change Log
 
 - 2026-09-10: item создан и закрыт (сессия-11 FU-4); 1 ревью-проход (doc-only lane), MINOR применён.
+- 2026-09-10 (APPEND, post-close): push-гонка — PR #435 смержился с head `047eb344` (до литерал-коммита):
+  сетевая смерть push + пайп `git push | tail` съел exit-code → цепочка прошла мимо фейла, merge ушёл без
+  литерала; на main остался `PR #TBD` в §26/артефакте. Фикс = follow-up ветка `debt/fu4-pr-literal`
+  (то же дерево + эта APPEND-строка), отдельный PR. Прецедент: pipe-exit-code ловушка канона CLAUDE.md
+  воспроизведена на push-ноге — явные exit-коды без пайпов обязательны для push/merge тоже.
 
 **Lessons:** (1) Week-stamped verification claims rot on every reseed — pin the event + artifact, never the week. (2) «live-verified» must name what was actually asserted: endpoint+envelope probe ≠ pagination-field assert. (3) Twin-stamp sweep: contract-#219 stamps are historical facts — disposition, don't blanket-fix.
