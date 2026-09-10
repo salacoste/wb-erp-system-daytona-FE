@@ -27,6 +27,7 @@
     "test:coverage": "vitest --coverage",
     "test:e2e": "node scripts/e2e-preflight.mjs --",
     "test:e2e:full": "node scripts/e2e-preflight.mjs --full --",
+    "test:e2e:isolated": "node scripts/run-e2e-isolated.mjs",
     "test:e2e:preflight": "node scripts/e2e-preflight.mjs --check-only",
     "test:e2e:preflight:help": "node scripts/e2e-preflight.mjs --help",
     "test:e2e:ui": "node scripts/e2e-preflight.mjs --full -- --ui",
