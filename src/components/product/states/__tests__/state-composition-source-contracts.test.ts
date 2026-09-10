@@ -1,10 +1,13 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
+// All reads anchor to import.meta.url (170.6 canon) — no process.cwd() dependence.
+const testDirectory = path.dirname(fileURLToPath(import.meta.url))
 const statesRoot = path.resolve(__dirname, '..')
-const appRoot = path.resolve(process.cwd(), 'src/app')
+const appRoot = path.resolve(testDirectory, '..', '..', '..', '..', 'app')
 const appTestsRoot = path.join(appRoot, '__tests__')
 
 const productionManifest = [
