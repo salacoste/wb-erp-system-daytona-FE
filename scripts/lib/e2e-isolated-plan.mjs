@@ -201,7 +201,11 @@ export function buildPlan({
       readinessUrl: RESTORE_VERIFY_URL,
       readyTimeoutSeconds,
     },
-    { phase: 'run', commands: [[DEFAULT_PINS.npm, 'run', 'test:e2e:full', '--']], cwd: worktreeDir },
+    {
+      phase: 'run',
+      commands: [[DEFAULT_PINS.npm, 'run', 'test:e2e:full', '--']],
+      cwd: worktreeDir,
+    },
     {
       phase: 'restore',
       commands: [[pins.pm2, 'restart', pm2ProcName]],

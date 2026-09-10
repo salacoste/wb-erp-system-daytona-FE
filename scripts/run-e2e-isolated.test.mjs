@@ -41,7 +41,13 @@ test('parseIsolatedArgv applies documented defaults when no flags are given', ()
 
 test('parseIsolatedArgv accepts space and equals flag forms before --', () => {
   const parsed = parseIsolatedArgv(
-    ['--base', 'def5678', '--worktree-dir=/tmp/wt', '--keep-worktree', '--ready-timeout-seconds=90'],
+    [
+      '--base',
+      'def5678',
+      '--worktree-dir=/tmp/wt',
+      '--keep-worktree',
+      '--ready-timeout-seconds=90',
+    ],
     DEFAULTS
   )
   assert.equal(parsed.base, 'def5678')
@@ -103,7 +109,10 @@ test('parseIsolatedArgv consumes flag values that look like non-flags, then forw
 })
 
 test('parseIsolatedArgv still throws with usage on an unknown flag before any positional', () => {
-  assert.throws(() => parseIsolatedArgv(['--wat', 'e2e/x.spec.ts'], DEFAULTS), /Unknown flag: --wat/)
+  assert.throws(
+    () => parseIsolatedArgv(['--wat', 'e2e/x.spec.ts'], DEFAULTS),
+    /Unknown flag: --wat/
+  )
   assert.throws(() => parseIsolatedArgv(['--keep-worktree', '--wat', 'e2e/x'], DEFAULTS), /Usage:/)
 })
 
@@ -195,7 +204,8 @@ test('classifyPort3100 still matches the direct pm2 pid and stays foreign otherw
 function planWith(overrides = {}) {
   const merged = { ...PLAN_INPUT, ...overrides }
   const exists =
-    merged.exists ?? (target => target !== PLAN_INPUT.worktreeDir && !target.endsWith('/node_modules'))
+    merged.exists ??
+    (target => target !== PLAN_INPUT.worktreeDir && !target.endsWith('/node_modules'))
   return buildPlan({ ...merged, exists })
 }
 
@@ -314,7 +324,10 @@ test('buildPlan fail-closed branches each block with their own problem', () => {
 })
 
 test('buildPlan honors pin-seam command overrides in emitted commands', () => {
-  const pinned = resolvePins({ RUN_E2E_ISOLATED_GIT: '/custom/git', RUN_E2E_ISOLATED_PM2: '/custom/pm2' })
+  const pinned = resolvePins({
+    RUN_E2E_ISOLATED_GIT: '/custom/git',
+    RUN_E2E_ISOLATED_PM2: '/custom/pm2',
+  })
   const phases = planWith({ pins: pinned })
   const provision = phases.find(phase => phase.phase === 'provision')
   assert.equal(provision.commands[0][0], '/custom/git')
@@ -352,7 +365,9 @@ test('teardownSteps proves the invariant: kill, restart, restore-verify, then re
   const artifacts = steps.find(step => step.step === 'artifacts-cleanup')
   assert.deepEqual(artifacts.paths, ['e2e/.auth', 'test-results', 'playwright-report'])
   assert.ok(
-    artifacts.paths.every(relativePath => relativePath.startsWith('e2e/') || !relativePath.includes('/'))
+    artifacts.paths.every(
+      relativePath => relativePath.startsWith('e2e/') || !relativePath.includes('/')
+    )
   )
 })
 

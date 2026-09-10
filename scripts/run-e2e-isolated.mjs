@@ -50,7 +50,10 @@ function pm2List(pins) {
 function listenerPids(pins) {
   const result = sh(pins.lsof, ['-ti', `tcp:${E2E_PORT}`])
   if (result.status !== 0) return []
-  return result.stdout.split('\n').map(line => line.trim()).filter(Boolean)
+  return result.stdout
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
 }
 
 function parsePidTable(psOutput) {
@@ -274,11 +277,10 @@ async function main() {
     summary.phases.swapMs = Date.now() - swapStart
 
     const runStart = Date.now()
-    const runResult = spawnSync(
-      'npm',
-      ['run', 'test:e2e:full', '--', ...parsed.forwarded],
-      { cwd: worktreeDir, stdio: 'inherit' }
-    )
+    const runResult = spawnSync('npm', ['run', 'test:e2e:full', '--', ...parsed.forwarded], {
+      cwd: worktreeDir,
+      stdio: 'inherit',
+    })
     summary.phases.runMs = Date.now() - runStart
     summary.exitCode = runResult.status ?? 1
     finalExitCode = summary.exitCode
