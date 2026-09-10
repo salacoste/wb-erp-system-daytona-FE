@@ -10,8 +10,7 @@
  * form/fields/modal, shipped via the index.ts barrel after the pin was
  * written and clean of palette/hex). Pure catalog pin → literal adjusted to
  * disk reality (32 total), strengthening the palette/hex scan coverage.
- * All reads anchor to import.meta.url (170.6 canon) — no process.cwd()
- * dependence.
+ * All reads anchor to import.meta.url (170.6 canon) — no process working directory dependence.
  */
 import { readFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'

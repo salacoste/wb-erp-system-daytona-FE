@@ -48,10 +48,11 @@ import {
 } from '../../utils/metrics-calculator'
 import type { AdvertisingDailyItem } from '@/types/advertising-analytics'
 
+// All reads anchor to import.meta.url (170.6 canon) — no process working directory dependence.
 const testDirectory = dirname(fileURLToPath(import.meta.url))
 const componentsDirectory = join(testDirectory, '..')
 const routeDirectory = join(componentsDirectory, '..')
-// src/ anchor (170.6 canon) — replaces the former process.cwd() join so the
+// src/ anchor (170.6 canon) — replaces the former cwd-based join so the
 // forbidden-file existence check is cwd-independent.
 const srcRoot = resolve(routeDirectory, '..', '..', '..', '..')
 

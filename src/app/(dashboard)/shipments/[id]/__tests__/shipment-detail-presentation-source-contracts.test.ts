@@ -3,8 +3,8 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
-// 170.6 canon: anchor at the repo root via import.meta.url — NEVER
-// process.cwd(). This spec lives at
+// All reads anchor to import.meta.url (170.6 canon) — no process working directory dependence.
+// This spec lives at
 // src/app/(dashboard)/shipments/[id]/__tests__/ → six levels up = repo root.
 const repoRoot = resolve(
   dirname(fileURLToPath(import.meta.url)),

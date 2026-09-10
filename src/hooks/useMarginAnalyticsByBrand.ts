@@ -129,7 +129,7 @@ interface RawBrandItem {
   operating_profit: number | null
   operating_margin_pct: number | null
   skus_with_expenses_only: number
-  // FR-2..FR-5 competitor-parity fields (contract #219, verified W26)
+  // FR-2..FR-5 competitor-parity fields (contract #219, live-verified at integration; W26 data since reseeded)
   advertising_cost?: number | null
   drr_pct?: number | null
   tax_allocated?: number | null

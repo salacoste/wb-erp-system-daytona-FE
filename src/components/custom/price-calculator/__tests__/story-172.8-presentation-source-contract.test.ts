@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-// All reads anchor to import.meta.url (170.6 canon) — no process.cwd() dependence.
+// All reads anchor to import.meta.url (170.6 canon) — no process working directory dependence.
 const testDirectory = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(testDirectory, '..', '..', '..', '..', '..')
 
