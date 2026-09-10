@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest'
 
 // All reads anchor to import.meta.url (170.6 canon) — no process.cwd() dependence.
 const testDirectory = path.dirname(fileURLToPath(import.meta.url))
-const statesRoot = path.resolve(__dirname, '..')
+const statesRoot = path.resolve(testDirectory, '..')
 const appRoot = path.resolve(testDirectory, '..', '..', '..', '..', 'app')
 const appTestsRoot = path.join(appRoot, '__tests__')
 
