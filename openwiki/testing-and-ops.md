@@ -1,8 +1,8 @@
 ---
 type: "Operations Runbook"
 title: "Testing & Operations"
-description: "Testing strategy (Vitest unit with MSW, Playwright E2E, local E2E preflight and handshake, outbound network guards, Playwright static boundary, privacy console and diagnostic-capture guards), CI/CD workflows, local run modes, and environment variables."
-tags: [testing, e2e, playwright, vitest, network-guards, privacy, openwiki-workflow, ci]
+description: "Testing strategy (Vitest unit with MSW, Playwright E2E incl. the isolated restart-per-run e2e runner, local E2E preflight and handshake, outbound network guards, Playwright static boundary, privacy console and diagnostic-capture guards), CI/CD workflows, local run modes, and environment variables."
+tags: [testing, e2e, playwright, vitest, network-guards, privacy, openwiki-workflow, ci, isolated-e2e]
 sources:
   - id: openwiki-source-6d4b4e707b8d60b6ccfa3425
     resource: repo://.github/workflows/openwiki-update.yml
@@ -40,18 +40,26 @@ sources:
     resource: repo://e2e/support/story-174-3-runner-core.ts
   - id: openwiki-source-ffa6c3af53b402f151308103
     resource: repo://e2e/telegram-notifications.spec.ts
+  - id: openwiki-source-5b54a58d1b51cd490b0e7162
+    resource: repo://package.json
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
   - id: openwiki-source-7bebebc56a12d016856c32cc
     resource: repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs
   - id: openwiki-source-a6d59436db4440630eef1244
     resource: repo://scripts/.shadcn-ui-boundary-baseline.txt
+  - id: openwiki-source-f1a63cd07f9c5e8ce68e5902
+    resource: repo://scripts/check-e2e-bare-skips.mjs
   - id: openwiki-source-63d46e41978bcf9c4a46a1d7
     resource: repo://scripts/check-shadcn-migration-parity.mjs
   - id: openwiki-source-bdeb846005a65a32b569a6d3
     resource: repo://scripts/check-shadcn-ui-boundary.mjs
+  - id: openwiki-source-34d7b8c1bbe99ad37bf11fe8
+    resource: repo://scripts/lib/e2e-isolated-plan.mjs
   - id: openwiki-source-28021c2f62a088d4d9f6489f
     resource: repo://scripts/lib/story-174-3-execution-requirements.mjs
+  - id: openwiki-source-e8dafb8ad730440a037549d9
+    resource: repo://scripts/run-e2e-isolated.mjs
   - id: openwiki-source-8f2fb2dd82c28c75ce354113
     resource: repo://scripts/run-story-174-3-real-browser-zoom.mjs
   - id: openwiki-source-1bbe76f55f6efa9d2465f6c5
@@ -70,10 +78,10 @@ sources:
     resource: repo://test-utils/outbound-network-policy.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-09T08:47:58.907Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-10T08:47:50.517Z" }
 verified:
-  - by: openwiki/0.5.0
-    at: 2026-09-09T08:47:58.907Z
+  - by: openwiki/0.5.1
+    at: 2026-09-10T08:47:50.517Z
 ---
 # Testing & Operations
 
@@ -147,7 +155,7 @@ The floor is a floor, not a substitute for fresh per-story validation. It moves 
 - `e2e/fixtures/story-172-9-communications.ts` — Story 172.9 communications route controller with exact API paths and flippable per-section status (see below)
 
 ### E2E test areas
-Dashboard, orders, supplies, shipments (incl. SKU packaging, Story 173.11), margin analytics, FBS, COGS, pricing calculator (Epic 44-FE + Story 172.8), liquidity (with trends, Story 165.4), unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, finances (NEW-7), backfill admin (per-source retry, Story 165.5), communications (Story 172.9), accessibility, settings, monitoring, historical SPP analytics (Story 128.27), reactive 401 refresh (D-2/PB-3, `e2e/auth-reactive-refresh.spec.ts`), onboarding cabinet-create nonce-less-session coverage (D-1/PB-1, `e2e/onboarding-cabinet-create-nonce-mint.spec.ts`), plus `e2e/outbound-network-guard.spec.ts` which exercises the guard itself end-to-end. Story 174.3 added three more top-level specs: `e2e/shadcn-migration-visual-accessibility.spec.ts` (the 76-route inclusive visual/a11y matrix — see [Design System](design-system.md#the-story-1743-inclusive-visual-contract)), `e2e/story-174-3-dedicated-route-evidence.spec.ts`, and `e2e/story-174-3-real-browser-zoom.spec.ts` (see [Story 174.3 Evidence Runners](#story-1743-evidence-runners)).
+Dashboard, orders, supplies, shipments (incl. SKU packaging, Story 173.11), margin analytics, FBS, COGS, pricing calculator (Epic 44-FE + Story 172.8), liquidity (with trends, Story 165.4), unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, finances (NEW-7), backfill admin (per-source retry, Story 165.5), communications (Story 172.9), accessibility, settings, monitoring, historical SPP analytics (Story 128.27), reactive 401 refresh (D-2/PB-3, `e2e/auth-reactive-refresh.spec.ts`), onboarding cabinet-create nonce-less-session coverage (D-1/PB-1, `e2e/onboarding-cabinet-create-nonce-mint.spec.ts`), plus `e2e/outbound-network-guard.spec.ts` which exercises the guard itself end-to-end, `e2e/fr7-by-variant.spec.ts` (FR-7 «По цветомоделям» variant analytics against live data, documented as run through the isolated restart-per-run harness), and Story 174.3's three top-level specs: `e2e/shadcn-migration-visual-accessibility.spec.ts` (the 76-route inclusive visual/a11y matrix — see [Design System](design-system.md#the-story-1743-inclusive-visual-contract)), `e2e/story-174-3-dedicated-route-evidence.spec.ts`, and `e2e/story-174-3-real-browser-zoom.spec.ts` (see [Story 174.3 Evidence Runners](#story-1743-evidence-runners)).
 
 ### Story 172.8 — price calculator (`e2e/price-calculator.spec.ts`)
 
@@ -301,7 +309,7 @@ The Epics 166–174 shadcn migration added two Node-based gate scripts. Neither 
 Schema-v3 parity validator over three corpora: the BMAD story artifact (`_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md`, 94 stories with 12 pinned `EVIDENCE_FIELDS` and per-epic section profiles), the master OMX plan (`.omx/plans/shadcn-full-ui-migration-master.md`, ownership/dependency SHA-256 fingerprints, expected base SHA, backend-exception lifecycle records for 167.8/169.14), and the route ledger (exactly 76 rows). It proves 94 BMAD stories = 94 OMX plans and 76 source routes = 76 ledger rows with unique owners and linked implementation artifacts. It is filesystem-only (dependency-free), runs a deterministic mutation self-suite (`scripts/__tests__/check-shadcn-migration-parity.test.mjs`, 33 cases over a deep-cloned real corpus asserting exact `{ code, identity }` defect records) before validating the canonical corpus, and emits one machine-readable report plus one human summary per run.
 
 ### `check-shadcn-ui-boundary.mjs` (Story 174.2)
-Design-system boundary ratchet over production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, and `src/test/**` excluded; enumeration is relative-first so foreign worktree paths cannot re-enter). Two detection classes form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing lookahead, plus rgba/hsl/hsla/oklch color functions). Violation counts are grouped per route, totaled, and compared against the single-integer baseline `scripts/.shadcn-ui-boundary-baseline.txt` (**372**; born at 523 in 174.2, lowered to 401 by the 174.4 re-run after the 174.3-window raw-class removals, then ↓58 in the Margin-family wave-1 removals and ↓29 in wave-2 plus the D-4 `/15→/5` fold-in, 2026-09-03): a plain run exits 0 at or below the baseline, exits 1 only on increase, and a decrease must lower the baseline in the same commit. There are no file-level waivers — suppression is only via the exported `BOUNDARY_EXCEPTIONS` map (3 files: the C5 waterfall categorical hex and two historical `#7C3AED` chart marks; the former F-10 WCAG-contrast exception was lifted 2026-09-02 when PB-4 was fixed), each entry carrying an owner/debt ID and mirrored 1:1 in the classification manifest. Self-suite: `scripts/__tests__/check-shadcn-ui-boundary.test.mjs` (10 `node:test` cases proving the regexes and enumeration logic). See [Design System — boundary enforcement](design-system.md) for the canon's regex details and the arithmetic-closed manifest.
+Design-system boundary ratchet over production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, and `src/test/**` excluded; enumeration is relative-first so foreign worktree paths cannot re-enter). Two detection classes form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing lookahead, plus rgba/hsl/hsla/oklch color functions). Violation counts are grouped per route, totaled, and compared against the single-integer baseline `scripts/.shadcn-ui-boundary-baseline.txt` (**118**, after the 2026-09-05 wave-5 lib-residue sweep ↓149 from 267; history: born at 523 in 174.2, 401 after the 174.4 re-run, ↓58 wave-1 and ↓29 wave-2 plus the D-4 `/15→/5` fold-in to 372, ↓105 wave-4 component families to 267; residue = 95 chart-hex + 23 legacy-palette classes across lib 61 / components 37 / app 17 / types 3, deferred to the C5 owner): a plain run exits 0 at or below the baseline, exits 1 only on increase, and a decrease must lower the baseline in the same commit. There are no file-level waivers — suppression is only via the exported `BOUNDARY_EXCEPTIONS` map (3 files: the C5 waterfall categorical hex and two historical `#7C3AED` chart marks; the former F-10 WCAG-contrast exception was lifted 2026-09-02 when PB-4 was fixed), each entry carrying an owner/debt ID and mirrored 1:1 in the classification manifest. Self-suite: `scripts/__tests__/check-shadcn-ui-boundary.test.mjs` (10 `node:test` cases proving the regexes and enumeration logic). See [Design System — boundary enforcement](design-system.md) for the canon's regex details and the arithmetic-closed manifest.
 
 A concrete repaired example of AP#6 (vacuous assertion): the `e2e/login-dashboard.spec.ts` "displays trend graph" check used a `[data-testid="trend-graph"]` selector that only matched unit-test mocks — the real `TrendGraph` never rendered it — and its `.or()` recharts fallback matched the always-mounted `DailyBreakdownChart`, so the test stayed green even if `TrendGraph` were deleted. The contract now puts `data-testid` on the real `TrendGraph` Card (`src/components/custom/TrendGraph.tsx`), and the test expands the «Аналитика» disclosure first (lazy unmount) with no `.or()` fallback. When adding data-testid contracts, bind them to the real component, not to mocks, and prefer expanding collapsed containers over broad `or()` fallbacks.
 
@@ -315,6 +323,8 @@ Story 162.2 introduced a reproducible localhost preflight that gates every local
 | Full suite | `npm run test:e2e:full` | Same preflight, full suite |
 | Diagnostics only | `npm run test:e2e:preflight` | Validate config + services, print the exact next command (no Playwright launch) |
 | UI mode | `npm run test:e2e:ui` | Full suite with Playwright UI |
+<!-- openwiki: broken internal link [#isolated-e2e-runner-restart-per-run] heading anchor "isolated-e2e-runner-restart-per-run" does not exist in /openwiki/testing-and-ops.md. Fix the href or restore the target, then delete this comment. -->
+| Isolated restart-per-run | `npm run test:e2e:isolated` | tmp worktree + own dev server + guaranteed PM2 restore (see [Isolated E2E Runner](#isolated-e2e-runner-restart-per-run)) |
 
 **Preflight** (`scripts/e2e-preflight.mjs`) validates the `.env.e2e` configuration and probes both localhost services (`:3100/login`, `:3000/v1/health`) before Playwright collection. It removes only the two ignored auth-state files (`e2e/.auth/user.json`, `e2e/.auth/manager.json`) and regenerates them through the live setup-project login flow. `--no-deps` is rejected by both the preflight and `playwright.config.ts` because Chromium relies on the setup project for a fresh `user.json`. Playwright arguments forward after `--` (e.g., `npm run test:e2e -- --list`).
 
@@ -572,3 +582,62 @@ From `.env.example` (names only — never commit actual values):
 | `E2E_ENABLE_MUTATIONS` / `E2E_MUTATION_TARGET` / `E2E_MUTATION_ACK` | Three-part opt-in to un-gate `@mutating` specs (see [Local E2E Preflight](#local-e2e-preflight)) |
 eflight)) |
 ng` specs (see [Local E2E Preflight](#local-e2e-preflight)) |
+uard) was removed when the project replaced hosted certification with local validation gates. Its quality checks now run locally via the commands in [Conventions & Quality Gates](conventions-and-quality.md). There is currently no required GitHub Actions status check enforcing them.
+
+### `openwiki-update.yml` — OpenWiki Documentation Update
+Refreshes the generated `openwiki/**` pages. Authoritative contract in `.github/workflows/openwiki-update.yml`.
+
+| Aspect | Detail |
+|--------|--------|
+| **Triggers** | Schedule (daily `47 8 * * *` UTC) + manual `workflow_dispatch`. A manual dispatch must target a branch ref (not a tag or other ref) and must not target `main`; the `Validate manual dispatch ref` step rejects anything else before checkout. |
+| **Runner** | Self-hosted `wb-ci-fe` (`runs-on: [self-hosted, Linux, X64, wb-ci-fe]`), Node.js 24, 60 min timeout |
+| **Concurrency** | `openwiki-frontend` group, `cancel-in-progress: false` |
+| **Provider** | Anthropic protocol through `https://api.z.ai/api/anthropic`, model `glm-5.2` (`OPENWIKI_PROVIDER: anthropic`, `ANTHROPIC_API_KEY` from the `ZAI_API_KEY` secret) |
+| **Generator** | `npx --yes openwiki@0.3.0 code --update --print` in an isolated per-run `npm_config_cache` under `RUNNER_TEMP` |
+
+**Commit and publish rules** (enforced by the `Commit OpenWiki updates`, `Open pull request for scheduled main refresh`, and `Push updates back to dispatched branch` steps):
+- `actions/checkout` runs with `persist-credentials: false`, so no token is stored in `.git/config` after checkout.
+- After generation, the workflow restores `.github/workflows/openwiki-update.yml`, every `AGENTS.md`, `CLAUDE.md`, and `openwiki/INSTRUCTIONS.md` to their committed `HEAD` versions so only generated pages are committed.
+- `git add -A -- openwiki/ ':(top,exclude)openwiki/INSTRUCTIONS.md'` is the only staging command: it stages generated `openwiki/**` output while explicitly excluding `openwiki/INSTRUCTIONS.md`. The step refuses to commit if any change is staged outside `openwiki/`, if unexpected unstaged tracked changes remain, or if any untracked or ignored file is present.
+- **Scheduled run on `main`** → commits, creates a unique `automation/openwiki-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}` branch (including the attempt so failed-publication reruns use a fresh branch), pushes it with a temporary `x-access-token:${GH_TOKEN}` remote URL that is restored to a credential-free origin via an `EXIT` trap, and opens a PR against `main` through the GitHub REST API (`POST /repos/{owner}/{repo}/pulls` with `curl`); the PR title/body are built with `node`. There is no `gh` CLI dependency and no auto-merge.
+- **Manual dispatch on a non-`main` branch** → commits and pushes the generated commit back to that same branch using the same credential-isolated remote-url pattern.
+- **Manual dispatch on `main`** → rejected before checkout.
+
+> Never edit generated `openwiki/**` pages by hand; update source/docs and let the workflow regenerate. The workflow never force-pushes and never pushes directly to `main`.
+
+## Running Locally
+
+The dev and production servers both use port **3100**; never run both simultaneously.
+
+| Mode | Command | Notes |
+|------|---------|-------|
+| Development | `npm run dev` | Hot reload, no caching |
+| Production | `npm run build && npm run start` | Built `.next/` served via `next start -p 3100` |
+
+The previous PM2 process manager configuration (`ecosystem.config.js`, `pm2-switch-*.sh`, `.conductor/` scripts) was removed; local lifecycle helpers now live under `scripts/` (e.g., `start-fresh-next-dev.mjs` via `npm run dev:clean` / `npm run restart:safe`).
+
+## Environment Variables
+
+From `.env.example` (names only — never commit actual values):
+
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_API_URL` | Backend API URL (no `/api` suffix; default `http://localhost:3000`) |
+| `NEXT_PUBLIC_APP_NAME` | Application name |
+| `NEXT_PUBLIC_APP_VERSION` | Application version |
+| `NEXT_PUBLIC_ENABLE_ANALYTICS` | Feature flag |
+| `NEXT_PUBLIC_ENABLE_WEBSOCKET` | Feature flag |
+| `NEXT_PUBLIC_MIXPANEL_TOKEN` | Mixpanel analytics (Epic 37) |
+| `NEXT_PUBLIC_ENABLE_DEV_TOOLS` | Development-only tools |
+| `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME` | Telegram bot username (Epic 34-FE) |
+
+### E2E-specific (`.env.e2e.example`)
+
+| Variable | Purpose |
+|----------|---------|
+| `E2E_BASE_URL` | Frontend origin (required, exact `http://localhost:3100`) |
+| `E2E_API_URL` | Backend origin (required, exact `http://localhost:3000`) |
+| `E2E_TEST_EMAIL` / `E2E_TEST_PASSWORD` | Owner credentials matching the backend seed (required) |
+| `E2E_MANAGER_EMAIL` / `E2E_MANAGER_PASSWORD` | Optional Manager pair; set both or leave both blank |
+| `E2E_WB_TOKEN` | Optional token for legacy fixture integration scenarios |
+| `E2E_ENABLE_MUTATIONS` / `E2E_MUTATION_TARGET` / `E2E_MUTATION_ACK` | Three-part opt-in to un-gate `@mutating` specs (see [Local E2E Preflight](#local-e2e-preflight)) |

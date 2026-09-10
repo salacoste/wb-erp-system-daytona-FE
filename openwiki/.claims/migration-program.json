@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:3c85eacf663c51dbf500ac4506722115ed6d3b12c56ebded130b5e04319c5624",
+  "pageVersion": "sha256:2836f9edf7d74c1181ea68fe6e6d4893114992c261a1288eb4dafca27e251a62",
   "claims": [
     {
       "id": "claim_7146a57eacad4db2bf7552b903072ad9",
@@ -272,15 +272,15 @@
     },
     {
       "id": "claim_a4cf70ffe9eb43369c05117007eabdc3",
-      "statement": "The V18 session-8 handoff recorded main at `0b95e963` with the full Vitest suite at 19,559 passed / 0 failed across 1,287 files, lint 0/0, tsc 0, webpack build clean, boundary 118 = baseline with 3 exceptions, docs 95, locale 4, lessons 0, and the 174.3 contract tests green; it served as the session-9 entry baseline and is now superseded as the current baseline by the V19 handoff (main `be325f2a`, same gate numbers plus privacy exit 0 and treewide prettier-md check exit 0).",
+      "statement": "The V18 session-8 handoff recorded main at `0b95e963` with the full Vitest suite at 19,559 passed / 0 failed across 1,287 files, lint 0/0, tsc 0, webpack build clean, boundary 118 = baseline with 3 exceptions, docs 95, locale 4, lessons 0, and the 174.3 contract tests green; it served as the session-9 entry baseline and is now superseded as the current baseline by the V19 handoff (originally main `be325f2a` with the same gate numbers plus privacy exit 0 and treewide prettier-md check exit 0; after the post-merge append of PR #427 the V19 live state is main `c012f89d` with the floor raised to 19,570 and the 174.3 manifest regenerated at 275/275 pins).",
       "evidence": [
         {
           "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
           "version": "repo-file-v1:sha256:7fbcf0890522e8786b8ea390d121e5ab7349e465bb48c92a3f621fe0d6e1588a"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md#L19-L23",
-          "version": "repo-lines-v1:sha256:442c58c5ec0b9d3bc0f3ea7fe7f65621f325626ce384587e891a7137575ffef4:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGE0ZmI0YTE4MDVjYzA2Yjc4MTEwMWUzYTY5OGFkZjhlMmM2MGZlMDI4NzIxNDdmNjc2Yzg4MDQ4M2M2NmE4MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzdmOGY3NzgwOTFmYWRlN2IyN2Y5MmVhNWZjYmQ2NDM4YjJjOGE4OWQyNmIyOWQwOTIxNWZlOTNkNTZlMjIyMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzJiMDlkNjFiNWYyMTIwYjRkZWY0OTBkNGUxZDU5YTcxNzA5M2Y3ZTQ4MGQ0YTM2ODAzYTQ2ZmNiOTQ4Zjg2MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjU0NzQzOGM2ZjhiZWY2Y2ViMzA5MDA3ZjgyMDE2YmQ2NjM4YmYzMzc3NDQzYTFkOWMzYzc3MjZmODVlMTczZCJ9"
+          "resource": "repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:f65673c0046a63ba2507dc7a021611d86b1818d9b3a51085c842697eacf9c5fc"
         }
       ]
     },
@@ -308,7 +308,7 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:5e465c4775bb8a6766be0097ce8fba8e7f72e3d66fa468d2dda8d7bb4d80f503"
+          "version": "repo-file-v1:sha256:2183735cc241dbb64a49b527a26babb33f227e255a9f8fd3487268cab96b56cb"
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
@@ -348,7 +348,7 @@
         },
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:5e465c4775bb8a6766be0097ce8fba8e7f72e3d66fa468d2dda8d7bb4d80f503"
+          "version": "repo-file-v1:sha256:2183735cc241dbb64a49b527a26babb33f227e255a9f8fd3487268cab96b56cb"
         }
       ]
     },
@@ -396,47 +396,47 @@
     },
     {
       "id": "claim_43672677d15b4342a07b8eea3b5ff723",
-      "statement": "After session-9 the remaining backlog is: P3 window items (~25 route guards — the largest live item, harness restart-per-run, the FR-7/AT-matrix/Manager-creds test epics, docs-95 split, and pm2 stale-process deletion re-identified because pm2 id 5 is now the live wb-repricer-frontend-dev process), the owner-decision ledger (C5 chart palette, WCAG 1.4.11 valence channels + warn/40 rider, A2 OrganicTab /80-tier, apiClient-egress sanitization; the privacy route-constant quirk resolved-deferred via the exclusion), and BE questions (D-2 remote publish + request-backend #230 annex, NestJS raw pg/redis error reachability). Prettier-md and CABINET-BROWSER-02 were resolved in session-9.",
+      "statement": "After session-10's V20 tranche the remaining backlog is: pm2 delete 5 (must be re-identified — id 5 is the live wb-repricer-frontend-dev), the unowned-surfaces register §20 (custom/analytics files, campaigns/[advertId], period-presets, price-calculator) and the two out-of-scope guard registers (primitive-semantic-surfaces, dashboard-widgets); the owner-decision ledger (C5 chart palette gating the 118 boundary residue and chart-2 dark selHover, WCAG 1.4.11 valence channels + warn/40 rider, A2 OrganicTab /80-tier, apiClient-egress sanitization ~128 .tsx, logger-redact; the privacy route-constant quirk resolved-deferred via the exclusion); and BE questions (D-2 remote publish + request-backend #230 annex, NestJS raw pg/redis error reachability). Prettier-md, CABINET-BROWSER-02, privacy lanes, route-guards, cwd-anchoring, harness restart-per-run, FR-7/AT-matrix/Manager-creds, and the docs-95 split are all resolved.",
       "evidence": [
         {
-          "resource": "repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md#L28-L50",
-          "version": "repo-lines-v1:sha256:ebed57f51e4371935f81df1494ef8ecfce140b47187647f7dad29bdcfe848560:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNjc0MmRiMWFkYjczMDdmZjY0YTgwN2RmYzkxNGVkMDQyN2I5N2FiZjc4YjNhMmZiZDJhNTRiOWU3NTYzYjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1NmQ1NGY0ZjAwYjE5Y2RlMzUxMmE0MWExZmU0MTJlYWFmMjVjODY4OGE4MDVhZWEzMmMwMzQ1NTQxOGYwZGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzZDlmMWVjMDc2OGQ4MDZlZDBmNTU4ZDE4ZWRkMjdkMmJmOTk4ZWE2MmJmMzg5OThiYjhlZmUwMDhjY2ExOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjNjhhNjhlZTdkMGQwZjM1NmMzNGExZTI1OTA5NzVlNmRmYTE4YWMxY2RiYmVjN2QzYjgwMTQ4NmQwYWEzNGIifQ"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-test-epics-tranche.md",
+          "version": "repo-file-v1:sha256:8b59dfd0fa2ef0087bf5af5dd3ab3e545382dba2aeacc88dc63e976711c0a04f"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:f65673c0046a63ba2507dc7a021611d86b1818d9b3a51085c842697eacf9c5fc"
+        },
+        {
+          "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-09-10-V20-DEBT-CONTINUATION-OMC-SUBAGENTS.md",
+          "version": "repo-file-v1:sha256:562272d0edfa50f78ee4c0046ac92fab3ff38dee205574f73896906cc83383be"
         }
       ]
     },
     {
       "id": "claim_9a42274ef00c48a680e52db938b03cb3",
-      "statement": "The debt-session Vitest floor advanced monotonically 19,363 (program close) → 19,439 (wave-3) → 19,448/19,464 (session-6: /80-sweep +9, FE-D3 +16) → 19,492 (FE-D1 +28) → 19,521 (FE-D5 +29) → 19,537 (fe-d3-family +16) → 19,559 (wave-6 +22), with each increment shipped in the same PR that updates the CLAUDE.md Accepted Baselines floor.",
+      "statement": "The debt-session Vitest floor advanced monotonically 19,363 (program close) → 19,439 (wave-3) → 19,448/19,464 (session-6) → 19,492 (FE-D1) → 19,521/19,537/19,559 (session-8) → 19,570 (session-9 route-guards #427, +11 pins), with each increment shipped in the same PR that updates the CLAUDE.md Accepted Baselines floor (currently ≥ 19570).",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md",
-          "version": "repo-file-v1:sha256:c193a055815f4ab6e714d38b9962e639fbe473210cf30faba9b71b3aa567a5a6"
+          "version": "repo-file-v1:sha256:0ed2f8cab5b244c99d7f4deeaded2ed16ddc7cafd4a1afa099a0b88a7cf5c164"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
-          "version": "repo-file-v1:sha256:7fbcf0890522e8786b8ea390d121e5ab7349e465bb48c92a3f621fe0d6e1588a"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-route-guards-exact-array.md",
+          "version": "repo-file-v1:sha256:d04d862d54bac033295a98c16c987b95deecd08480950b8da1e377cfc8c26db5"
         }
       ]
     },
     {
       "id": "claim_54262bc261af4e9c8bf12791503d3941",
-      "statement": "Debt session-9 (V19, 2026-09-08/09) executed 4 items / 6 PRs (#420-#425), all merged with 0/0/0 cleanup: prettier-md (strict `--embedded-language-formatting=off`, 1,189 docs files, fences byte-preserved after an opus REJECT→fix-wave→APPROVE cycle, commit-immediately protocol after a /tmp worktree loss); CABINET-BROWSER-02 root-caused as a stale twin spec pin with the FE-D1 hypothesis falsified and re-pinned to MARGIN_RECOVERY_MESSAGE with live e2e green; privacy docs-example redaction of fake Bearer tokens exposed by the HEAD merge-diff scan semantics; and the owner-approved exclusion of 5 vendored BMAD knowledge directories (630 real violations, 4.7× the prior estimate) from the privacy scanner's change-set path.",
+      "statement": "Debt session-9 (V19, 2026-09-08/09) executed 5 items / 9 PRs (#420-#428), all merged with 0/0/0 cleanup: prettier-md (strict `--embedded-language-formatting=off`, 1,189 docs files, fences byte-preserved after an opus REJECT→fix-wave→APPROVE cycle, commit-immediately protocol after /tmp worktree losses); CABINET-BROWSER-02 root-caused as a stale twin spec pin with the FE-D1 hypothesis falsified and re-pinned to MARGIN_RECOVERY_MESSAGE with live e2e green; privacy docs-example redaction of fake Bearer tokens exposed by the HEAD merge-diff scan semantics; the owner-approved exclusion of 5 vendored BMAD knowledge directories (630 real violations) from the privacy scanner's change-set path; and the route-guards exact-array unification (PR #427, executed post-handoff-merge with append #428).",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-cabinet-browser-02-repin.md",
-          "version": "repo-file-v1:sha256:82a177a0aef6ee60a65ecc004a87f53ebd82ffa5d4fa6251e69061e6083ce640"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-route-guards-exact-array.md",
+          "version": "repo-file-v1:sha256:d04d862d54bac033295a98c16c987b95deecd08480950b8da1e377cfc8c26db5"
         },
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-prettier-md-docs.md",
-          "version": "repo-file-v1:sha256:61dba56017ea098708dbb9ed3f735fe13b7f5acb59b8aad781e5874a25c049bf"
-        },
-        {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-privacy-scanner-tool-dir-exclusion.md",
-          "version": "repo-file-v1:sha256:6374258047f31f953587073d61dbcf3d0651769c09b709756d138001e69d5f9a"
-        },
-        {
-          "resource": "repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md#L10-L24",
-          "version": "repo-lines-v1:sha256:d8b0b72c094e29693143762d07bac409b3bc897692dc12207fa9d5dbb57e9236:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNDZlODU5YjJkNmI3YzU4MzVmOTc4MzQ2ODQxNDEzYjBkNzUxNjI2NmJhMmRkZjZmZGIyNDI2ODlmMWQ1YTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmOGIzZjFlZmIxZWQwMWFhYjQwMzVhN2U0YzQ0MTQzNDkwNzJlNTI2MzcxNzFiNDhjZWQ0ZmI1ZjBiNzJiYTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzZDlmMWVjMDc2OGQ4MDZlZDBmNTU4ZDE4ZWRkMjdkMmJmOTk4ZWE2MmJmMzg5OThiYjhlZmUwMDhjY2ExOTcifQ"
+          "resource": "repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:f65673c0046a63ba2507dc7a021611d86b1818d9b3a51085c842697eacf9c5fc"
         }
       ]
     },
@@ -473,10 +473,74 @@
           "version": "repo-lines-v1:sha256:f9c5415c544682ea4e426573e6b0dbac4adbce7b50af8f8cddc0237f2c500865:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyN2ZkZmRkMzM0ZmRjNTcxNTk5ZTYyMjc4MWRlNDMzNjAzNjAxNTUxNzY3NThhNzAxZGI1YmViYzU4Zjk2NzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1MGUwYTc0OTNiODhmYThiYjRhYzEwOTc2NjBiNWYxYTA0NDZhZmFjZDU3ZDA1YjAzMjZlNTY3MGJhMGE3NTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkMTQ4NTc5M2RkNTJiNTNiMjVlYzk2OGUyODgwNjQ3MDcyNGIzYThmZDI3NTMzODBlMzE0M2Y1MmJjYWMwZWIifQ"
         }
       ]
+    },
+    {
+      "id": "claim_6b5197ce925f489da0c7ac5bdf591687",
+      "statement": "The route-guards exact-array item (PR #427, session-9 post-handoff-append) re-scoped '~25' to 33 deviants of 45 presentation-source guards and converted 32 of them to the 172.10 exact-array canon in 3 executor waves, declaring primitive-semantic-surfaces and dashboard-widgets out-of-scope with rationale; it found a stale tariffs pin (29→32 after three ScheduleVersion* files arrived, disclosed in-file), triggered a 174.3 manifest incident (missed pre-flight intersection caught by full Vitest; regeneration updated 3 pinned hashes, not the attested 1; 275/275 pins == disk after regen), performed 6 process.cwd()→import.meta.url migrations, and raised the floor 19,559→19,570 with the CLAUDE.md sync in the same PR.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-route-guards-exact-array.md",
+          "version": "repo-file-v1:sha256:d04d862d54bac033295a98c16c987b95deecd08480950b8da1e377cfc8c26db5"
+        }
+      ]
+    },
+    {
+      "id": "claim_9e749df894bc49f6a370aaebcd1a9533",
+      "statement": "Session-10's cwd-anchoring item (PR #430) migrated the four remaining process.cwd()-anchored (a)-class presentation guards (settings/tax, shipments, shipments/sku-packaging, shipments/box-types) to the 170.6 import.meta.url/repoRoot canon with zero logic changes, introducing a new zero-literal comment convention (canon comments avoid the process.cwd() literal so grep hygiene stays checkable — the commit's 'per shipped sibling convention' attribution was falsified by both review passes); cwd-independence was proven by executing the guards from a foreign cwd, floor stayed 19,570, and the 174.3 manifest was untouched (0 pins).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-cwd-anchoring-4-guards.md",
+          "version": "repo-file-v1:sha256:0144e9e51271eff96ff7a2fa2c09424b3a8b054a5c664077552ec0934239d4bc"
+        }
+      ]
+    },
+    {
+      "id": "claim_78536896a90841ae88997ee850d67fd5",
+      "statement": "Session-10's e2e isolated runner (PR #431) codified the previously docs-only 174.3 restart-per-run harness canon as `npm run test:e2e:isolated` — `scripts/run-e2e-isolated.mjs` (CLI orchestrator) plus `scripts/lib/e2e-isolated-plan.mjs` (pure logic) with a 56-test hermetic node:test suite. The flow is fail-closed port classification (lsof + ps process-tree matching, since the :3100 socket is held by a pm2 child), a detached-HEAD tmp-worktree with symlinked node_modules and chmod-600 env copies, pm2 stop of pm2-owned processes only, an own webpack dev server, composition of the protected `test:e2e:full` (handshake/3100 pins byte-untouched), and guaranteed teardown with triple restore attestation (HTTP 200, pm2 online, port re-classified pm2-owned) plus per-step teardownErrors.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-e2e-isolated-runner.md",
+          "version": "repo-file-v1:sha256:f21d92b8958cc757a9b42202729df567fe101da396d85e80458a6c0ff6a72708"
+        }
+      ]
+    },
+    {
+      "id": "claim_0da8b310654e41a09bf9ffbb6bfb57db",
+      "statement": "Session-10's test-epics tranche (PR #432, three owner decisions 2026-09-10) closed the three long-standing test epics: FR-7 re-pinned to live data (nmId 148188881, weeks W33/W35-W36, endpoint discovered via `useMarginAnalyticsByVariant.ts` because the spec's PRODUCT constant is a UI route, not an API path) making all 4 previously 2/4-runnable tests green through the isolated runner; the AT-matrix accepted as a written owner residual (no real screen-reader environments exist on the host); and Manager-creds corrected from the handoff's '22-23 skips' to 4 actual static skips (auth-manager.setup.ts skip + 3 PII role-gate tests in the @mutating excluded spec — the 22-23 figure was 174.4 manifest-regen run-level totals mis-attributed), journeys remaining available when credentials appear.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-test-epics-tranche.md",
+          "version": "repo-file-v1:sha256:8b59dfd0fa2ef0087bf5af5dd3ab3e545382dba2aeacc88dc63e976711c0a04f"
+        }
+      ]
+    },
+    {
+      "id": "claim_7cbc0dab02f84e318ce0e7ca0708340d",
+      "statement": "Session-10's docs-95 zoning item re-zoned `scripts/.check-docs-baseline.txt` by comments into CANONICAL: 1 / ARCHIVAL-CANDIDATE: 4 / ARCHIVAL: 90, but the zones are narrative only: the gate strips comments today, and `--update-baseline` regenerates the file flat and silently destroys the zones (re-split required after every regeneration). Recon corrected the item's premise — the canonical zone is materially empty (94 of 95 broken citations live in frozen docs; the single living-doc entry cites the permanently deleted `src/hooks-v1/useMarginTrends.ts:70` and is fixable only by rewriting the citation in the doc), so the gate already implicitly enforces zero broken citations in living docs.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-docs-95-zoning.md",
+          "version": "repo-file-v1:sha256:8bcd0043aa95196dd3bf2d825206db69ccabafb04d6c4cba2c14185d0444f32c"
+        },
+        {
+          "resource": "repo://scripts/.check-docs-baseline.txt",
+          "version": "repo-file-v1:sha256:82878fa8985f3664b7ebbde81feecf491bd16b1c05541646c726173e31e1eb6f"
+        }
+      ]
+    },
+    {
+      "id": "claim_7652ed40dd6f40889792b53fba63c0c2",
+      "statement": "The V20 orchestrator prompt (`docs/ORCHESTRATOR-PROMPT-2026-09-10-V20-DEBT-CONTINUATION-OMC-SUBAGENTS.md`, 2026-09-10) is the current session-10 process canon: it points at the V19 handoff, mandates a per-item pre-flight (Story-105.2 already-fixed grep, a 174.3 manifest intersection for every touched test file with runner-only regeneration and set-diff pin counting, e2e visibility, gate-tool scope estimation), fixes the delegation matrix (opus executors for behavior, opus code-reviewer in fresh context per pass, 2 passes mandatory for behavior/test-assertion classes, 1 for doc-only mechanics), orders the remaining backlog (boundary waves forbidden — the 118 residue is C5-blocked), and requires full solo Vitest as the only honest floor measurement because batch runs missed the #427 contract failure.",
+      "evidence": [
+        {
+          "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-09-10-V20-DEBT-CONTINUATION-OMC-SUBAGENTS.md",
+          "version": "repo-file-v1:sha256:562272d0edfa50f78ee4c0046ac92fab3ff38dee205574f73896906cc83383be"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.0",
-    "at": "2026-09-09T08:47:58.907Z"
+    "by": "openwiki/0.5.1",
+    "at": "2026-09-10T08:47:50.517Z"
   }
 }

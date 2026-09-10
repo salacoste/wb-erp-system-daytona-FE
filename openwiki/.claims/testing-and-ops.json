@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e59717e91ebd288f2bfdbb2127a306ae82c5bfb0ae016db16633d37650758181",
+  "pageVersion": "sha256:816f98cdd7dd46312252dec387d065120160f54a132602d255b7175269d34b8b",
   "claims": [
     {
       "id": "claim_34d4e9ec9e0249299eb57f3e06db8784",
@@ -18,11 +18,15 @@
     },
     {
       "id": "claim_6f40c953f4a54d4f9d1a5f2db9c186a0",
-      "statement": "The current accepted full Vitest baseline (CLAUDE.md accepted-baselines table, `npm test -- --run`) is ≥ 19,559 passing / 0 failed. That value is the 19,118 floor set by Story 174.2-FE (2026-08-31) — itself an exact −756 tests / −22 files from 19,874/1,256 by deletion of 65 proven-dead test files (import-closure proved, no live test deleted) — plus +237 tests from the 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), +12 reactive-refresh tests (D-2/PB-3), +3 wave-3 AA re-pins, +9 /80-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, and +22 wave-6 WCAG style pins. Earlier per-story peaks such as 19,874 are historical; the baseline is not a substitute for fresh per-story validation, and a story that legitimately moves it must update the table in the same PR.",
+      "statement": "The current accepted full Vitest baseline (CLAUDE.md accepted-baselines table, `npm test -- --run`) is ≥ 19,570 passing / 0 failed. That value is the 19,118 floor set by Story 174.2-FE (2026-08-31) — itself an exact −756 tests / −22 files from 19,874/1,256 by deletion of 65 proven-dead test files (import-closure proved, no live test deleted) — plus +237 tests from the 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), +12 reactive-refresh tests (D-2/PB-3), +3 wave-3 AA re-pins, +9 /80-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, +22 wave-6 WCAG style pins, and +11 route-guards exact-array pins (session-9). Earlier per-story peaks such as 19,874 are historical; the baseline is not a substitute for fresh per-story validation, and a story that legitimately moves it must update the table in the same PR.",
       "evidence": [
         {
-          "resource": "repo://CLAUDE.md#L152-L154",
-          "version": "repo-lines-v1:sha256:f8e0c60918753ecdb623b1a68bce10f580854eebb6eb7c1d1ce4347fdc7d8cb3:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjQwMWE3YWRkOTg1YjY1MDVlZWUwYmFmMTFlNDk1NTlmZGIwYmMwYzdjNzQ4Mzk5YjgwYTU5OTUyNzBkYzg0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
+          "resource": "repo://CLAUDE.md#L153-L156",
+          "version": "repo-lines-v1:sha256:2026988624be549c3ffc896054ff6a7279b891c9694fa4b57ce43e5ce2b05a74:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmMzZGNiYjU2YWRlZjQ0ZTYzNWVmYzY4NDNmNDNjMjEzMzZkZDM4ZDViOWE2NDQ1YzI0NmMwNjMwOWYwNGJiYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
+        },
+        {
+          "resource": "repo://vitest.config.ts",
+          "version": "repo-file-v1:sha256:e3f1198528add9378784801ab5de96e4e16285b3c122e4c7f2f3a5301e098e74"
         }
       ]
     },
@@ -114,7 +118,7 @@
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L152-L156",
-          "version": "repo-lines-v1:sha256:cd63e0f6b6688dcaa60c01aedb2ae9bbe6d74fd89ab928a3446eecf776730f22:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
+          "version": "repo-lines-v1:sha256:1727cea84d45172b0e278b54173c39fcc70b599aac28a1c50381ed691b313886:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
@@ -293,10 +297,56 @@
           "version": "repo-lines-v1:sha256:b705b5d323cd2c5f0ccbddcee26d633efc0493b3562281fd78db2df447883d7b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiMWJlMWZiNjBlZDAzNTA4ODVhNjczMzlmYWU2YmJkYThkYmU0MjA3YjQ3NDAzZDM2Y2ZmYjk1NDFhY2RmZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhMjRmNjViYWNlYTM3YTBiOWVkOGNjZTVhNGY0OWQwNzQxYTg0MzlhYTA4YTZmOGU0MmExNWFlM2M2ODdlNDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0Mzk5NDI4NGViMGUzODc5ODJlNzdiYTU2ODYzNGYzZDNlYjJiOWFiYjE0Y2MwMjJjZjcxNDAwZWI5ZTg0NTYifQ"
         }
       ]
+    },
+    {
+      "id": "claim_73295680c36944929b9ed676f966413f",
+      "statement": "The isolated restart-per-run E2E runner (`npm run test:e2e:isolated` → scripts/run-e2e-isolated.mjs, planning in scripts/lib/e2e-isolated-plan.mjs, unit-tested by scripts/run-e2e-isolated.test.mjs under node --test with fully injected effect seams) provisions a detached `git worktree add --detach` tmp checkout of committed HEAD (dirty trees only warn), symlinks node_modules, copies .env.local/.env.e2e with chmod 600, stops the pm2 process `wb-repricer-frontend-dev` (no-op when :3100 is free), boots its own `npx next dev --webpack -p 3100` there, runs the suite as `npm run test:e2e:full` inside the worktree (so the preflight gate and handshake still apply), and then guarantees teardown: kill the detached dev process group, pm2 restart (only if a stop actually happened), restore verification, worktree removal.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L30-L30",
+          "version": "repo-lines-v1:sha256:9d50a57f1770d845b56d601e0fc1af54729a347b99fe57d619348e26a1340e21:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWQ1MGE1N2YxNzcwZDg0NWI1NmQ2MDFlMGZjMWFmNTQ3MjlhMzQ3Yjk5ZmU1N2Q2MTkzNDhlMjZhMTM0MGUyMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWQ1MGE1N2YxNzcwZDg0NWI1NmQ2MDFlMGZjMWFmNTQ3MjlhMzQ3Yjk5ZmU1N2Q2MTkzNDhlMjZhMTM0MGUyMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGEyMDdlNWZjOTI1MjcxODY5YjFmOGFhNWRhZTE0NGQ0ZWVkNmM0ZWUyMjhkMzRjNTQ3MTY0NzNmYzEzYzljYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmY3NDEwOWRkZjQzOWE4ZDgxZWEzN2VjNTExN2ViYTJmZWRkNWZkZDAzNjA2MThhNDc3OTdhYjNmYWM5NDlmOCJ9"
+        },
+        {
+          "resource": "repo://scripts/lib/e2e-isolated-plan.mjs#L144-L247",
+          "version": "repo-lines-v1:sha256:be73fb5cbfc10b9c17bd4d979f13f0571d6e54aa983a559cd1025bc75ad954e6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzMWMzNjA0MTdhZjY4ZTU3NGNkM2NhMWQyNzliODc1NzFlYjhhNzliMzU4MjNiMjdmY2RkMDc0NTA1YzY5ZWE3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlNDkxOGU0MTY1Nzk3MTUxNDQyNmE4MWIzZmNkMDMzZDZjZGZhNmVmM2FiZDYxZmUwZjUxOTU5OGU1ZGNiNGE1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0NWQ2N2M2MjJlYzVjMGI3NDljZWU5NmMxYzI1YWFlYmIxNTg3YmRmYTViNmYwZDE5OWIwZGRhNDc4NDc5ODgxIn0"
+        },
+        {
+          "resource": "repo://scripts/run-e2e-isolated.mjs#L248-L357",
+          "version": "repo-lines-v1:sha256:6cf281f406a81ad66c0b5daa72be43fb296af60f6c531e85b51b90ca00d28c6c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2MjIzMWRkNmQ2NTUyOTk2NjA3ZTUyYTMyOTEwN2Q1OGUyYWQ5OTRlMGU3MjA3OTVkMjYwNjU0NDM5M2YxMzQzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI5ZmQ4YmFkNzRjNjFlOTZkYWVjMzJmYzczYmQ1YmQwMDZmODExYmZmYzM1ZDkzZjAzNGM3Njc2ZGI0YWQzNjYwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjY2FiODE5OGRlMzA4NTg1ZGE3ZmViYzI0OTZkNTQ1OGRkMzRkYmNkNDBjMGMxMTk5MDgxZDMzMTk3YjljMGRlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2M0YTg4NzJkMTE2YTMzOTNiOTM3NDliOTBjM2M3MzhhYzdmMjkyZTJhNDI5OTYwOTdkNzhjMDViYzJmZTI0In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_7fe183f41ddf467591c9ad33e3da63a1",
+      "statement": "The isolated runner is fail-closed and restore-attested: before any state change it classifies :3100 via `lsof -ti tcp:3100 -sTCP:LISTEN` plus a full pid table as 'free', 'pm2-owned' (pm2 pid or any descendant — next dev owns the socket through children), or 'foreign'; 'foreign', an unreadable process table, or an lsof spawn failure aborts the run (an orphaned dev server from a SIGKILLed run is caught this way). Restore verification requires simultaneously HTTP 200 on http://localhost:3100/login, pm2 jlist status 'online', and :3100 re-classified 'pm2-owned' from a fresh process table; unverified restore forces exit code 1 with a CRITICAL stderr warning even if the suite passed. A Ctrl+C is deferred until a phase boundary (or the readiness poll), re-raised after the JSON summary drains, while a second Ctrl+C during teardown is deliberately swallowed so the pm2 restore cannot be killed mid-flight.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/lib/e2e-isolated-plan.mjs#L249-L391",
+          "version": "repo-lines-v1:sha256:09caf4fe5087e6cc1ca5a68e5ceff8df9ab52741c329507bc6f8e461b7c229ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlYWYyMmNmMDczMjU5MmMyNDcxNDFjYmU2MWVmYTExMDEyNjEyZjVhMzEyMmI5YWY5YmJhZjUyZjU3MjRkMTk0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiMzhkMzI5NDFjOWJhNDVjM2ViY2ZmMGM5MjZkMWZkMDFhYmI5YmQ0ODBjYWI3N2NmZmNmYTRkNTBlNjI0MzI5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://scripts/run-e2e-isolated.mjs#L284-L409",
+          "version": "repo-lines-v1:sha256:1bae90bc6bdbeb24bbc8f294a1ff65c331e20df30184d33f603ed0f8cedba629:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjNTFkNGQ4YWE0N2MyNzU0YjY0OTQzNjdlZTFjYTcxNGFiNzdkN2JkOTEzMTQ0Yjc1YjhmZWUxYWM4MWI1NDk1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxYjliYWI0YTc4Y2I2ZDQ2ZjIxZDdjNWUwNDQ3YjdjMGMwYTg0NTU2ZDdlMjY0OWI3ZjNmMjFhMmI5NTczMWQ1IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0NzUxNDk1Nzk3MDQ5ZDBmYzdjZDkxNDFkNWQ3Y2IxNDUyZmMxNjA5Y2U3NzRhZjYyZTAwNTk1Y2M1OGYyNDhjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmZGM5Y2Y2MWEyY2U2ODVmOTlkMzVjYzU4NmRmZWI4MDk0YTAwMmMzMTE5Mjc2N2I2MTQ0MDE2YmRlMGMzMTM3In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_4d8bf251c76d4e47b13108ff6d1de6da",
+      "statement": "Besides `check:e2e-assertions` (vacuous-assertion AST scanner) and `check:e2e-waits` (fixed-wait scanner), package.json exposes `check:e2e-bare-skips` (node scripts/check-e2e-bare-skips.mjs), an E2E gate against silent/bare test skips; all three run as dedicated npm scripts outside the README Local validation list.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L51-L53",
+          "version": "repo-lines-v1:sha256:95929f863abe3b6065bc7678e3daa32482b26e3f9ee2896f4e6e9f0fab0a769b:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzQ2YzdkNzcwNDhmYjZlMDgxODU4ZTEzMGE5N2Y5YmVjMmUwNjE2Y2RjNWE3ZmU5NWI4NGYwZGQ1NDgwYTRkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTA1NmZjMjUyNDdmYjgxM2Q5MWNkMTFmNDk3MzE2NjExNGRkNmQwNDNkZjNjZTE0NjNjNmI5OGVkNzZhNTdlYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTg2NTIzOGNhNzcyY2M0NzhlZmJmZmQ1YTE0N2UyM2Q2ZmQ0YmUzNDM3MzNiNzY5ZjNhYTdlMzI4MTBmMjU3NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzdiNzc0ZWM3ZmUyM2ZjYWMyN2E1N2UyZjdhNDZkNzJhMGQwM2Y3Y2RjMDY1MTliNDljODMxN2VjZTRiMDgzNCJ9"
+        },
+        {
+          "resource": "repo://scripts/check-e2e-bare-skips.mjs",
+          "version": "repo-file-v1:sha256:0aa4c34d4934a58e2f4d439363b17ad79a19223d2b0c44d8ca6d1fc2d674c6f5"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.0",
-    "at": "2026-09-09T08:47:58.907Z"
+    "by": "openwiki/0.5.1",
+    "at": "2026-09-10T08:47:50.517Z"
   }
 }

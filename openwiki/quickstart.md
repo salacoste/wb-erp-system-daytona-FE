@@ -14,24 +14,32 @@ sources:
     resource: repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md
   - id: openwiki-source-7825c41e82ca828e4e955736
     resource: repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md
+  - id: openwiki-source-dd73bf43340fba783fd95443
+    resource: repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md
+  - id: openwiki-source-012193b44418d77f0463a518
+    resource: repo://docs/ORCHESTRATOR-PROMPT-2026-09-10-V20-DEBT-CONTINUATION-OMC-SUBAGENTS.md
   - id: openwiki-source-c66fd1b858bdd6d97345f065
     resource: repo://docs/request-backend/230-auth-refresh-endpoint-missing.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
+  - id: openwiki-source-cf420d2a3bbc3f5b978f6bfe
+    resource: repo://scripts/.check-docs-baseline.txt
   - id: openwiki-source-a6d59436db4440630eef1244
     resource: repo://scripts/.shadcn-ui-boundary-baseline.txt
   - id: openwiki-source-02888236bcd9b1d1d663f151
     resource: repo://scripts/generate-story-174-3-scope-register.mjs
+  - id: openwiki-source-e8dafb8ad730440a037549d9
+    resource: repo://scripts/run-e2e-isolated.mjs
   - id: openwiki-source-8f2fb2dd82c28c75ce354113
     resource: repo://scripts/run-story-174-3-real-browser-zoom.mjs
   - id: openwiki-source-1bbe76f55f6efa9d2465f6c5
     resource: repo://scripts/run-story-174-3-state-evidence.mjs
-generated: { by: "openwiki/0.5.0", at: "2026-09-09T08:47:58.907Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-10T08:47:50.517Z" }
 verified:
-  - by: openwiki/0.5.0
-    at: 2026-09-09T08:47:58.907Z
+  - by: openwiki/0.5.1
+    at: 2026-09-10T08:47:50.517Z
 ---
 
 # WB ERP System — Frontend OpenWiki
@@ -71,20 +79,22 @@ After the 94/94 closeout, debt-session waves landed on main (`docs/HANDOFF-2026-
 - Quality wave (PR #392/#393): AcceptanceStatusBadge solid pairs, GapsTable SR dedup, `ScenarioUrgencyTier` single classification source. Vitest floor 19,424; lint 0/0, tsc 0, build 0.
 - **P2 wave-3 "AA-quick-wins"** (2026-09-05, session-3): `/15→/5` and `/10→/5` solid-pair fixes across `unit-economics-config.ts`, CashflowRowPrimitives, pnl-waterfall, and the price-calculator family; Vitest floor **19,424 → ≥ 19,439**. The layered-compositing model was falsified (over-card); artifact `_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md` is the new canon.
 
-Subsequent sessions (handoff chain V16→V18, ending at `docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md`) executed further waves; the boundary ratchet continued down to the current baseline **118** in `scripts/.shadcn-ui-boundary-baseline.txt`.
+Subsequent sessions (handoff chain V16→V18, ending at `docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md`) executed further waves: FE-D5 cross-tab cabinet-create → Web Locks (`src/lib/cabinetCreationLock.ts`, PR #415), fe-d3-family hook-fallback sanitization (`sanitizeFallbackMessage` moved to `src/lib/sanitize-fallback-message.ts` with a SHA-pinned re-export, PR #416), WCAG wave-6 (PR #417), and a dead-code quickwin. The boundary ratchet continued down to the current baseline **118** in `scripts/.shadcn-ui-boundary-baseline.txt` — the entire residual 118 is now gated on the owner decision C5 (chart palette), so no further boundary waves are possible until that decision lands.
 
-### Session-8 (2026-09-06) state — latest handoff entry point
+### Session-9 (2026-09-08/09, V19) and session-10 (2026-09-10, V20) — latest chain entry points
 
-Four PRs merged (cleanup 0/0/0 ×4), live main `0b95e963`:
+Latest handoff: `docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md` (5 items, PRs #420–#428, all merged, cleanup 0/0/0). Next orchestrator entry point: `docs/ORCHESTRATOR-PROMPT-2026-09-10-V20-DEBT-CONTINUATION-OMC-SUBAGENTS.md` (session-10 continues the P3 debt backlog through OMC subagents). Live main after #427: `c012f89d`.
 
-- **FE-D5 cross-tab cabinet-create → Web Locks** (PR #415): `src/lib/cabinetCreationLock.ts` (navigator.locks + localStorage claim + in-lock re-checks); the key is minted in the lock and reused on wire-ambiguous takeover (BE replay verified via `@@unique([userId, operationId])`); three-state reporter (clean / failed-ambiguous / uncertain-tombstone); cross-tab e2e green. Vitest 19,492 → 19,521.
-- **fe-d3-family hook-fallback sanitization** (PR #416): `sanitizeFallbackMessage` moved byte-identically to `src/lib/sanitize-fallback-message.ts` with a SHA-pinned re-export (no manifest regeneration). Vitest → 19,537.
-- **WCAG wave-6** (PR #417): warn-on-warn/10 + selected-row text failures fixed with fg-on-tint / warning-foreground / underline; post-remedy worst kept 4.87. Vitest → 19,559.
-- **P3 quickwin**: dead `queryClient.ts` deleted (0 importers).
+- **prettier-md** (PR #420): strict mode `--embedded-language-formatting=off` applied to **1,189 files** under `docs/**/*.md` (fences byte-untouched); treewide `prettier --check` exit 0 idempotently. Owner precedents: `\_\_` / `\|` escapes in GFM cells, embedded formatting must stay off.
+- **CABINET-BROWSER-02 pre-existing red** (PR #421/#422): root cause was a stale twin-pin in the spec, **not** a regression (FE-D1 hypothesis falsified — both mutations use `retry: false`, 4xx is not mocked); re-pinned to `toHaveText(MARGIN_RECOVERY_MESSAGE)`; live e2e verified via a PM2↔worktree-dev swap.
+- **privacy docs-example redaction** (PR #423/#424): the privacy gate scans the HEAD merge-diff (fallback `-m`), so pre-existing doc examples with fake Bearer tokens surfaced on merge #420; 4 files under `docs/request-backend/` shortened below the 12-char trigger.
+- **privacy scanner × tool dirs exclusion** (PR #425): owner decision 2026-09-08 excluded the 5 vendored BMAD knowledge dirs (≈630 actual violations across 4 classes) from the change-set scan via `EXCLUDED_CHANGE_SET_PREFIXES` + a per-file filter in `collectGitChangeFiles` — accepted residual recorded; scan roots/PII pins untouched.
+- **route-guards exact-array unification** (PR #427): 33 deviants across 3 waves (catalog pins, real disk guards, 18 count-pins, 7 boundary checks incl. a stale tariffs pin 29→32); the 174.3 execution manifest was regenerated with `--owner-units` (3 hash updates, 275/275 == disk). Test floor 19,559 → **19,570** (CLAUDE.md synced in the same PR).
+- **docs-95 split** (session-10, registry §24): `scripts/.check-docs-baseline.txt` is now zone-annotated — 1 CANONICAL entry, 4 ARCHIVAL-CANDIDATE, 90 ARCHIVAL (frozen story artifacts). Zones are narrative only (comments are stripped by the gate); `--update-baseline` regenerates the file flat and silently destroys the zones, so re-split after any regeneration. Zone semantics: a NEW break of a CANONICAL citation is a real maintenance signal in a living doc; multi-host ties resolve to the most-alive host.
 
-Live gate state: Vitest full **19,559 / 0** (1,287 files) · lint 0/0 · tsc 0 · build `--webpack` 0 · **boundary 118 = baseline** · 3 exceptions · docs 95 · locale 4 · lessons 0 · privacy exit 0 · 174.3 contracts green. Environment: Node **24.18.0** (PATH-pinned; Node 26 breaks webpack), PM2 frontend on :3100, backend on :3000.
+Live gate state (V19 §2, verified by runs): Vitest full **19,570 / 0** · lint 0/0 · tsc 0 · build `--webpack` 0 · **boundary 118 = baseline** · 3 exceptions · docs 95 · locale 4 · lessons 0 · privacy exit 0 (bare run, never piped — a pipe eats the exit code) · 174.3 contracts 33/33. Environment: Node **24.18.0** (PATH-pinned; Node 26 breaks webpack), PM2 frontend on :3100, backend on :3000; after a Mac reboot restore Docker → `pm2 resurrect`.
 
-Remaining backlog is P3-window work (prettier-md ~1,189 files, ~25 route-guards, harness restart-per-run, FR-7 / AT-matrix / Manager-creds, docs-95 split, `pm2 delete 5`, and the pre-existing CABINET-BROWSER-02 red on main) plus the owner decision ledger (C5 chart-palette gating the 118 residual, WCAG 1.4.11 valence channels, A2 OrganicTab /80, apiClient-wide sanitization, financial tokens / logger-redact). Backend follow-ups to monitor: remote publish of the D-2 refresh branch, FE-D3-residual NestJS filters. Route backend-blocking work to `docs/request-backend/` (e.g. `docs/request-backend/230-auth-refresh-endpoint-missing.md`).
+Remaining backlog (V19 §3.0): cwd-anchoring of 4 sibling guards (tax, shipments, sku-packaging, box-types), harness restart-per-run, FR-7 / AT-matrix / Manager-creds test epics, unowned presentation-guard surfaces (§20), route-constant scanner quirk — plus the owner decision ledger (C5 chart-palette gating the 118 residual, WCAG 1.4.11 valence channels, A2 OrganicTab /80, apiClient-wide sanitization ~128 .tsx, financial tokens / logger-redact). Backend follow-ups to monitor: remote publish of the D-2 refresh branch, FE-D3-residual NestJS filters. Route backend-blocking work to `docs/request-backend/` (e.g. `docs/request-backend/230-auth-refresh-endpoint-missing.md`).
 
 ## Overview
 
@@ -114,8 +124,17 @@ npm run test:coverage          # Vitest with coverage
 npm run test:privacy           # Privacy console + diagnostic-capture-policy tests (node:test)
 npm run check:privacy          # Privacy console guard (PII-adjacent files)
 npm run format:check           # Prettier check
-npm run check:docs             # Doc-citation drift gate
+npm run check:docs             # Doc-citation drift gate (baseline: scripts/.check-docs-baseline.txt, zone-annotated)
 npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
+npm run check:eslint-rules     # ESLint rule registry guard
+npm run check:lessons          # Lessons-length guard
+npm run check:markers          # Story-marker guard
+npm run check:max-lines        # File-size guard (200-line cap)
+npm run check:next-params      # async-params guard
+npm run check:locale-percent   # Locale coverage ratchet (baseline 4)
+npm run check:e2e-assertions   # Vacuous e2e assertion guard
+npm run check:e2e-waits        # Fixed-wait e2e guard
+npm run check:e2e-bare-skips   # Bare-skip e2e guard
 ```
 
 Browser tests require the backend on `localhost:3000` (backend owns its Owner seed — the frontend has no database-seeding script) and the frontend on `localhost:3100`; copy `.env.e2e.example` to `.env.e2e` first:
@@ -124,6 +143,8 @@ Browser tests require the backend on `localhost:3000` (backend owns its Owner se
 npm run test:e2e:preflight     # Config + service diagnostics only (no browser)
 npm run test:e2e               # Bounded read-only orders smoke on Chromium (preflight-gated)
 npm run test:e2e:full          # Full Playwright suite through the same preflight
+npm run test:e2e:isolated      # scripts/run-e2e-isolated.mjs: tmp-worktree restart-per-run orchestrator
+                               # (own dev server on :3100, guaranteed PM2 restore, fail-closed on foreign :3100 owners)
 ```
 
 Migration and Story 174.3 gates have **no `npm run` alias** — invoke them directly (see [Conventions & Quality Gates](conventions-and-quality.md) and [Testing & Operations](testing-and-ops.md)):
@@ -145,8 +166,8 @@ node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate 
 | App structure / route groups / auth store (including D-1 `ensureSessionNonce`, D-2 nonce-preserving `refreshToken`, and FE-D5 `cabinetCreationLock` Web Locks) / environment & API configuration | [Architecture](architecture.md) |
 | api-client transport, error semantics, the D-2 reactive 401 single-flight refresh interceptor, and the FE-D3/fe-d3-family `sanitizeFallbackMessage` fallback sanitization | [API Client and Normalizers](api-and-normalizers.md) |
 | Financial summary math, margin/liquidity calculations, cabinet creation and settlement flows, task-role semantics (including the quality-wave `ScenarioUrgencyTier` work) | [Domain Logic](domain-logic.md) |
-| Gate / baseline / ratchet work, including `check-shadcn-ui-boundary.mjs` (current baseline 372, fails only on increase) and `check-shadcn-migration-parity.mjs` self-suites | [Conventions & Quality Gates](conventions-and-quality.md) |
-| Test / e2e / automation work, including the story-174-3 e2e runner tooling (`e2e/support/story-174-3-runner-*.ts`, real-browser-zoom and state-evidence runners, fixture corpus under `e2e/fixtures/story-174-3/`) and the D-1 two-tab nonce-nulling e2e | [Testing & Operations](testing-and-ops.md) |
+| Gate / baseline / ratchet work, including `check-shadcn-ui-boundary.mjs` (current baseline 118, fails only on increase; the residual is C5-gated) and `check-shadcn-migration-parity.mjs` self-suites | [Conventions & Quality Gates](conventions-and-quality.md) |
+| Test / e2e / automation work, including the story-174-3 e2e runner tooling (`e2e/support/story-174-3-runner-*.ts`, real-browser-zoom and state-evidence runners, fixture corpus under `e2e/fixtures/story-174-3/`) and the D-1 two-tab nonce-nulling e2e, and the isolated restart-per-run e2e orchestrator (`npm run test:e2e:isolated`) | [Testing & Operations](testing-and-ops.md) |
 
 ## Wiki Map
 
@@ -155,13 +176,4 @@ node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate 
 - **[Design System](design-system.md)** — Tailwind v4 semantic tokens, hardened shadcn primitives, composition families, enforced design-system boundary, and the Story 174.3 inclusive visual contract.
 - **[Domain Logic](domain-logic.md)** — financial-summary math, margin/liquidity calculations, cabinet creation/settlement, and task-role semantics.
 - **[Migration Program (Epics 166–174)](migration-program.md)** — per-epic/story status ledger, route ledger (76/76 verified), parity validation, Story 174.3 evidence pipeline, orchestration process, and the final 94/94 closeout.
-- **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174-3 evidence runners.
-ki Map
-
-- **[Architecture](architecture.md)** — route groups, layout/provider hierarchy, client-side data fetching, the auth store, and the canonical configuration table.
-- **[API Client and Normalizers](api-and-normalizers.md)** — the typed API surface, transport, error semantics, and the null-money/ratio preservation rules.
-- **[Design System](design-system.md)** — Tailwind v4 semantic tokens, hardened shadcn primitives, composition families, enforced design-system boundary, and the Story 174.3 inclusive visual contract.
-- **[Domain Logic](domain-logic.md)** — financial-summary math, margin/liquidity calculations, cabinet creation/settlement, and task-role semantics.
-- **[Migration Program (Epics 166–174)](migration-program.md)** — per-epic/story status ledger, route ledger (76/76 verified), parity validation, Story 174.3 evidence pipeline, orchestration process, and the final 94/94 closeout.
-- **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174-3 evidence runners.
-174-3 evidence runners.
+- **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174.3 evidence runners.

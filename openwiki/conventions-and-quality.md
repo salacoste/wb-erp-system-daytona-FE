@@ -34,8 +34,6 @@ sources:
     resource: repo://src/app/(dashboard)/analytics/models/components/__tests__/model-registry-presentation-source-contracts.test.ts
   - id: openwiki-source-9279f4f3ec2fbb6b6482d9ae
     resource: repo://src/app/(dashboard)/cogs/bulk/__tests__/bulk-cogs-presentation-source-contracts.test.ts
-  - id: openwiki-source-f77bbc8322f7f3d3c5ce166b
-    resource: repo://src/app/(dashboard)/moysklad/__tests__/moysklad-presentation-source-contracts.test.ts
   - id: openwiki-source-4c9b120fde01f836cfc88317
     resource: repo://src/app/(dashboard)/orders/__tests__/orders-presentation-source-contracts.test.ts
   - id: openwiki-source-67291b9dd2f19fa46ea944f3
@@ -46,6 +44,8 @@ sources:
     resource: repo://src/app/(dashboard)/supplies/%5Bid%5D/__tests__/supply-detail-presentation-source-contracts.test.ts
   - id: openwiki-source-8d0f263ceba491caec34db6c
     resource: repo://src/app/providers.tsx
+  - id: openwiki-source-4762fce35fccca75d26d559e
+    resource: repo://src/components/custom/analytics/__tests__/brand-share-presentation-source-contracts.test.tsx
   - id: openwiki-source-9ce5e1562aa7550a904ae8e6
     resource: repo://src/components/custom/dashboard/__tests__/dashboard-widgets-presentation-source-contracts.test.ts
   - id: openwiki-source-be0dd10095970e7048ebf130
@@ -56,10 +56,10 @@ sources:
     resource: repo://src/lib/sanitize-fallback-message.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-09T08:47:58.907Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-10T08:47:50.517Z" }
 verified:
-  - by: openwiki/0.5.0
-    at: 2026-09-09T08:47:58.907Z
+  - by: openwiki/0.5.1
+    at: 2026-09-10T08:47:50.517Z
 ---
 
 # Conventions & Quality Gates
@@ -129,7 +129,7 @@ The Epic 173 settings/shipments migration established a two-layer test contract 
 
 ### Layer 1 — Page source contracts
 
-Each migrated route owns a `*-presentation-source-contracts.test.ts` (Vitest, no DOM) that reads production source with `node:fs` and asserts four families of invariants. As of the 174.x era the repository carries **38 such suites** spanning: settings/backfill (173.2), settings/cabinet (173.3), settings/notifications (173.5), settings/tariffs (173.6), settings/tax (173.7), shipments list (173.8), shipment detail (173.9), shipments/box-types (173.10), shipments/sku-packaging (173.11), supplies list (173.12), supplies detail (173.13), and — added or already present alongside the 174-family wave — orders (list/fbo/integrity), moysklad, bulk-cogs/cogs-single/cogs-history, analytics AI families (anomalies, forecast accuracy, model registry, model evaluations, sku-accuracy, model performance, funnel, gaps, liquidity), automation (canned-rules, installed-rules, installed-rule editor), communications, finances, products, monitor, monitoring, dashboard, and the colocated dashboard-widgets suite:
+Each migrated route owns a `*-presentation-source-contracts.test.ts` (Vitest, no DOM) that reads production source with `node:fs` and asserts four families of invariants. As of the current window the repository carries **44 such suites** spanning: settings/backfill (173.2), settings/cabinet (173.3), settings/notifications (173.5), settings/tariffs (173.6), settings/tax (173.7), shipments list (173.8), shipment detail (173.9), shipments/box-types (173.10), shipments/sku-packaging (173.11), supplies list (173.12), supplies detail (173.13), and — added or already present alongside the 174-family wave — orders (list/fbo/integrity), moysklad, bulk-cogs/cogs-single/cogs-history, analytics AI families (anomalies, forecast accuracy, model registry, model evaluations, sku-accuracy, model performance, funnel, gaps, liquidity), the wider analytics routes (advertising, cross-reference, forecast, returns, search, storage, supply-planning), automation (canned-rules, installed-rules, installed-rule editor), communications, finances, products, monitor, monitoring, dashboard, and the colocated dashboard-widgets and brand-share custom-analytics suites:
 
 1. **Pinned production catalog** — the test enumerates every production file the route owns (either recursively discovering non-test `.ts/.tsx` files under the route directory, as backfill does, or via an explicit `OWNED_PRODUCTION_FILES` array cross-checked against directory discovery, as shipments and cabinet do) and asserts the exact expected list. Adding or removing a file in a migrated route fails the suite until the catalog is consciously updated.
 2. **No legacy palette or contextual hex** — every owned file must not match `LEGACY_PALETTE` (Tailwind palette classes like `text-yellow-600`, `bg-blue-500`, etc. across ~20 color families and shades 50–950) nor `CONTEXTUAL_HEX` (inline hex literals like `'#3B82F6'` in strings or Tailwind arbitrary values `bg-[#...]`). Colors must come from semantic design-system tokens instead of raw palettes.
@@ -180,7 +180,7 @@ Each story closes only when every quality gate matches its accepted baseline (th
 | Dot-locale percent | `npm run check:locale-percent` | Ratchet ↓ — current count 4 in `scripts/.locale-percent-baseline.txt` (started at ~108); lower the baseline when migrating |
 | AP#8 normalizer | `npm run check:anti-pattern-8-normalizer` | Ratchet guard vs baseline (`scripts/.anti-pattern-8-normalizer-baseline.txt`) |
 | ESLint | `npm run lint` | 0 errors, 0 warnings (zero-warning policy, `--max-warnings 0` in `lint` + `lint:fix`, Story 164.4) |
-| Vitest | `npm test -- --run` | ≥ 19559 passing / 0 failed (floor: 19118 after 174.2 dead-test deletion; then +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite debt-FE-D9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, +12 reactive-refresh suite D-2/PB-3, +3 wave-3 AA re-pins, +9 /80-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, +22 wave-6 WCAG style pins; additions OK, regressions not; skipped informational) |
+| Vitest | `npm test -- --run` | ≥ 19570 passing / 0 failed (floor: 19118 after 174.2 dead-test deletion; then +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite debt-FE-D9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, +12 reactive-refresh suite D-2/PB-3, +3 wave-3 AA re-pins, +9 /80-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, +22 wave-6 WCAG style pins, +11 route-guards exact-array pins, session-9; additions OK, regressions not; skipped informational) |
 | E2E bare skips | `npm run check:e2e-bare-skips` + `scripts/check-e2e-bare-skips.test.mjs` | No bare `.skip` without reason in owned E2E specs |
 | Max-lines cross-check | `npm run check:max-lines` | Matches the ESLint `max-lines` caps (200 source / 800 test) |
 | Privacy console guard | `npm run check:privacy` | 0 forbidden `console.*` calls in PII-adjacent files (see [Testing & Operations](testing-and-ops.md#privacy-console-check)) |

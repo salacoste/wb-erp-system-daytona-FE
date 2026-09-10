@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d3aec86b518b283c3c4ed4c0adceded60b954cbd44b1af17d2e09d2b0d34ad83",
+  "pageVersion": "sha256:4de731025bba4b47099ddb7ac4ee5d66273a17e7885f30ad162c4546ec3eb208",
   "claims": [
     {
       "id": "claim_07e85bb249e745f69c550323b16664e1",
@@ -32,21 +32,21 @@
         },
         {
           "resource": "repo://package.json",
-          "version": "repo-file-v1:sha256:09291c9463d0f970c3013ab0a919cf95be3d6743d84f6f249002771c29305823"
+          "version": "repo-file-v1:sha256:ab60e56072cf1bb7cceaddf66498403ea245a6a76bbd9b34093b94ad3a39af6d"
         }
       ]
     },
     {
       "id": "claim_9682dbb9da65496e8cb391069b72c365",
-      "statement": "Local validation commands include npm run dev (port 3100), build, start (port 3100), lint (--max-warnings 0 zero-warning policy, Story 164.4), type-check, npm test -- --run (Vitest), test:coverage, test:e2e / test:e2e:full / test:e2e:preflight (Playwright with preflight gate), check:privacy, test:privacy, format:check, check:docs, and check:anti-pattern-8-normalizer; browser E2E additionally requires the backend-seeded Owner user on localhost:3000 and the frontend on localhost:3100, with .env.e2e copied from .env.e2e.example.",
+      "statement": "Local validation commands include npm run dev (port 3100), build, start (port 3100), lint (--max-warnings 0 zero-warning policy, Story 164.4), type-check, npm test -- --run (Vitest), test:coverage, test:e2e / test:e2e:full / test:e2e:preflight / test:e2e:isolated (Playwright with preflight gate plus the isolated restart-per-run orchestrator), check:privacy, test:privacy, format:check, check:docs, check:anti-pattern-8-normalizer, check:eslint-rules, check:lessons, check:markers, check:max-lines, check:next-params, check:locale-percent, check:e2e-assertions, check:e2e-waits, and check:e2e-bare-skips; browser E2E additionally requires the backend-seeded Owner user on localhost:3000 and the frontend on localhost:3100, with .env.e2e copied from .env.e2e.example.",
       "evidence": [
         {
-          "resource": "repo://README.md",
-          "version": "repo-file-v1:sha256:4e3f44bf5b86e1c45307f91b5de80ee587959c736145a7c5384e1b37dbed3b9f"
+          "resource": "repo://README.md#L43-L87",
+          "version": "repo-lines-v1:sha256:d55cbc646b797798e841341cc11d72568affa35b2d64f5acdfb586c424154920:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4NTk5NmQxODg1ODhiY2M5MmVhMGZlNjdlYmM5ODhhZjY4Yjg5MWU0YTk2NDM3MmEwNmE4NDNlZjg5ZDlkYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkMTIzYmY4ZGUxZDY3ODE4YTc3ZjIxYjhiZmYyYTNkODBjYjZiNTI4ZGM4ZGZkZTNmMzk5ZTUwYTM5Y2NlMTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiNGIyNmI1NDExODljNWNkNmJjOTljZTAzOGZhZWQyZDA1ZmIwNzYyNmRkMjlhODQxYzFiYTE5MDg5Mjg1NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEyNjQ5ZGNkODgwNDQ2YzBmZDUzNzk0MDBlNzM5YjM3M2VlYTdiMTRiYWZmMDdhZjM3M2Q5MzM3YTZmODM3MTYifQ"
         },
         {
-          "resource": "repo://package.json",
-          "version": "repo-file-v1:sha256:09291c9463d0f970c3013ab0a919cf95be3d6743d84f6f249002771c29305823"
+          "resource": "repo://package.json#L17-L53",
+          "version": "repo-lines-v1:sha256:d30f2cb33da64083a7c5a6dd494d244a5705f7e4737a0127f51f2dac9badc331:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNTZmYzI1MjQ3ZmI4MTNkOTFjZDExZjQ5NzMxNjYxMTRkZDZkMDQzZGYzY2UxNDYzYzZiOThlZDc2YTU3ZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4OWE3MThmZDBhNzIwOWUyYTc3NDNiMzk2ZmY0Y2MwYmRiMGVhMGQ0Y2U3ZjdhMzk4YzZmMmVkNjg4Y2FkZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3Yjc3NGVjN2ZlMjNmY2FjMjdhNTdlMmY3YTQ2ZDcyYTBkMDNmN2NkYzA2NTE5YjQ5YzgzMTdlY2U0YjA4MzQifQ"
         }
       ]
     },
@@ -86,15 +86,15 @@
     },
     {
       "id": "claim_b6851120b3a344e59b791e5ae2973b00",
-      "statement": "The two migration gate scripts have no npm-run alias and are invoked directly: node scripts/check-shadcn-migration-parity.mjs (Story 174.1 schema-v3 BMAD/route-ledger/OMX parity, 94 = 94 and 76 = 76) and node scripts/check-shadcn-ui-boundary.mjs (Story 174.2 design-system boundary ratchet with baseline 523, exit 1 only on increase); both run node:test self-suites first and are excluded from the Vitest run.",
+      "statement": "The two migration gate scripts have no npm-run alias and are invoked directly: node scripts/check-shadcn-migration-parity.mjs (Story 174.1 schema-v3 BMAD/route-ledger/OMX parity, 94 = 94 and 76 = 76) and node scripts/check-shadcn-ui-boundary.mjs (Story 174.2 design-system boundary ratchet, current baseline 118 in scripts/.shadcn-ui-boundary-baseline.txt, exit 1 only on increase); both run node:test self-suites first and are excluded from the Vitest run. The entire residual 118 is gated on the owner decision C5 (chart palette), so no boundary waves can proceed without it.",
       "evidence": [
         {
-          "resource": "repo://README.md",
-          "version": "repo-file-v1:sha256:4e3f44bf5b86e1c45307f91b5de80ee587959c736145a7c5384e1b37dbed3b9f"
+          "resource": "repo://package.json#L17-L53",
+          "version": "repo-lines-v1:sha256:d30f2cb33da64083a7c5a6dd494d244a5705f7e4737a0127f51f2dac9badc331:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNTZmYzI1MjQ3ZmI4MTNkOTFjZDExZjQ5NzMxNjYxMTRkZDZkMDQzZGYzY2UxNDYzYzZiOThlZDc2YTU3ZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4OWE3MThmZDBhNzIwOWUyYTc3NDNiMzk2ZmY0Y2MwYmRiMGVhMGQ0Y2U3ZjdhMzk4YzZmMmVkNjg4Y2FkZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3Yjc3NGVjN2ZlMjNmY2FjMjdhNTdlMmY3YTQ2ZDcyYTBkMDNmN2NkYzA2NTE5YjQ5YzgzMTdlY2U0YjA4MzQifQ"
         },
         {
-          "resource": "repo://package.json#L17-L52",
-          "version": "repo-lines-v1:sha256:f3b443a84df172fb017325e93c0f29164b4ab61bd811c3cdc1d1d36c1db790f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNTZmYzI1MjQ3ZmI4MTNkOTFjZDExZjQ5NzMxNjYxMTRkZDZkMDQzZGYzY2UxNDYzYzZiOThlZDc2YTU3ZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4OWE3MThmZDBhNzIwOWUyYTc3NDNiMzk2ZmY0Y2MwYmRiMGVhMGQ0Y2U3ZjdhMzk4YzZmMmVkNjg4Y2FkZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3Yjc3NGVjN2ZlMjNmY2FjMjdhNTdlMmY3YTQ2ZDcyYTBkMDNmN2NkYzA2NTE5YjQ5YzgzMTdlY2U0YjA4MzQifQ"
+          "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
+          "version": "repo-file-v1:sha256:f10f7170eeb4986f69d764a4cb97c3f8e9337963222188a647fc4c0ac289d0e4"
         }
       ]
     },
@@ -104,7 +104,7 @@
       "evidence": [
         {
           "resource": "repo://package.json#L17-L52",
-          "version": "repo-lines-v1:sha256:f3b443a84df172fb017325e93c0f29164b4ab61bd811c3cdc1d1d36c1db790f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNTZmYzI1MjQ3ZmI4MTNkOTFjZDExZjQ5NzMxNjYxMTRkZDZkMDQzZGYzY2UxNDYzYzZiOThlZDc2YTU3ZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4OWE3MThmZDBhNzIwOWUyYTc3NDNiMzk2ZmY0Y2MwYmRiMGVhMGQ0Y2U3ZjdhMzk4YzZmMmVkNjg4Y2FkZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3Yjc3NGVjN2ZlMjNmY2FjMjdhNTdlMmY3YTQ2ZDcyYTBkMDNmN2NkYzA2NTE5YjQ5YzgzMTdlY2U0YjA4MzQifQ"
+          "version": "repo-lines-v1:sha256:d30f2cb33da64083a7c5a6dd494d244a5705f7e4737a0127f51f2dac9badc331:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNTZmYzI1MjQ3ZmI4MTNkOTFjZDExZjQ5NzMxNjYxMTRkZDZkMDQzZGYzY2UxNDYzYzZiOThlZDc2YTU3ZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4OWE3MThmZDBhNzIwOWUyYTc3NDNiMzk2ZmY0Y2MwYmRiMGVhMGQ0Y2U3ZjdhMzk4YzZmMmVkNjg4Y2FkZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3Yjc3NGVjN2ZlMjNmY2FjMjdhNTdlMmY3YTQ2ZDcyYTBkMDNmN2NkYzA2NTE5YjQ5YzgzMTdlY2U0YjA4MzQifQ"
         },
         {
           "resource": "repo://scripts/generate-story-174-3-scope-register.mjs",
@@ -271,10 +271,58 @@
           "version": "repo-lines-v1:sha256:0812c5ac14b57013ffb98331084be5853095c9f75365f605f9b0f6635929d64c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3OTRhOWIzNTQ4MjQ5NzA0NDUyMjQyNTRkMzIxNDllYjgyYTgwYjkzMzM3NDMxYzYxMDE3MTU0ZDMxNDQwZGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkYWZkM2Q1MWZkYmYwYTFhOWY2Yzc2OWM4ZTNmYTJkY2QyYjQwMjUyODI5ZGIyYzk5ZmY5ZGNhN2MxZWY1ZTcifQ"
         }
       ]
+    },
+    {
+      "id": "claim_ad5ab8fd42914ef7b799070b8b599af3",
+      "statement": "The handoff chain entry point is now session-9's docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md (5 items, PRs #420-#428, all merged) followed by docs/ORCHESTRATOR-PROMPT-2026-09-10-V20-DEBT-CONTINUATION-OMC-SUBAGENTS.md for session-10; live gate state on main c012f89d is Vitest floor 19570/0, lint 0/0, tsc 0, boundary 118 = baseline, docs 95, privacy exit 0 (bare run, never piped), 174.3 contracts 33/33.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md#L10-L27",
+          "version": "repo-lines-v1:sha256:6832f7f269943fa5984945057665806b71564d1ee9748c9814bc078169b36d23:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3MmNmMmI3NzE3MGI3NDNmNzQxMDIzZTkzNWM3NzkyNmQyNDU3ZDFjMTliZThlMmU0ODNmN2JjYjMyZmJlMzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmOGIzZjFlZmIxZWQwMWFhYjQwMzVhN2U0YzQ0MTQzNDkwNzJlNTI2MzcxNzFiNDhjZWQ0ZmI1ZjBiNzJiYTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzZDlmMWVjMDc2OGQ4MDZlZDBmNTU4ZDE4ZWRkMjdkMmJmOTk4ZWE2MmJmMzg5OThiYjhlZmUwMDhjY2ExOTcifQ"
+        },
+        {
+          "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-09-10-V20-DEBT-CONTINUATION-OMC-SUBAGENTS.md#L1-L15",
+          "version": "repo-lines-v1:sha256:49301a7114c558a82a4cab54cf45f92fba0442f7a0c9a2973f04b3c470683632:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzOWM4YTc1YjkxMDMxNDQzNjdhMDlhM2EzNDYyODA2YzRkOGExMzdmZDQzMjJjMGM0ZGQ3Yjc1Njc1Y2NjNjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5MGFhNWMwMWE5MWViMmQ2ZWY0MmJlYjMwOWMyNTZkNWU2YzA1ZmExZDk3MTdhODk4ZTJhMWM1ZmZjZjVjYjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1OWJkOTg1NjNkYjU5MzVlMTRlMGY3YjllZDExMGEzMDRjY2U0YWFkNjNjOGYyM2FiMjM5OTFkZWJjMTkzNGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a2f856fec1f04d9e881e41592f792912",
+      "statement": "Session-9 outcomes: strict prettier-md over 1,189 docs files (embedded-language-formatting=off, fences untouched); CABINET-BROWSER-02 root-caused as a stale twin-pin (not a regression, FE-D1 falsified) and re-pinned; the privacy scanner scans the HEAD merge-diff so pre-existing content surfaces at merge time; owner decision 2026-09-08 excluded the 5 vendored BMAD tool dirs from the change-set privacy scan (EXCLUDED_CHANGE_SET_PREFIXES filter in collectGitChangeFiles, ~630 real violations accepted as residual); route-guards exact-array unified with a 174.3 manifest regen (275/275 pins == disk, floor +11 to 19570).",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md#L14-L20",
+          "version": "repo-lines-v1:sha256:b68f27c0c7efd75d81f7a722d239bf513a6d3d46932ad0153012590c0cfbdd69:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGE2ZjkzYTlmMTJmMDEzZTJmZGY1OGJhMDkxYTZjMmM1YTFmNDg1Njk5MmY2ZjFiZGVmOThkNTU4NWMzMTRjYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjY4OTU4MzE1NDEzY2U0MzYxNWE5YThjODhjNzgzYzcyZDhiNDQ5NmEwMDBjZWU5MGJkYTJiNmExMDVkN2I0NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTlkNTU5OGVkYTYwNGIyNTM5NGE4YmM2NjZmNDgzZDlhMTdhZThmYTExMzk5OTRlODgyMzcwMDNlYjg0OGU5MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNhNGYxZTM1ZmYzODRjYmM0NzU4YjdmYTZkNTkzNmIzZDZjYTljMjBmZTg1MTk1ZTBkN2ZiODcwZjI4Njg4OSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_1330e666318d45d2abcf0954fb126a1d",
+      "statement": "scripts/.check-docs-baseline.txt (the docs-95 baseline) is zone-annotated as of session-10: 1 CANONICAL, 4 ARCHIVAL-CANDIDATE, and 90 ARCHIVAL entries; zones are narrative only (comments are stripped by the gate), and running check-doc-citations.sh --update-baseline regenerates the file flat, silently destroying the zone annotation, so it must be re-split after any regeneration.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/.check-docs-baseline.txt#L13-L30",
+          "version": "repo-lines-v1:sha256:37a8c1f2336bcb52593b6c3e8f020474c9c0da05680d0a7421a09e8c1c4402cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjYTE5OGU4Y2QyYjE5MjA1MDdlZDhmMDJkYjVhOWRjMjNkNTVjYzhmNDY4NjI1MzE5ZDE0YjUzOTA4ZDJiYTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1Y2Y1ZTk3MmI1OTgyY2U1OTlmMDlkY2RlMjk3YzNjYTY3ZTIwNWI0MjE3N2Y4ODcwMDBiMmFjZjg1YmJjMmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljZjgwMjUyM2U5MTllZDk0MGYxMGFiOTVjODAwYjg4Zjg3ZWIwYTliYzdhODhjMmVkMjIxZWZiOWZiZDE3ZDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJlZjcyZjUxZjRkMmVkMWFjOTgxOGNkYjQ2NTMxODZkNmU5OTdmODUyMDBlOGZlNGRmNTlmMzAwOTA0OGFkZjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_42ddcb667ef64cc6a8bd03f1dc8e6709",
+      "statement": "npm run test:e2e:isolated runs scripts/run-e2e-isolated.mjs, a restart-per-run e2e orchestrator that provisions a tmp worktree with its own dev server on :3100, composes the existing preflight via npm run test:e2e:full, guarantees PM2 restore (restart + verify HTTP 200, pm2 'online', and :3100 classified pm2-owned), and aborts fail-closed when :3100 is owned by a foreign process; Ctrl+C during teardown is deliberately swallowed to protect the restore.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L28-L33",
+          "version": "repo-lines-v1:sha256:d680606e50bea043420e0ace71f7ab57921536e3845b22610401f2c469c395f7:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDFkMjE1MGQzMDc4ZjQ1NDI3ZDg4ZmMwNzIyMDBiNDEwOGQ0NTZmZGQxNzc3MzQwNDE4Yjk1NGIzODQzZDk4MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDBlOWJlMWEyY2FkNzk3ZTdjYjdmY2UwZWVhNGI2MDk5NDY0YmJiODAxZWY4OGQxNGI0NTU0MDUwYTMzOGFmYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjNjN2FhMjQzZWU3ZjVlMTFhYTNiNDBlNzIzZDVmZjc4YjBjMDQ3NDJhYjgyMjkyYzEzZDhhOGEyMTk3ZjJhNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmQzZDliNTc0YTM3ZTM4OTFmZmQwYjdhODlmNTAxYzJhY2NiMTJmNmRlZmVjMjY5NzhlN2MwZDljYjJlMzU5ZCJ9"
+        },
+        {
+          "resource": "repo://scripts/run-e2e-isolated.mjs#L1-L40",
+          "version": "repo-lines-v1:sha256:1622b9b1012ce8f646fd519bffe27e2c31648629b04d3253f7f50fc44f757329:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1OWM0Nzg3MmI3MWYxMjU4OTk0Mjg5MjQ2NGU3NjRjMGRiMzUwYzIwYjcyMjI4NjQ1NjE1Y2MzNmUwYTA3MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3ZmFlMGM5YmRjMmY1MWMzYjQzZTAyMDJlY2Q4N2MxMDg2YjAzODZmMDBkNmFjNGQyNTRjZmNmZjU0ZjJlYjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzMWYxODMyNmViMTFjNzZlODMzYmRmZTZjODBlMDU5YjZiOWJjZWQwYWVjMzFkN2RjMmQzOGUwOGYyNTQ4ZDYifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.0",
-    "at": "2026-09-09T08:47:58.907Z"
+    "by": "openwiki/0.5.1",
+    "at": "2026-09-10T08:47:50.517Z"
   }
 }

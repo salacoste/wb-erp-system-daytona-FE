@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ee829dc49db9525508052b73e7c4570cda221a876fa83846384e38507b94cd6c",
+  "pageVersion": "sha256:c8bd5d4924e63e2044ab3d0c868964b630fe4e7f5fffdbf40926512cba2363a0",
   "claims": [
     {
       "id": "claim_47ae5092df88459d932915ee945c35e6",
@@ -8,7 +8,7 @@
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L141-L156",
-          "version": "repo-lines-v1:sha256:7b6180fa1316bc153357c72631c3cb364f4d0f25a29ab5965ee5ce4ec3e5209b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+          "version": "repo-lines-v1:sha256:befbf75a92a912f0e1f52fc48c656b29868e18f4cdb27dc9a12f6c1d5c687d02:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
         }
       ]
     },
@@ -32,39 +32,47 @@
     },
     {
       "id": "claim_9dabd84699f841a0b6e50a6d1be2ec79",
-      "statement": "Every migrated route owns a Vitest presentation-source-contract suite that reads production source text with node:fs and pins four invariant families: the exact owned production-file catalog, absence of legacy Tailwind palette classes and contextual hex literals, use of merged semantic compositions (PageHeader/PageState/ResponsiveTable/StatusBadge/FilterToolbar), and banishment of raw-palette helpers — so a migrated page cannot silently regress to raw palette, ad-hoc layout, or unnamed states independent of rendered output. The pattern now spans 38 suites covering settings, shipments, supplies, orders, moysklad, cogs, analytics AI families, automation, communications, finances, products, monitoring, and the colocated dashboard-widgets tree.",
+      "statement": "Every migrated route owns a Vitest presentation-source-contract suite that reads production source text with node:fs and pins four invariant families: the exact owned production-file catalog, absence of legacy Tailwind palette classes and contextual hex literals, use of merged semantic compositions (PageHeader/PageState/ResponsiveTable/StatusBadge/FilterToolbar), and banishment of raw-palette helpers — so a migrated page cannot silently regress to raw palette, ad-hoc layout, or unnamed states independent of rendered output. The pattern now spans 44 suites covering settings, shipments, supplies, orders (list/fbo/integrity), moysklad, cogs, analytics AI families and the wider analytics routes (advertising, cross-reference, forecast, returns, search, storage, supply-planning), automation, communications, finances, products, monitor/monitoring, dashboard, and the colocated dashboard-widgets and brand-share custom-analytics trees.",
       "evidence": [
         {
           "resource": "repo://src/app/(dashboard)/analytics/ai-admin/anomalies/components/__tests__/anomalies-presentation-source-contracts.test.ts",
-          "version": "repo-file-v1:sha256:af54c7f5f8ed59911515f1cef570274fcec9590dd3dcdceae1234fcd63c8bd86"
+          "version": "repo-file-v1:sha256:1d5085d9b4dc32e82fafd395651f411e652a7b808298298508d7cece74fc001d"
         },
         {
           "resource": "repo://src/app/(dashboard)/analytics/models/components/__tests__/model-registry-presentation-source-contracts.test.ts",
-          "version": "repo-file-v1:sha256:45ec34dc5135714a53ff0407048354d661f091b40cc5a5f31ed92f65f5acc0e6"
+          "version": "repo-file-v1:sha256:0ab4a1e2586c91314347d434c2168ea82f38087ca89a33ef20f15c0a23590f11"
         },
         {
           "resource": "repo://src/app/(dashboard)/cogs/bulk/__tests__/bulk-cogs-presentation-source-contracts.test.ts",
-          "version": "repo-file-v1:sha256:fe4971a210d991e32f0d495530d35d5d695832e50b576ebb6cbbbee4a35ac0d9"
-        },
-        {
-          "resource": "repo://src/app/(dashboard)/moysklad/__tests__/moysklad-presentation-source-contracts.test.ts",
-          "version": "repo-file-v1:sha256:19e15bcf372e95c18140c3fa41b2895589bf7f5389dc572f3af2000f83a22e24"
+          "version": "repo-file-v1:sha256:c0cbfc12d55d0c83ea21b9b793eb9c1672afc7f4c9889fc9c98cbdc23b630c2a"
         },
         {
           "resource": "repo://src/app/(dashboard)/orders/__tests__/orders-presentation-source-contracts.test.ts",
-          "version": "repo-file-v1:sha256:7a19980be83c7fb45194819a884985437ad251477044e5d72edc44a49dd3d7ba"
+          "version": "repo-file-v1:sha256:928cf26dd3ff5c8014f755fb5e5e5aca9e35bd00b6ce79d276baa7efcf1eff06"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/shipments/box-types/__tests__/box-types-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:5588b61881ce1e679191d43aa78a8988aa84dddfd428e2d7e3f19b1af74a3df6"
         },
         {
           "resource": "repo://src/app/(dashboard)/shipments/sku-packaging/__tests__/sku-packaging-presentation-source-contracts.test.ts",
-          "version": "repo-file-v1:sha256:bf05b9acba98eca867f0d27e7bd2c13e7dc1c66fa40e0aff378dd1f5c9d49619"
+          "version": "repo-file-v1:sha256:8836535e33ed6e320a3544f754198e0b0e24ade32fbd2eb0c736d2dc0185bfcd"
         },
         {
           "resource": "repo://src/app/(dashboard)/supplies/%5Bid%5D/__tests__/supply-detail-presentation-source-contracts.test.ts",
-          "version": "repo-file-v1:sha256:e71b1b89cdb1d792c60ea682ba78382edd86a5346969f452d17a2b6e62c77dca"
+          "version": "repo-file-v1:sha256:af2d907d822f8e19c95eedde8d957b853d1a91f798da0971cc7742dc4974b895"
+        },
+        {
+          "resource": "repo://src/components/custom/analytics/__tests__/brand-share-presentation-source-contracts.test.tsx",
+          "version": "repo-file-v1:sha256:f295d4e11f0782d8dd7651fee35e2d1af27ee36e9db7226b9c55797a75045082"
         },
         {
           "resource": "repo://src/components/custom/dashboard/__tests__/dashboard-widgets-presentation-source-contracts.test.ts",
           "version": "repo-file-v1:sha256:10e5fb7d1fd3d11f8cfbdb05c6302081c8d49bd92605eaeab64bfd21cc00c243"
+        },
+        {
+          "resource": "repo://vitest.config.ts",
+          "version": "repo-file-v1:sha256:e3f1198528add9378784801ab5de96e4e16285b3c122e4c7f2f3a5301e098e74"
         }
       ]
     },
@@ -74,7 +82,7 @@
       "evidence": [
         {
           "resource": "repo://src/app/(dashboard)/supplies/%5Bid%5D/__tests__/supply-detail-presentation-source-contracts.test.ts#L31-L76",
-          "version": "repo-lines-v1:sha256:1e96fde910ef807e9a3745880e057e1279d0228d7388ba9c368e4c6173ac2a70:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwZWJlYjEyMWJjMWYyM2M0MWQxOTZhZTJmYWE2Y2EzMDJmNTRlOWU3NDQyOWIzMDk4N2QzOTA1ZDVjMjY4MzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyNDk0NGUxOTBhNjMzODkxMGE1ZmRhMmEwNWFhMGMxM2E3YzcyMzVjNDJjNWJmODZiOWRhZGI5NjFkNDc5ZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhNzQ2OGVkZmI2OTI2NTk4OWNlYWRiNzZiOGRmMjdkYmJiNmE5ZGVkNTNmNmIyYjkxODM1ZWRkMDBhNTI3NDYifQ"
+          "version": "repo-lines-v1:sha256:ace514fc0b6a360eee09388eed650ecb394d34affd395d9f1bab552288fe719e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5YWJhOWZhZDdhNzBjNDgwNmVkOTI3NmUyY2VhOGQyNTRjNTNiODNhYzVkN2I4ZjVmOWY2ZTM4YjRhN2Q1ZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkZmEyNTc0NzQ5NTY4YzZmMTc2NWE5OTVmMzA2MTg1NjNhOTgxMGIwZDM0ODI4MjI3YTdmMWNlNzRhYzhiODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjOWJkZDA0NzYwMmNiZmY2Nzg5OTE5MDRkZWU5M2IyNWIzMzIzZWNmM2RjN2NiMGYwNDJkMWFmMjg3ODM5NzkifQ"
         }
       ]
     },
@@ -84,11 +92,11 @@
       "evidence": [
         {
           "resource": "repo://src/app/(dashboard)/shipments/box-types/__tests__/box-types-presentation-source-contracts.test.ts",
-          "version": "repo-file-v1:sha256:efe3bfba44b3a0fbecac351273dc87b8177ef648098f6186d6e1b58963f0d728"
+          "version": "repo-file-v1:sha256:5588b61881ce1e679191d43aa78a8988aa84dddfd428e2d7e3f19b1af74a3df6"
         },
         {
           "resource": "repo://src/app/(dashboard)/shipments/sku-packaging/__tests__/sku-packaging-presentation-source-contracts.test.ts",
-          "version": "repo-file-v1:sha256:bf05b9acba98eca867f0d27e7bd2c13e7dc1c66fa40e0aff378dd1f5c9d49619"
+          "version": "repo-file-v1:sha256:8836535e33ed6e320a3544f754198e0b0e24ade32fbd2eb0c736d2dc0185bfcd"
         }
       ]
     },
@@ -98,7 +106,7 @@
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L141-L156",
-          "version": "repo-lines-v1:sha256:7b6180fa1316bc153357c72631c3cb364f4d0f25a29ab5965ee5ce4ec3e5209b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+          "version": "repo-lines-v1:sha256:befbf75a92a912f0e1f52fc48c656b29868e18f4cdb27dc9a12f6c1d5c687d02:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
@@ -168,11 +176,11 @@
     },
     {
       "id": "claim_7edbfecc3ad34e2aa8eb52c47a05d470",
-      "statement": "The accepted Vitest baseline is ≥ 19559 passing / 0 failed, with a hard floor of 19118 passing (lowered exactly by 756 proven-dead tests in Story 174.2-FE, then raised incrementally through the 174.3 window, 174.4 contract tests, and the debt/backlog suites — redact D-9, nonce-mint D-1/PB-1, urgency-tier C15, reactive-refresh D-2/PB-3, AA re-pins, /80-sweep style pins, FE-D3 sanitizer pins, FE-D1 retry/ApiError-preservation pins, FE-D5 web-locks/claim suite, fe-d3-family hook-fallback pins, and wave-6 WCAG style pins); additions are acceptable, regressions are not, and skipped counts are informational only.",
+      "statement": "The accepted Vitest baseline is ≥ 19570 passing / 0 failed, with a hard floor of 19118 passing (lowered exactly by 756 proven-dead tests in Story 174.2-FE, then raised incrementally through the 174.3 window, 174.4 contract tests, and the debt/backlog suites — redact D-9, nonce-mint D-1/PB-1, urgency-tier C15, reactive-refresh D-2/PB-3, AA re-pins, /80-sweep style pins, FE-D3 sanitizer pins, FE-D1 retry/ApiError-preservation pins, FE-D5 web-locks/claim suite, fe-d3-family hook-fallback pins, wave-6 WCAG style pins, and session-9 route-guards exact-array pins); additions are acceptable, regressions are not, and skipped counts are informational only.",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L153-L156",
-          "version": "repo-lines-v1:sha256:a9d165e708115092e931a699a98f443a807dd04f102e05ec3b9efa68a88a6ffe:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE1MWVmOWMzOTQxMmQxNjQzYmRmZTI5NTNiYjI3MzlhOWQzNDQ0N2M3YWQyYTJiZGUyNWFhOWJjZjA3ZjgwZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
+          "version": "repo-lines-v1:sha256:2026988624be549c3ffc896054ff6a7279b891c9694fa4b57ce43e5ce2b05a74:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmMzZGNiYjU2YWRlZjQ0ZTYzNWVmYzY4NDNmNDNjMjEzMzZkZDM4ZDViOWE2NDQ1YzI0NmMwNjMwOWYwNGJiYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
         }
       ]
     },
@@ -308,7 +316,7 @@
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.0",
-    "at": "2026-09-09T08:47:58.907Z"
+    "by": "openwiki/0.5.1",
+    "at": "2026-09-10T08:47:50.517Z"
   }
 }
