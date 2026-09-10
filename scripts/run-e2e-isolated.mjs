@@ -8,7 +8,7 @@
  * Composes scripts/e2e-preflight.mjs via `npm run test:e2e:full` (read-only
  * reference; never modified). Pure planning lives in scripts/lib/e2e-isolated-plan.mjs.
  *
- * Pin seams (precedent STORY_174_3_NPM_CLI): RUN_E2E_ISOLATED_PM2 / _LSOF / _GIT.
+ * Pin seams (precedent STORY_174_3_NPM_CLI): RUN_E2E_ISOLATED_PM2 / _LSOF / _GIT / _PS.
  */
 
 import { spawn, spawnSync } from 'node:child_process'
@@ -51,6 +51,18 @@ function listenerPids(pins) {
   const result = sh(pins.lsof, ['-ti', `tcp:${E2E_PORT}`])
   if (result.status !== 0) return []
   return result.stdout.split('\n').map(line => line.trim()).filter(Boolean)
+}
+
+function parsePidTable(psOutput) {
+  return psOutput
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
+    .map(line => {
+      const [pid, ppid] = line.split(/\s+/)
+      return { pid, ppid }
+    })
+    .filter(entry => entry.pid !== undefined && entry.ppid !== undefined)
 }
 
 function probe(url) {
@@ -166,7 +178,25 @@ async function main() {
 
   const pm2Procs = pm2List(pins)
   const proc = pm2Procs.find(entry => entry?.name === PM2_PROC_NAME)
-  const portState = classifyPort3100({ pm2Pid: proc?.pid ?? null, listenerPids: listenerPids(pins) })
+  // next dev owns :3100 through CHILD processes (live: pm2 fork → next dev →
+  // next-server), so ownership matching needs the full process table — direct
+  // pid equality never matches. Fail closed when the table cannot be read.
+  let pidTable = []
+  if (proc?.pid != null) {
+    const psTable = sh(pins.ps, ['-axo', 'pid=,ppid='])
+    if (psTable.status !== 0) {
+      console.error(
+        '[run-e2e-isolated] Aborting before any state change: unable to read the process table (ps -axo pid=,ppid=) needed to match the :3100 listener against the pm2 process tree.'
+      )
+      process.exit(1)
+    }
+    pidTable = parsePidTable(psTable.stdout)
+  }
+  const portState = classifyPort3100({
+    pm2Pid: proc?.pid ?? null,
+    listenerPids: listenerPids(pins),
+    pidTable,
+  })
 
   // Fail-closed BEFORE any state change: buildPlan aggregates every problem.
   let plan

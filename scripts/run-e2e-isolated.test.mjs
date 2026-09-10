@@ -6,6 +6,7 @@ import {
   RESTORE_VERIFY_URL,
   buildPlan,
   classifyPort3100,
+  collectDescendantPids,
   parseIsolatedArgv,
   resolvePins,
   teardownSteps,
@@ -129,6 +130,64 @@ test('classifyPort3100 returns free only when no listeners are present', () => {
 test('classifyPort3100 returns foreign for unknown listeners, including a null pm2 pid', () => {
   assert.equal(classifyPort3100({ pm2Pid: 42, listenerPids: ['7'] }), 'foreign')
   assert.equal(classifyPort3100({ pm2Pid: null, listenerPids: ['7', '8'] }), 'foreign')
+})
+
+const PM2_TREE = [
+  { pid: '80620', ppid: '1' },
+  { pid: '80724', ppid: '80620' },
+  { pid: '80725', ppid: '80724' },
+]
+
+test('collectDescendantPids returns every descendant excluding the root', () => {
+  const table = [...PM2_TREE, { pid: 99999, ppid: '80725' }]
+  assert.deepEqual([...collectDescendantPids('80620', table)].sort(), ['80724', '80725', '99999'])
+})
+
+test('collectDescendantPids accepts a Map table and numeric pids', () => {
+  const table = new Map([
+    ['80620', { pid: '80620', ppid: '1' }],
+    ['80724', { pid: '80724', ppid: 80620 }],
+    ['80725', { pid: 80725, ppid: '80724' }],
+  ])
+  assert.deepEqual([...collectDescendantPids(80620, table)].sort(), ['80724', '80725'])
+})
+
+test('collectDescendantPids terminates on ppid self-loops and ancestor cycles', () => {
+  const table = [
+    { pid: 'selfloop', ppid: 'selfloop' },
+    { pid: 'root', ppid: '1' },
+    { pid: 'a', ppid: 'root' },
+    { pid: 'b', ppid: 'a' },
+    { pid: 'c', ppid: 'b' },
+    { pid: 'a', ppid: 'c' }, // second parent link closes an ancestor cycle a→b→c→a
+  ]
+  assert.deepEqual([...collectDescendantPids('root', table)].sort(), ['a', 'b', 'c'])
+})
+
+test('classifyPort3100 recognizes next-server owning :3100 as a pm2 grandchild', () => {
+  // Live shape (proof-run #2): pm2 fork 80620 → next dev 80724 →
+  // next-server 80725 holds the listening socket.
+  assert.equal(
+    classifyPort3100({ pm2Pid: 80620, listenerPids: ['80725'], pidTable: PM2_TREE }),
+    'pm2-owned'
+  )
+})
+
+test('classifyPort3100 still matches the direct pm2 pid and stays foreign otherwise', () => {
+  assert.equal(classifyPort3100({ pm2Pid: 42, listenerPids: ['42'], pidTable: [] }), 'pm2-owned')
+  assert.equal(
+    classifyPort3100({ pm2Pid: 80620, listenerPids: ['80725'], pidTable: [] }),
+    'foreign',
+    'an empty pid table cannot vouch for a child listener'
+  )
+  assert.equal(
+    classifyPort3100({ pm2Pid: 80620, listenerPids: ['777'], pidTable: PM2_TREE }),
+    'foreign'
+  )
+  assert.equal(
+    classifyPort3100({ pm2Pid: null, listenerPids: ['80725'], pidTable: PM2_TREE }),
+    'foreign'
+  )
 })
 
 // Happy-path default: env files exist in the primary checkout, the worktree
@@ -264,14 +323,15 @@ test('buildPlan honors pin-seam command overrides in emitted commands', () => {
 })
 
 test('resolvePins defaults to plain command names and respects each env override', () => {
-  assert.deepEqual(resolvePins({}), { pm2: 'pm2', lsof: 'lsof', git: 'git' })
+  assert.deepEqual(resolvePins({}), { pm2: 'pm2', lsof: 'lsof', git: 'git', ps: 'ps' })
   assert.deepEqual(
     resolvePins({
       RUN_E2E_ISOLATED_PM2: '/x/pm2',
       RUN_E2E_ISOLATED_LSOF: '/x/lsof',
       RUN_E2E_ISOLATED_GIT: '/x/git',
+      RUN_E2E_ISOLATED_PS: '/x/ps',
     }),
-    { pm2: '/x/pm2', lsof: '/x/lsof', git: '/x/git' }
+    { pm2: '/x/pm2', lsof: '/x/lsof', git: '/x/git', ps: '/x/ps' }
   )
 })
 

@@ -36,6 +36,7 @@ export function resolvePins(env = process.env) {
     pm2: env.RUN_E2E_ISOLATED_PM2 ?? 'pm2',
     lsof: env.RUN_E2E_ISOLATED_LSOF ?? 'lsof',
     git: env.RUN_E2E_ISOLATED_GIT ?? 'git',
+    ps: env.RUN_E2E_ISOLATED_PS ?? 'ps',
   }
 }
 
@@ -94,12 +95,47 @@ function splitInline(arg) {
 }
 
 /**
- * Classify who owns :3100 before any state change.
+ * All descendant pids of rootPid via BFS over parent→children links built
+ * from pidTable (a Map whose values are {pid, ppid}, or an array of them;
+ * pids may be numeric or string). Excludes rootPid itself; the visited set
+ * makes ppid self-loops and ancestor cycles terminate.
+ */
+export function collectDescendantPids(rootPid, pidTable) {
+  const entries = pidTable instanceof Map ? pidTable.values() : pidTable
+  const children = new Map()
+  for (const entry of entries) {
+    if (!entry || entry.ppid === undefined || entry.ppid === null) continue
+    const parent = String(entry.ppid)
+    const list = children.get(parent) ?? []
+    list.push(String(entry.pid))
+    children.set(parent, list)
+  }
+  const descendants = new Set()
+  const seen = new Set([String(rootPid)])
+  const queue = [String(rootPid)]
+  while (queue.length > 0) {
+    for (const child of children.get(queue.pop()) ?? []) {
+      if (seen.has(child)) continue
+      seen.add(child)
+      descendants.add(child)
+      queue.push(child)
+    }
+  }
+  return descendants
+}
+
+/**
+ * Classify who owns :3100 before any state change. `next dev` spawns child
+ * processes that own the listening socket (live: pm2 fork → next dev →
+ * next-server), so a listener matches when it is the pm2 pid itself OR any
+ * of its descendants in pidTable — direct pid equality alone never matches.
  * 'foreign' blocks the run; 'free' is allowed (swap stop becomes a no-op).
  */
-export function classifyPort3100({ pm2Pid, listenerPids }) {
+export function classifyPort3100({ pm2Pid, listenerPids, pidTable = [] }) {
   if (listenerPids.length === 0) return 'free'
-  if (pm2Pid !== null && listenerPids.some(pid => pid === String(pm2Pid))) return 'pm2-owned'
+  if (pm2Pid === null) return 'foreign'
+  const owned = new Set([String(pm2Pid), ...collectDescendantPids(pm2Pid, pidTable)])
+  if (listenerPids.some(pid => owned.has(String(pid)))) return 'pm2-owned'
   return 'foreign'
 }
 
