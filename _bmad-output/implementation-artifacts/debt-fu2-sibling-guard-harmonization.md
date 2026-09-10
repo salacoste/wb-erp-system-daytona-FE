@@ -4,7 +4,7 @@
 |---|---|
 | Status | done |
 | Date | 2026-09-10 (сессия-11, follow-up FU-2 из HANDOFF-2026-09-10 §3.4 №2) |
-| PR | TBD |
+| PR | [#438](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/438) |
 | Branch | `debt/fu2-sibling-guard-harmonization` @ `c3a3bd0a` (база `cfbfdefd`) |
 | Class | doc-класс (комментарии) + механический код (6 анкоров, behavior-идентичных) — 2 ревью-прохода opus |
 | Реестр | §28 |
