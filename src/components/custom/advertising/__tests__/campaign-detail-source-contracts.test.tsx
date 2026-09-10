@@ -22,18 +22,19 @@
  */
 
 import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { BID_LEVEL_COLORS } from '../BidRecommendationsCard'
 
+// All reads anchor to import.meta.url (170.6 canon) — no process.cwd() dependence.
+const testDirectory = dirname(fileURLToPath(import.meta.url))
+const repoRoot = resolve(testDirectory, '..', '..', '..', '..', '..')
 const PAGE_PATH = join(
-  process.cwd(),
+  repoRoot,
   'src/app/(dashboard)/analytics/advertising/campaigns/[advertId]/page.tsx'
 )
-const CARD_PATH = join(
-  process.cwd(),
-  'src/components/custom/advertising/BidRecommendationsCard.tsx'
-)
+const CARD_PATH = join(repoRoot, 'src/components/custom/advertising/BidRecommendationsCard.tsx')
 const OWNED_FILES = [PAGE_PATH, CARD_PATH]
 
 function withoutComments(source: string): string {

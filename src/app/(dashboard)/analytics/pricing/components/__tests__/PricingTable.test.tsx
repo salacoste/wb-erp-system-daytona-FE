@@ -5,12 +5,17 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { fireEvent, renderWithProviders, screen } from '@/test/utils/test-utils'
 import userEvent from '@testing-library/user-event'
 import { PricingTable } from '../PricingTable'
 import { emptyPriceRecommendation } from '@/test/fixtures/price-recommendations-empty'
 import type { PriceRecommendation } from '@/types/price-recommendations'
+
+// All reads anchor to import.meta.url (170.6 canon) — no process.cwd() dependence.
+const testDirectory = dirname(fileURLToPath(import.meta.url))
+const repoRoot = resolve(testDirectory, '..', '..', '..', '..', '..', '..', '..')
 
 function item(overrides: Partial<PriceRecommendation> = {}): PriceRecommendation {
   return emptyPriceRecommendation({
@@ -70,7 +75,7 @@ describe('PricingTable — SPP-1.7 basis badge', () => {
 
   it('keeps the elasticity table in one named keyboard-focusable scroll region', () => {
     const source = readFileSync(
-      join(process.cwd(), 'src/app/(dashboard)/analytics/pricing/components/ElasticitySection.tsx'),
+      join(repoRoot, 'src/app/(dashboard)/analytics/pricing/components/ElasticitySection.tsx'),
       'utf8'
     )
 

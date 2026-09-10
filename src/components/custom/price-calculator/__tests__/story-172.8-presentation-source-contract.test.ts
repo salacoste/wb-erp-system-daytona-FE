@@ -1,6 +1,11 @@
 import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { dirname, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
+
+// All reads anchor to import.meta.url (170.6 canon) — no process.cwd() dependence.
+const testDirectory = dirname(fileURLToPath(import.meta.url))
+const repoRoot = resolve(testDirectory, '..', '..', '..', '..', '..')
 
 const MUTABLE_PRESENTATION_MANIFEST = [
   'src/app/(dashboard)/cogs/price-calculator/page.tsx',
@@ -81,7 +86,7 @@ const RAW_PALETTE_CLASS =
 const RAW_HEX_COLOR = /#[\da-fA-F]{3,8}\b/g
 
 function presentationViolations(path: string): string[] {
-  const source = readFileSync(resolve(process.cwd(), path), 'utf8')
+  const source = readFileSync(resolve(repoRoot, path), 'utf8')
 
   return source.split('\n').flatMap((line, index) => {
     const matches = [...line.matchAll(RAW_PALETTE_CLASS), ...line.matchAll(RAW_HEX_COLOR)]
@@ -111,11 +116,11 @@ describe('Story 172.8 mutable presentation source contract', () => {
 
   it('pins the narrow-width reflow contract for live calculator controls', () => {
     const dimensions = readFileSync(
-      resolve(process.cwd(), 'src/components/custom/price-calculator/DimensionInputSection.tsx'),
+      resolve(repoRoot, 'src/components/custom/price-calculator/DimensionInputSection.tsx'),
       'utf8'
     )
     const warehouse = readFileSync(
-      resolve(process.cwd(), 'src/components/custom/price-calculator/WarehouseSelect.tsx'),
+      resolve(repoRoot, 'src/components/custom/price-calculator/WarehouseSelect.tsx'),
       'utf8'
     )
 
