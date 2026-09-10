@@ -464,7 +464,7 @@ test('killProcessGroup stops after SIGTERM when the group exits during the grace
 test('executeTeardown falls back to rmSync only when git remove fails, after pm2-restart', async () => {
   const calls = []
   let dirExists = true
-  const summary = { phases: {}, restoreVerified: false }
+  const summary = { phases: {}, restoreVerified: false, swapped: true }
   const result = await executeTeardown({
     steps: teardownSteps({ keepWorktree: false, worktreeDir: '/tmp/wt' }),
     devPid: 900,
@@ -528,7 +528,7 @@ test('executeTeardown skips the rmSync fallback when git worktree remove succeed
 
 test('executeTeardown records a failing step and still runs the remaining invariant', async () => {
   const calls = []
-  const summary = { phases: {}, restoreVerified: false }
+  const summary = { phases: {}, restoreVerified: false, swapped: true }
   const result = await executeTeardown({
     steps: teardownSteps({ keepWorktree: false, worktreeDir: '/tmp/wt' }),
     devPid: null,
@@ -806,8 +806,8 @@ test('runIsolatedE2E green path executes the full lifecycle with pin seams (M1/M
     assert.ok(indexOf(earlier) !== -1 && indexOf(earlier) < indexOf(later), `${earlier} < ${later}`)
   }
   assert.ok(
-    calls.includes('/custom/lsof -ti -sTCP:LISTEN tcp:3100'),
-    'lsof pin reaches port probes, restricted to LISTEN sockets (L5)'
+    calls.includes('/custom/lsof -ti tcp:3100 -sTCP:LISTEN'),
+    'lsof pin reaches port probes; address follows -ti, LISTEN filter last (C1/L5)'
   )
   assert.ok(calls.includes('/custom/ps -axo pid=,ppid='), 'ps pin reaches pid-table reads')
   assert.equal(result.exitCode, 0)
@@ -913,9 +913,10 @@ test('runIsolatedE2E aborts promptly when interrupted during readiness (M3/M5b)'
   assert.equal(summary.restoreVerified, false, 'probe stays down, so attestation stays false')
 })
 
-test('runIsolatedE2E keeps portFreed false when no dev server was spawned (L7)', async () => {
-  let pm2Restarted = false
+test('runIsolatedE2E free-port run skips pm2 stop/restart and keeps portFreed false (L3/L7)', async () => {
+  const calls = []
   const sh = (command, args = []) => {
+    calls.push([command, ...args].join(' '))
     if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
     if (command === 'pm2' && args[0] === 'jlist') {
       return {
@@ -925,24 +926,22 @@ test('runIsolatedE2E keeps portFreed false when no dev server was spawned (L7)',
         ]),
       }
     }
-    if (command === 'lsof') return { status: 0, stdout: pm2Restarted ? '80725\n' : '' }
+    // lsof always clean-no-match: the port starts AND stays free.
+    if (command === 'lsof') return { status: 1, stdout: '' }
     if (command === 'ps') {
       return { status: 0, stdout: ' 80620     1\n 80724  80620\n 80725  80724\n' }
-    }
-    if (command === 'pm2' && args[0] === 'restart') {
-      pm2Restarted = true
-      return { status: 0, stdout: '', stderr: '' }
     }
     return { status: 0, stdout: '', stderr: '' }
   }
   const stdout = []
+  const stderr = []
   const result = await runIsolatedE2E({
     // Port starts free (portState 'free'): no pm2 stop, and the dev spawn
     // fails immediately with no pid, so the stop-dev-kill step never runs.
     argv: ['--ready-timeout-seconds', '1'],
     sh,
     spawnDev: () => ({ pid: undefined, unref() {}, on() {} }),
-    probeUrl: async () => (pm2Restarted ? 200 : null),
+    probeUrl: async () => null,
     waitMs: async () => {},
     killGroup: () => {},
     openLog: () => 3,
@@ -950,17 +949,25 @@ test('runIsolatedE2E keeps portFreed false when no dev server was spawned (L7)',
       if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
       return !target.startsWith('/private/tmp/e2e-isolated-')
     },
-    restoreTimeoutSeconds: 2,
+    restoreTimeoutSeconds: 0.2,
     writeStdout: message => stdout.push(message),
-    writeStderr: () => {},
+    writeStderr: message => stderr.push(message),
   })
   assert.equal(result.exitCode, 1)
   const summary = JSON.parse(stdout.at(-1))
-  assert.equal(summary.restoreVerified, true)
-  assert.equal(summary.worktreeRemoved, true)
+  // L3: nothing was swapped (port free → no stop), so the restart step is
+  // skipped — pm2 is never bounced when it was never touched.
+  assert.equal(summary.swapped, false)
+  assert.ok(!calls.some(call => call.startsWith('pm2 stop')))
+  assert.ok(!calls.some(call => call.startsWith('pm2 restart')))
   // L7: stop-dev-kill never ran (devPid null), so portFreed keeps its
   // initialized false instead of being omitted from the summary.
   assert.equal(summary.portFreed, false)
+  assert.equal(summary.worktreeRemoved, true)
+  // With lsof reporting no listener, the pm2-owned attestation leg is
+  // unreachable — the run must say so loudly instead of claiming success.
+  assert.equal(summary.restoreVerified, false)
+  assert.ok(stderr.join('\n').includes('CRITICAL: PM2 restore NOT verified'))
 })
 
 // Shared fake-environment harness for the pass-3 runIsolatedE2E tests:
@@ -1103,4 +1110,161 @@ test('runIsolatedE2E --keep-worktree keeps the tree and omits worktreeRemoved (L
   assert.equal(summary.worktreeKept, true)
   assert.ok(!('worktreeRemoved' in summary), 'worktreeRemoved is omitted when kept')
   assert.equal(summary.exitCode, 0)
+})
+
+test('every lsof probe uses the load-bearing argv order (C1 regression)', async () => {
+  const harness = createIsolatedHarness()
+  const lsofArgv = []
+  const result = await runIsolatedE2E({
+    ...harness,
+    argv: [],
+    sh: (command, args, options) => {
+      if (command === 'lsof') lsofArgv.push(args)
+      return harness.sh(command, args, options)
+    },
+    writeStdout: () => {},
+    writeStderr: () => {},
+  })
+  assert.equal(result.exitCode, 0)
+  assert.ok(lsofArgv.length > 0, 'the flow exercised the lsof port probe')
+  for (const args of lsofArgv) {
+    // darwin lsof getopt: '-sTCP:LISTEN' between '-i' and the address makes
+    // getopt bind -i to the filter and parse 'tcp:3100' as a bare filename —
+    // exactly the bug that shipped in pass 3. The address token MUST
+    // immediately follow -i and the state filter MUST be last.
+    assert.deepEqual(args, ['-ti', 'tcp:3100', '-sTCP:LISTEN'])
+    assert.equal(args[0], '-ti')
+    assert.equal(args[1], 'tcp:3100', 'address token must immediately follow -i')
+    assert.equal(args.at(-1), '-sTCP:LISTEN', 'the state filter must be the LAST argument')
+  }
+})
+
+test('runIsolatedE2E fails closed when lsof cannot be spawned (M1)', async () => {
+  const harness = createIsolatedHarness()
+  const stderr = []
+  const result = await runIsolatedE2E({
+    ...harness,
+    sh: (command, args, options) => {
+      if (command === 'lsof') return { status: null, stdout: '', stderr: 'spawn ENOENT' }
+      return harness.sh(command, args, options)
+    },
+    writeStdout: () => {},
+    writeStderr: message => stderr.push(message),
+  })
+  assert.equal(result.exitCode, 1)
+  assert.match(stderr.join('\n'), /Unable to read :3100 listeners/)
+  assert.match(stderr.join('\n'), /Aborting before any state change/)
+  assert.ok(
+    !harness.calls.some(call => call.startsWith('pm2 stop')),
+    'a broken lsof must not be conflated with a free port'
+  )
+  assert.ok(!harness.calls.some(call => call.startsWith('git worktree add')))
+})
+
+test('runIsolatedE2E treats lsof exit 1 as no-listeners and proceeds (M1)', async () => {
+  const harness = createIsolatedHarness()
+  const stdout = []
+  const stderr = []
+  const result = await runIsolatedE2E({
+    ...harness,
+    sh: (command, args, options) => {
+      if (command === 'lsof') return { status: 1, stdout: '' }
+      return harness.sh(command, args, options)
+    },
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  // Exit 1 is lsof's clean "no match": the run proceeds (swap stop skipped),
+  // but the pm2-owned attestation leg is then unreachable and must say so.
+  assert.ok(harness.calls.some(call => call.startsWith('git worktree add')))
+  assert.ok(harness.calls.some(call => call.startsWith('npm run test:e2e:full')))
+  assert.ok(!harness.calls.some(call => call.startsWith('pm2 stop')))
+  assert.equal(result.exitCode, 1)
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.restoreVerified, false)
+  assert.ok(stderr.join('\n').includes('CRITICAL: PM2 restore NOT verified'))
+})
+
+test('runIsolatedE2E provision failure skips both pm2 stop and restart (L3)', async () => {
+  const harness = createIsolatedHarness()
+  const stdout = []
+  const stderr = []
+  const result = await runIsolatedE2E({
+    ...harness,
+    argv: ['--ready-timeout-seconds', '1'],
+    sh: (command, args, options) => {
+      if (command === 'git' && args[1] === 'add') {
+        return { status: 1, stdout: '', stderr: 'worktree add failed' }
+      }
+      return harness.sh(command, args, options)
+    },
+    restoreTimeoutSeconds: 0.2,
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  assert.equal(result.exitCode, 1)
+  assert.match(stderr.join('\n'), /Provision step failed/)
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.swapped, false, 'pm2 was never stopped')
+  assert.ok(!harness.calls.some(call => call.startsWith('pm2 stop')))
+  assert.ok(
+    !harness.calls.some(call => call.startsWith('pm2 restart')),
+    'restarting would needlessly bounce the untouched shared server'
+  )
+})
+
+test('restore attestation fails when pm2 reports stopped despite HTTP 200 (L4)', async () => {
+  const harness = createIsolatedHarness()
+  const stdout = []
+  const stderr = []
+  const result = await runIsolatedE2E({
+    ...harness,
+    argv: [],
+    sh: (command, args, options) => {
+      if (command === 'pm2' && args[0] === 'jlist') {
+        return {
+          status: 0,
+          stdout: JSON.stringify([
+            { name: PM2_PROC_NAME, pid: 80620, pm2_env: { status: 'stopped' } },
+          ]),
+        }
+      }
+      return harness.sh(command, args, options)
+    },
+    probeUrl: async () => 200,
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  assert.equal(result.exitCode, 1)
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.restoreVerified, false, 'HTTP 200 alone must not pass the attestation')
+  assert.ok(stderr.join('\n').includes('CRITICAL: PM2 restore NOT verified'))
+})
+
+test('restore attestation fails when :3100 is owned by a foreign pid (L4)', async () => {
+  const harness = createIsolatedHarness()
+  const stdout = []
+  const stderr = []
+  const result = await runIsolatedE2E({
+    ...harness,
+    argv: [],
+    sh: (command, args, options) => {
+      if (command === 'lsof') {
+        // Pre-run: pm2-owned (the swap may proceed). After the restart: an
+        // unrelated pid owns the port — the attestation must reject it.
+        return {
+          status: 0,
+          stdout: harness.state.pm2Restarted ? '99999\n' : '80725\n',
+        }
+      }
+      return harness.sh(command, args, options)
+    },
+    probeUrl: async () => 200,
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  assert.equal(result.exitCode, 1)
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.restoreVerified, false, 'a foreign listener must fail the attestation')
+  assert.ok(stderr.join('\n').includes('CRITICAL: PM2 restore NOT verified'))
 })

@@ -12,6 +12,9 @@ export const PM2_PROC_NAME = 'wb-repricer-frontend-dev'
 export const E2E_PORT = '3100'
 export const RESTORE_VERIFY_URL = `http://localhost:${E2E_PORT}/login`
 export const DEV_COMMAND = ['npx', 'next', 'dev', '--webpack', '-p', E2E_PORT]
+// Single source of truth for the suite invocation; the plan's run phase and
+// the executor's run spawn both build from this constant (do not re-literal).
+export const RUN_COMMAND = ['run', 'test:e2e:full', '--']
 
 const USAGE = `Usage: node scripts/run-e2e-isolated.mjs [--base <sha>] [--worktree-dir <path>]
        [--keep-worktree] [--ready-timeout-seconds <n>] [--|SPEC...] [PLAYWRIGHT_ARGS...]
@@ -218,14 +221,14 @@ export function buildPlan({
       commands: portOwned ? [[pins.pm2, 'stop', pm2ProcName]] : [],
       stopIsNoOp: !portOwned,
       portFreePollSeconds: 15,
-      devCommand: [pins.npx ?? DEV_COMMAND[0], ...DEV_COMMAND.slice(1)],
+      devCommand: [pins.npx, ...DEV_COMMAND.slice(1)],
       devLogPath: `${worktreeDir}/.e2e-isolated-dev.log`,
       readinessUrl: RESTORE_VERIFY_URL,
       readyTimeoutSeconds,
     },
     {
       phase: 'run',
-      commands: [[pins.npm, 'run', 'test:e2e:full', '--']],
+      commands: [[pins.npm, ...RUN_COMMAND]],
       cwd: worktreeDir,
     },
     {
@@ -350,6 +353,12 @@ export async function executeTeardown({
           summary.portFreed = await waitForPortFreed(10)
         }
       } else if (step.step === 'pm2-restart') {
+        // Nothing swapped (provision failed / port was already free) means
+        // pm2 was never touched: restarting here would needlessly bounce the
+        // shared server. summary.swapped records whether a stop happened.
+        if (!summary.swapped) {
+          continue
+        }
         const restartStart = Date.now()
         const result = sh(step.command[0], step.command.slice(1))
         summary.phases.pm2RestartMs = Date.now() - restartStart

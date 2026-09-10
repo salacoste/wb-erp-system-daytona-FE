@@ -25,11 +25,13 @@
  * 'foreign' (the orphan is outside the pm2 process tree) and aborts
  * fail-closed.
  *
- * Restore semantics: teardown's `pm2 restart` restores the shared dev server
- * to ONLINE even when it was 'stopped' before the run (restore-to-online, not
- * restore-to-pre-state). restoreVerified requires ALL of: HTTP 200 on /login,
- * pm2 jlist status 'online', and :3100 classified 'pm2-owned' via a fresh
- * process table — HTTP-200-alone can be a false positive.
+ * Restore semantics: when the swap stopped pm2 (summary.swapped), teardown's
+ * `pm2 restart` brings the shared dev server back ONLINE and restoreVerified
+ * requires ALL of: HTTP 200 on /login, pm2 jlist status 'online', and :3100
+ * classified 'pm2-owned' via a fresh process table — HTTP-200-alone can be a
+ * false positive. When NOTHING was swapped (provision failed / port already
+ * free), the restart step is skipped: pm2 was never touched, so its pre-run
+ * state is preserved as-is.
  *
  * Summary contract: the JSON summary is printed only after provisioning has
  * begun (pre-provision fail-closed aborts print nothing); `exitCode` reflects
@@ -48,6 +50,7 @@ import {
   E2E_PORT,
   PM2_PROC_NAME,
   RESTORE_VERIFY_URL,
+  RUN_COMMAND,
   buildPlan,
   classifyPort3100,
   executeTeardown,
@@ -111,18 +114,33 @@ export async function runIsolatedE2E({
     }
   },
   restoreTimeoutSeconds = null,
-  // Drain-aware default: resolves on the write callback, so awaiting the
-  // FINAL summary guarantees it is flushed before the CLI layer calls
-  // process.exit (piped stdout would otherwise risk dropping the JSON).
+  // Drain-aware defaults: resolve on the write callback, so awaiting the
+  // FINAL summary and the CRITICAL stderr warnings guarantees they are
+  // flushed before the CLI layer calls process.exit (piped streams would
+  // otherwise risk dropping the attestation JSON).
   writeStdout = message => new Promise(resolve => process.stdout.write(`${message}\n`, resolve)),
-  writeStderr = message => process.stderr.write(`${message}\n`),
+  writeStderr = message => new Promise(resolve => process.stderr.write(`${message}\n`, resolve)),
 } = {}) {
   function listenerPidsNow() {
+    // Argv order is load-bearing (darwin lsof getopt): the address token MUST
+    // immediately follow -i and -sTCP:LISTEN must come LAST — putting the
+    // filter between them makes getopt bind -i to '-sTCP:LISTEN' and parse
+    // 'tcp:3100' as a bare filename (lsof exits 1, port reads as free).
     // -sTCP:LISTEN restricts to LISTEN-state sockets: without it lsof also
     // matches established CLIENT connections to :3100 (e.g. the probe's own
     // socket), which would misclassify a busy port as 'foreign'.
-    const result = sh(pins.lsof, ['-ti', '-sTCP:LISTEN', `tcp:${E2E_PORT}`])
-    if (result.status !== 0) return []
+    const result = sh(pins.lsof, ['-ti', `tcp:${E2E_PORT}`, '-sTCP:LISTEN'])
+    if (result.status === 1) {
+      // Exit 1 is lsof's clean "no match" — no listener on the port.
+      return []
+    }
+    if (result.status !== 0) {
+      // Spawn failure (status null) or an unexpected exit code is NOT
+      // "no listeners": conflating it would fail open and skip the pm2 stop.
+      throw new Error(
+        `Unable to read :${E2E_PORT} listeners (${pins.lsof} exited ${result.status ?? 'signal'}); refusing to guess port ownership.`
+      )
+    }
     return result.stdout
       .split('\n')
       .map(line => line.trim())
@@ -213,11 +231,19 @@ export async function runIsolatedE2E({
     }
     pidTable = table
   }
-  const portState = classifyPort3100({
-    pm2Pid: proc?.pid ?? null,
-    listenerPids: listenerPidsNow(),
-    pidTable,
-  })
+  let portState
+  try {
+    portState = classifyPort3100({
+      pm2Pid: proc?.pid ?? null,
+      listenerPids: listenerPidsNow(),
+      pidTable,
+    })
+  } catch (error) {
+    // lsof spawn failure / unexpected exit: fail closed BEFORE any state
+    // change instead of conflating the failure with "no listeners".
+    writeStderr(`[run-e2e-isolated] Aborting before any state change:\n${error.message}`)
+    return { exitCode: 1 }
+  }
 
   // Fail-closed BEFORE any state change: buildPlan aggregates every problem.
   // pins/exists/envFiles flow through so the seams hold at plan build time.
@@ -247,6 +273,7 @@ export async function runIsolatedE2E({
     phases: {},
     restoreVerified: false,
     portFreed: false,
+    swapped: false,
     worktreeKept: parsed.keepWorktree,
     startedAtMs: Date.now(),
   }
@@ -279,6 +306,9 @@ export async function runIsolatedE2E({
         throw new Error(`Swap step failed (${command.join(' ')}):\n${result.stderr ?? ''}`)
       }
     }
+    // Recorded ONLY after a successful stop so teardown knows whether pm2
+    // was actually touched (no swap → no restart, see executeTeardown).
+    summary.swapped = plan.find(phase => phase.phase === 'swap').commands.length > 0
     if (!(await waitFor(async () => listenerPidsNow().length === 0, 15))) {
       throw new Error(`Port ${E2E_PORT} did not free within the swap window.`)
     }
@@ -318,7 +348,7 @@ export async function runIsolatedE2E({
     summary.phases.swapMs = Date.now() - swapStart
 
     const runStart = Date.now()
-    const runResult = sh(pins.npm, ['run', 'test:e2e:full', '--', ...parsed.forwarded], {
+    const runResult = sh(pins.npm, [...RUN_COMMAND, ...parsed.forwarded], {
       cwd: worktreeDir,
       stdio: 'inherit',
     })
@@ -344,23 +374,36 @@ export async function runIsolatedE2E({
       exists,
     })
     if (!summary.restoreVerified) {
-      writeStderr(
+      // Awaited so a piped stderr cannot truncate the CRITICAL attestation
+      // warning before exit.
+      await writeStderr(
         `[run-e2e-isolated] CRITICAL: PM2 restore NOT verified (HTTP 200 on ${RESTORE_VERIFY_URL} + pm2 'online' + :3100 'pm2-owned'). ` +
           `Inspect pm2 and :3100 manually; your shared dev server may be down.`
       )
       finalExitCode = 1
     }
     if (summary.teardownErrors.length > 0) {
-      writeStderr(`[run-e2e-isolated] Teardown step errors:\n${summary.teardownErrors.join('\n')}`)
+      await writeStderr(
+        `[run-e2e-isolated] Teardown step errors:\n${summary.teardownErrors.join('\n')}`
+      )
     }
     summary.durationMs = Date.now() - summary.startedAtMs
     // Attestation override BEFORE printing so the JSON exitCode matches the
     // process exit even when the run itself passed but restore failed.
     // Awaited so piped stdout drains before the CLI re-raise / process.exit.
-    const printed = { ...summary, exitCode: finalExitCode, interrupted }
-    if (parsed.keepWorktree) delete printed.worktreeRemoved
-    await writeStdout(JSON.stringify(printed))
-    unregisterSignals()
+    // try/finally keeps unregisterSignals running even if a destroyed stdout
+    // throws mid-write — signal hygiene must never be skipped.
+    try {
+      const printed = { ...summary, exitCode: finalExitCode, interrupted }
+      if (parsed.keepWorktree) delete printed.worktreeRemoved
+      await writeStdout(JSON.stringify(printed))
+    } catch (error) {
+      writeStderr(
+        `[run-e2e-isolated] Unable to print the summary JSON: ${error instanceof Error ? error.message : String(error)}`
+      )
+    } finally {
+      unregisterSignals()
+    }
   }
 
   return { exitCode: finalExitCode, interrupted }
