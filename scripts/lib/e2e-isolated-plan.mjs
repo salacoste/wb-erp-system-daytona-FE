@@ -1,4 +1,4 @@
-import { existsSync as defaultExists } from 'node:fs'
+import { existsSync as defaultExists, rmSync } from 'node:fs'
 
 /**
  * Pure planning logic for scripts/run-e2e-isolated.mjs (restart-per-run e2e
@@ -37,6 +37,7 @@ export function resolvePins(env = process.env) {
     lsof: env.RUN_E2E_ISOLATED_LSOF ?? 'lsof',
     git: env.RUN_E2E_ISOLATED_GIT ?? 'git',
     ps: env.RUN_E2E_ISOLATED_PS ?? 'ps',
+    npm: env.RUN_E2E_ISOLATED_NPM ?? 'npm',
   }
 }
 
@@ -63,6 +64,9 @@ export function parseIsolatedArgv(argv, { defaultBase, defaultWorktreeDir }) {
 
     const [flag, inlineValue] = splitInline(arg)
     if (BOOLEAN_FLAGS.has(flag)) {
+      if (inlineValue !== undefined) {
+        throw new Error(`${flag} does not take a value (got '${inlineValue}')\n${USAGE}`)
+      }
       parsed.keepWorktree = true
       continue
     }
@@ -139,7 +143,7 @@ export function classifyPort3100({ pm2Pid, listenerPids, pidTable = [] }) {
   return 'foreign'
 }
 
-const DEFAULT_PINS = { ...resolvePins({}), npm: 'npm' }
+const DEFAULT_PINS = resolvePins({})
 
 /**
  * Build the ordered execution plan. Fail-closed: throws ONE Error whose
@@ -203,7 +207,7 @@ export function buildPlan({
     },
     {
       phase: 'run',
-      commands: [[DEFAULT_PINS.npm, 'run', 'test:e2e:full', '--']],
+      commands: [[pins.npm ?? DEFAULT_PINS.npm, 'run', 'test:e2e:full', '--']],
       cwd: worktreeDir,
     },
     {
@@ -224,7 +228,9 @@ export function buildPlan({
 /**
  * The teardown invariant, as ordered data: stop-dev-kill → pm2-restart →
  * restore-verify (HTTP poll) → worktree removal (skippable) → artifacts
- * cleanup. Restore MUST precede worktree removal.
+ * cleanup. Restore MUST precede worktree removal. Both removal AND artifacts
+ * cleanup are skipped under --keep-worktree: the kept worktree IS the evidence
+ * being preserved, so deleting e2e/.auth would destroy it.
  */
 export function teardownSteps({ keepWorktree, worktreeDir }) {
   const steps = [
@@ -246,11 +252,105 @@ export function teardownSteps({ keepWorktree, worktreeDir }) {
       ],
       fallback: 'fs.rmSync(recursive, force) — symlink is unlinked, not followed',
     })
+    steps.push({
+      step: 'artifacts-cleanup',
+      paths: ['e2e/.auth', 'test-results', 'playwright-report'],
+      relativeTo: worktreeDir,
+    })
   }
-  steps.push({
-    step: 'artifacts-cleanup',
-    paths: ['e2e/.auth', 'test-results', 'playwright-report'],
-    relativeTo: worktreeDir,
-  })
   return steps
+}
+
+function defaultBlockingWaitMs(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms)
+}
+
+/**
+ * Terminate a detached process group: SIGTERM, a bounded grace window, then
+ * SIGKILL. Injected kill/wait seams make the escalation order unit-testable;
+ * returns the signals actually delivered (early return on a dead group).
+ */
+export function killProcessGroup(
+  pid,
+  graceMs,
+  { kill = (target, signal) => process.kill(target, signal), waitMs = defaultBlockingWaitMs } = {}
+) {
+  const delivered = []
+  try {
+    kill(-pid, 'SIGTERM')
+    delivered.push('SIGTERM')
+  } catch {
+    return delivered
+  }
+  const deadline = Date.now() + graceMs
+  while (Date.now() < deadline) {
+    try {
+      kill(-pid, 0)
+    } catch {
+      return delivered
+    }
+    waitMs(Math.min(200, deadline - Date.now()))
+  }
+  try {
+    kill(-pid, 'SIGKILL')
+    delivered.push('SIGKILL')
+  } catch {
+    /* group already gone */
+  }
+  return delivered
+}
+
+/**
+ * Execute the teardown invariant with injected seams. Each step body is
+ * individually guarded: a failing step is recorded into summary.teardownErrors
+ * and later steps still run (ordering already restarts pm2 before removal).
+ * restoreVerified comes solely from the injected verifyRestore callback.
+ */
+export async function executeTeardown({
+  steps,
+  devPid = null,
+  summary,
+  sh,
+  killGroup = killProcessGroup,
+  waitForPortFreed,
+  verifyRestore,
+  exists = defaultExists,
+  removePath = path => rmSync(path, { recursive: true, force: true }),
+}) {
+  const teardownErrors = []
+  for (const step of steps) {
+    try {
+      if (step.step === 'stop-dev-kill') {
+        if (devPid) {
+          killGroup(devPid, step.graceMs)
+          summary.portFreed = await waitForPortFreed(10)
+        }
+      } else if (step.step === 'pm2-restart') {
+        const restartStart = Date.now()
+        const result = sh(step.command[0], step.command.slice(1))
+        summary.phases.pm2RestartMs = Date.now() - restartStart
+        if (result.status !== 0) {
+          teardownErrors.push(`pm2-restart: pm2 restart exited ${result.status}`)
+        }
+      } else if (step.step === 'restore-verify') {
+        summary.restoreVerified = await verifyRestore(step)
+      } else if (step.step === 'worktree-remove') {
+        const worktreeDir = step.commands[0].at(-1)
+        const gitRemove = sh(step.commands[0][0], step.commands[0].slice(1))
+        sh(step.commands[1][0], step.commands[1].slice(1))
+        if (gitRemove.status !== 0 && exists(worktreeDir)) {
+          removePath(worktreeDir)
+        }
+        summary.worktreeRemoved = !exists(worktreeDir)
+      } else if (step.step === 'artifacts-cleanup' && exists(step.relativeTo)) {
+        for (const relativePath of step.paths) {
+          removePath(`${step.relativeTo}/${relativePath}`)
+        }
+      }
+    } catch (error) {
+      teardownErrors.push(`${step.step}: ${error instanceof Error ? error.message : String(error)}`)
+    }
+  }
+  summary.teardownErrors = teardownErrors
+  return summary
 }

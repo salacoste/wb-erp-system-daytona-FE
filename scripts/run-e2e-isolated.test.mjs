@@ -7,10 +7,13 @@ import {
   buildPlan,
   classifyPort3100,
   collectDescendantPids,
+  executeTeardown,
+  killProcessGroup,
   parseIsolatedArgv,
   resolvePins,
   teardownSteps,
 } from './lib/e2e-isolated-plan.mjs'
+import { runIsolatedE2E } from './run-e2e-isolated.mjs'
 
 const DEFAULTS = {
   defaultBase: 'abc1234',
@@ -336,15 +339,22 @@ test('buildPlan honors pin-seam command overrides in emitted commands', () => {
 })
 
 test('resolvePins defaults to plain command names and respects each env override', () => {
-  assert.deepEqual(resolvePins({}), { pm2: 'pm2', lsof: 'lsof', git: 'git', ps: 'ps' })
+  assert.deepEqual(resolvePins({}), {
+    pm2: 'pm2',
+    lsof: 'lsof',
+    git: 'git',
+    ps: 'ps',
+    npm: 'npm',
+  })
   assert.deepEqual(
     resolvePins({
       RUN_E2E_ISOLATED_PM2: '/x/pm2',
       RUN_E2E_ISOLATED_LSOF: '/x/lsof',
       RUN_E2E_ISOLATED_GIT: '/x/git',
       RUN_E2E_ISOLATED_PS: '/x/ps',
+      RUN_E2E_ISOLATED_NPM: '/x/npm',
     }),
-    { pm2: '/x/pm2', lsof: '/x/lsof', git: '/x/git', ps: '/x/ps' }
+    { pm2: '/x/pm2', lsof: '/x/lsof', git: '/x/git', ps: '/x/ps', npm: '/x/npm' }
   )
 })
 
@@ -371,10 +381,299 @@ test('teardownSteps proves the invariant: kill, restart, restore-verify, then re
   )
 })
 
-test('teardownSteps skips worktree removal when keepWorktree is set, keeping restore intact', () => {
+test('teardownSteps skips worktree removal AND artifacts cleanup when keepWorktree is set', () => {
   const steps = teardownSteps({ keepWorktree: true, worktreeDir: PLAN_INPUT.worktreeDir })
   const names = steps.map(step => step.step)
+  assert.deepEqual(names, ['stop-dev-kill', 'pm2-restart', 'restore-verify'])
   assert.ok(!names.includes('worktree-remove'))
-  assert.deepEqual(names, ['stop-dev-kill', 'pm2-restart', 'restore-verify', 'artifacts-cleanup'])
+  assert.ok(!names.includes('artifacts-cleanup'), 'the kept worktree IS the evidence (L9)')
   assert.ok(names.indexOf('pm2-restart') < names.indexOf('restore-verify'))
+})
+
+test('parseIsolatedArgv rejects an inline value on the boolean --keep-worktree flag', () => {
+  assert.throws(
+    () => parseIsolatedArgv(['--keep-worktree=false'], DEFAULTS),
+    /does not take a value/
+  )
+  assert.throws(() => parseIsolatedArgv(['--keep-worktree=1'], DEFAULTS), /--keep-worktree/)
+})
+
+test('buildPlan locks the dev command shape: executed under npx, never bare next', () => {
+  const swap = planWith().find(phase => phase.phase === 'swap')
+  assert.deepEqual(swap.devCommand, ['npx', 'next', 'dev', '--webpack', '-p', '3100'])
+  assert.equal(swap.devCommand[0], 'npx')
+})
+
+test('killProcessGroup returns early for an already-dead group', () => {
+  const signals = []
+  const delivered = killProcessGroup(4242, 50, {
+    kill: (target, signal) => {
+      signals.push(signal)
+      throw new Error('ESRCH')
+    },
+    waitMs: () => {},
+  })
+  assert.deepEqual(delivered, [])
+  assert.deepEqual(signals, ['SIGTERM'])
+})
+
+test('killProcessGroup escalates SIGTERM to SIGKILL when the group survives the grace window', () => {
+  const signals = []
+  const delivered = killProcessGroup(4242, 20, {
+    kill: (target, signal) => {
+      signals.push(signal)
+    },
+    waitMs: () => {},
+  })
+  assert.deepEqual(delivered, ['SIGTERM', 'SIGKILL'])
+  assert.equal(signals[0], 'SIGTERM')
+  assert.equal(signals.at(-1), 'SIGKILL')
+})
+
+test('killProcessGroup stops after SIGTERM when the group exits during the grace window', () => {
+  const signals = []
+  let alive = true
+  const delivered = killProcessGroup(4242, 500, {
+    kill: (target, signal) => {
+      signals.push(signal)
+      if (signal === 'SIGTERM') alive = false
+      if (signal === 0 && !alive) throw new Error('ESRCH')
+    },
+    waitMs: () => {},
+  })
+  assert.deepEqual(delivered, ['SIGTERM'])
+  assert.ok(!signals.includes('SIGKILL'))
+})
+
+test('executeTeardown falls back to rmSync only when git remove fails, after pm2-restart', async () => {
+  const calls = []
+  let dirExists = true
+  const summary = { phases: {}, restoreVerified: false }
+  const result = await executeTeardown({
+    steps: teardownSteps({ keepWorktree: false, worktreeDir: '/tmp/wt' }),
+    devPid: 900,
+    summary,
+    sh: (command, args) => {
+      calls.push([command, ...args].join(' '))
+      if (command === 'git' && args[1] === 'remove')
+        return { status: 1, stdout: '', stderr: 'nope' }
+      return { status: 0, stdout: '', stderr: '' }
+    },
+    killGroup: pid => calls.push(`kill:${pid}`),
+    waitForPortFreed: async () => true,
+    verifyRestore: async () => true,
+    exists: () => dirExists,
+    removePath: path => {
+      calls.push(`rmSync:${path}`)
+      dirExists = false
+    },
+  })
+  assert.ok(calls.indexOf('kill:900') < calls.indexOf('pm2 restart wb-repricer-frontend-dev'))
+  assert.ok(
+    calls.indexOf('pm2 restart wb-repricer-frontend-dev') <
+      calls.indexOf('git worktree remove --force /tmp/wt')
+  )
+  assert.deepEqual(
+    calls.filter(call => call.startsWith('rmSync:')),
+    ['rmSync:/tmp/wt']
+  )
+  assert.equal(result.worktreeRemoved, true)
+  assert.equal(result.restoreVerified, true)
+  assert.ok(result.phases.pm2RestartMs >= 0)
+  assert.deepEqual(summary.teardownErrors, [])
+})
+
+test('executeTeardown skips the rmSync fallback when git worktree remove succeeds', async () => {
+  const calls = []
+  let removed = false
+  const summary = { phases: {}, restoreVerified: false }
+  const result = await executeTeardown({
+    steps: teardownSteps({ keepWorktree: false, worktreeDir: '/tmp/wt' }),
+    devPid: null,
+    summary,
+    sh: (command, args) => {
+      calls.push([command, ...args].join(' '))
+      if (command === 'git' && args[1] === 'remove') removed = true
+      return { status: 0, stdout: '', stderr: '' }
+    },
+    killGroup: () => {},
+    waitForPortFreed: async () => true,
+    verifyRestore: async () => true,
+    exists: () => !removed,
+    removePath: path => calls.push(`rmSync:${path}`),
+  })
+  assert.deepEqual(
+    calls.filter(call => call.startsWith('rmSync:')),
+    []
+  )
+  assert.equal(result.worktreeRemoved, true)
+  assert.deepEqual(summary.teardownErrors, [])
+})
+
+test('executeTeardown records a failing step and still runs the remaining invariant', async () => {
+  const calls = []
+  const summary = { phases: {}, restoreVerified: false }
+  const result = await executeTeardown({
+    steps: teardownSteps({ keepWorktree: false, worktreeDir: '/tmp/wt' }),
+    devPid: null,
+    summary,
+    sh: (command, args) => {
+      calls.push([command, ...args].join(' '))
+      if (command === 'pm2') return { status: 1, stdout: '', stderr: 'daemon down' }
+      return { status: 0, stdout: '', stderr: '' }
+    },
+    killGroup: () => {},
+    waitForPortFreed: async () => false,
+    verifyRestore: async () => false,
+    exists: () => false,
+    removePath: () => calls.push('rmSync'),
+  })
+  assert.equal(result.restoreVerified, false)
+  assert.ok(summary.teardownErrors.some(message => message.startsWith('pm2-restart:')))
+  assert.ok(
+    calls.includes('git worktree remove --force /tmp/wt'),
+    'worktree removal still ran after the failed restart'
+  )
+})
+
+test('runIsolatedE2E records devSpawnError, still tears down, and exits non-zero', async () => {
+  const calls = []
+  let pm2Stopped = false
+  let pm2Restarted = false
+  let worktreeRemoved = false
+  const sh = (command, args = []) => {
+    calls.push([command, ...args].join(' '))
+    if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
+    if (command === 'pm2' && args[0] === 'jlist') {
+      return {
+        status: 0,
+        stdout: JSON.stringify([
+          { name: PM2_PROC_NAME, pid: 80620, pm2_env: { status: 'online' } },
+        ]),
+      }
+    }
+    if (command === 'lsof') {
+      return { status: 0, stdout: pm2Stopped && !pm2Restarted ? '' : '80725\n' }
+    }
+    if (command === 'ps') {
+      return { status: 0, stdout: ' 80620     1\n 80724  80620\n 80725  80724\n' }
+    }
+    if (command === 'pm2' && args[0] === 'stop') {
+      pm2Stopped = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'pm2' && args[0] === 'restart') {
+      pm2Restarted = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'git' && args[1] === 'remove') {
+      worktreeRemoved = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    return { status: 0, stdout: '', stderr: '' }
+  }
+  const stdout = []
+  const stderr = []
+  const result = await runIsolatedE2E({
+    argv: ['--ready-timeout-seconds', '1'],
+    sh,
+    spawnDev: (command, args) => {
+      calls.push(`spawnDev:${command} ${args.join(' ')}`)
+      return {
+        pid: 4242,
+        unref() {},
+        on(event, callback) {
+          if (event === 'error') callback(new Error('spawn npx ENOENT'))
+        },
+      }
+    },
+    probeUrl: async () => (pm2Restarted ? 200 : null),
+    waitMs: async () => {},
+    killGroup: pid => calls.push(`kill:${pid}`),
+    openLog: () => 3,
+    exists: target => {
+      if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
+      if (target.startsWith('/private/tmp/e2e-isolated-')) return !worktreeRemoved
+      return true
+    },
+    restoreTimeoutSeconds: 2,
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  assert.equal(result.exitCode, 1)
+  assert.ok(calls.includes('spawnDev:npx next dev --webpack -p 3100'), 'dev runs under npx (H1a)')
+  assert.ok(calls.includes('kill:4242'), 'teardown killed the dev process group')
+  assert.ok(!calls.some(call => call.startsWith('npm run test:e2e:full')), 'run never started')
+  const summary = JSON.parse(stdout.at(-1))
+  assert.match(summary.devSpawnError, /ENOENT/)
+  assert.equal(summary.exitCode, 1)
+  assert.equal(summary.restoreVerified, true)
+  assert.equal(summary.portFreed, true)
+  assert.equal(summary.worktreeRemoved, true)
+  assert.equal(summary.worktreeKept, false)
+  assert.deepEqual(summary.teardownErrors, [])
+  assert.ok(summary.phases.pm2RestartMs >= 0)
+  assert.ok(stderr.join('\n').length > 0, 'readiness failure is reported')
+})
+
+test('runIsolatedE2E failed restore overrides exitCode in JSON and process exit (M7/M3)', async () => {
+  let pm2Stopped = false
+  let worktreeRemoved = false
+  const sh = (command, args = []) => {
+    if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
+    if (command === 'pm2' && args[0] === 'jlist') {
+      return {
+        status: 0,
+        stdout: JSON.stringify([
+          {
+            name: PM2_PROC_NAME,
+            pid: 80620,
+            pm2_env: { status: pm2Stopped ? 'stopped' : 'online' },
+          },
+        ]),
+      }
+    }
+    if (command === 'lsof') return { status: 0, stdout: pm2Stopped ? '' : '80725\n' }
+    if (command === 'ps') {
+      return { status: 0, stdout: ' 80620     1\n 80724  80620\n 80725  80724\n' }
+    }
+    if (command === 'pm2' && args[0] === 'stop') {
+      pm2Stopped = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'pm2' && args[0] === 'restart') {
+      return { status: 1, stdout: '', stderr: 'daemon down' }
+    }
+    if (command === 'git' && args[1] === 'remove') {
+      worktreeRemoved = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    return { status: 0, stdout: '', stderr: '' }
+  }
+  const stdout = []
+  const stderr = []
+  const result = await runIsolatedE2E({
+    argv: ['--ready-timeout-seconds', '1'],
+    sh,
+    spawnDev: () => ({ pid: 4242, unref() {}, on() {} }),
+    probeUrl: async () => null,
+    waitMs: async () => {},
+    killGroup: () => {},
+    openLog: () => 3,
+    exists: target => {
+      if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
+      if (target.startsWith('/private/tmp/e2e-isolated-')) return !worktreeRemoved
+      return true
+    },
+    restoreTimeoutSeconds: 0.2,
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  assert.equal(result.exitCode, 1)
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.exitCode, 1, 'JSON exitCode matches the process exit (M7)')
+  assert.equal(summary.restoreVerified, false)
+  assert.equal(summary.worktreeRemoved, true, 'removal still ran after the failed restart (M5)')
+  assert.ok(stderr.join('\n').includes('CRITICAL: PM2 restore NOT verified'))
+  assert.ok(summary.teardownErrors.some(message => message.startsWith('pm2-restart:')))
 })
