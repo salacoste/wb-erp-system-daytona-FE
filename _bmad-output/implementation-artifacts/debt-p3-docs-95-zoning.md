@@ -2,8 +2,8 @@
 
 | Поле | Значение |
 |---|---|
-| **Status** | review (флип → done пост-merge) |
-| **PR** | pending (номер вторым коммитом) |
+| **Status** | done (merged; 1 ревью-проход REJECT→фикс→delta re-pass APPROVE) |
+| **PR** | [#433](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/433) |
 | **Head-SHA** | closeout-коммит (ветка `debt/docs95-zoning`, база `0b23ae16` = post-#432 main) |
 | **Класс** | doc-only (baseline-файл: комментарии + порядок; гейт-семантика нетронута) |
 | **Дата** | 2026-09-10 |
