@@ -11,9 +11,10 @@ import { test, expect } from './fixtures/network-test'
  *  4. Product detail «Варианты» tab → variant view + the single-week note
  *
  * Auth: uses the project's saved storageState (e2e/.auth/user.json) wired via the
- * `chromium` project in playwright.config.ts. Run with `--no-deps` to skip the
- * setup re-login (avoids the 5/hr login throttle):
- *   npx playwright test e2e/fr7-by-variant.spec.ts --project=chromium --no-deps
+ * `chromium` project in playwright.config.ts. Run through the npm wrappers only:
+ *   npm run test:e2e:isolated -- e2e/fr7-by-variant.spec.ts --project=chromium
+ * (restart-per-run harness, PR #431; the setup project re-logs-in per run —
+ * the 5/hr BE login throttle applies; --no-deps is banned).
  *
  * No `networkidle` (anti-pattern #9 — dashboard/background polling never settles);
  * uses `waitUntil: 'domcontentloaded'` + element-presence assertions, matching the
@@ -21,12 +22,13 @@ import { test, expect } from './fixtures/network-test'
  */
 
 const SKU = '/analytics/sku'
-// nmId 202867769 has FBS variants in W26 (chrt 326996478, …).
-const PRODUCT = '/analytics/product/202867769'
-// W26 is verified to carry 14 variant rows (single-week; the by-variant endpoint
-// 400s on a range). Used to force a single data-bearing week for happy-path tests.
-const SINGLE_WEEK = '?group_by=variant&weekStart=2026-W26&weekEnd=2026-W26'
-const RANGE_WEEKS = '?group_by=variant&weekStart=2026-W25&weekEnd=2026-W26'
+// nmId 148188881 has FBS variants in W33/W35/W36 (chrt 248941683, …).
+const PRODUCT = '/analytics/product/148188881'
+// W33 is verified to carry 28 variant rows (single-week; the by-variant endpoint
+// 400s on a range). Re-pinned 2026-09-10 post-DB-reseed: pre-reseed W26 data is
+// gone. Used to force a single data-bearing week for happy-path tests.
+const SINGLE_WEEK = '?group_by=variant&weekStart=2026-W33&weekEnd=2026-W33'
+const RANGE_WEEKS = '?group_by=variant&weekStart=2026-W35&weekEnd=2026-W36'
 
 const T = 20_000
 
