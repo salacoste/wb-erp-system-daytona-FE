@@ -4,7 +4,7 @@
 |---|---|
 | Status | done (3b+3c implemented; 3a no-op close) |
 | Date | 2026-09-10 (сессия-11, follow-up FU-3 из HANDOFF-2026-09-10 §3.4 №3; residual §22) |
-| PR | TBD |
+| PR | [#439](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/439) |
 | Branch | `debt/fu3-runner-failsafe` @ `27fb3261` (база `1f00c5f2`) |
 | Class | behavior/test-infra (tests-first RED→GREEN, executor opus), 2 ревью-прохода opus + эмпирический RED-check ревьюера |
 | Реестр | §29 |
