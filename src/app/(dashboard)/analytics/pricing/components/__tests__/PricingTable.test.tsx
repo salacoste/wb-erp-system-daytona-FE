@@ -13,7 +13,7 @@ import { PricingTable } from '../PricingTable'
 import { emptyPriceRecommendation } from '@/test/fixtures/price-recommendations-empty'
 import type { PriceRecommendation } from '@/types/price-recommendations'
 
-// All reads anchor to import.meta.url (170.6 canon) — no process.cwd() dependence.
+// All reads anchor to import.meta.url (170.6 canon) — no process working directory dependence.
 const testDirectory = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(testDirectory, '..', '..', '..', '..', '..', '..', '..')
 

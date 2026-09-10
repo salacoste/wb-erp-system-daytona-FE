@@ -27,7 +27,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { BID_LEVEL_COLORS } from '../BidRecommendationsCard'
 
-// All reads anchor to import.meta.url (170.6 canon) — no process.cwd() dependence.
+// All reads anchor to import.meta.url (170.6 canon) — no process working directory dependence.
 const testDirectory = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(testDirectory, '..', '..', '..', '..', '..')
 const PAGE_PATH = join(

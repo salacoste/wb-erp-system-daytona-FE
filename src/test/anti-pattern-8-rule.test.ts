@@ -16,9 +16,12 @@
 import { execFileSync } from 'child_process'
 import { existsSync, readdirSync } from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 
-const REPO_ROOT = path.resolve(__dirname, '..', '..')
+// All reads anchor to import.meta.url (170.6 canon) — no process working directory dependence.
+const testDirectory = path.dirname(fileURLToPath(import.meta.url))
+const REPO_ROOT = path.resolve(testDirectory, '..', '..')
 const SCRIPT_PATH = path.join(REPO_ROOT, 'scripts', 'test-anti-pattern-8-rule.sh')
 const TEMP_PREFIX = '_ap8_test_tmp_'
 

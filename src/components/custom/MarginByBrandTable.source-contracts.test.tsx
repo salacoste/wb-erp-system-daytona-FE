@@ -29,7 +29,7 @@ import { MarginByBrandTable } from './MarginByBrandTable'
 import type { MarginAnalyticsAggregated } from '@/types/api'
 
 // Round-1 LOW-2: import.meta.url-anchored — cwd-safe (invocations from the parent
-// monorepo dir previously threw ENOENT on process.cwd()-relative paths).
+// monorepo dir previously threw ENOENT on cwd-relative paths).
 const here = (rel: string) => readFileSync(fileURLToPath(new URL(rel, import.meta.url)), 'utf8')
 const pageSource = here('../../app/(dashboard)/analytics/brand/page.tsx')
 const helpSource = here('../../app/(dashboard)/analytics/brand/components/BrandHelpSection.tsx')

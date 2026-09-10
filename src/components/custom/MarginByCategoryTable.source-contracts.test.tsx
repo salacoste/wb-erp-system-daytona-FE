@@ -27,7 +27,7 @@ import { MarginByCategoryTable } from './MarginByCategoryTable'
 import type { MarginAnalyticsAggregated } from '@/types/api'
 
 // import.meta.url-anchored — cwd-safe (invocations from the parent monorepo dir
-// previously threw ENOENT on process.cwd()-relative paths; 170.3 Round-1 LOW-2).
+// previously threw ENOENT on cwd-relative paths; 170.3 Round-1 LOW-2).
 const here = (rel: string) => readFileSync(fileURLToPath(new URL(rel, import.meta.url)), 'utf8')
 const pageSource = here('../../app/(dashboard)/analytics/category/page.tsx')
 const helpSource = here(

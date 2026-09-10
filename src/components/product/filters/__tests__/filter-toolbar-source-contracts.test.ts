@@ -1,10 +1,13 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import ts from 'typescript'
 import { describe, expect, it } from 'vitest'
 
-const FILTER_ROOT = path.resolve(__dirname, '..')
+// All reads anchor to import.meta.url (170.6 canon) — no process working directory dependence.
+const testDirectory = path.dirname(fileURLToPath(import.meta.url))
+const FILTER_ROOT = path.resolve(testDirectory, '..')
 const PRODUCT_ROOT = path.resolve(FILTER_ROOT, '..')
 const PRODUCT_BARREL = path.join(PRODUCT_ROOT, 'index.ts')
 const CANONICAL_FILES = ['FilterToolbar.tsx', 'FilterToolbar.types.ts', 'index.ts']

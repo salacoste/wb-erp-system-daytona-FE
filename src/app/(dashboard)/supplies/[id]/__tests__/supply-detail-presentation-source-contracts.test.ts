@@ -10,8 +10,8 @@
  * double-fail those files. Literals = live disk enumeration, relative,
  * forward slashes, sorted. The Story 173.12 SHA-256 pins below are a
  * byte-identity contract with the 173.12 guard and are untouched by this
- * conversion. All reads anchor to import.meta.url (170.6 canon) — no
- * process.cwd() dependence.
+ * conversion.
+ * All reads anchor to import.meta.url (170.6 canon) — no process working directory dependence.
  */
 import { readFileSync } from 'node:fs'
 import { readdirSync } from 'node:fs'

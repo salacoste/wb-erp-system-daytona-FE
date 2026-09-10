@@ -8,8 +8,8 @@
  * sorted. Sibling exclusions are EXPLICIT: components/custom/settings is
  * shared with the cabinet guard (CabinetInfoCard/JamStatusBadge/
  * SellerRatingCard/TargetMarginSettingsCard) and the tax guard (the
- * TaxSettings family + tax-settings-* helpers). All reads anchor to
- * import.meta.url (170.6 canon) — no process.cwd() dependence.
+ * TaxSettings family + tax-settings-* helpers).
+ * All reads anchor to import.meta.url (170.6 canon) — no process working directory dependence.
  */
 import { readFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'

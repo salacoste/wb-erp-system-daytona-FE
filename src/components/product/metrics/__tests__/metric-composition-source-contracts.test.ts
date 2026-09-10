@@ -1,10 +1,13 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import ts from 'typescript'
 import { describe, expect, it } from 'vitest'
 
-const METRICS_ROOT = path.resolve(__dirname, '..')
+// All reads anchor to import.meta.url (170.6 canon) — no process working directory dependence.
+const testDirectory = path.dirname(fileURLToPath(import.meta.url))
+const METRICS_ROOT = path.resolve(testDirectory, '..')
 const PRODUCT_ROOT = path.resolve(METRICS_ROOT, '..')
 const CANONICAL_FILES = [
   'DataAvailability.tsx',

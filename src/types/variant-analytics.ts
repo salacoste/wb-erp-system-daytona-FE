@@ -2,7 +2,7 @@
  * FR-7 (#221): per-variant (color/size) weekly analytics row.
  * Backend: GET /v1/analytics/weekly/by-variant?week=YYYY-Www (single-week only).
  *
- * Field semantics (verified live W26):
+ * Field semantics (live-verified at the FR-7 integration; W26 data since reseeded):
  *  - Exact per-variant (orders_fbs): revenue_net, total_units.
  *  - ALLOCATED — approximate, "распределено по доле выручки варианта":
  *    profit_allocated_rub, margin_allocated_pct. Render with the allocated marker,

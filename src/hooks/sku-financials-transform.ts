@@ -56,7 +56,8 @@ export function transformBackendItem(item: BackendSkuItem): SkuFinancialItem {
     missingCogs: item.cogs === null,
     // FR-2..FR-5 (#219): competitor-parity enrichment. Backend returns these
     // top-level on each item when include_ads/include_stock are sent (contract
-    // #219, verified W26). Preserve null (never ?? 0) so the UI renders "—"
+    // #219, live-verified at integration; W26 data since reseeded).
+    // Preserve null (never ?? 0) so the UI renders "—"
     // for unavailable fields (anti-pattern #8). Omit `parity` entirely when no
     // FR field is present (flags not sent) to keep the item shape clean.
     ...(hasAnyParityField(item)
