@@ -26,7 +26,7 @@ export interface VariantAnalyticsFilters {
   limit?: number
 }
 
-/** Pagination block returned by the by-variant endpoint (verified W26). */
+/** Pagination block per contract — endpoint + envelope live-verified at the FR-7 re-pin (any week stamp goes stale on reseed; see debt-p3-test-epics-tranche.md). */
 export interface VariantAnalyticsPagination {
   count?: number
   has_more?: boolean
