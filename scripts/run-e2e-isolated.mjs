@@ -40,8 +40,9 @@
  * the CLI layer re-raises after the summary is drained. Dev-boot failures are
  * fast-fail: a dev spawn 'error' or an 'exit' BEFORE readiness aborts the
  * readiness poll immediately (no timeout burn) and is attested as
- * `devSpawnError` or `devExitedBeforeReady` + `devExitCode`, with the thrown
- * error naming the actual cause instead of the generic readiness timeout.
+ * `devSpawnError` or `devExitedBeforeReady` + `devExitCode`/`devExitSignal`,
+ * with the thrown error naming the actual cause instead of the generic
+ * readiness timeout.
  */
 
 import { spawn, spawnSync } from 'node:child_process'
@@ -339,10 +340,11 @@ export async function runIsolatedE2E({
     child.on?.('error', error => {
       summary.devSpawnError = error instanceof Error ? error.message : String(error)
     })
-    child.on?.('exit', code => {
+    child.on?.('exit', (code, signal) => {
       if (readinessAchieved) return
       summary.devExitedBeforeReady = true
       summary.devExitCode = code ?? null
+      summary.devExitSignal = signal ?? null
     })
     devPid = child.pid ?? null
     // Readiness intentionally accepts ANY HTTP status (including 404/500):
@@ -352,28 +354,50 @@ export async function runIsolatedE2E({
     // shouldAbort makes Ctrl+C exit the poll into teardown immediately, and
     // also fast-fails on a spawn error / an exit before readiness (signals
     // keep precedence) instead of burning the full timeout on a dead server.
-    const ready = await waitFor(
-      async () => (await probeUrl(RESTORE_VERIFY_URL)) !== null,
-      parsed.readyTimeoutSeconds,
-      500,
-      () => {
-        if (interrupted !== null) return true
-        if (summary.devSpawnError !== undefined) {
-          return (
-            `Dev server failed to spawn: ${summary.devSpawnError}. ` +
-            `Log: ${worktreeDir}/.e2e-isolated-dev.log`
-          )
+    let ready = false
+    try {
+      ready = await waitFor(
+        async () => (await probeUrl(RESTORE_VERIFY_URL)) !== null,
+        parsed.readyTimeoutSeconds,
+        500,
+        () => {
+          if (interrupted !== null) return true
+          if (summary.devSpawnError !== undefined) {
+            return (
+              `Dev server failed to spawn: ${summary.devSpawnError}. ` +
+              `Log: ${worktreeDir}/.e2e-isolated-dev.log`
+            )
+          }
+          if (summary.devExitedBeforeReady) {
+            // Prefer the signal name when the code is null (signal kill) — a
+            // «code null» attestation would lose the actual cause.
+            const cause =
+              summary.devExitCode === null && summary.devExitSignal !== null
+                ? `exited by signal ${summary.devExitSignal}`
+                : `exited (code ${summary.devExitCode})`
+            return (
+              `Dev server ${cause} before becoming ready. ` +
+              `Log: ${worktreeDir}/.e2e-isolated-dev.log`
+            )
+          }
+          return false
         }
-        if (summary.devExitedBeforeReady) {
-          return (
-            `Dev server exited (code ${summary.devExitCode}) before becoming ready. ` +
-            `Log: ${worktreeDir}/.e2e-isolated-dev.log`
-          )
-        }
-        return false
-      }
-    )
-    readinessAchieved = true
+      )
+    } finally {
+      // The poll is over either way: a later 'exit' is teardown's own group
+      // kill or a post-boot crash, never a boot failure. Setting the gate on
+      // the throw path too stops an abort (SIGINT / fast-fail) from letting
+      // teardown's killGroup pollute the devExitedBeforeReady attestation.
+      readinessAchieved = true
+    }
+    if (ready) {
+      // An 'exit' macrotask can land mid-probe in the same iteration the probe
+      // answers true (after that iteration's abort check): clear the
+      // contradictory record before the summary prints.
+      summary.devExitedBeforeReady = undefined
+      summary.devExitCode = undefined
+      summary.devExitSignal = undefined
+    }
     if (!ready) {
       throw new Error(
         `Dev server did not answer ${RESTORE_VERIFY_URL} within ${parsed.readyTimeoutSeconds}s. ` +
