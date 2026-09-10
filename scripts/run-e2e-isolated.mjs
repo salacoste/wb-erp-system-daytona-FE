@@ -10,23 +10,32 @@
  * (executeTeardown, killProcessGroup) live in scripts/lib/e2e-isolated-plan.mjs.
  *
  * Pin seams (precedent STORY_174_3_NPM_CLI): RUN_E2E_ISOLATED_PM2 / _LSOF /
- * _GIT / _PS / _NPM.
+ * _GIT / _PS / _NPM / _NPX.
  *
  * Signal semantics: Ctrl+C (SIGINT/SIGTERM) is recorded and handled promptly
  * at phase boundaries AND inside the dev-boot readiness poll (an interrupt
  * during readiness throws into guaranteed teardown within one poll tick).
  * During the e2e suite it is deferred until spawnSync returns (safe: the suite
  * finishes or fails on its own), then the guaranteed teardown runs and the
- * signal is re-raised. SIGKILL of this runner cannot run teardown and orphans
- * the detached worktree dev server; containment is structural — the next
- * runner run classifies :3100 as 'foreign' (the orphan is outside the pm2
- * process tree) and aborts fail-closed.
+ * signal is re-raised. A SECOND Ctrl+C while teardown itself is running is
+ * deliberately swallowed: killing mid-teardown would skip pm2 restart /
+ * restore — the exact state this runner exists to prevent. SIGKILL of this
+ * runner cannot run teardown and orphans the detached worktree dev server;
+ * containment is structural — the next runner run classifies :3100 as
+ * 'foreign' (the orphan is outside the pm2 process tree) and aborts
+ * fail-closed.
  *
  * Restore semantics: teardown's `pm2 restart` restores the shared dev server
  * to ONLINE even when it was 'stopped' before the run (restore-to-online, not
  * restore-to-pre-state). restoreVerified requires ALL of: HTTP 200 on /login,
  * pm2 jlist status 'online', and :3100 classified 'pm2-owned' via a fresh
  * process table — HTTP-200-alone can be a false positive.
+ *
+ * Summary contract: the JSON summary is printed only after provisioning has
+ * begun (pre-provision fail-closed aborts print nothing); `exitCode` reflects
+ * the run result + restore attestation, not cleanup errors (those surface as
+ * `teardownErrors[]` + stderr), and `interrupted` reports the pending signal
+ * the CLI layer re-raises after the summary is drained.
  */
 
 import { spawn, spawnSync } from 'node:child_process'
@@ -102,11 +111,17 @@ export async function runIsolatedE2E({
     }
   },
   restoreTimeoutSeconds = null,
-  writeStdout = message => process.stdout.write(`${message}\n`),
+  // Drain-aware default: resolves on the write callback, so awaiting the
+  // FINAL summary guarantees it is flushed before the CLI layer calls
+  // process.exit (piped stdout would otherwise risk dropping the JSON).
+  writeStdout = message => new Promise(resolve => process.stdout.write(`${message}\n`, resolve)),
   writeStderr = message => process.stderr.write(`${message}\n`),
 } = {}) {
   function listenerPidsNow() {
-    const result = sh(pins.lsof, ['-ti', `tcp:${E2E_PORT}`])
+    // -sTCP:LISTEN restricts to LISTEN-state sockets: without it lsof also
+    // matches established CLIENT connections to :3100 (e.g. the probe's own
+    // socket), which would misclassify a busy port as 'foreign'.
+    const result = sh(pins.lsof, ['-ti', '-sTCP:LISTEN', `tcp:${E2E_PORT}`])
     if (result.status !== 0) return []
     return result.stdout
       .split('\n')
@@ -165,6 +180,16 @@ export async function runIsolatedE2E({
   }
   const baseSha = headSha.stdout.trim()
   const defaultWorktreeDir = `/private/tmp/e2e-isolated-${path.basename(PRIMARY_ROOT)}-${baseSha.slice(0, 7)}-${process.pid}`
+  // The worktree checks out COMMITTED code. A dirty working tree is the
+  // natural pre-commit use case, so warn (non-fatal) instead of aborting.
+  const dirtyStatus = sh(pins.git, ['status', '--porcelain'], { cwd: PRIMARY_ROOT })
+  if (dirtyStatus.status === 0 && dirtyStatus.stdout.trim()) {
+    writeStderr(
+      `[run-e2e-isolated] NOTE: the working tree is dirty — the isolated worktree checks out ` +
+        `HEAD (${baseSha.slice(0, 7)}), NOT your uncommitted changes. Commit or stash first ` +
+        `if this run must test working-tree code.`
+    )
+  }
   let parsed
   try {
     parsed = parseIsolatedArgv(argv, { defaultBase: baseSha, defaultWorktreeDir })
@@ -228,7 +253,11 @@ export async function runIsolatedE2E({
   let devPid = null
   let finalExitCode = 1
   let interrupted = null
+  let teardownInProgress = false
   const unregisterSignals = registerSignals(signal => {
+    // A second Ctrl+C DURING teardown is swallowed on purpose: the teardown
+    // must not be killed between pm2 restart and restore-verify.
+    if (teardownInProgress) return
     interrupted = signal
   })
 
@@ -254,10 +283,11 @@ export async function runIsolatedE2E({
       throw new Error(`Port ${E2E_PORT} did not free within the swap window.`)
     }
     const logFile = openLog(`${worktreeDir}/.e2e-isolated-dev.log`)
-    const devArgs = plan.find(phase => phase.phase === 'swap').devCommand.slice(1)
-    // Execute under npx (PATH-independent); a bare 'next' spawn emits ENOENT.
-    // The async 'error' event is recorded so the finally teardown still runs.
-    const child = spawnDev('npx', devArgs, {
+    // devCommand[0] is 'npx' from DEV_COMMAND (single source of truth; a bare
+    // 'next' spawn would emit ENOENT). The async 'error' event is recorded so
+    // the finally teardown still runs.
+    const devCommand = plan.find(phase => phase.phase === 'swap').devCommand
+    const child = spawnDev(devCommand[0], devCommand.slice(1), {
       cwd: worktreeDir,
       detached: true,
       stdio: ['ignore', logFile, logFile],
@@ -299,7 +329,10 @@ export async function runIsolatedE2E({
     writeStderr(`[run-e2e-isolated] ${error instanceof Error ? error.message : String(error)}`)
     finalExitCode = 1
   } finally {
-    unregisterSignals()
+    // Handlers stay registered THROUGH teardown (teardownInProgress swallows
+    // further Ctrl+C) so a second interrupt cannot kill mid-restore; they are
+    // unregistered only after the summary is drained, right before returning.
+    teardownInProgress = true
     await executeTeardown({
       steps: teardownSteps({ keepWorktree: parsed.keepWorktree, worktreeDir, pins }),
       devPid,
@@ -323,9 +356,11 @@ export async function runIsolatedE2E({
     summary.durationMs = Date.now() - summary.startedAtMs
     // Attestation override BEFORE printing so the JSON exitCode matches the
     // process exit even when the run itself passed but restore failed.
-    const printed = { ...summary, exitCode: finalExitCode }
+    // Awaited so piped stdout drains before the CLI re-raise / process.exit.
+    const printed = { ...summary, exitCode: finalExitCode, interrupted }
     if (parsed.keepWorktree) delete printed.worktreeRemoved
-    writeStdout(JSON.stringify(printed))
+    await writeStdout(JSON.stringify(printed))
+    unregisterSignals()
   }
 
   return { exitCode: finalExitCode, interrupted }

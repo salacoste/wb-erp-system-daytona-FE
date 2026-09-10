@@ -241,14 +241,17 @@ test('buildPlan provision phase attaches the worktree, node_modules symlink, and
     `${PLAN_INPUT.worktreeDir}/node_modules`,
   ])
   for (const envFile of PLAN_INPUT.envFiles) {
-    assert.ok(
-      commands.some(
-        command =>
-          command[0] === 'cp' &&
-          command[1] === `${PLAN_INPUT.primaryRoot}/${envFile}` &&
-          command[2] === `${PLAN_INPUT.worktreeDir}/${envFile}`
-      ),
-      `missing env copy for ${envFile}`
+    const source = `${PLAN_INPUT.primaryRoot}/${envFile}`
+    const destination = `${PLAN_INPUT.worktreeDir}/${envFile}`
+    assert.deepEqual(
+      commands.find(command => command[0] === 'cp' && command.at(-1) === destination),
+      ['cp', '-p', source, destination],
+      `missing mode-preserving env copy for ${envFile}`
+    )
+    assert.deepEqual(
+      commands.find(command => command[0] === 'chmod' && command[2] === destination),
+      ['chmod', '600', destination],
+      `missing chmod 600 for ${envFile} (sticky /private/tmp must not expose secrets)`
     )
   }
 })
@@ -348,6 +351,7 @@ test('resolvePins defaults to plain command names and respects each env override
     git: 'git',
     ps: 'ps',
     npm: 'npm',
+    npx: 'npx',
   })
   assert.deepEqual(
     resolvePins({
@@ -356,8 +360,9 @@ test('resolvePins defaults to plain command names and respects each env override
       RUN_E2E_ISOLATED_GIT: '/x/git',
       RUN_E2E_ISOLATED_PS: '/x/ps',
       RUN_E2E_ISOLATED_NPM: '/x/npm',
+      RUN_E2E_ISOLATED_NPX: '/x/npx',
     }),
-    { pm2: '/x/pm2', lsof: '/x/lsof', git: '/x/git', ps: '/x/ps', npm: '/x/npm' }
+    { pm2: '/x/pm2', lsof: '/x/lsof', git: '/x/git', ps: '/x/ps', npm: '/x/npm', npx: '/x/npx' }
   )
 })
 
@@ -405,6 +410,14 @@ test('buildPlan locks the dev command shape: executed under npx, never bare next
   const swap = planWith().find(phase => phase.phase === 'swap')
   assert.deepEqual(swap.devCommand, ['npx', 'next', 'dev', '--webpack', '-p', '3100'])
   assert.equal(swap.devCommand[0], 'npx')
+})
+
+test('buildPlan dev command honors the npx pin seam (L4)', () => {
+  const swap = planWith({
+    pins: resolvePins({ RUN_E2E_ISOLATED_NPX: '/custom/npx' }),
+  }).find(phase => phase.phase === 'swap')
+  assert.equal(swap.devCommand[0], '/custom/npx')
+  assert.deepEqual(swap.devCommand.slice(1), ['next', 'dev', '--webpack', '-p', '3100'])
 })
 
 test('killProcessGroup returns early for an already-dead group', () => {
@@ -792,7 +805,10 @@ test('runIsolatedE2E green path executes the full lifecycle with pin seams (M1/M
   ]) {
     assert.ok(indexOf(earlier) !== -1 && indexOf(earlier) < indexOf(later), `${earlier} < ${later}`)
   }
-  assert.ok(calls.includes('/custom/lsof -ti tcp:3100'), 'lsof pin reaches port probes')
+  assert.ok(
+    calls.includes('/custom/lsof -ti -sTCP:LISTEN tcp:3100'),
+    'lsof pin reaches port probes, restricted to LISTEN sockets (L5)'
+  )
   assert.ok(calls.includes('/custom/ps -axo pid=,ppid='), 'ps pin reaches pid-table reads')
   assert.equal(result.exitCode, 0)
   const summary = JSON.parse(stdout.at(-1))
@@ -893,6 +909,7 @@ test('runIsolatedE2E aborts promptly when interrupted during readiness (M3/M5b)'
   assert.ok(stderr.join('\n').includes('Interrupted (SIGINT)'))
   const summary = JSON.parse(stdout.at(-1))
   assert.equal(summary.exitCode, 1)
+  assert.equal(summary.interrupted, 'SIGINT', 'pending signal is attested in the JSON (L9)')
   assert.equal(summary.restoreVerified, false, 'probe stays down, so attestation stays false')
 })
 
@@ -944,4 +961,146 @@ test('runIsolatedE2E keeps portFreed false when no dev server was spawned (L7)',
   // L7: stop-dev-kill never ran (devPid null), so portFreed keeps its
   // initialized false instead of being omitted from the summary.
   assert.equal(summary.portFreed, false)
+})
+
+// Shared fake-environment harness for the pass-3 runIsolatedE2E tests:
+// stateful fake sh (pm2/lsof/ps/git), the canonical pid tree, a probe that
+// comes alive once pm2 restarts AND the dev server spawned, and the fake
+// filesystem (env files exist; the fake worktree path never does).
+function createIsolatedHarness({ statusPorcelain = '' } = {}) {
+  const calls = []
+  const state = { spawned: false, pm2Stopped: false, pm2Restarted: false }
+  const sh = (command, args = []) => {
+    calls.push([command, ...args].join(' '))
+    if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc1234def\n' }
+    if (command === 'git' && args[0] === 'status') return { status: 0, stdout: statusPorcelain }
+    if (command === 'pm2' && args[0] === 'jlist') {
+      return {
+        status: 0,
+        stdout: JSON.stringify([
+          { name: PM2_PROC_NAME, pid: 80620, pm2_env: { status: 'online' } },
+        ]),
+      }
+    }
+    if (command === 'lsof') {
+      return { status: 0, stdout: state.pm2Stopped && !state.pm2Restarted ? '' : '80725\n' }
+    }
+    if (command === 'ps') {
+      return { status: 0, stdout: ' 80620     1\n 80724  80620\n 80725  80724\n' }
+    }
+    if (command === 'pm2' && args[0] === 'stop') {
+      state.pm2Stopped = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    if (command === 'pm2' && args[0] === 'restart') {
+      state.pm2Restarted = true
+      return { status: 0, stdout: '', stderr: '' }
+    }
+    return { status: 0, stdout: '', stderr: '' }
+  }
+  return {
+    calls,
+    state,
+    sh,
+    spawnDev: (command, args) => {
+      state.spawned = true
+      calls.push(`spawnDev:${command} ${args.join(' ')}`)
+      return { pid: 4242, unref() {}, on() {} }
+    },
+    // Probe comes alive as soon as the dev server spawned: readiness runs
+    // BEFORE the teardown restart, so gating on pm2Restarted here would spin
+    // the full readiness budget at 100% CPU (bug this line once had).
+    probeUrl: async () => (state.spawned ? 200 : null),
+    waitMs: async () => {},
+    killGroup: pid => calls.push(`kill:${pid}`),
+    openLog: () => 3,
+    exists: target => {
+      if (target.endsWith('.env.local') || target.endsWith('.env.e2e')) return true
+      return !target.startsWith('/private/tmp/e2e-isolated-')
+    },
+    restoreTimeoutSeconds: 2,
+  }
+}
+
+test('runIsolatedE2E warns non-fatally when the working tree is dirty (M2-DIRTY)', async () => {
+  const harness = createIsolatedHarness({ statusPorcelain: ' M src/pages/x.tsx\n' })
+  const stdout = []
+  const stderr = []
+  const result = await runIsolatedE2E({
+    ...harness,
+    argv: [],
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  assert.equal(result.exitCode, 0, 'the dirty tree is a warning, never an abort')
+  const warning = stderr.join('\n')
+  assert.match(warning, /working tree is dirty/)
+  assert.match(warning, /HEAD \(abc1234\)/)
+  assert.match(warning, /Commit or stash first/)
+  assert.ok(
+    harness.calls.some(call => call.startsWith('npm run test:e2e:full')),
+    'the run still executed'
+  )
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.exitCode, 0)
+})
+
+test('runIsolatedE2E swallows a second Ctrl+C during teardown (M1-SIG)', async () => {
+  const harness = createIsolatedHarness()
+  let signalHandler = null
+  let teardownSignalFired = false
+  const stdout = []
+  const stderr = []
+  const result = await runIsolatedE2E({
+    ...harness,
+    argv: ['--ready-timeout-seconds', '1'],
+    // Readiness fails (probe down until pm2 restarts); the FIRST restore
+    // attestation poll fires a second Ctrl+C mid-teardown.
+    probeUrl: async () => {
+      if (harness.state.pm2Restarted && !teardownSignalFired) {
+        teardownSignalFired = true
+        signalHandler('SIGTERM')
+      }
+      return harness.state.pm2Restarted ? 200 : null
+    },
+    registerSignals: handler => {
+      signalHandler = handler
+      return () => {}
+    },
+    restoreTimeoutSeconds: 2,
+    writeStdout: message => stdout.push(message),
+    writeStderr: message => stderr.push(message),
+  })
+  assert.equal(teardownSignalFired, true, 'the test actually fired the mid-teardown signal')
+  assert.equal(result.interrupted, null, 'the mid-teardown signal was swallowed')
+  assert.equal(result.exitCode, 1)
+  assert.ok(harness.calls.includes('pm2 restart wb-repricer-frontend-dev'))
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.restoreVerified, true, 'restore attestation completed despite the signal')
+  assert.equal(summary.worktreeRemoved, true, 'teardown ran to completion')
+  assert.deepEqual(summary.teardownErrors, [])
+})
+
+test('runIsolatedE2E --keep-worktree keeps the tree and omits worktreeRemoved (L8)', async () => {
+  const harness = createIsolatedHarness()
+  const stdout = []
+  const result = await runIsolatedE2E({
+    ...harness,
+    argv: ['--keep-worktree'],
+    writeStdout: message => stdout.push(message),
+    writeStderr: () => {},
+  })
+  assert.equal(result.exitCode, 0)
+  assert.ok(
+    !harness.calls.some(call => call.startsWith('git worktree remove')),
+    'the kept worktree is not removed'
+  )
+  assert.ok(
+    !harness.calls.some(call => call.startsWith('rm ')),
+    'no artifacts cleanup against kept evidence'
+  )
+  const summary = JSON.parse(stdout.at(-1))
+  assert.equal(summary.worktreeKept, true)
+  assert.ok(!('worktreeRemoved' in summary), 'worktreeRemoved is omitted when kept')
+  assert.equal(summary.exitCode, 0)
 })

@@ -29,7 +29,9 @@ const BOOLEAN_FLAGS = new Set(['--keep-worktree'])
 
 /**
  * Pin seams (precedent STORY_174_3_NPM_CLI): env-overridable command names so
- * tests and hardened environments can redirect tool lookups.
+ * tests and hardened environments can redirect tool lookups. Known gap
+ * (intentional): ln/cp/chmod in the provision commands are plain coreutils
+ * and are NOT seamed — seam them only if a hardened environment requires it.
  */
 export function resolvePins(env = process.env) {
   return {
@@ -38,6 +40,7 @@ export function resolvePins(env = process.env) {
     git: env.RUN_E2E_ISOLATED_GIT ?? 'git',
     ps: env.RUN_E2E_ISOLATED_PS ?? 'ps',
     npm: env.RUN_E2E_ISOLATED_NPM ?? 'npm',
+    npx: env.RUN_E2E_ISOLATED_NPX ?? 'npx',
   }
 }
 
@@ -150,12 +153,15 @@ const DEFAULT_PINS = resolvePins({})
  * message lists ALL problems, newline-joined, before anything is returned.
  * `exists` is the injected existence probe (purity seam for tests).
  *
- * Phase execution semantics: 'provision' and 'swap' are EXECUTED AS DATA by
- * runIsolatedE2E (commands drive spawnSync/spawn). 'run', 'restore', and
- * 'cleanup' are DESCRIPTIVE — they document intent and pin shapes, but their
- * actual execution is owned by runIsolatedE2E (run, via the pins.npm seam)
- * and executeTeardown (restore + cleanup, via teardownSteps); do not consume
- * their commands elsewhere without updating that comment.
+ * Phase execution semantics: 'provision' is EXECUTED AS DATA by
+ * runIsolatedE2E (commands drive spawnSync). 'swap' is PARTIALLY executed:
+ * its `commands` (pm2 stop) are spawned, while `devCommand`/`devLogPath`/
+ * `readinessUrl`/`readyTimeoutSeconds` are consumed by the executor's spawn +
+ * readiness poll. 'run', 'restore', and 'cleanup' are DESCRIPTIVE — they
+ * document intent and pin shapes, but their actual execution is owned by
+ * runIsolatedE2E (run, via the pins.npm seam) and executeTeardown (restore +
+ * cleanup, via teardownSteps); do not consume their commands elsewhere
+ * without updating that comment.
  */
 export function buildPlan({
   base,
@@ -195,7 +201,12 @@ export function buildPlan({
   const provisionCommands = [
     [pins.git, 'worktree', 'add', '--detach', worktreeDir, base],
     ['ln', '-s', `${primaryRoot}/node_modules`, `${worktreeDir}/node_modules`],
-    ...envFiles.map(envFile => ['cp', `${primaryRoot}/${envFile}`, `${worktreeDir}/${envFile}`]),
+    // Env files carry backend secrets; the sticky /private/tmp worktree must
+    // not expose them world-readable — preserve modes (-p) then force 600.
+    ...envFiles.flatMap(envFile => [
+      ['cp', '-p', `${primaryRoot}/${envFile}`, `${worktreeDir}/${envFile}`],
+      ['chmod', '600', `${worktreeDir}/${envFile}`],
+    ]),
   ]
 
   const portOwned = portState === 'pm2-owned'
@@ -207,14 +218,14 @@ export function buildPlan({
       commands: portOwned ? [[pins.pm2, 'stop', pm2ProcName]] : [],
       stopIsNoOp: !portOwned,
       portFreePollSeconds: 15,
-      devCommand: DEV_COMMAND,
+      devCommand: [pins.npx ?? DEV_COMMAND[0], ...DEV_COMMAND.slice(1)],
       devLogPath: `${worktreeDir}/.e2e-isolated-dev.log`,
       readinessUrl: RESTORE_VERIFY_URL,
       readyTimeoutSeconds,
     },
     {
       phase: 'run',
-      commands: [[pins.npm ?? DEFAULT_PINS.npm, 'run', 'test:e2e:full', '--']],
+      commands: [[pins.npm, 'run', 'test:e2e:full', '--']],
       cwd: worktreeDir,
     },
     {
@@ -237,8 +248,10 @@ export function buildPlan({
  * restore-verify (HTTP poll) → worktree removal (skippable) → artifacts
  * cleanup. Restore MUST precede worktree removal. Both removal AND artifacts
  * cleanup are skipped under --keep-worktree: the kept worktree IS the evidence
- * being preserved, so deleting e2e/.auth would destroy it. `pins` flow into
- * the pm2/git commands so RUN_E2E_ISOLATED_PM2/_GIT hold at teardown too.
+ * being preserved, so deleting e2e/.auth would destroy it (note the kept
+ * worktree still holds chmod-600 env copies — keep it access-controlled).
+ * `pins` flow into the pm2/git commands so RUN_E2E_ISOLATED_PM2/_GIT hold at
+ * teardown too.
  */
 export function teardownSteps({ keepWorktree, worktreeDir, pins = DEFAULT_PINS }) {
   const steps = [
@@ -261,6 +274,9 @@ export function teardownSteps({ keepWorktree, worktreeDir, pins = DEFAULT_PINS }
       fallback: 'fs.rmSync(recursive, force) — symlink is unlinked, not followed',
     })
     steps.push({
+      // Belt-and-suspenders only: this runs AFTER worktree removal, so the
+      // paths are normally already gone. It still scrubs evidence if BOTH the
+      // git remove and the rmSync fallback failed and the directory survived.
       step: 'artifacts-cleanup',
       paths: ['e2e/.auth', 'test-results', 'playwright-report'],
       relativeTo: worktreeDir,
@@ -345,10 +361,12 @@ export async function executeTeardown({
       } else if (step.step === 'worktree-remove') {
         const worktreeDir = step.commands[0].at(-1)
         const gitRemove = sh(step.commands[0][0], step.commands[0].slice(1))
-        sh(step.commands[1][0], step.commands[1].slice(1))
         if (gitRemove.status !== 0 && exists(worktreeDir)) {
           removePath(worktreeDir)
         }
+        // Prune AFTER the rmSync fallback: pruning while the directory still
+        // exists is a no-op and would leave orphaned .git/worktrees metadata.
+        sh(step.commands[1][0], step.commands[1].slice(1))
         summary.worktreeRemoved = !exists(worktreeDir)
       } else if (step.step === 'artifacts-cleanup' && exists(step.relativeTo)) {
         for (const relativePath of step.paths) {
