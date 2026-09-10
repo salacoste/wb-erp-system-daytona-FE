@@ -12,7 +12,7 @@ import { test, expect } from './fixtures/network-test'
  *
  * Auth: uses the project's saved storageState (e2e/.auth/user.json) wired via the
  * `chromium` project in playwright.config.ts. Run through the npm wrappers only:
- *   npm run test:e2e:isolated -- e2e/fr7-by-variant.spec.ts --project=chromium
+ *   npm run test:e2e:isolated -- e2e/fr7-by-variant.spec.ts --retries=0 --project=chromium
  * (restart-per-run harness, PR #431; the setup project re-logs-in per run —
  * the 5/hr BE login throttle applies; --no-deps is banned).
  *
@@ -26,7 +26,8 @@ const SKU = '/analytics/sku'
 const PRODUCT = '/analytics/product/148188881'
 // W33 is verified to carry 28 variant rows (single-week; the by-variant endpoint
 // 400s on a range). Re-pinned 2026-09-10 post-DB-reseed: pre-reseed W26 data is
-// gone. Used to force a single data-bearing week for happy-path tests.
+// gone. Any future DB reseed re-freezes these pins — re-verify via a live
+// by-variant probe before re-pinning. Used to force a data-bearing week.
 const SINGLE_WEEK = '?group_by=variant&weekStart=2026-W33&weekEnd=2026-W33'
 const RANGE_WEEKS = '?group_by=variant&weekStart=2026-W35&weekEnd=2026-W36'
 
