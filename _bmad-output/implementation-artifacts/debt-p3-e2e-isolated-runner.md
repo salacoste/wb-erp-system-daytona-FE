@@ -3,7 +3,7 @@
 | Поле | Значение |
 |---|---|
 | **Status** | review (5 ревью-проходов, 2×REJECT→fixed, финал APPROVE+CONVERGED; flip → done пост-merge) |
-| **PR** | pending (номер вторым коммитом после `gh pr create`) |
+| **PR** | [#431](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/431) |
 | **Head-SHA** | `01e114bb` (ветка `debt/e2e-isolated-runner`, база `dff15987` = post-#430 main) |
 | **Класс** | behavior (новая тест-инфраструктура); tests-first; live-verified |
 | **Источник** | FINAL-94-94 §176; реестр §11.9(5); V19-handoff §3.0 №2; V20 §4 п.2 |
