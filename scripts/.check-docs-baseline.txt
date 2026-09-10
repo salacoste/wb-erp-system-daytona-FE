@@ -9,15 +9,31 @@
 #   0 = current broken set matches this baseline (story closed cleanly)
 #   1 = NEW citations introduced OR RESOLVED citations not yet baselined
 #       (output enumerates what changed)
+
+# ZONES (docs-95 split, session-10 2026-09-10; registry §24): classification by HOST doc.
+# Comments are stripped by the gate today — zones are narrative, not enforcement.
+# NOTE: `--update-baseline` regenerates this file FLAT and silently destroys these zones —
+# re-split after any regeneration. Canonical zone semantics: a NEW break of a CANONICAL-zone
+# citation = a real maintenance signal in a living doc; ARCHIVAL = frozen history (owner-
+# approved archival treatment 26a97561). Multi-host tie-break: ANY living-doc host puts the
+# entry in CANONICAL (most-alive host wins).
+
+# ============ CANONICAL (living docs; sole entry cites a permanently deleted src file) ============
+src/hooks-v1/useMarginTrends.ts:70 | file not found
+
+# ============ ARCHIVAL-CANDIDATE (semi-frozen process/planning/competitor docs) ============
+src/app/(dashboard)/analytics/fbs-stock/components/FbsExportButton.tsx:142 | line 142 > file has 35 lines
+src/components/custom/dashboard/table-columns.ts:188-191 | line 191 > file has 150 lines
+src/products/marketplace.types.ts:156-161 | file not found
+src/sync/sync.service.ts:108-122 | file not found
+
+# ============ ARCHIVAL (frozen story artifacts / archive / .bak; 90 entries) ============
 src/analytics/weekly-analytics.service.ts:357-399 | file not found
 src/app/(dashboard)/analytics/advertising/components/performance-table/performance-table-columns.tsx:152-158 | line 158 > file has 67 lines
 src/app/(dashboard)/analytics/advertising/components/performance-table/performance-table-columns.tsx:152-158 | line 158 > file has 67 lines
-src/app/(dashboard)/analytics/fbs-stock/components/FbsExportButton.tsx:142 | line 142 > file has 35 lines
-src/components/custom/dashboard/table-columns.ts:188-191 | line 191 > file has 150 lines
 src/components/notifications/TelegramBindingModal.tsx:216 | line 216 > file has 128 lines
 src/hooks-v1/use-search-analytics.ts:44-54 | file not found
 src/hooks-v1/use-search-analytics.ts:44-54 | file not found
-src/hooks-v1/useMarginTrends.ts:70 | file not found
 src/hooks/useDashboardMetricsWithPeriod.ts:32-49 | file not found
 src/hooks/useDashboardMetricsWithPeriod.ts:32-49 | file not found
 src/hooks/useDashboardMetricsWithPeriod.ts:59 | file not found
@@ -64,10 +80,8 @@ src/lib/routes.ts:215 | line 215 > file has 149 lines
 src/mocks/handlers/unit-economics.ts:224 | line 224 > file has 28 lines
 src/mocks/handlers/unit-economics.ts:37-48 | line 48 > file has 28 lines
 src/mocks/handlers/unit-economics.ts:54-66 | line 66 > file has 28 lines
-src/products/marketplace.types.ts:156-161 | file not found
 src/products/products.service.ts:210-259 | file not found
 src/products/products.service.ts:83-182 | file not found
-src/sync/sync.service.ts:108-122 | file not found
 src/types/cabinet.ts:10-11 | file not found
 src/types/cabinet.ts:112 | file not found
 src/types/cabinet.ts:112 | file not found
@@ -104,3 +118,4 @@ src/types/unit-economics.ts:44 | file not found
 src/types/unit-economics.ts:44 | file not found
 src/types/unit-economics.ts:85 | file not found
 src/types/unit-economics.ts:85 | file not found
+
