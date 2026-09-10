@@ -37,7 +37,11 @@
  * begun (pre-provision fail-closed aborts print nothing); `exitCode` reflects
  * the run result + restore attestation, not cleanup errors (those surface as
  * `teardownErrors[]` + stderr), and `interrupted` reports the pending signal
- * the CLI layer re-raises after the summary is drained.
+ * the CLI layer re-raises after the summary is drained. Dev-boot failures are
+ * fast-fail: a dev spawn 'error' or an 'exit' BEFORE readiness aborts the
+ * readiness poll immediately (no timeout burn) and is attested as
+ * `devSpawnError` or `devExitedBeforeReady` + `devExitCode`, with the thrown
+ * error naming the actual cause instead of the generic readiness timeout.
  */
 
 import { spawn, spawnSync } from 'node:child_process'
@@ -163,12 +167,17 @@ export async function runIsolatedE2E({
     return parsePidTable(result.stdout)
   }
 
+  // shouldAbort contract: return false/undefined to keep polling, `true` to
+  // abort as a signal interrupt (message built from `interrupted`), or a
+  // string to abort with that string surfaced verbatim as the error cause.
   async function waitFor(predicate, timeoutSeconds, intervalMs = 500, shouldAbort = null) {
     const deadline = Date.now() + timeoutSeconds * 1000
     while (Date.now() < deadline) {
-      if (shouldAbort?.()) {
+      const abort = shouldAbort?.()
+      if (abort === true) {
         throw new Error(`Interrupted (${interrupted}); entering guaranteed teardown.`)
       }
+      if (typeof abort === 'string') throw new Error(abort)
       if (await predicate()) return true
       await waitMs(intervalMs)
     }
@@ -315,7 +324,8 @@ export async function runIsolatedE2E({
     const logFile = openLog(`${worktreeDir}/.e2e-isolated-dev.log`)
     // devCommand[0] is 'npx' from DEV_COMMAND (single source of truth; a bare
     // 'next' spawn would emit ENOENT). The async 'error' event is recorded so
-    // the finally teardown still runs.
+    // the finally teardown still runs; the 'exit' listener catches a server
+    // that spawns-then-dies instantly (no 'error' emitted).
     const devCommand = plan.find(phase => phase.phase === 'swap').devCommand
     const child = spawnDev(devCommand[0], devCommand.slice(1), {
       cwd: worktreeDir,
@@ -323,21 +333,47 @@ export async function runIsolatedE2E({
       stdio: ['ignore', logFile, logFile],
     })
     child.unref?.()
+    // Gates the 'exit' recording: only exits BEFORE readiness count — a crash
+    // after the server answered is the suite's failure, not a boot failure.
+    let readinessAchieved = false
     child.on?.('error', error => {
       summary.devSpawnError = error instanceof Error ? error.message : String(error)
+    })
+    child.on?.('exit', code => {
+      if (readinessAchieved) return
+      summary.devExitedBeforeReady = true
+      summary.devExitCode = code ?? null
     })
     devPid = child.pid ?? null
     // Readiness intentionally accepts ANY HTTP status (including 404/500):
     // next dev compiles lazily and can answer non-2xx while warming up, so
     // socket-alive is the only requirement here. Deeper health checking is
     // the preflight wrapper's job (SERVICE_CONFIGURATION probes + handshake).
-    // shouldAbort makes Ctrl+C exit the poll into teardown immediately.
+    // shouldAbort makes Ctrl+C exit the poll into teardown immediately, and
+    // also fast-fails on a spawn error / an exit before readiness (signals
+    // keep precedence) instead of burning the full timeout on a dead server.
     const ready = await waitFor(
       async () => (await probeUrl(RESTORE_VERIFY_URL)) !== null,
       parsed.readyTimeoutSeconds,
       500,
-      () => interrupted !== null
+      () => {
+        if (interrupted !== null) return true
+        if (summary.devSpawnError !== undefined) {
+          return (
+            `Dev server failed to spawn: ${summary.devSpawnError}. ` +
+            `Log: ${worktreeDir}/.e2e-isolated-dev.log`
+          )
+        }
+        if (summary.devExitedBeforeReady) {
+          return (
+            `Dev server exited (code ${summary.devExitCode}) before becoming ready. ` +
+            `Log: ${worktreeDir}/.e2e-isolated-dev.log`
+          )
+        }
+        return false
+      }
     )
+    readinessAchieved = true
     if (!ready) {
       throw new Error(
         `Dev server did not answer ${RESTORE_VERIFY_URL} within ${parsed.readyTimeoutSeconds}s. ` +
