@@ -4,7 +4,7 @@
 |---|---|
 | Status | done |
 | Date | 2026-09-10 (сессия-11, follow-up FU-1 из HANDOFF-2026-09-10 §3.4) |
-| PR | TBD |
+| PR | [#437](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/437) |
 | Branch | `debt/fu1-cwd-anchor-contracts` @ `93f2e7df` (база `f7296c0a`) |
 | Class | behavior/test-assertion (механическая волна по доказанному шаблону #430), 2 ревью-прохода opus |
 | Реестр | §27 |
