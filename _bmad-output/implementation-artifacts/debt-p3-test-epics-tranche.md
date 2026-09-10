@@ -3,7 +3,7 @@
 | Поле | Значение |
 |---|---|
 | **Status** | review (флип → done пост-merge) |
-| **PR** | pending (номер вторым коммитом) |
+| **PR** | [#432](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/432) |
 | **Head-SHA** | `ed4713d3` + closeout (ветка `debt/test-epics-tranche`, база `57d772c6` = post-#431 main) |
 | **Класс** | test-assertion re-pin (FR-7, 1 файл) + doc-only диспозиции (AT, Manager — реестр §23) |
 | **Owner-решения** | 2026-09-10, AskUserQuestion: (A) re-pin / (B) письменный owner-accept / (C) фиксация optional + коррекция цифры |
