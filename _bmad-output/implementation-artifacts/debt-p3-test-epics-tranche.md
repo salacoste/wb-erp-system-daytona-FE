@@ -77,7 +77,7 @@ src/test/story-174-3-surface-contract.test.ts` (33 теста в 2 файлах 
 
 | Файл | Дельта |
 |---|---|
-| `e2e/fr7-by-variant.spec.ts` | +11/−9 (константы данных + комментарии, ассерты нетронуты) |
+| `e2e/fr7-by-variant.spec.ts` | +12/−9 branch-cumulative (+11/−9 re-pin `ed4713d3`; +1 хедер-строка pass-1) — константы данных + комментарии, ассерты нетронуты |
 | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` | §23 APPEND |
 | `_bmad-output/implementation-artifacts/debt-p3-test-epics-tranche.md` | NEW (этот артефакт) |
 
