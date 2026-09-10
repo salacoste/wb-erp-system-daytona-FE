@@ -39,7 +39,7 @@
  * `teardownErrors[]` + stderr), and `interrupted` reports the pending signal
  * the CLI layer re-raises after the summary is drained. Dev-boot failures are
  * fast-fail: a dev spawn 'error' or an 'exit' BEFORE readiness aborts the
- * readiness poll immediately (no timeout burn) and is attested as
+ * readiness poll within one poll tick (no timeout burn) and is attested as
  * `devSpawnError` or `devExitedBeforeReady` + `devExitCode`/`devExitSignal`,
  * with the thrown error naming the actual cause instead of the generic
  * readiness timeout.
