@@ -14,9 +14,18 @@ export const RESTORE_VERIFY_URL = `http://localhost:${E2E_PORT}/login`
 export const DEV_COMMAND = ['npx', 'next', 'dev', '--webpack', '-p', E2E_PORT]
 
 const USAGE = `Usage: node scripts/run-e2e-isolated.mjs [--base <sha>] [--worktree-dir <path>]
-       [--keep-worktree] [--ready-timeout-seconds <n>] [-- PLAYWRIGHT_ARGS...]`
+       [--keep-worktree] [--ready-timeout-seconds <n>] [--|SPEC...] [PLAYWRIGHT_ARGS...]
 
-const KNOWN_FLAGS = new Set(['--base', '--worktree-dir', '--keep-worktree', '--ready-timeout-seconds'])
+Runner flags are recognized only BEFORE forwarding starts. Forwarding starts at
+the first bare \`--\` (npm keeps it) OR at the first bare positional argument
+(npm strips its single \`--\`); everything from that point is forwarded
+verbatim. Both of these forward identically:
+  npm run test:e2e:isolated -- e2e/x.spec.ts --grep "y" --retries=0
+  node scripts/run-e2e-isolated.mjs -- e2e/x.spec.ts --grep "y" --retries=0
+Running with no positional and no \`--\` forwards nothing (full default suite).`
+
+const VALUE_FLAGS = new Set(['--base', '--worktree-dir', '--ready-timeout-seconds'])
+const BOOLEAN_FLAGS = new Set(['--keep-worktree'])
 
 /**
  * Pin seams (precedent STORY_174_3_NPM_CLI): env-overridable command names so
@@ -31,41 +40,48 @@ export function resolvePins(env = process.env) {
 }
 
 export function parseIsolatedArgv(argv, { defaultBase, defaultWorktreeDir }) {
-  const separator = argv.indexOf('--')
-  const flagArgs = separator === -1 ? [...argv] : argv.slice(0, separator)
-  const forwarded = separator === -1 ? [] : argv.slice(separator + 1)
-
   const parsed = {
     base: defaultBase,
     worktreeDir: defaultWorktreeDir,
     keepWorktree: false,
     readyTimeoutSeconds: 180,
-    forwarded,
+    forwarded: [],
   }
 
-  for (let index = 0; index < flagArgs.length; index += 1) {
-    const arg = flagArgs[index]
-    const [flag, inlineValue] = splitInline(arg)
-    if (!KNOWN_FLAGS.has(flag)) {
-      throw new Error(`Unknown flag: ${arg}\n${USAGE}`)
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index]
+
+    // A bare `--` OR the first bare positional starts verbatim forwarding.
+    // The positional rule covers npm-style invocations where npm consumes the
+    // single `--` itself: `npm run test:e2e:isolated -- e2e/x.spec.ts ...`
+    // reaches this parser with the spec already as the first argument.
+    if (arg === '--' || !arg.startsWith('-')) {
+      const forwardFrom = arg === '--' ? index + 1 : index
+      return { ...parsed, forwarded: argv.slice(forwardFrom) }
     }
-    if (flag === '--keep-worktree') {
+
+    const [flag, inlineValue] = splitInline(arg)
+    if (BOOLEAN_FLAGS.has(flag)) {
       parsed.keepWorktree = true
       continue
     }
-    const value = inlineValue ?? flagArgs[++index]
-    if (value === undefined) {
-      throw new Error(`Missing value for ${flag}\n${USAGE}`)
-    }
-    if (flag === '--base') parsed.base = value
-    if (flag === '--worktree-dir') parsed.worktreeDir = value
-    if (flag === '--ready-timeout-seconds') {
-      const seconds = Number(value)
-      if (!Number.isInteger(seconds) || seconds <= 0) {
-        throw new Error(`Invalid --ready-timeout-seconds: ${value}\n${USAGE}`)
+    if (VALUE_FLAGS.has(flag)) {
+      const value = inlineValue ?? argv[++index]
+      if (value === undefined) {
+        throw new Error(`Missing value for ${flag}\n${USAGE}`)
       }
-      parsed.readyTimeoutSeconds = seconds
+      if (flag === '--base') parsed.base = value
+      if (flag === '--worktree-dir') parsed.worktreeDir = value
+      if (flag === '--ready-timeout-seconds') {
+        const seconds = Number(value)
+        if (!Number.isInteger(seconds) || seconds <= 0) {
+          throw new Error(`Invalid --ready-timeout-seconds: ${value}\n${USAGE}`)
+        }
+        parsed.readyTimeoutSeconds = seconds
+      }
+      continue
     }
+    throw new Error(`Unknown flag: ${arg}\n${USAGE}`)
   }
 
   return parsed

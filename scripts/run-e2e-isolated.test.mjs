@@ -75,6 +75,47 @@ test('parseIsolatedArgv rejects a non-integer or non-positive ready timeout', ()
   assert.throws(() => parseIsolatedArgv(['--ready-timeout-seconds', 'soon'], DEFAULTS))
 })
 
+test('parseIsolatedArgv forwards npm-style argv where npm stripped the single --', () => {
+  // Live repro: `npm run test:e2e:isolated -- e2e/box-types-page.spec.ts
+  // --grep "renders page heading" --retries=0` reaches the parser with the
+  // spec as the FIRST argument and no bare `--` anywhere.
+  const argv = ['e2e/box-types-page.spec.ts', '--grep', 'renders page heading', '--retries=0']
+  const parsed = parseIsolatedArgv(argv, DEFAULTS)
+  assert.deepEqual(parsed.forwarded, argv)
+  assert.equal(parsed.keepWorktree, false)
+  assert.equal(parsed.base, 'abc1234')
+})
+
+test('parseIsolatedArgv starts forwarding at the first bare positional, keeping earlier flags', () => {
+  const parsed = parseIsolatedArgv(
+    ['--keep-worktree', 'e2e/x.spec.ts', '--grep', 'y', '--retries=0'],
+    DEFAULTS
+  )
+  assert.equal(parsed.keepWorktree, true)
+  assert.deepEqual(parsed.forwarded, ['e2e/x.spec.ts', '--grep', 'y', '--retries=0'])
+})
+
+test('parseIsolatedArgv consumes flag values that look like non-flags, then forwards', () => {
+  const parsed = parseIsolatedArgv(['--base', 'abc123', 'e2e/x.spec.ts'], DEFAULTS)
+  assert.equal(parsed.base, 'abc123')
+  assert.deepEqual(parsed.forwarded, ['e2e/x.spec.ts'])
+})
+
+test('parseIsolatedArgv still throws with usage on an unknown flag before any positional', () => {
+  assert.throws(() => parseIsolatedArgv(['--wat', 'e2e/x.spec.ts'], DEFAULTS), /Unknown flag: --wat/)
+  assert.throws(() => parseIsolatedArgv(['--keep-worktree', '--wat', 'e2e/x'], DEFAULTS), /Usage:/)
+})
+
+test('parseIsolatedArgv explicit bare -- form still forwards verbatim', () => {
+  const parsed = parseIsolatedArgv(['--', 'e2e/x.spec.ts', '--grep', 'y'], DEFAULTS)
+  assert.deepEqual(parsed.forwarded, ['e2e/x.spec.ts', '--grep', 'y'])
+  assert.deepEqual(
+    parseIsolatedArgv(['--'], DEFAULTS).forwarded,
+    [],
+    'a trailing bare -- forwards nothing (valid no-playwright-args case)'
+  )
+})
+
 test('classifyPort3100 returns pm2-owned when a listener pid matches the pm2 pid', () => {
   assert.equal(classifyPort3100({ pm2Pid: 42, listenerPids: ['42'] }), 'pm2-owned')
   assert.equal(classifyPort3100({ pm2Pid: 42, listenerPids: ['7', '42'] }), 'pm2-owned')
