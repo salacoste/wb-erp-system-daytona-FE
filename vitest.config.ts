@@ -53,6 +53,7 @@ export default defineConfig({
       'scripts/check-privacy-console.test.mjs', // Runs separately with node:test
       'scripts/check-e2e-bare-skips.test.mjs', // Runs separately with node:test (Story 162.9 bare-skip scanner)
       'scripts/e2e-preflight.test.mjs', // Runs separately with node:test
+      'scripts/run-e2e-isolated.test.mjs', // Runs separately with node:test (restart-per-run runner suite)
       'scripts/privacy/diagnostic-capture-policy.test.mjs', // Runs separately with node:test
       'scripts/story-128-10/verify-frontend.test.mjs', // Runs separately with node:test
       // CARRY-IN FIX (174.1 → 174.2): node:test suite fails under vitest with
