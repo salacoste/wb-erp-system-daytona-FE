@@ -21,7 +21,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   Джем: 'var(--color-chart-6)',
   лояльности: 'var(--color-chart-3)',
 }
-const DEFAULT_COLOR = 'var(--color-chart-9)' // C5-W3 (byte-identical)
+const DEFAULT_COLOR = 'var(--color-chart-9)' // C5-W3 (gray-400->gray-500 shift)
 
 /** Get semantic color for a category name */
 export function getCategoryColor(category: string): string {

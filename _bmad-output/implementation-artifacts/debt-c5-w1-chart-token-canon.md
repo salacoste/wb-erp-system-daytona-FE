@@ -371,7 +371,7 @@ informational, APPEND-ONLY конвенция соблюдена.
 
 | Файл | Сайтов | Маппинг | Light-пиксели |
 |---|---|---|---|
-| expense-chart-config | 18 | CATEGORY_COLORS: Комиссия→brand, Логистика→chart-1, Продвижение→chart-2, Эквайринг→chart-7, Хранение→chart-10, Штрафы→chart-negative, Джем→chart-6, лояльности→chart-3, DEFAULT→chart-9; tooltip: gray-900/700→foreground, gray-500/600→muted-foreground, red/green-600→status-error/success | brand/Хранение/DEFAULT ≡ байт; Джем сдвиг (дистинкция от Продвижения) |
+| expense-chart-config | 18 | CATEGORY_COLORS: Комиссия→brand, Логистика→chart-1, Продвижение→chart-2, Эквайринг→chart-7, Хранение→chart-10, Штрафы→chart-negative, Джем→chart-6, лояльности→chart-3, DEFAULT→chart-9; tooltip: gray-900/700→foreground, gray-500/600→muted-foreground, red/green-600→status-error/success | brand/Хранение ≡ байт; DEFAULT — gray-400→gray-500 сдвиг (ложный клейм «≡ байт» исправлен проходом-1; #9CA3AF = valence-neutral, не chart-9); Джем сдвиг (дистинкция от Продвижения) |
 | TrendGraph | 14 | info-баннер→`bg-status-information/10`+`text-status-information` (fg-on-tint, wave-6 канон; X-кнопка без dim-hover); grid→chart-grid; series: revenue→chart-1, totalPayable→chart-positive, payoutTotal→chart-9, cogsTotal→chart-5, operatingProfit→**brand ×2** (байт, highlight-семантика), logisticsCost→chart-7, efficiencyPct→chart-2 ×2 | brand ≡ байт |
 | ProductOrganicChart | 7 | series→chart-positive/chart-1; grid #EEEEEE×3→chart-grid; axis #757575×2→chart-axis | сдвиги grid/axis |
 | ElasticitySkuChart | 4 | chart-1 ×2, chart-positive ×2 | сдвиг blues |
@@ -397,3 +397,25 @@ CartesianGrid пойманы tsc TS1003) — JSX-атрибутные комме
 
 **Гейты**: vitest СОЛО (финал прогона см. §33) · lint 0/0 · tsc 0 (bare) · boundary **0=0** (bare exit 0;
 ratchet 57→0 тем же PR) · таргет 108 файлов 1675/1675.
+
+### W3 Post-1st-pass-review fixes (2026-09-11)
+
+**Meta-claim blanket qualifier (Trigger 4; pre-written по A-2, применяется к W3-блокам).** Формулировки
+блока и §11 о структурных свойствах, исходах проходов и счётах — unaudited meta-claims, квалифицируются
+коллективно здесь.
+
+**Проход-1** (свежий контекст, opus): **APPROVE-with-riders** — 0 CRITICAL / 1 MINOR / 4 LOW.
+Хирургия верифицирована hunk-by-hunk (0 жертв вне намеченного; оба repaired CartesianGrid — валидные
+self-closing; 0 остатков C5-W3 в className-строках; tsc re-run bare 0). Аттестация 57 = 38+19
+воспроизведена ревьюером ЧЕКЕРСКИМИ регексами на parent-коммите — до цифры. Дистинкция
+Джем(chart-6 #AD1457)/Продвижение(chart-2 #6A1B9A) подтверждена вычислением.
+
+Применённые фиксы:
+1. **MINOR-1**: ложный клейм «DEFAULT ≡ байт» — chart-9 = #6B7280 (gray-500), #9CA3AF = gray-400
+   (= valence-neutral, не chart-9!). Комментарий в коде переписан («gray-400→gray-500 shift»), §11-клетка
+   исправлена in-place (волна ещё не смержена; блок = дисклоужа). Тот же паттерн был ВЕРЕН в W2
+   (orders-status fallback #6B7280→chart-9 ≡) — конflating gray-400/gray-500 между волнами.
+
+Диспозиции LOW-ов: banner 5.00:1 (AA-pass, запас тоньше легаси 6.16 — учтено в W4-light-форке);
+X-кнопка без hover — соответствует wave-6 канону (sibling TaxWarningBanner), aria-label сохранён;
+Джем-сдвиг — осознанный, owner-awareness; маркер-ремонт вошёл в фикс-1.
