@@ -172,8 +172,8 @@ describe('OrdersStatusBreakdown - Status Display', () => {
 // 3. Color Scheme
 describe('OrdersStatusBreakdown - Color Scheme', () => {
   describe('complete status', () => {
-    it('should use green color (#22C55E) for complete', () => {
-      expect(ORDER_STATUS_CONFIG.complete.color).toBe('#22C55E')
+    it('should use the success token for complete (C5-W2)', () => {
+      expect(ORDER_STATUS_CONFIG.complete.color).toBe('var(--status-success)')
     })
     it('should apply bg-status-success background class', () => {
       expect(ORDER_STATUS_CONFIG.complete.bgClass).toBe('bg-status-success')
@@ -183,8 +183,8 @@ describe('OrdersStatusBreakdown - Color Scheme', () => {
     })
   })
   describe('confirm status', () => {
-    it('should use blue color (#3B82F6) for confirm', () => {
-      expect(ORDER_STATUS_CONFIG.confirm.color).toBe('#3B82F6')
+    it('should use the information token for confirm (C5-W2)', () => {
+      expect(ORDER_STATUS_CONFIG.confirm.color).toBe('var(--status-information)')
     })
     it('should apply bg-status-information background class', () => {
       expect(ORDER_STATUS_CONFIG.confirm.bgClass).toBe('bg-status-information')
@@ -194,8 +194,8 @@ describe('OrdersStatusBreakdown - Color Scheme', () => {
     })
   })
   describe('new status', () => {
-    it('should use yellow color (#F59E0B) for new', () => {
-      expect(ORDER_STATUS_CONFIG.new.color).toBe('#F59E0B')
+    it('should use the warning token for new (C5-W2)', () => {
+      expect(ORDER_STATUS_CONFIG.new.color).toBe('var(--status-warning)')
     })
     it('should apply bg-status-warning background class', () => {
       expect(ORDER_STATUS_CONFIG.new.bgClass).toBe('bg-status-warning')
@@ -205,8 +205,8 @@ describe('OrdersStatusBreakdown - Color Scheme', () => {
     })
   })
   describe('cancel status', () => {
-    it('should use red color (#EF4444) for cancel', () => {
-      expect(ORDER_STATUS_CONFIG.cancel.color).toBe('#EF4444')
+    it('should use the error token for cancel (C5-W2)', () => {
+      expect(ORDER_STATUS_CONFIG.cancel.color).toBe('var(--status-error)')
     })
     it('should apply bg-status-error background class', () => {
       expect(ORDER_STATUS_CONFIG.cancel.bgClass).toBe('bg-status-error')
@@ -216,8 +216,14 @@ describe('OrdersStatusBreakdown - Color Scheme', () => {
     })
   })
   describe('WCAG compliance', () => {
-    it('should meet WCAG 2.1 AA contrast requirements for all colors', () => {
-      Object.values(ORDER_STATUS_CONFIG).forEach(c => expect(c.color).toMatch(/^#[0-9A-Fa-f]{6}$/))
+    it('maps every status to its semantic role token (real AA verified in globals-compiled-contrast)', () => {
+      const roles = Object.values(ORDER_STATUS_CONFIG).map(c => c.color)
+      expect(roles).toEqual([
+        'var(--status-success)',
+        'var(--status-information)',
+        'var(--status-warning)',
+        'var(--status-error)',
+      ])
     })
   })
 })

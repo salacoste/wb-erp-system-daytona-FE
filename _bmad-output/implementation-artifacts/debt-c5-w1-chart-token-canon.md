@@ -285,3 +285,43 @@ merge READY** — 0 CRITICAL / 1 MINOR / 4 LOW. Все 8 клеймов фикс
 locale 4, lessons 0, privacy 0, lint 0/0, tsc 0, vitest 19573/0 (полный, ×2: оркестратор + ревьюер);
 author-attested only — физический акт RED-check реверта (численно воспроизведён независимо:
 3.6979 exact) и негативный поиск FAIL по двойникам (дисклоужен как неисчерпывающий в Post-2).
+
+---
+
+## 10. Wave-2 record: lib-hex 57 → 0 (2026-09-11, ветка `debt/c5-w2-lib-hex-tokens`)
+
+**Маппинги** (8 файлов, 57 сайтов = 53 hex + 4 legacy-класса):
+
+| Файл | Сайтов | Маппинг | Light-пиксели |
+|---|---|---|---|
+| unit-economics-config | 10 | chart-1..10 индексно 1:1 (owner ②) | серии 0..5 сдвиг (дисклоужа §4), 6..9 ≡ |
+| profitability-utils | 6 | valence-1..5 + neutral (owner ③) | все ≡ |
+| liquidity-category-config | 12 | color → valence-1/3/4/5; bgColor → **color-mix tint**; bgClass → `bg-valence-N` | color ≡, тинты ≈ (Δ≤8/канал) |
+| liquidity-action-benchmark | 11 | valence-1/2/4/5 + status-information (нейтральное действие) | ≡, синий сдвиг |
+| orders-status-config | 5 | status-success/information/warning/error; fallback → chart-9 (≡ gray-500) | сдвиг к AA-ролям |
+| seasonal-localization | 7 | bars → chart-1/positive/negative; heatmap → color-mix глубина | сдвиг |
+| liquidity-utils | 3 | valence-5/3/1 | ≡ |
+| fbs-analytics-formatters | 3 | chart-1/positive/negative | сдвиг |
+
+**Кодификация color-mix рецепта** (волна-2): тинты в TS = `color-mix(in srgb, var(--token) N%, var(--card))`
+— theme-aware (dark адаптируется сам), checker-чист (color-mix вне banned-списка CONTEXTUAL_HEX);
+heatmap-peak смешивает к `var(--foreground)` (темнее в light, ярче в dark — глубина сохраняется в обеих темах).
+
+**Дисклоужа райдера light-AA-форка**: рекон опроверг премиссу райдера («текст-сайты мигрируют в волне 2»)
+— все валенс-потребители скоупа волны-2 = fills/свотчи (recharts Cell, backgroundColor-свотчи), текстовых
+нет. Форк 1.4.11-light остаётся owner-решением волны-4 (закрытие бандла); волна-2 мигрирует
+пиксель-сохранно, форк не эскалирует.
+
+**Тест-пины RED→GREEN**: 23 обновления в 13 файлах (7 lib-файлов: 11 пинов; 5 presentation/fixture: 12 пинов
+вкл. фейк-«WCAG compliance» таутологию → точный exact-array ролей; fixture fbs-trends LINE_COLORS).
+Таутология-пин «should meet WCAG AA» проверял только ФОРМАТ hex (`toMatch(/^#[0-9A-F]{6}$/)`), не контраст —
+заменён на exact-array семантических ролей (реальный AA живёт в globals-compiled-contrast).
+
+**Визуальный проб Playwright** (dev :3100, живой логин, isolation-сессия): /dashboard (валенс-свотчи фильтра),
+/analytics/unit-economics (10-серийная структура затрат резолвится из chart-токенов),
+/analytics/liquidity light+dark (валенс-точки категорий, donut shim, бейджи) — рендер корректен в обеих темах.
+
+**Гейты**: vitest СОЛО **19573/0** · lint 0/0 · tsc 0 · boundary **57=57** (38 hex + 19 legacy:
+components 37 + app 17 + types 3 → волна ③) · docs 0 · locale 0-fail · lessons 0 · privacy 0.
+CLAUDE.md boundary-строка 57 тем же PR. Манифест-префлайт: 0 пинов execution-manifest/chart-inventory
+на 8 файлов (проверено грепом до старта).
