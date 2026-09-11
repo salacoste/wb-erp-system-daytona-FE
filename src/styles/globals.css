@@ -182,8 +182,9 @@
     --telegram: 200 100% 40%;
     /* Chart color canon (C5-W1, debt registry §31): every chart color reads from
        these CSS variables only — var(--chart-N) / Tailwind chart-* utilities.
-       Hex literals and parallel color constants are banned in production source;
-       the boundary checker (contextual-hex + ratchet) enforces the ratchet. */
+       Hex literals and parallel color constants are banned for new code
+       (legacy sites ratchet to zero at C5 wave-4); the boundary checker
+       (contextual-hex + ratchet) enforces it. */
     --chart-1: 211.929825 80.28169% 41.764706%;
     --chart-2: 277.322835 70.165746% 35.490196%;
     --chart-3: 185.034965 100% 28.039216%;

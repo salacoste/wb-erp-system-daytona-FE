@@ -19,29 +19,31 @@
 | 4 | Waterfall double-color-source | **Валенс-семантика**: increase→chart-positive, decrease→chart-negative, total→нейтраль; exception снимается (wave-4) |
 | 5 | chart-2 dark selHover 3.71 | **Фикс токена в дизайн-проходе** (L↑, hue сохранён) |
 | 6 | Скоуп/цель boundary | **Полный 118 → 0**, все 3 exceptions снимаются; 23 legacy-класса → status/tint-токены |
-| 7 | Форма поставки | **4 волны × PR**: ① токены+канон ② lib-hex (61) ③ components/app+legacy (57) ④ waterfall+exceptions+baseline 0+доки |
+| 7 | Форма поставки | **4 волны × PR**: ① токены+канон ② lib-hex (57 после удаления dead chart-colors) ③ components/app+legacy (57) ④ waterfall+exceptions+baseline 0+доки |
 | 8 | Режим ревью | **4/2/2/4**: wave-1/4 кодификационные (4 прохода), wave-2/3 behavior (2+триггеры) |
 
 ## 2. Рекон/твин-свип (2026-09-11, паттерновый скан чекером, не handoff-списком)
 
-Полный состав 118 (21 файл; `node scripts/check-shadcn-ui-boundary.mjs`):
+Полный состав 118 (20 файлов = 19 живых + удаляемый chart-colors; `node scripts/check-shadcn-ui-boundary.mjs`):
 
 - **lib (61)**: liquidity-category-config 12 · liquidity-action-benchmark 11 · unit-economics-config 10 · seasonal-localization 7 · profitability-utils 6 · orders-status-config 5 · **chart-colors 4 (dead)** · liquidity-utils 3 · fbs-analytics-formatters 3
-- **components+app+types (57)**: expense-chart-config 18 · TrendGraph 14 · ProductOrganicChart 7 · ElasticitySkuChart 4 · ExpenseChart 3 · supply-planning-config 3 · ProductAdvTrendChart 2 · LiquiditySummaryBar 2 · advertising-tokens 2 · trend-graph-config 1 · FbsTrendsChart 1 (+ мелочь app/types)
+- **components+app+types (57)**: expense-chart-config 18 · TrendGraph 14 · ProductOrganicChart 7 · ElasticitySkuChart 4 · ExpenseChart 3 · supply-planning-config 3 · ProductAdvTrendChart 2 · LiquiditySummaryBar 2 · advertising-tokens 2 · trend-graph-config 1 · FbsTrendsChart 1
 
 Ключевые находки рекон-а:
 
 1. **`src/lib/chart-colors.ts` — production-dead**: 0 импортёров, 0 тестов (grep по `lib/chart-colors`, `chart-colors` — только сам файл). Заголовок сам запрещал ретро-миграцию («Do NOT refactor existing chart files retroactively»). → удаляется в wave-1: −4 сайта, boundary **118 → 114**.
-2. **Второй одноимённый `CHART_COLORS`** живёт в `src/components/custom/dashboard/chart-config.ts` (dashboard-метрики; METRIC_LABELS/METRIC_AXIS) — отдельная сущность, мигрирует в wave-3; после удаления lib-тёзки требует различающий комментарий (CLAUDE.md same-name convention уже соблюдён комментарием в trends-config).
+2. **Три живых одноимённых `CHART_COLORS`** (после удаления lib-тёзки): `src/components/custom/dashboard/chart-config.ts:22` (dashboard-метрики; METRIC_LABELS/METRIC_AXIS) · `src/components/custom/price-calculator/cost-breakdown-types.ts:40` · `src/app/(dashboard)/analytics/storage/components/storage-trends-config.ts:15` — отдельные сущности, мигрируют в wave-3; различающих same-name комментариев у них нет (CLAUDE.md convention — добавить при миграции).
 3. **Byte-идентичные двойники токенов** (прецедент 172.x «verify HSL not names»): light `chart-4 ≡ chart-positive ≡ status-success ≡ availability-available ≡ financial-positive`; dark `chart-2 ≡ chart-target ≡ availability-partial`. Правило C5: меняем только объявленный ролью токен; двойники-роли не трогаем без отдельного решения (rider ниже).
 4. **Пин 3.71 идентифицирован**: `ProductTableRow.tsx:133` `<span className="text-chart-2">` (storage-акцент) на selected-row стеке (canon: rest=card, hover=muted/50, selected=info/10, selected-hover=info/20; cogs page Card mount). **Коммитед-пина контраста НЕТ** — число 3.71 живёт в артефакте волны-6 + реестре; существующий `ProductTableRow.selected-stack.test.tsx` пиннет классы ремедий, не число.
-5. **`supply-planning-chart.ts` жив** (реэкспорт из supply-planning-utils) — не dead, wave-3.
+5. **`supply-planning-chart.ts` жив** (supply-planning-utils:127 реэкспортирует из него; извлечён из utils ранее) — не dead, wave-3.
 6. Color-math на `CHART_COLORS.*` (concat/slice/replace) — не найден (пусто).
 
 ## 3. Wave-1 scope-контракт
 
 **Входит**:
 - `src/styles/globals.css`: +`--chart-7..10`, +`--valence-1..5`, +`--valence-neutral` (light+dark); dark `--chart-2` L↑; `--color-*` маппинги в theme-блоке; канон-декларация в шапке chart-блока.
+- `src/styles/__tests__/token-test-utils.ts`: +`compositeTriplets` (alpha-композит тинтов для stack-пинов).
+- `src/styles/__tests__/globals-compiled-contrast.test.ts`: chartRoles 6→10 uniqueness; +compile pins `bg-chart-7..10`/`text-valence-*`.
 - Удаление `src/lib/chart-colors.ts` (dead) → boundary 118→114, baseline ↓ тем же PR + строка CLAUDE.md.
 - `src/styles/__tests__/globals-token-contract.test.ts`: requiredRoles + новые роли; пиксель-контракты light (hslTripletToHex == исходные hex); hue-различимость chart-1..10; численный dark selected-stack контраст-тест для chart-2 ≥4.5.
 - Дисклоужи: артефакт + реестр §31 (APPEND-ONLY) + CLAUDE.md boundary/vitest строки.
@@ -56,19 +58,19 @@ Light = **пиксель-идентичность** исходным hex (док
 
 | Токен | light (≡ исходный hex) | dark (контраст-тюнинг) |
 |---|---|---|
-| `--chart-7` (категория idx6, #EAB308) | `45.39 93.46% 47.45%` | 45.39 ~93% ~65% |
-| `--chart-8` (idx7, #EF4444) | `0 84.18% 60.2%` | 0 ~72% ~77% (≡ chart-negative dark) |
-| `--chart-9` (idx8, #6B7280) | `220 8.94% 46.1%` | 220 ~9% ~70% |
-| `--chart-10` (idx9, #14B8A6) | `173.42 80.4% 40%` | 173.42 ~45% ~60% |
-| `--valence-1` (#22C55E) | `142.09 70.6% 45.3%` | ≡ financial-positive dark (122.57 38.46% 64.31%) |
-| `--valence-2` (#84CC16) | `83.74 80.5% 44.3%` | 83.74 ~55% ~65% |
-| `--valence-3` (#EAB308) | ≡ chart-7 light | ≡ status-warning dark (45.68 100% 65.49%) |
-| `--valence-4` (#F97316) | `24.58 94.9% 53.1%` | 24.58 ~95% ~68% |
-| `--valence-5` (#EF4444) | ≡ chart-8 light | ≡ financial-negative dark (0 72.65% 77.06%) |
-| `--valence-neutral` (#9CA3AF) | `217.93 10.6% 64.9%` | ≡ financial-neutral dark (0 0% 74.12%) |
-| `--chart-2` dark fix | (light не меняется: 277.32 70.17% 35.49%) | **L 59.6% → целевое по расчёту ≥4.5 на selected-hover стеке** (info/20 над muted/50 над card; hue 291.25 сохранён) |
+| `--chart-7` (категория idx6, #EAB308) | `45.39823 93.38843% 47.45098%` | 45.39823 93.38843% 65% |
+| `--chart-8` (idx7, #EF4444) | `0 84.236453% 60.196078%` | 0 72.649573% 77.058824% (≡ chart-negative dark) |
+| `--chart-9` (idx8, #6B7280) | `220 8.93617% 46.078431%` | 220 8.93617% 70% |
+| `--chart-10` (idx9, #14B8A6) | `173.414634 80.392157% 40%` | 173.414634 45% 60% |
+| `--valence-1` (#22C55E) | `142.08589 70.562771% 45.294118%` | ≡ financial-positive dark (122.571429 38.461538% 64.313725%) |
+| `--valence-2` (#84CC16) | `83.736264 80.530973% 44.313725%` | 83.736264 55% 65% |
+| `--valence-3` (#EAB308) | ≡ chart-7 light | ≡ status-warning dark (45.681818 100% 65.490196%) |
+| `--valence-4` (#F97316) | `24.581498 94.979079% 53.137255%` | 24.581498 94.979079% 68% |
+| `--valence-5` (#EF4444) | ≡ chart-8 light | ≡ financial-negative dark (0 72.649573% 77.058824%) |
+| `--valence-neutral` (#9CA3AF) | `217.894737 10.614525% 64.901961%` | ≡ financial-neutral dark (0 0% 74.117647%) |
+| `--chart-2` dark fix | (light не меняется: 277.32 70.17% 35.49%) | **L 59.6% → 70%** (пара ≥4.5 на selected-hover стеке: info/20 над card — hover-вариант замещает базовый bg, muted/50 в стек не входит; hue 291.25 сохранён) |
 
-Dark-значения фиксируются точными триплетами в коде; приведённые здесь — целевые роли
+Dark-значения фиксируются точными триплетами в коде; таблица транскрибирована из globals.css
 (byte-идентичность с существующими dark-ролями помечена ≡, прецедент chart-4≡chart-positive).
 Точная пара chart-2/стек вычисляется тестом; RED-check: revert 59.6% → тест падает ≈3.71
 (кросс-валидация с аттестацией волны-6).
@@ -80,15 +82,16 @@ Dark-значения фиксируются точными триплетами
 сохраняется») выполнен; факт фиксируется здесь и будет виден в wave-2 визуальном пробе.
 
 **Канон-декларация** (в шапке chart-блока globals.css): все chart-цвета читаются только
-из этих CSS-переменных (`var(--chart-N)` / Tailwind `chart-*` утилиты) — hex-литералы в
-production-исходниках запрещены; энфорсер — boundary-чекер (contextual-hex + ratchet),
-полный текст канона — реестр §31, CLAUDE.md-строка — wave-4.
+из этих CSS-переменных (`var(--chart-N)` / Tailwind `chart-*` утилиты) — hex-литералы
+запрещены для нового кода (легаси-сайты ратчатся до нуля в волне 4); энфорсер —
+boundary-чекер (contextual-hex + ratchet), полный текст канона — реестр §31,
+CLAUDE.md-строка — wave-4.
 
 ## 5. Изменения (файлы)
 
 | Файл | Действие |
 |---|---|
-| `src/styles/globals.css` | +11 ролей ×2 темы, dark chart-2 fix, `--color-*` маппинги, канон-шапка |
+| `src/styles/globals.css` | +10 ролей ×2 темы, dark chart-2 fix, `--color-*` маппинги, канон-шапка |
 | `src/lib/chart-colors.ts` | **удалить** (dead, −4 сайта) |
 | `src/styles/__tests__/globals-token-contract.test.ts` | requiredRoles+11; пиксель-контракты; hue-различимость; stack-контраст chart-2 |
 | `scripts/.shadcn-ui-boundary-baseline.txt` | 118 → 114 |
@@ -112,13 +115,13 @@ production-исходниках запрещены; энфорсер — boundar
 
 ## 8. Roadmap волн ②–④ (зафиксировано owner'ом, детали — в мини-планах волн)
 
-- **② lib-hex (61→0)**: liquidity-* (26) — валенс/reference-маппинг; unit-economics (10) — chart-1..10 индексно; seasonal (7) — sky-шкала → information-тинты; profitability (6) — valence-1..5+neutral; orders-status (5) — status-*; fbs-formatters (3) + chart-colors уже удалён; **2 прохода + триггеры**; визуальный проб Playwright (light: 6 серий сдвиг — дисклоужа §4).
+- **② lib-hex (57→0)**: liquidity-* (26) — валенс/reference-маппинг; unit-economics (10) — chart-1..10 индексно; seasonal (7) — sky-шкала → information-тинты; profitability (6) — valence-1..5+neutral; orders-status (5) — status-*; fbs-formatters (3) + chart-colors уже удалён; **2 прохода + триггеры**; визуальный проб Playwright (light: 6 серий сдвиг — дисклоужа §4).
 - **③ components/app/types (57→0)**: expense-chart-config 18, TrendGraph 14, product-charts 9, Elasticity 4, …; 23 legacy-класса → status/tint; **2 прохода + триггеры**.
 - **④ close**: waterfall валенс-семантика; снятие 3 exceptions; baseline → 0; CLAUDE.md scope-контракт (пересчёт состава по прецеденту волны-5(c)); реестр §34 + закрытие C5 и WCAG 1.4.11; **4 прохода**.
 
 ## 9. Dev Agent Record
 
-**Реализация (2026-09-11)**: globals.css (+11 ролей ×2 темы, dark chart-2 70%, канон-шапка) · удалён `src/lib/chart-colors.ts` (dead) · `token-test-utils` +`compositeTriplets` · контракт-тест: requiredRoles +11, пиксель-контракт, hue-различимость, selected-stack AA · compiled-contrast chartRoles 6→10 · baseline 114 · CLAUDE.md vitest/boundary строки · реестр §31.
+**Реализация (2026-09-11)**: globals.css (+10 ролей ×2 темы, dark chart-2 70%, канон-шапка) · удалён `src/lib/chart-colors.ts` (dead) · `token-test-utils` +`compositeTriplets` · контракт-тест: requiredRoles +10, пиксель-контракт, hue-различимость, selected-stack AA · compiled-contrast chartRoles 6→10 + compile pins · baseline 114 · CLAUDE.md vitest/boundary строки · реестр §31.
 
 **Evidence**:
 - RED-check: реверт 59.6% → stack-тест FAIL **3.6979** (кросс-валидация волны-6 «3.71»); sha256 `259dc4b75476ef0d` до/после — байт-идентичен.
@@ -161,3 +164,41 @@ boundary 114=23+91 c ручным пересчётом, vitest +3) воспро�
   (`generated: by openwiki/0.5.0` в frontmatter) — по OpenWiki-политике hand-редактирование
   запрещено; регенерируется плановым GH Actions workflow после merge. Wave-4 docs-sweep
   сверит terminal-state-абзац с фактом (114/91/57 + C5-W1 в реестре §31).
+
+### Post-2nd-pass-review fixes (2026-09-11)
+
+**Проход-2** (свежий контекст, opus, мандат: narrative/factual/attestation drift; сессия
+прервалась сетевым обрывом после 39 tool-use'ов, возобновлена из транскрипта с сохранением
+контекста): **APPROVE-with-riders** — 0 CRITICAL / 5 MINOR / 7 LOW. Все числа кода, гейтов,
+реестра и CLAUDE.md воспроизведены ревьюером независимо; дрейф концентрировался в прозе
+артефакта. Суммарно 14 находок (1-й+2-й проходы) > 12 → **Trigger 2: 3-й проход MANDATORY**
+(в расписании 4/2/2/4); >5 в одном проходе → Trigger 3 (покрыт тем же расписанием).
+
+Применённые фиксы (все — проза артефакта + 1 коммент-клауза в globals.css):
+
+1. **MINOR-1**: §4-скобка «info/20 над muted/50 над card» противоречила тесту/реестру/DOM
+   (hover-варианты взаимоисключающи; 3-слойный стек давал бы 4.6586, не 5.3053) → «info/20 над card».
+2. **MINOR-2**: §2 «21 файл» → «20 файлов = 19 живых + удаляемый chart-colors».
+3. **MINOR-3**: §2 тёзки CHART_COLORS — их **три** (chart-config.ts:22, cost-breakdown-types.ts:40,
+   storage-trends-config.ts:15), клейм о различающем комментарии в trends-config был ложен
+   (оркестратором спот-верифицирован grep'ом) → инвентарь исправлен (важно для волны 3).
+4. **MINOR-4**: «+11 ролей» → «+10 ролей» (chart-7..10=4 + valence-1..5=5 + neutral=1; 11 было
+   строками semanticClasses, не ролями). Реестр §31 — APPEND-ONLY: исправляется disclosure-строкой.
+5. **MINOR-5**: §1/§8 роадмап «lib-hex 61» → 57 (61−4; заголовок §8 противоречил собственному телу).
+6. **LOW-6**: §4-таблица перетранскрибирована точными триплетами из globals.css (4 значения
+   были не-округлениями авторских значений).
+7. **LOW-7**: убрана «(+ мелочь app/types)» (перечисление уже суммировалось в 57).
+8. **LOW-8**: §2-направление реэкспорта supply-planning-chart исправлено (utils:127 реэкспортирует ИЗ chart.ts).
+9. **LOW-9**: канон-клауза «banned in production source» → «banned for new code (ratchet to
+   zero at C5 wave-4)» в globals.css + зеркально в §3 артефакта (презент-тайм клейм бежал впереди энфорсмента).
+10. **LOW-10**: §5-таблица дополнена token-test-utils.ts и globals-compiled-contrast.test.ts (§5↔§9 консистентность).
+11. **LOW-11** (без правок): вердикт/счёт прохода-1 — unverifiable-from-pass-2 мета-клейм,
+    покрыт blanket-qualifier'ом; числа независимо воспроизведены проходом-2.
+12. **LOW-12** (диспозиция): цитата гарда без пути (`playwright-static-boundary.test.ts:322`) —
+    в будущих реестровых строках полный путь `src/test/…:322` (check-docs regex не ловит голую форму).
+
+Open questions прохода-2 (диспозиции оркестратора): полный vitest 19573/0 — авторский клейм
+подкреплён соло-прогоном exit 0 перед коммитом 5bdadb0c (независимый реран будет в PR-протоколе);
+lint/tsc/privacy — реран в финальном PR-протоколе; «зарегистрированных FAIL нет» по двойникам —
+корроборировано реестром остатков волны-6 (только chart-2 3.71 + warn/40 2.66), исчерпывающий
+негативный поиск не проводился — признано.
