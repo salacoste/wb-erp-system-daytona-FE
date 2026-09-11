@@ -90,6 +90,8 @@ const rgbToHslTriplet = (rgb: [number, number, number]): string => {
   let saturation = 0
   if (delta !== 0) {
     saturation = lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min)
+    // `max` derives from the same rounded integers compared above, so exact
+    // float ties between channels cannot occur here.
     switch (max) {
       case r255:
         hue = ((g255 - b255) / delta + (g255 < b255 ? 6 : 0)) * 60

@@ -122,14 +122,14 @@ production-исходниках запрещены; энфорсер — boundar
 
 **Evidence**:
 - RED-check: реверт 59.6% → stack-тест FAIL **3.6979** (кросс-валидация волны-6 «3.71»); sha256 `259dc4b75476ef0d` до/после — байт-идентичен.
-- Расчёт пары: минимальная L для ≥4.5 = 65.5%; выбрано 70% → 5.31 (selHover), 6.53 (selected/info/10), 5.91 (muted/50), 6.52 (card).
+- Расчёт пары (8-битное округление композита, репо-математика `compositeTriplets`): минимальная L для ≥4.5 = **65.17%**; выбрано 70% → **5.31** (selHover), **6.57** (selected/info/10), **6.87** (muted/50), **7.61** (card). Первоначальные значения этого пункта (65.5% / 6.53 / 5.91 / 6.52) считались float-композитом без округления каналов — исправлены проходом-1 ревью.
 - `bg-chart-2` потребители (FulfillmentMetricCard/FulfillmentShareBar) — чистые заливки/точки без текста: осветление безопасно.
 - ENOENT-урок: гард `playwright-static-boundary.test.ts:322` читает `git ls-files` — незастейдженное удаление падает; стейдж до соло-прогона.
 - Гейты: vitest 19573/0 (соло) · lint 0/0 · tsc 0 · boundary 114 bare-exit 0 · docs 0 (95) · locale 4 · lessons 0 · privacy 0.
 
 **Изменённые файлы**: `src/styles/globals.css` · `src/lib/chart-colors.ts` (del) · `src/styles/__tests__/token-test-utils.ts` · `src/styles/__tests__/globals-token-contract.test.ts` · `src/styles/__tests__/globals-compiled-contrast.test.ts` · `scripts/.shadcn-ui-boundary-baseline.txt` · `CLAUDE.md` · реестр §31.
 
-### Post-1st-pass-review fixes (YYYY-MM-DD)
+### Post-1st-pass-review fixes (2026-09-11)
 
 **Meta-claim blanket qualifier (Trigger 4 MANDATORY; pre-written per 116.1-FE A-2).** Этот блок,
 Completion Notes, Change Log и последующие Post-Nth-pass блоки используют формулировки,
@@ -137,4 +137,27 @@ Completion Notes, Change Log и последующие Post-Nth-pass блоки 
 самоклассификацию применимости правил и подобный recursive-self-validation язык. Всё это —
 **unaudited meta-claims** по Trigger 4, квалифицируются коллективно здесь.
 
-_(находки 1-го прохода добавляются при его запуске)_
+**Проход-1** (свежий контекст, opus, read-only, adversarial-мандат: структурная корректность):
+**APPROVE** — 0 CRITICAL / 2 MINOR / 2 LOW; все гейт-клеймы (пиксель-идентичность 8 hex другим
+HSL-алгоритмом, 5.3053/3.6979/3.7100 на независимом пересчёте, hue-минимумы 11.620°/9.668°,
+boundary 114=23+91 c ручным пересчётом, vitest +3) воспроизведены ревьюером самостоятельно.
+
+Применённые фиксы:
+
+1. **MINOR-1 (§9 secondary ratios)**: контекст-парии 6.53/5.91/6.52 и min-L 65.5% в §9 были
+   посчитаны float-композитом без 8-битного округления; репо-математика (`compositeTriplets`)
+   даёт **6.57/6.87/7.61 / 65.17%** (независимо подтверждено ревьюером и оркестратором).
+   §9 исправлен + метод назван. Гейт-числа (5.31/3.6979/3.71) воспроизводились точно — не менялись.
+2. **LOW-1 (compile pins)**: `semanticClasses` compiled-contrast теста дополнен
+   `bg-chart-7..10` + `text-valence-1..5` + `text-valence-neutral` (пин компиляции утилит
+   до появления консьюмеров в волне 2).
+3. **LOW-2a (cosmetic)**: неиспользуемый `lightness` убран из деструктуры hue-separability теста.
+4. **LOW-2b (cosmetic)**: комментарий о невозможности float-ничьих в `switch (max)`
+   `rgbToHslTriplet` (max выводится из тех же округлённых int'ов, что сравнивались выше).
+
+Диспозиции (без правок):
+
+- **MINOR-2 (openwiki/design-system.md:417 stale «118 = 95 chart-hex…»)**: файл СГЕНЕРИРОВАН
+  (`generated: by openwiki/0.5.0` в frontmatter) — по OpenWiki-политике hand-редактирование
+  запрещено; регенерируется плановым GH Actions workflow после merge. Wave-4 docs-sweep
+  сверит terminal-state-абзац с фактом (114/91/57 + C5-W1 в реестре §31).

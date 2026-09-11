@@ -164,8 +164,8 @@ describe('globals semantic token contract', () => {
     // Near-grays (S < 20) carry no meaningful hue and are exempt from the hue
     // gap; saturated slots must keep >= 8deg circular hue separation.
     const parse = (triplet: string) => {
-      const [hue, saturation, lightness] = triplet.split(/[\s%]+/).map(Number)
-      return { hue, saturation, lightness }
+      const [hue, saturation] = triplet.split(/[\s%]+/).map(Number)
+      return { hue, saturation }
     }
     for (const tokens of [light, dark]) {
       const slots = categorical.map(role => parse(tokens.get(`--${role}`) ?? ''))
