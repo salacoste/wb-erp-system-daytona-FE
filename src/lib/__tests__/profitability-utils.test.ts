@@ -66,7 +66,7 @@ describe('getStatusConfig', () => {
     for (const status of ALL_PROFITABILITY_STATUSES) {
       const cfg = getStatusConfig(status)
       expect(cfg.label).toBeTruthy()
-      expect(cfg.color).toMatch(/^#[0-9A-Fa-f]{6}$/)
+      expect(cfg.color).toMatch(/^var\(--valence-(1|2|3|4|5|neutral)\)$/) // C5-W2 token canon
       expect(cfg.bgClass).toBeTruthy()
       expect(cfg.textClass).toBeTruthy()
       expect(cfg.threshold).toBeTruthy()

@@ -50,7 +50,7 @@ export const EXTENDED_STATUS_CONFIG: Record<
 > = {
   excellent: {
     label: 'Отлично',
-    color: '#22C55E',
+    color: 'var(--valence-1)', // C5-W2 (light ≡ legacy)
     bgClass: 'bg-status-success',
     textClass: 'text-status-success-foreground',
     threshold: 'Маржа > 25%',
@@ -58,7 +58,7 @@ export const EXTENDED_STATUS_CONFIG: Record<
   },
   good: {
     label: 'Хорошо',
-    color: '#84CC16',
+    color: 'var(--valence-2)', // C5-W2 (light ≡ legacy)
     bgClass: 'bg-status-success/15',
     textClass: 'text-foreground',
     threshold: 'Маржа 15-25%',
@@ -66,7 +66,7 @@ export const EXTENDED_STATUS_CONFIG: Record<
   },
   warning: {
     label: 'Внимание',
-    color: '#EAB308',
+    color: 'var(--valence-3)', // C5-W2 (light ≡ legacy)
     bgClass: 'bg-status-warning/15',
     textClass: 'text-foreground',
     threshold: 'Маржа 5-15%',
@@ -74,7 +74,7 @@ export const EXTENDED_STATUS_CONFIG: Record<
   },
   critical: {
     label: 'Критично',
-    color: '#F97316',
+    color: 'var(--valence-4)', // C5-W2 (light ≡ legacy)
     bgClass: 'bg-status-warning',
     textClass: 'text-status-warning-foreground',
     threshold: 'Маржа 0-5%',
@@ -82,7 +82,7 @@ export const EXTENDED_STATUS_CONFIG: Record<
   },
   loss: {
     label: 'Убыток',
-    color: '#EF4444',
+    color: 'var(--valence-5)', // C5-W2 (light ≡ legacy)
     bgClass: 'bg-status-error',
     textClass: 'text-status-error-foreground',
     threshold: 'Маржа < 0%',
@@ -90,7 +90,7 @@ export const EXTENDED_STATUS_CONFIG: Record<
   },
   unknown: {
     label: 'Нет данных',
-    color: '#9CA3AF',
+    color: 'var(--valence-neutral)', // C5-W2 (light ≡ legacy)
     bgClass: 'bg-muted',
     textClass: 'text-muted-foreground',
     threshold: 'COGS не назначен',

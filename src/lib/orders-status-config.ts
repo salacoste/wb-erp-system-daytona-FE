@@ -32,32 +32,32 @@ export interface StatusConfig {
 
 /**
  * Order status configuration with Russian labels and colors
- * Hex `color` is the chart discriminator (out of wave-5 scope); bgClass/
+ * Hex `color` is the chart discriminator on the same semantic role as the classes (C5-W2 token canon); bgClass/
  * textClass palette → semantic status tokens (P2 wave-5, production-dead
  * Tailwind channels). Fallbacks map to the muted idiom (canon #6).
  */
 export const ORDER_STATUS_CONFIG: Record<OrderStatus, StatusConfig> = {
   complete: {
     label: 'Выполнено',
-    color: '#22C55E', // Green
+    color: 'var(--status-success)', // C5-W2: chart discriminator on the same role as bgClass/textClass
     bgClass: 'bg-status-success',
     textClass: 'text-status-success',
   },
   confirm: {
     label: 'Подтверждено',
-    color: '#3B82F6', // Blue
+    color: 'var(--status-information)', // C5-W2
     bgClass: 'bg-status-information',
     textClass: 'text-status-information',
   },
   new: {
     label: 'Новый',
-    color: '#F59E0B', // Yellow/Amber
+    color: 'var(--status-warning)', // C5-W2
     bgClass: 'bg-status-warning',
     textClass: 'text-status-warning',
   },
   cancel: {
     label: 'Отменено',
-    color: '#EF4444', // Red
+    color: 'var(--status-error)', // C5-W2
     bgClass: 'bg-status-error',
     textClass: 'text-status-error',
   },
@@ -78,7 +78,7 @@ export function getStatusLabel(status: OrderStatus): string {
  * Get hex color for order status
  */
 export function getStatusColor(status: OrderStatus): string {
-  return ORDER_STATUS_CONFIG[status]?.color ?? '#6B7280'
+  return ORDER_STATUS_CONFIG[status]?.color ?? 'var(--chart-9)' // C5-W2: neutral chart slot (light ≡ legacy gray-500)
 }
 
 /**

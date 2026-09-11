@@ -33,9 +33,9 @@ export const DEFAULT_METRIC_VISIBILITY: MetricVisibility = {
  * Chart line colors for each metric
  */
 export const CHART_LINE_COLORS = {
-  orders: '#3B82F6', // Blue
-  revenue: '#22C55E', // Green
-  cancellations: '#EF4444', // Red
+  orders: 'var(--chart-1)', // C5-W2: chart series
+  revenue: 'var(--chart-positive)', // C5-W2: chart series
+  cancellations: 'var(--chart-negative)', // C5-W2: chart series
 } as const
 
 /**

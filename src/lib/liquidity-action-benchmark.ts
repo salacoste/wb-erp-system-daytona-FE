@@ -21,25 +21,25 @@ export const ACTION_TYPE_CONFIG: Record<ActionType, ActionTypeConfig> = {
   MAXIMIZE: {
     label: 'Масштабировать',
     buttonLabel: 'Увеличить закупки',
-    color: '#22C55E',
+    color: 'var(--valence-1)', // C5-W2
     variant: 'default',
   },
   MAINTAIN: {
     label: 'Поддерживать',
     buttonLabel: 'ОК',
-    color: '#3B82F6',
+    color: 'var(--status-information)', // C5-W2: neutral-info action
     variant: 'secondary',
   },
   REDUCE: {
     label: 'Сократить',
     buttonLabel: 'Сократить',
-    color: '#F97316',
+    color: 'var(--valence-4)', // C5-W2
     variant: 'outline',
   },
   LIQUIDATE: {
     label: 'Ликвидировать',
     buttonLabel: 'Скидка',
-    color: '#EF4444',
+    color: 'var(--valence-5)', // C5-W2
     variant: 'destructive',
   },
 } as const
@@ -74,25 +74,25 @@ export function getLiquidityActionVariant(
 export const BENCHMARK_STATUS_CONFIG: Record<BenchmarkStatus, BenchmarkStatusConfig> = {
   excellent: {
     label: 'Отлично',
-    color: '#22C55E',
+    color: 'var(--valence-1)', // C5-W2 (light ≡ legacy)
     textClass: 'text-status-success',
     icon: '🎯',
   },
   good: {
     label: 'Хорошо',
-    color: '#84CC16',
+    color: 'var(--valence-2)', // C5-W2 (light ≡ legacy)
     textClass: 'text-status-success',
     icon: '✅',
   },
   warning: {
     label: 'Внимание',
-    color: '#F97316',
+    color: 'var(--valence-4)', // C5-W2 (light ≡ legacy)
     textClass: 'text-status-warning',
     icon: '⚠️',
   },
   critical: {
     label: 'Критично',
-    color: '#EF4444',
+    color: 'var(--valence-5)', // C5-W2 (light ≡ legacy)
     textClass: 'text-status-error',
     icon: '🚨',
   },
@@ -131,12 +131,12 @@ export function getBenchmarkStatusIcon(status: BenchmarkStatus): string {
 export function getTrendInsightColor(type: TrendInsightType): string {
   switch (type) {
     case 'improvement':
-      return '#22C55E'
+      return 'var(--valence-1)' // C5-W2
     case 'warning':
-      return '#F97316'
+      return 'var(--valence-4)' // C5-W2
     case 'info':
     default:
-      return '#3B82F6'
+      return 'var(--status-information)' // C5-W2
   }
 }
 
