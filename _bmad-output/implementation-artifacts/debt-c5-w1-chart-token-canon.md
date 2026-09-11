@@ -414,8 +414,19 @@ self-closing; 0 остатков C5-W3 в className-строках; tsc re-run b
 1. **MINOR-1**: ложный клейм «DEFAULT ≡ байт» — chart-9 = #6B7280 (gray-500), #9CA3AF = gray-400
    (= valence-neutral, не chart-9!). Комментарий в коде переписан («gray-400→gray-500 shift»), §11-клетка
    исправлена in-place (волна ещё не смержена; блок = дисклоужа). Тот же паттерн был ВЕРЕН в W2
-   (orders-status fallback #6B7280→chart-9 ≡) — конflating gray-400/gray-500 между волнами.
+   (orders-status fallback #6B7280→chart-9 ≡) — конфляция gray-400/gray-500 между волнами (search-string homoglyph-тип «витест/vitest» — тот же fix-attestation класс, пойман проходом-2 на §33).
 
 Диспозиции LOW-ов: banner 5.00:1 (AA-pass, запас тоньше легаси 6.16 — учтено в W4-light-форке);
 X-кнопка без hover — соответствует wave-6 канону (sibling TaxWarningBanner), aria-label сохранён;
 Джем-сдвиг — осознанный, owner-awareness; маркер-ремонт вошёл в фикс-1.
+
+### W3 Post-2nd-pass-review fixes (2026-09-11)
+
+**Проход-2** (свежий контекст, opus): **REQUEST-CHANGES → исполнено** — 1 CRITICAL / 1 MINOR / 1 LOW,
+все три применены. CRITICAL — тот же fix-attestation-vs-disk класс, НОВЫЙ механизм: python-replace
+для §33-клейма искал «витест» (кириллица) вместо «vitest» (латиница) — гомоглиф-тип в search-строке,
+замена молча не села (assert-а не было). §33 висел с «см. финал строки» без числа. Исправлено:
+«vitest СОЛО **19573/0**» + штампы прогонов (таргет 1675/1675 @ 0383f626 · post-rider 701/701 @ 4d0a4cf4)
++ конфляция-тип задокументирован. Кросс-волновый byte-claim аудит прохода-2: все оставшиеся клеймы ≡
+верифицированы TRUE (chart-9≡#6B7280 / valence-neutral≡#9CA3AF / brand≡#E53935 / chart-10≡#14B8A6 /
+chart-7≡#EAB308 — только где старое значение совпадает). Merge-ready.
