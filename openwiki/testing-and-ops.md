@@ -339,11 +339,10 @@ Story 162.2 introduced a reproducible localhost preflight that gates every local
 
 A per-run orchestration that gives one E2E run a private frontend: a detached `git worktree add --detach` tmp checkout of committed `HEAD` (a dirty working tree only warns — the worktree tests committed code, not uncommitted edits), a symlinked `node_modules`, and copies of `.env.local`/`.env.e2e` forced to mode 600 (env files carry backend secrets and must not sit world-readable in the sticky tmp worktree). It stops the shared pm2 process `wb-repricer-frontend-dev` when pm2 owns `:3100`, boots its own `npx next dev --webpack -p 3100` inside the worktree, runs the suite as `npm run test:e2e:full` there (so the preflight gate and handshake still apply — `RUN_COMMAND` in `e2e-isolated-plan.mjs` is the single source of truth), and then guarantees teardown: kill the detached dev process group, `pm2 restart` (only if a stop actually happened — `summary.swapped` gates it), restore verification, and worktree removal (`--keep-worktree` preserves it as evidence, including its chmod-600 env copies).
 
-<!-- openwiki: mermaid parse failed and this diagram was converted to a text fence so it does not break rendering. Fix the diagram source and restore the mermaid fence. Parser error: Heuristic: a semicolon inside a label breaks rendering; rephrase the label. -->
-```text
+```mermaid
 flowchart TD
     HEAD["git rev-parse HEAD"] --> WT["git worktree add --detach tmp"]
-    WT --> ENV["symlink node_modules; cp -p .env* + chmod 600"]
+    WT --> ENV["symlink node_modules, copy .env* with chmod 600"]
     CLS["classifyPort3100 lsof + ps pid table"] -->|free| BOOT
     CLS -->|pm2-owned| STOP["pm2 stop wb-repricer-frontend-dev"]
     CLS -->|foreign| ABORT["abort fail-closed before any state change"]
@@ -351,7 +350,7 @@ flowchart TD
     ENV --> BOOT
     BOOT --> READY["readiness poll any HTTP status"]
     READY --> RUN["npm run test:e2e:full in worktree"]
-    RUN --> TD["teardown: kill dev group; pm2 restart if swapped"]
+    RUN --> TD["teardown: kill dev group, pm2 restart if swapped"]
     TD --> RV["restore verify: HTTP 200 /login + pm2 online + pm2-owned"]
     RV --> RM["worktree remove + prune"]
 ```
