@@ -29,8 +29,8 @@ interface ChartRow {
   estimatedAdCart: number
 }
 
-const COLOR_ORGANIC = '#22C55E'
-const COLOR_AD = '#3B82F6'
+const COLOR_ORGANIC = 'var(--color-chart-positive)'
+const COLOR_AD = 'var(--color-chart-1)'
 
 /** Format X-axis date labels: "MM.DD" from ISO date string. */
 function formatShortDate(iso: string): string {
@@ -64,19 +64,19 @@ export function ProductOrganicChart({ correlation }: ProductOrganicChartProps) {
     >
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 4 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-chart-grid)" vertical={false} />
           <XAxis
             dataKey="date"
             tickFormatter={formatShortDate}
-            tick={{ fontSize: 11, fill: '#757575' }}
+            tick={{ fontSize: 11, fill: 'var(--color-chart-axis)' }}
             tickLine={false}
-            axisLine={{ stroke: '#EEEEEE' }}
+            axisLine={{ stroke: 'var(--color-chart-grid)' }}
           />
           <YAxis
             tickFormatter={(v: number) => formatNumber(v)}
-            tick={{ fontSize: 11, fill: '#757575' }}
+            tick={{ fontSize: 11, fill: 'var(--color-chart-axis)' }}
             tickLine={false}
-            axisLine={{ stroke: '#EEEEEE' }}
+            axisLine={{ stroke: 'var(--color-chart-grid)' }}
             width={48}
           />
           <Tooltip

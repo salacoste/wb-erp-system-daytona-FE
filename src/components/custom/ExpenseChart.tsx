@@ -107,7 +107,7 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
               type="category"
               dataKey="category"
               width={130}
-              tick={{ fontSize: 13, fill: '#374151' }}
+              tick={{ fontSize: 13, fill: 'var(--color-chart-axis)' }}
               axisLine={false}
               tickLine={false}
               className="expense-chart-yaxis"
@@ -123,7 +123,7 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
                   }
                 />
               }
-              cursor={{ fill: '#f3f4f6' }}
+              cursor={{ fill: 'var(--color-muted)' }}
             />
             <Bar dataKey="amount" radius={[0, 6, 6, 0]} barSize={24}>
               {chartData.map((entry, index) => (
@@ -134,7 +134,7 @@ export function ExpenseChart({ weekOverride }: { weekOverride?: string }) {
                 position="right"
                 // recharts LabelFormatter passes (value, props, index)
                 formatter={(v: unknown) => (typeof v === 'number' ? formatCurrency(v) : '')}
-                style={{ fontSize: 12, fill: '#374151', fontWeight: 500 }}
+                style={{ fontSize: 12, fill: 'var(--color-chart-axis)', fontWeight: 500 }}
               />
             </Bar>
           </BarChart>

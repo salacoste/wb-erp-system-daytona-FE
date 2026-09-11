@@ -89,7 +89,7 @@ export function FbsTrendsChart({
         >
           <ResponsiveContainer width="100%" height={chartHeight}>
             <LineChart data={data.trends} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-chart-grid)" />
               <XAxis
                 dataKey="date"
                 tickFormatter={formatChartDate}

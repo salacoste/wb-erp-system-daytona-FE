@@ -21,8 +21,8 @@ import {
 } from 'recharts'
 
 const COLORS = {
-  spend: '#E53935',
-  orders: '#3B82F6',
+  spend: 'var(--color-brand)',
+  orders: 'var(--color-chart-1)',
 } as const
 
 interface ProductAdvTrendChartProps {

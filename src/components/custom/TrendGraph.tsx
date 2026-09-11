@@ -57,7 +57,7 @@ export function TrendGraph() {
         </div>
       </CardHeader>
       {!infoDismissed && (
-        <div className="mx-6 mb-2 flex items-center gap-2 rounded-md bg-blue-50 px-3 py-2 text-xs text-blue-700">
+        <div className="mx-6 mb-2 flex items-center gap-2 rounded-md bg-status-information/10 px-3 py-2 text-xs text-status-information">
           <Info className="h-3.5 w-3.5 shrink-0" />
           <span>Метрика обновлена: теперь показывает выручку продавца без комиссии WB</span>
           <button
@@ -65,7 +65,7 @@ export function TrendGraph() {
               localStorage.setItem(METRIC_CHANGE_KEY, '1')
               setInfoDismissed(true)
             }}
-            className="ml-auto shrink-0 text-blue-500 hover:text-blue-700"
+            className="ml-auto shrink-0 text-status-information"
             aria-label="Скрыть"
           >
             <X className="h-3.5 w-3.5" />
@@ -75,7 +75,7 @@ export function TrendGraph() {
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={data.trends} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-chart-grid)" />
             <XAxis
               dataKey="week"
               tickFormatter={w => w.replace(/^\d{4}-/, '')}
@@ -98,7 +98,7 @@ export function TrendGraph() {
               yAxisId="left"
               type="monotone"
               dataKey="revenue"
-              stroke="#3B82F6"
+              stroke="var(--color-chart-1)"
               strokeWidth={2}
               name="revenue"
               dot={{ r: 4 }}
@@ -108,7 +108,7 @@ export function TrendGraph() {
               yAxisId="left"
               type="monotone"
               dataKey="totalPayable"
-              stroke="#22C55E"
+              stroke="var(--color-chart-positive)"
               strokeWidth={2}
               name="totalPayable"
               dot={{ r: 4 }}
@@ -118,7 +118,7 @@ export function TrendGraph() {
               yAxisId="left"
               type="monotone"
               dataKey="payoutTotal"
-              stroke="#9CA3AF"
+              stroke="var(--color-chart-9)"
               strokeWidth={1.5}
               strokeDasharray="4 3"
               name="payoutTotal"
@@ -129,7 +129,7 @@ export function TrendGraph() {
               yAxisId="left"
               type="monotone"
               dataKey="cogsTotal"
-              stroke="#FF9800"
+              stroke="var(--color-chart-5)"
               strokeWidth={1.5}
               name="cogsTotal"
               dot={{ r: 3 }}
@@ -139,10 +139,10 @@ export function TrendGraph() {
               yAxisId="left"
               type="monotone"
               dataKey="operatingProfit"
-              stroke="#E53935"
+              stroke="var(--color-brand)"
               strokeWidth={2.5}
               name="operatingProfit"
-              dot={{ r: 4, fill: '#E53935' }}
+              dot={{ r: 4, fill: 'var(--color-brand)' }}
               activeDot={{ r: 6 }}
               connectNulls
             />
@@ -150,7 +150,7 @@ export function TrendGraph() {
               yAxisId="left"
               type="monotone"
               dataKey="logisticsCost"
-              stroke="#F59E0B"
+              stroke="var(--color-chart-7)"
               strokeWidth={1.5}
               strokeDasharray="5 5"
               name="logisticsCost"
@@ -161,11 +161,11 @@ export function TrendGraph() {
               yAxisId="right"
               type="monotone"
               dataKey="efficiencyPct"
-              stroke="#7C4DFF"
+              stroke="var(--color-chart-2)"
               strokeWidth={2}
               strokeDasharray="8 4"
               name="efficiencyPct"
-              dot={{ r: 4, fill: '#7C4DFF' }}
+              dot={{ r: 4, fill: 'var(--color-chart-2)' }}
               activeDot={{ r: 6 }}
               connectNulls
             />

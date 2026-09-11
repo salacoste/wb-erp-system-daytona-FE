@@ -12,16 +12,16 @@ import type { ExpenseItem } from '@/hooks/useExpenses'
 
 /** Semantic color map by category key word */
 const CATEGORY_COLORS: Record<string, string> = {
-  Комиссия: '#E53935',
-  Логистика: '#3B82F6',
-  Продвижение: '#7C4DFF',
-  Эквайринг: '#F59E0B',
-  Хранение: '#14B8A6',
-  Штрафы: '#DC2626',
-  Джем: '#8B5CF6',
-  лояльности: '#06B6D4',
+  Комиссия: 'var(--color-brand)',
+  Логистика: 'var(--color-chart-1)',
+  Продвижение: 'var(--color-chart-2)',
+  Эквайринг: 'var(--color-chart-7)',
+  Хранение: 'var(--color-chart-10)',
+  Штрафы: 'var(--color-chart-negative)',
+  Джем: 'var(--color-chart-6)',
+  лояльности: 'var(--color-chart-3)',
 }
-const DEFAULT_COLOR = '#9CA3AF'
+const DEFAULT_COLOR = 'var(--color-chart-9)' // C5-W3 (byte-identical)
 
 /** Get semantic color for a category name */
 export function getCategoryColor(category: string): string {
@@ -71,17 +71,17 @@ export function ExpenseBarTooltip({
   const d = payload[0].payload
   return (
     <div className="rounded-lg border bg-white p-3 shadow-md min-w-[200px]">
-      <p className="font-semibold text-gray-900 mb-1">{d.category}</p>
-      <p className="text-sm text-gray-700">
+      <p className="font-semibold text-foreground mb-1">{d.category}</p>
+      <p className="text-sm text-foreground">
         Сумма: <span className="font-medium">{formatCurrency(d.amount)}</span>
       </p>
       {d.percentage != null && (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           Доля расходов: <span className="font-medium">{formatPercentage(d.percentage)}</span>
         </p>
       )}
       {revenueShare != null && (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           % от выручки:{' '}
           <span className="font-medium">
             {d.percentage != null && d.percentage > 0
@@ -91,9 +91,9 @@ export function ExpenseBarTooltip({
         </p>
       )}
       {wowChange != null && (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           К нед.:{' '}
-          <span className={`font-medium ${wowChange > 0 ? 'text-red-600' : 'text-green-600'}`}>
+          <span className={`font-medium ${wowChange > 0 ? 'text-status-error' : 'text-status-success'}`}>
             {wowChange > 0 ? '+' : ''}
             {formatPercentage(wowChange)}
           </span>
@@ -101,9 +101,9 @@ export function ExpenseBarTooltip({
       )}
       {d.subItems && d.subItems.length > 0 && (
         <div className="mt-2 border-t pt-2 space-y-1">
-          <p className="text-xs font-medium text-gray-500">Включает:</p>
+          <p className="text-xs font-medium text-muted-foreground">Включает:</p>
           {d.subItems.map(sub => (
-            <p key={sub.category} className="text-xs text-gray-600 flex justify-between gap-4">
+            <p key={sub.category} className="text-xs text-muted-foreground flex justify-between gap-4">
               <span>{sub.category}</span>
               <span className="font-medium">{formatCurrency(sub.amount)}</span>
             </p>

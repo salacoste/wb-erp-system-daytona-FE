@@ -362,3 +362,38 @@ Rider применён: счёт пинов под собственным мет
 test/fixture файлах** («33» смешивала метрики — тот же self-falsifying класс, 118.1-FE); это —
 финальная аттестация счёта волны-2. LOW-ы (коммит-месседж docs-скоупа; §32-строка читается без §32.1) —
 informational, APPEND-ONLY конвенция соблюдена.
+
+---
+
+## 11. Wave-3 record: components/app/types 57 → 0 (2026-09-11, ветка `debt/c5-w3-presentation-tokens`)
+
+**Маппинги** (11 файлов; 38 hex + 19 legacy-классов, из них 7 сайтов — comment-only):
+
+| Файл | Сайтов | Маппинг | Light-пиксели |
+|---|---|---|---|
+| expense-chart-config | 18 | CATEGORY_COLORS: Комиссия→brand, Логистика→chart-1, Продвижение→chart-2, Эквайринг→chart-7, Хранение→chart-10, Штрафы→chart-negative, Джем→chart-6, лояльности→chart-3, DEFAULT→chart-9; tooltip: gray-900/700→foreground, gray-500/600→muted-foreground, red/green-600→status-error/success | brand/Хранение/DEFAULT ≡ байт; Джем сдвиг (дистинкция от Продвижения) |
+| TrendGraph | 14 | info-баннер→`bg-status-information/10`+`text-status-information` (fg-on-tint, wave-6 канон; X-кнопка без dim-hover); grid→chart-grid; series: revenue→chart-1, totalPayable→chart-positive, payoutTotal→chart-9, cogsTotal→chart-5, operatingProfit→**brand ×2** (байт, highlight-семантика), logisticsCost→chart-7, efficiencyPct→chart-2 ×2 | brand ≡ байт |
+| ProductOrganicChart | 7 | series→chart-positive/chart-1; grid #EEEEEE×3→chart-grid; axis #757575×2→chart-axis | сдвиги grid/axis |
+| ElasticitySkuChart | 4 | chart-1 ×2, chart-positive ×2 | сдвиг blues |
+| ExpenseChart | 3 | tick/LabelList fill #374151→chart-axis; cursor #f3f4f6→muted | ≈ байт (245 vs 243) |
+| ProductAdvTrendChart | 2 | #E53935→brand (байт), #3B82F6→chart-1 | brand ≡ |
+| trend-graph-config | 1 | tooltip title text-gray-900→text-foreground | — |
+| FbsTrendsChart | 1 | grid #eee→chart-grid | сдвиг |
+| supply-planning-config (types) | 3 | **comment-only** — hex/класс-примеры в JSDoc переписаны на role-нейтральные формулировки | n/a |
+| LiquiditySummaryBar | 2 | **comment-only** — «legacy /100-pastel blue pairs» | n/a |
+| advertising-tokens | 2 | **comment-only** — «old palette was an orange inline text», «legacy neutral-gray fallback» | n/a |
+
+**Computed-style проб** (живой браузер, тот же протокол §10): brand = **rgb(229,57,53) = #E53935 байт-в-байт**;
+chart-7 = **#EAB308 байт-в-байт**; muted ≈ легаси-cursor (245,245,245 vs 243,244,246); задокументированные
+сдвиги: grid #EEEEEE→#CCCCCC (роль grid темнее), axis #757575→#616161, blues глубже #3B82F6→#1565C0
+(chart-1 роль), oranges/reds к hue-ближайшим ролям. Все resолвятся — сырых триплетов и мёртвых форм нет.
+
+**Процессные уроки волны-3** (для §33): (a) comment-only сайты (7 из 57) — «резидуа» чекера считает
+комментарии тоже; переписывание формулировок легитимная миграция для не-кода сайтов; (b) стрип
+JSX-контекстных комментариев через `// …$` регекс съедает ` />` self-closing тегов (2 сломанных
+CartesianGrid пойманы tsc TS1003) — JSX-атрибутные комментарии после миграций валидировать tsc НЕ
+пайпом (exit-code ловушка); (c) `bg-white` тултипов не в скоупе (white не в banned-палитре; dark-поведение
+тултипов — отдельный вопрос вне C5, зарегистрировано ниже).
+
+**Гейты**: vitest СОЛО (финал прогона см. §33) · lint 0/0 · tsc 0 (bare) · boundary **0=0** (bare exit 0;
+ratchet 57→0 тем же PR) · таргет 108 файлов 1675/1675.
