@@ -15,8 +15,8 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
   highly_liquid: {
     label: 'Высоколиквидный',
     labelShort: 'Ликвид.',
-    color: 'var(--valence-1)', // C5-W2: valence good (light pixel-identical to legacy Green-500)
-    bgColor: 'color-mix(in srgb, var(--valence-1) 14%, var(--card))', // theme-aware tint
+    color: 'var(--color-valence-1)', // C5-W2: valence good (light pixel-identical to legacy Green-500)
+    bgColor: 'color-mix(in srgb, var(--color-valence-1) 14%, var(--color-card))', // theme-aware tint
     bgClass: 'bg-valence-1', // C5-W2 token utility (light ≡ legacy green-500)
     textClass: 'text-white',
     icon: '🟢',
@@ -27,8 +27,8 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
   medium: {
     label: 'Средняя ликвидность',
     labelShort: 'Средний',
-    color: 'var(--valence-3)', // C5-W2 (light ≡ legacy Yellow-500)
-    bgColor: 'color-mix(in srgb, var(--valence-3) 18%, var(--card))', // theme-aware tint
+    color: 'var(--color-valence-3)', // C5-W2 (light ≡ legacy Yellow-500)
+    bgColor: 'color-mix(in srgb, var(--color-valence-3) 18%, var(--color-card))', // theme-aware tint
     bgClass: 'bg-valence-3',
     textClass: 'text-white',
     icon: '🟡',
@@ -39,8 +39,8 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
   low: {
     label: 'Низкая ликвидность',
     labelShort: 'Низкий',
-    color: 'var(--valence-4)', // C5-W2 (light ≡ legacy Orange-500)
-    bgColor: 'color-mix(in srgb, var(--valence-4) 28%, var(--card))', // theme-aware tint
+    color: 'var(--color-valence-4)', // C5-W2 (light ≡ legacy Orange-500)
+    bgColor: 'color-mix(in srgb, var(--color-valence-4) 28%, var(--color-card))', // theme-aware tint
     bgClass: 'bg-valence-4',
     textClass: 'text-white',
     icon: '🟠',
@@ -51,8 +51,8 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
   illiquid: {
     label: 'Неликвид',
     labelShort: 'Неликвид',
-    color: 'var(--valence-5)', // C5-W2 (light ≡ legacy Red-500)
-    bgColor: 'color-mix(in srgb, var(--valence-5) 14%, var(--card))', // theme-aware tint
+    color: 'var(--color-valence-5)', // C5-W2 (light ≡ legacy Red-500)
+    bgColor: 'color-mix(in srgb, var(--color-valence-5) 14%, var(--color-card))', // theme-aware tint
     bgClass: 'bg-valence-5',
     textClass: 'text-white',
     icon: '🔴',

@@ -173,7 +173,7 @@ describe('OrdersStatusBreakdown - Status Display', () => {
 describe('OrdersStatusBreakdown - Color Scheme', () => {
   describe('complete status', () => {
     it('should use the success token for complete (C5-W2)', () => {
-      expect(ORDER_STATUS_CONFIG.complete.color).toBe('var(--status-success)')
+      expect(ORDER_STATUS_CONFIG.complete.color).toBe('var(--color-status-success)')
     })
     it('should apply bg-status-success background class', () => {
       expect(ORDER_STATUS_CONFIG.complete.bgClass).toBe('bg-status-success')
@@ -184,7 +184,7 @@ describe('OrdersStatusBreakdown - Color Scheme', () => {
   })
   describe('confirm status', () => {
     it('should use the information token for confirm (C5-W2)', () => {
-      expect(ORDER_STATUS_CONFIG.confirm.color).toBe('var(--status-information)')
+      expect(ORDER_STATUS_CONFIG.confirm.color).toBe('var(--color-status-information)')
     })
     it('should apply bg-status-information background class', () => {
       expect(ORDER_STATUS_CONFIG.confirm.bgClass).toBe('bg-status-information')
@@ -195,7 +195,7 @@ describe('OrdersStatusBreakdown - Color Scheme', () => {
   })
   describe('new status', () => {
     it('should use the warning token for new (C5-W2)', () => {
-      expect(ORDER_STATUS_CONFIG.new.color).toBe('var(--status-warning)')
+      expect(ORDER_STATUS_CONFIG.new.color).toBe('var(--color-status-warning)')
     })
     it('should apply bg-status-warning background class', () => {
       expect(ORDER_STATUS_CONFIG.new.bgClass).toBe('bg-status-warning')
@@ -206,7 +206,7 @@ describe('OrdersStatusBreakdown - Color Scheme', () => {
   })
   describe('cancel status', () => {
     it('should use the error token for cancel (C5-W2)', () => {
-      expect(ORDER_STATUS_CONFIG.cancel.color).toBe('var(--status-error)')
+      expect(ORDER_STATUS_CONFIG.cancel.color).toBe('var(--color-status-error)')
     })
     it('should apply bg-status-error background class', () => {
       expect(ORDER_STATUS_CONFIG.cancel.bgClass).toBe('bg-status-error')
@@ -219,10 +219,10 @@ describe('OrdersStatusBreakdown - Color Scheme', () => {
     it('maps every status to its semantic role token (real AA verified in globals-compiled-contrast)', () => {
       const roles = Object.values(ORDER_STATUS_CONFIG).map(c => c.color)
       expect(roles).toEqual([
-        'var(--status-success)',
-        'var(--status-information)',
-        'var(--status-warning)',
-        'var(--status-error)',
+        'var(--color-status-success)',
+        'var(--color-status-information)',
+        'var(--color-status-warning)',
+        'var(--color-status-error)',
       ])
     })
   })

@@ -26,9 +26,9 @@ describe('chart config constants', () => {
     })
   })
   it('CHART_LINE_COLORS maps each metric to a chart token (C5-W2)', () => {
-    expect(CHART_LINE_COLORS.orders).toBe('var(--chart-1)')
-    expect(CHART_LINE_COLORS.revenue).toBe('var(--chart-positive)')
-    expect(CHART_LINE_COLORS.cancellations).toBe('var(--chart-negative)')
+    expect(CHART_LINE_COLORS.orders).toBe('var(--color-chart-1)')
+    expect(CHART_LINE_COLORS.revenue).toBe('var(--color-chart-positive)')
+    expect(CHART_LINE_COLORS.cancellations).toBe('var(--color-chart-negative)')
   })
 })
 

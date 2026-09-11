@@ -64,7 +64,7 @@ describe('delivery_to_warehouse type extensions', () => {
     const config: CostCategoryConfig = {
       key: 'delivery_to_warehouse',
       label: 'Доставка на склад',
-      color: 'var(--chart-6)',
+      color: 'var(--color-chart-6)',
       group: 'seller_costs',
     }
     expect(config.group).toBe('seller_costs')
@@ -80,7 +80,7 @@ describe('COST_CATEGORIES includes delivery_to_warehouse', () => {
 
   it('has correct label and color', () => {
     expect(deliveryCategory!.label).toBe('Доставка на склад')
-    expect(deliveryCategory!.color).toBe('var(--chart-6)')
+    expect(deliveryCategory!.color).toBe('var(--color-chart-6)')
     expect(deliveryCategory!.group).toBe('seller_costs')
   })
 
@@ -132,7 +132,7 @@ describe('transformToWaterfallData with delivery_to_warehouse', () => {
     const deliveryBar = result.find(d => d.name === 'Доставка на склад')
     expect(deliveryBar).toBeDefined()
     expect(deliveryBar!.value).toBe(-42)
-    expect(deliveryBar!.color).toBe('var(--chart-6)')
+    expect(deliveryBar!.color).toBe('var(--color-chart-6)')
   })
 
   it('omits delivery_to_warehouse bar when absent', () => {

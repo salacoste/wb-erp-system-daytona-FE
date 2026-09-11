@@ -299,14 +299,14 @@ describe('getScenarioUrgencyTier', () => {
 
 describe('getScenarioUrgencyColor', () => {
   it('returns red for aggressive', () => {
-    expect(getScenarioUrgencyColor(30)).toBe('var(--valence-5)')
+    expect(getScenarioUrgencyColor(30)).toBe('var(--color-valence-5)')
   })
 
   it('returns yellow for balanced', () => {
-    expect(getScenarioUrgencyColor(60)).toBe('var(--valence-3)')
+    expect(getScenarioUrgencyColor(60)).toBe('var(--color-valence-3)')
   })
 
   it('returns green for conservative', () => {
-    expect(getScenarioUrgencyColor(90)).toBe('var(--valence-1)')
+    expect(getScenarioUrgencyColor(90)).toBe('var(--color-valence-1)')
   })
 })

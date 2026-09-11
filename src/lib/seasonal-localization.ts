@@ -128,16 +128,16 @@ export function formatPeakHour(hour: number): string {
 export const SEASONAL_COLORS = {
   /** Bar chart colors */
   bar: {
-    default: 'var(--chart-1)', // C5-W2: default bars
-    peak: 'var(--chart-positive)', // C5-W2: peak highlight
-    low: 'var(--chart-negative)', // C5-W2: low highlight
+    default: 'var(--color-chart-1)', // C5-W2: default bars
+    peak: 'var(--color-chart-positive)', // C5-W2: peak highlight
+    low: 'var(--color-chart-negative)', // C5-W2: low highlight
   },
   /** Heatmap gradient colors (light to dark) */
   heatmap: {
-    low: 'color-mix(in srgb, var(--chart-1) 22%, var(--card))', // C5-W2: theme-aware depth tint
-    medium: 'color-mix(in srgb, var(--chart-1) 55%, var(--card))',
-    high: 'color-mix(in srgb, var(--chart-1) 85%, var(--card))',
-    peak: 'color-mix(in srgb, var(--chart-1) 70%, var(--foreground))', // darker than chart-1 in light, brighter in dark
+    low: 'color-mix(in srgb, var(--color-chart-1) 22%, var(--color-card))', // C5-W2: theme-aware depth tint
+    medium: 'color-mix(in srgb, var(--color-chart-1) 55%, var(--color-card))',
+    high: 'color-mix(in srgb, var(--color-chart-1) 85%, var(--color-card))',
+    peak: 'color-mix(in srgb, var(--color-chart-1) 70%, var(--color-foreground))', // darker than chart-1 in light, brighter in dark
   },
 } as const
 

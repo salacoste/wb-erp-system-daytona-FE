@@ -20,9 +20,9 @@ import type { TrendDataPoint, TrendsResponse } from '@/types/fbs-analytics'
 // ============================================================================
 
 export const LINE_COLORS = {
-  orders: 'var(--chart-1)', // Blue
-  revenue: 'var(--chart-positive)', // Green
-  cancellations: 'var(--chart-negative)', // Red
+  orders: 'var(--color-chart-1)', // Blue
+  revenue: 'var(--color-chart-positive)', // Green
+  cancellations: 'var(--color-chart-negative)', // Red
 } as const
 
 // ============================================================================

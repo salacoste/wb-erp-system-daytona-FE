@@ -161,11 +161,11 @@ export function getScenarioUrgencyColor(targetDays: number): string {
   const tier = getScenarioUrgencyTier(targetDays)
   switch (tier) {
     case 'aggressive':
-      return 'var(--valence-5)' // C5-W2
+      return 'var(--color-valence-5)' // C5-W2
     case 'balanced':
-      return 'var(--valence-3)' // C5-W2
+      return 'var(--color-valence-3)' // C5-W2
     case 'conservative':
-      return 'var(--valence-1)' // C5-W2
+      return 'var(--color-valence-1)' // C5-W2
     default: {
       // C15 pass-2 review: compile-time exhaustiveness over the tier union —
       // a future 4th tier fails HERE instead of silently falling into green.

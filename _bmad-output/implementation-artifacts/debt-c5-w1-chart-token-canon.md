@@ -303,25 +303,52 @@ author-attested only — физический акт RED-check реверта (�
 | liquidity-utils | 3 | valence-5/3/1 | ≡ |
 | fbs-analytics-formatters | 3 | chart-1/positive/negative | сдвиг |
 
-**Кодификация color-mix рецепта** (волна-2): тинты в TS = `color-mix(in srgb, var(--token) N%, var(--card))`
-— theme-aware (dark адаптируется сам), checker-чист (color-mix вне banned-списка CONTEXTUAL_HEX);
-heatmap-peak смешивает к `var(--foreground)` (темнее в light, ярче в dark — глубина сохраняется в обеих темах).
+**Кодификация color-mix рецепта** (волна-2, каноническая форма после CRITICAL-фикса): тинты в TS =
+`color-mix(in srgb, var(--color-token) N%, var(--color-card))` — АРГУМЕНТЫ ТОЛЬКО в полной `--color-*` форме:
+сырой триплет `var(--valence-1)` НЕ цвет (резолвится в чёрный/прозрачный — доказано headless-пробой прохода-1),
+а `hsl(var(--x))` матчится CONTEXTUAL_HEX-регексом чекера (hsl( + цифра) → re-инфляция boundary;
+heatmap-peak смешивает к `var(--color-foreground)` (темнее в light, ярче в dark — глубина сохраняется в обеих темах).
 
 **Дисклоужа райдера light-AA-форка**: рекон опроверг премиссу райдера («текст-сайты мигрируют в волне 2»)
 — все валенс-потребители скоупа волны-2 = fills/свотчи (recharts Cell, backgroundColor-свотчи), текстовых
 нет. Форк 1.4.11-light остаётся owner-решением волны-4 (закрытие бандла); волна-2 мигрирует
 пиксель-сохранно, форк не эскалирует.
 
-**Тест-пины RED→GREEN**: 23 обновления в 13 файлах (7 lib-файлов: 11 пинов; 5 presentation/fixture: 12 пинов
+**Тест-пины RED→GREEN**: 33 строки пинов в 10 test/fixture файлах (дифф vs main; первая аттестация «23 в 13» была неверна — поймана проходом-1
 вкл. фейк-«WCAG compliance» таутологию → точный exact-array ролей; fixture fbs-trends LINE_COLORS).
 Таутология-пин «should meet WCAG AA» проверял только ФОРМАТ hex (`toMatch(/^#[0-9A-F]{6}$/)`), не контраст —
 заменён на exact-array семантических ролей (реальный AA живёт в globals-compiled-contrast).
 
-**Визуальный проб Playwright** (dev :3100, живой логин, isolation-сессия): /dashboard (валенс-свотчи фильтра),
-/analytics/unit-economics (10-серийная структура затрат резолвится из chart-токенов),
-/analytics/liquidity light+dark (валенс-точки категорий, donut shim, бейджи) — рендер корректен в обеих темах.
+**Проб Playwright (computed-style, ПОСЛЕ CRITICAL-фикса прохода-1)**: скриншоты страниц НЕ доказательны —
+видимые на них цвета шли из других источников (route-shim `var(--color-chart-N)`, компонентные конфиги
+волны-3, Tailwind-утилиты). Доказательство = getComputedStyle-изоляция мигрированных форм в живом браузере:
+valence-1 → rgb(34,197,94) = **#22C55E байт-в-байт**; valence-3 → #EAB308; chart-9 → #6B7280;
+status-success → #2E7D32 (задокументированный сдвиг к AA-роли); color-mix тинт → ≈(224,247,233) vs легаси
+(220,252,231); heatmap-peak → dark-blue семья. Скриншоты /dashboard, /analytics/unit-economics,
+/analytics/liquidity (light+dark) — без регрессий окружения (навигация/диаграммы/бейджи).
 
 **Гейты**: vitest СОЛО **19573/0** · lint 0/0 · tsc 0 · boundary **57=57** (38 hex + 19 legacy:
 components 37 + app 17 + types 3 → волна ③) · docs 0 · locale 0-fail · lessons 0 · privacy 0.
 CLAUDE.md boundary-строка 57 тем же PR. Манифест-префлайт: 0 пинов execution-manifest/chart-inventory
 на 8 файлов (проверено грепом до старта).
+
+### W2 Post-1st-pass-review fixes (2026-09-11)
+
+**Meta-claim blanket qualifier (Trigger 4; pre-written по 116.1-FE A-2, применяется к W2-блокам).**
+Формулировки этого блока и §10 о структурных свойствах, исходах проходов и счётах находок —
+unaudited meta-claims, квалифицируются коллективно здесь.
+
+**Проход-1** (свежий контекст, opus): **REQUEST-CHANGES** — 1 CRITICAL / 2 MINOR / 2 LOW.
+CRITICAL пойман эмпирически (headless-Chromium проб ревьюера), НЕ повторением класса из W1 —
+новый канон-прецедент (см. §32.1): сырой триплет ≠ цвет; jsdom структурно слеп к резолву CSS-переменных.
+
+Применённые фиксы:
+1. **CRITICAL**: все строки-значения канонизированы в полную форму `var(--color-<role>)` (53 сайта + 11
+   color-mix аргументов + 33 строки тест-пинов); 6 коллатеральных double-wrap `var(--color-*)` откатены.
+   Форма `hsl(var(--x))` отклонена: матчится CONTEXTUAL_HEX → re-инфляция boundary.
+2. **MINOR (аттестация «23 в 13»)**: исправлено на фактические 33 строки пинов / 10 файлов (git diff).
+3. **MINOR (рецепт в сломанной форме)**: §10/§32 перекодифицированы в `--color-*` форме.
+4. **§10 «визуальный проб» оверклейм** заменён на computed-style-протокол с числами (см. §10).
+
+Диспозиции: LOW-ы ревьюера (возможная production-dead веток action-benchmark — fix их накрыл тем же
+паттерном; задокументировано в §32.1) — без отдельных правок.

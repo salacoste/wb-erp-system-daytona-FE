@@ -39,25 +39,25 @@ export interface StatusConfig {
 export const ORDER_STATUS_CONFIG: Record<OrderStatus, StatusConfig> = {
   complete: {
     label: 'Выполнено',
-    color: 'var(--status-success)', // C5-W2: chart discriminator on the same role as bgClass/textClass
+    color: 'var(--color-status-success)', // C5-W2: chart discriminator on the same role as bgClass/textClass
     bgClass: 'bg-status-success',
     textClass: 'text-status-success',
   },
   confirm: {
     label: 'Подтверждено',
-    color: 'var(--status-information)', // C5-W2
+    color: 'var(--color-status-information)', // C5-W2
     bgClass: 'bg-status-information',
     textClass: 'text-status-information',
   },
   new: {
     label: 'Новый',
-    color: 'var(--status-warning)', // C5-W2
+    color: 'var(--color-status-warning)', // C5-W2
     bgClass: 'bg-status-warning',
     textClass: 'text-status-warning',
   },
   cancel: {
     label: 'Отменено',
-    color: 'var(--status-error)', // C5-W2
+    color: 'var(--color-status-error)', // C5-W2
     bgClass: 'bg-status-error',
     textClass: 'text-status-error',
   },
@@ -78,7 +78,7 @@ export function getStatusLabel(status: OrderStatus): string {
  * Get hex color for order status
  */
 export function getStatusColor(status: OrderStatus): string {
-  return ORDER_STATUS_CONFIG[status]?.color ?? 'var(--chart-9)' // C5-W2: neutral chart slot (light ≡ legacy gray-500)
+  return ORDER_STATUS_CONFIG[status]?.color ?? 'var(--color-chart-9)' // C5-W2: neutral chart slot (light ≡ legacy gray-500)
 }
 
 /**

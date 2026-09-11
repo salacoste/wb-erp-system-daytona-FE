@@ -21,25 +21,25 @@ export const ACTION_TYPE_CONFIG: Record<ActionType, ActionTypeConfig> = {
   MAXIMIZE: {
     label: 'Масштабировать',
     buttonLabel: 'Увеличить закупки',
-    color: 'var(--valence-1)', // C5-W2
+    color: 'var(--color-valence-1)', // C5-W2
     variant: 'default',
   },
   MAINTAIN: {
     label: 'Поддерживать',
     buttonLabel: 'ОК',
-    color: 'var(--status-information)', // C5-W2: neutral-info action
+    color: 'var(--color-status-information)', // C5-W2: neutral-info action
     variant: 'secondary',
   },
   REDUCE: {
     label: 'Сократить',
     buttonLabel: 'Сократить',
-    color: 'var(--valence-4)', // C5-W2
+    color: 'var(--color-valence-4)', // C5-W2
     variant: 'outline',
   },
   LIQUIDATE: {
     label: 'Ликвидировать',
     buttonLabel: 'Скидка',
-    color: 'var(--valence-5)', // C5-W2
+    color: 'var(--color-valence-5)', // C5-W2
     variant: 'destructive',
   },
 } as const
@@ -74,25 +74,25 @@ export function getLiquidityActionVariant(
 export const BENCHMARK_STATUS_CONFIG: Record<BenchmarkStatus, BenchmarkStatusConfig> = {
   excellent: {
     label: 'Отлично',
-    color: 'var(--valence-1)', // C5-W2 (light ≡ legacy)
+    color: 'var(--color-valence-1)', // C5-W2 (light ≡ legacy)
     textClass: 'text-status-success',
     icon: '🎯',
   },
   good: {
     label: 'Хорошо',
-    color: 'var(--valence-2)', // C5-W2 (light ≡ legacy)
+    color: 'var(--color-valence-2)', // C5-W2 (light ≡ legacy)
     textClass: 'text-status-success',
     icon: '✅',
   },
   warning: {
     label: 'Внимание',
-    color: 'var(--valence-4)', // C5-W2 (light ≡ legacy)
+    color: 'var(--color-valence-4)', // C5-W2 (light ≡ legacy)
     textClass: 'text-status-warning',
     icon: '⚠️',
   },
   critical: {
     label: 'Критично',
-    color: 'var(--valence-5)', // C5-W2 (light ≡ legacy)
+    color: 'var(--color-valence-5)', // C5-W2 (light ≡ legacy)
     textClass: 'text-status-error',
     icon: '🚨',
   },
@@ -131,12 +131,12 @@ export function getBenchmarkStatusIcon(status: BenchmarkStatus): string {
 export function getTrendInsightColor(type: TrendInsightType): string {
   switch (type) {
     case 'improvement':
-      return 'var(--valence-1)' // C5-W2
+      return 'var(--color-valence-1)' // C5-W2
     case 'warning':
-      return 'var(--valence-4)' // C5-W2
+      return 'var(--color-valence-4)' // C5-W2
     case 'info':
     default:
-      return 'var(--status-information)' // C5-W2
+      return 'var(--color-status-information)' // C5-W2
   }
 }
 
