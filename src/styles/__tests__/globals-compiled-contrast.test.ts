@@ -33,6 +33,16 @@ const semanticClasses = [
   'bg-chart-4',
   'bg-chart-5',
   'bg-chart-6',
+  'bg-chart-7',
+  'bg-chart-8',
+  'bg-chart-9',
+  'bg-chart-10',
+  'text-valence-1',
+  'text-valence-2',
+  'text-valence-3',
+  'text-valence-4',
+  'text-valence-5',
+  'text-valence-neutral',
   'outline-ring',
   'text-primary-dark',
   'text-telegram-blue',
@@ -76,7 +86,18 @@ const textPairs = [
   ['chart-tooltip', 'chart-tooltip-foreground'],
 ] as const
 
-const chartRoles = ['chart-1', 'chart-2', 'chart-3', 'chart-4', 'chart-5', 'chart-6']
+const chartRoles = [
+  'chart-1',
+  'chart-2',
+  'chart-3',
+  'chart-4',
+  'chart-5',
+  'chart-6',
+  'chart-7',
+  'chart-8',
+  'chart-9',
+  'chart-10',
+]
 
 const semanticTextRoles = [
   'primary',
@@ -109,7 +130,10 @@ describe('compiled semantic utilities and contrast', () => {
 
     expect(result.warnings()).toEqual([])
     for (const className of semanticClasses) {
-      expect(result.css, className).toContain(`.${className}`)
+      // Boundary-aware match: '.bg-chart-1' must not be satisfied by the
+      // '.bg-chart-10' selector text (substring masking), hence the negative
+      // lookahead for a word character / hyphen right after the class name.
+      expect(result.css, className).toMatch(new RegExp(`\\.${className}(?![\\w-])`))
     }
     expect(result.css).toContain('var(--primary-pressed)')
     expect(result.css).toContain('var(--telegram)')
