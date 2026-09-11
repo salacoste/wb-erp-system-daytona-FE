@@ -130,7 +130,10 @@ describe('compiled semantic utilities and contrast', () => {
 
     expect(result.warnings()).toEqual([])
     for (const className of semanticClasses) {
-      expect(result.css, className).toContain(`.${className}`)
+      // Boundary-aware match: '.bg-chart-1' must not be satisfied by the
+      // '.bg-chart-10' selector text (substring masking), hence the negative
+      // lookahead for a word character / hyphen right after the class name.
+      expect(result.css, className).toMatch(new RegExp(`\\.${className}(?![\\w-])`))
     }
     expect(result.css).toContain('var(--primary-pressed)')
     expect(result.css).toContain('var(--telegram)')

@@ -81,6 +81,18 @@ Dark-значения фиксируются точными триплетами
 в light будут серии 6..9 (новые chart-7..10). Главный owner-критерий («различимость серий
 сохраняется») выполнен; факт фиксируется здесь и будет виден в wave-2 визуальном пробе.
 
+**Owner-rider (до волны 2): light-валенс как текст = AA-форк** (проход-3). Light-значения
+валенс/новых категориальных токенов пиксель-идентичны легаси и как ТЕКСТ на белом дают
+1.92–3.76:1 (valence-2 1.98, valence-3/chart-7 1.92, valence-5/chart-8 3.76, valence-1 2.28,
+neutral 2.54, chart-10 2.49) — ниже 4.5. Dark — чисто (7.6–14.0 на background/card).
+Это НЕ регрессия (легаси-рендер сохранён), но: (a) `text-valence-*` утилиты отчеканены и
+пиннуты на компиляцию, а `semanticTextRoles` их сознательно не покрывает; (b) пиксель-пины
+замораживают light-AA до форка: закрытие бандла WCAG 1.4.11 для light требует ЛИБО
+ретюна light-валенс (ломает пиксель-контракт), ЛИБO зафиксированного решения «1.4.11 закрывается
+для dark + легаси-light принимается». `semanticTextRoles` исключает valence по решению
+(легаси-пиксель-презервация), не по недосмотру. Решение — owner'у в волне 2 (там 6
+profitability-сайтов мигрируют в valence).
+
 **Канон-декларация** (в шапке chart-блока globals.css): все chart-цвета читаются только
 из этих CSS-переменных (`var(--chart-N)` / Tailwind `chart-*` утилиты) — hex-литералы
 запрещены для нового кода (легаси-сайты ратчатся до нуля в волне 4); энфорсер —
@@ -93,17 +105,19 @@ CLAUDE.md-строка — wave-4.
 |---|---|
 | `src/styles/globals.css` | +10 ролей ×2 темы, dark chart-2 fix, `--color-*` маппинги, канон-шапка |
 | `src/lib/chart-colors.ts` | **удалить** (dead, −4 сайта) |
-| `src/styles/__tests__/globals-token-contract.test.ts` | requiredRoles+11; пиксель-контракты; hue-различимость; stack-контраст chart-2 |
+| `src/styles/__tests__/token-test-utils.ts` | +`compositeTriplets`/`rgbToHslTriplet` (alpha-композит для stack-пинов) |
+| `src/styles/__tests__/globals-token-contract.test.ts` | requiredRoles+10; пиксель-контракты; hue-различимость; stack-контраст chart-2 |
+| `src/styles/__tests__/globals-compiled-contrast.test.ts` | chartRoles 6→10 uniqueness; semanticClasses +11 (compile pins) |
 | `scripts/.shadcn-ui-boundary-baseline.txt` | 118 → 114 |
-| `CLAUDE.md` | boundary-строка 114 + дисклоужа; vitest floor +N |
+| `CLAUDE.md` | boundary-строка 114 + дисклоужа; vitest floor 19570→19573 |
 | `_bmad-output/.../shadcn-migration-status-and-debt-registry.md` | §31 (APPEND-ONLY) |
 
 ## 6. Гейты (ожидания wave-1)
 
-- `npm run lint` 0/0 · `npm run type-check` 0 · `npm test -- --run` ≥ 19570+N/0
+- `npm run lint` 0/0 · `npm run type-check` 0 · `npm test -- --run` ≥ 19573/0
 - `node scripts/check-shadcn-ui-boundary.mjs` PASS **114 = baseline 114** (ратчет вниз)
 - `npm run check:docs` exit 0 · locale 4 (не трогаем) · privacy 0 bare · lessons 0
-- vitest floor обновлён в CLAUDE.md тем же PR (+N новых тестов, 0 удалено — у chart-colors тестов не было)
+- vitest floor обновлён в CLAUDE.md тем же PR (+3 новых теста, 0 удалено — у chart-colors тестов не было)
 
 ## 7. Ревью-протокол (кодификационная: Trigger 1 + Trigger 4)
 
@@ -174,7 +188,9 @@ boundary 114=23+91 c ручным пересчётом, vitest +3) воспро�
 артефакта. Суммарно 14 находок (1-й+2-й проходы) > 12 → **Trigger 2: 3-й проход MANDATORY**
 (в расписании 4/2/2/4); >5 в одном проходе → Trigger 3 (покрыт тем же расписанием).
 
-Применённые фиксы (все — проза артефакта + 1 коммент-клауза в globals.css):
+Применённые фиксы (проза артефакта + 1 коммент-клауза в globals.css; реестровая коррекция
+MINOR-4 исполняется отдельной APPEND-ONLY disclosure-строкой — см. Post-3rd-pass дисклоужу
+о том, что часть клеймов этого блока изначально не была доведена до диска):
 
 1. **MINOR-1**: §4-скобка «info/20 над muted/50 над card» противоречила тесту/реестру/DOM
    (hover-варианты взаимоисключающи; 3-слойный стек давал бы 4.6586, не 5.3053) → «info/20 над card».
@@ -202,3 +218,38 @@ Open questions прохода-2 (диспозиции оркестратора):
 lint/tsc/privacy — реран в финальном PR-протоколе; «зарегистрированных FAIL нет» по двойникам —
 корроборировано реестром остатков волны-6 (только chart-2 3.71 + warn/40 2.66), исчерпывающий
 негативный поиск не проводился — признано.
+
+### Post-3rd-pass-review fixes (2026-09-11)
+
+**Проход-3** (свежий контекст, opus; Trigger 2 MANDATORY; мандат: кодификационная семантика +
+Trigger 4 meta-audit + miss-class hunt): **APPROVE-with-riders** — 0 CRITICAL / 4 MINOR / 4 LOW.
+Кодификационные вердикты: (a) пиксель-пины SOUND (8-битная гранулярность — фича, не баг);
+(b) hue-различимость — приемлемый floor; (c) double-lock chart-2 — GOOD (разные инварианты);
+(d) compositeTriplets верифицирован против браузерной модели (±1 LSB; вердикт-флип требует
+±0.02 к порогу — у пина 5.31 запас 18%). Dark AA всех 11 ролей: 7.6–14.0 на background/card.
+
+**Главный улов — fix-attestation-vs-disk (новый класс для реестра прецедентов)**: 2 из 12
+клеймов прохода-2 НЕ были на диске при аттестации (§5-таблица: второй `requiredRoles+11`
+в строке token-contract теста + отсутствие 2 строк файлов; отсутствие обещанной
+реестровой disclosure-строки). Аттестация была в Post-2 блоке И в коммит-месседже — и оба
+раза мимо диска. Исполнитель систематически доводит до диска 10/12 и аттестует 12/12.
+
+Применённые фиксы:
+
+1. **MINOR-4-r1**: §5-строка `requiredRoles+11` → `+10`; §5-таблица дополнена 2 строками
+   (token-test-utils, compiled-contrast) — на диске верифицировано grep'ом; реестровая
+   disclosure-строка **§31.1** добавлена (APPEND-ONLY).
+2. **MINOR-3-r2**: §4 + §31.1 — light-валенс AA-форк дисклоужа + owner-rider до волны 2
+   (1.92–3.76:1 как текст; `semanticTextRoles` исключение — сознательное; форк 1.4.11-light).
+3. **MINOR-4-r3**: bg-chart-1 substring-маскировка снята — assertions → boundary-aware
+   regex `\.(?![\w-])` (одной строкой де-маскирует ВСЕ пины).
+4. **LOW-5**: §5/§6 placeholder'ы «+N» → реальные 19573/+3.
+5. **LOW-6**: коммент `rgbToHslTriplet` переписан (determinism/exact-operand, не
+   «невозможность ничьих»; tie-ветви названы: r==g→60°, g==b→180°, r==b→300°).
+6. **LOW-7**: recipe-коммент в separability тесте (3 списка синхронно: requiredRoles /
+   chartRoles / categorical; floor-семантика названа).
+7. **LOW-8**: сообщение chart-2 string-пина переписано (frozen triplet, инструкция при retune).
+8. **Post-2 заголовок** скорректирован (честная формулировка про реестровую коррекцию).
+
+Диспозиции: остальные наблюдения прохода-3 (openwiki staleness — прецедент регена; dark
+byte-twin пины — future hardening, не блокер; S<20 gameable — floor принят) — без правок.

@@ -162,7 +162,12 @@ describe('globals semantic token contract', () => {
       'chart-10',
     ] as const
     // Near-grays (S < 20) carry no meaningful hue and are exempt from the hue
-    // gap; saturated slots must keep >= 8deg circular hue separation.
+    // gap; saturated slots must keep >= 8deg circular hue separation. This is
+    // a floor, not a full perceptual metric (hue-only, no chroma/L weighting).
+    // Adding a future chart-11 slot requires growing THREE lists in sync:
+    // requiredRoles above, chartRoles in globals-compiled-contrast.test.ts,
+    // and `categorical` here — no derivation exists by design (each list
+    // asserts a different facet).
     const parse = (triplet: string) => {
       const [hue, saturation] = triplet.split(/[\s%]+/).map(Number)
       return { hue, saturation }
@@ -196,7 +201,10 @@ describe('globals semantic token contract', () => {
       contrastRatio(selectedHoverStack, dark.get('--chart-2') ?? ''),
       'chart-2 dark on selected-hover stack'
     ).toBeGreaterThanOrEqual(4.5)
-    expect(dark.get('--chart-2'), 'C5-W1 pinned lightness').toBe('291.25 46.601942% 70%')
+    expect(
+      dark.get('--chart-2'),
+      'C5-W1 frozen triplet (hue+S pinned by design) — on an owner-approved retune, update this pin AND artifact §4'
+    ).toBe('291.25 46.601942% 70%')
   })
 
   it('keeps critical red and state meanings as independent roles', () => {
