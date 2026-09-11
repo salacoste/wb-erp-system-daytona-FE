@@ -32,7 +32,7 @@
 Ключевые находки рекон-а:
 
 1. **`src/lib/chart-colors.ts` — production-dead**: 0 импортёров, 0 тестов (grep по `lib/chart-colors`, `chart-colors` — только сам файл). Заголовок сам запрещал ретро-миграцию («Do NOT refactor existing chart files retroactively»). → удаляется в wave-1: −4 сайта, boundary **118 → 114**.
-2. **Три живых одноимённых `CHART_COLORS`** (после удаления lib-тёзки): `src/components/custom/dashboard/chart-config.ts:22` (dashboard-метрики; METRIC_LABELS/METRIC_AXIS) · `src/components/custom/price-calculator/cost-breakdown-types.ts:40` · `src/app/(dashboard)/analytics/storage/components/storage-trends-config.ts:15` — отдельные сущности, мигрируют в wave-3; различающих same-name комментариев у них нет (CLAUDE.md convention — добавить при миграции).
+2. **Три живых одноимённых `CHART_COLORS`** (после удаления lib-тёзки; экспортируемые): `src/components/custom/dashboard/chart-config.ts:22` (dashboard-метрики; METRIC_LABELS/METRIC_AXIS) · `src/components/custom/price-calculator/cost-breakdown-types.ts:40` · `src/app/(dashboard)/analytics/storage/components/storage-trends-config.ts:15` — отдельные сущности, мигрируют в wave-3; различающих same-name комментариев у них нет (CLAUDE.md convention — добавить при миграции). Плюс **2 module-local** `const CHART_COLORS` (не импортируемые): `PriceHistorySheet.tsx:26` — **hex-носитель (6 литералов) под exception, мигрирует в wave-4 при снятии exceptions, не в wave-3**; `StorageTrendsChart.tsx:32` — var-based.
 3. **Byte-идентичные двойники токенов** (прецедент 172.x «verify HSL not names»): light `chart-4 ≡ chart-positive ≡ status-success ≡ availability-available ≡ financial-positive`; dark `chart-2 ≡ chart-target ≡ availability-partial`. Правило C5: меняем только объявленный ролью токен; двойники-роли не трогаем без отдельного решения (rider ниже).
 4. **Пин 3.71 идентифицирован**: `ProductTableRow.tsx:133` `<span className="text-chart-2">` (storage-акцент) на selected-row стеке (canon: rest=card, hover=muted/50, selected=info/10, selected-hover=info/20; cogs page Card mount). **Коммитед-пина контраста НЕТ** — число 3.71 живёт в артефакте волны-6 + реестре; существующий `ProductTableRow.selected-stack.test.tsx` пиннет классы ремедий, не число.
 5. **`supply-planning-chart.ts` жив** (supply-planning-utils:127 реэкспортирует из него; извлечён из utils ранее) — не dead, wave-3.
@@ -81,10 +81,12 @@ Dark-значения фиксируются точными триплетами
 в light будут серии 6..9 (новые chart-7..10). Главный owner-критерий («различимость серий
 сохраняется») выполнен; факт фиксируется здесь и будет виден в wave-2 визуальном пробе.
 
-**Owner-rider (до волны 2): light-валенс как текст = AA-форк** (проход-3). Light-значения
-валенс/новых категориальных токенов пиксель-идентичны легаси и как ТЕКСТ на белом дают
-1.92–3.76:1 (valence-2 1.98, valence-3/chart-7 1.92, valence-5/chart-8 3.76, valence-1 2.28,
-neutral 2.54, chart-10 2.49) — ниже 4.5. Dark — чисто (7.6–14.0 на background/card).
+**Owner-rider (до волны 2): light-валенс как текст = AA-форк** (проход-3; диапазон уточнён
+проходом-4). Light-значения валенс-семейства + chart-7/8/10 пиксель-идентичны легаси и как
+ТЕКСТ на белом дают **1.92–3.76:1** (valence-2 1.98, valence-3/chart-7 1.92, valence-4 2.80,
+valence-5/chart-8 3.76, valence-1 2.28, neutral 2.54, chart-10 2.49) — ниже 4.5.
+**chart-9 light = 4.83:1 — AA-PASS, вне форка** (серый #6B7280; в исходной формулировке
+прохода-3 ошибочно попадал в диапазон). Dark — чисто (7.6–14.0 на background/card).
 Это НЕ регрессия (легаси-рендер сохранён), но: (a) `text-valence-*` утилиты отчеканены и
 пиннуты на компиляцию, а `semanticTextRoles` их сознательно не покрывает; (b) пиксель-пины
 замораживают light-AA до форка: закрытие бандла WCAG 1.4.11 для light требует ЛИБО
@@ -110,7 +112,8 @@ CLAUDE.md-строка — wave-4.
 | `src/styles/__tests__/globals-compiled-contrast.test.ts` | chartRoles 6→10 uniqueness; semanticClasses +11 (compile pins) |
 | `scripts/.shadcn-ui-boundary-baseline.txt` | 118 → 114 |
 | `CLAUDE.md` | boundary-строка 114 + дисклоужа; vitest floor 19570→19573 |
-| `_bmad-output/.../shadcn-migration-status-and-debt-registry.md` | §31 (APPEND-ONLY) |
+| `_bmad-output/.../shadcn-migration-status-and-debt-registry.md` | §31 + §31.1 (APPEND-ONLY) |
+| `_bmad-output/.../debt-c5-w1-chart-token-canon.md` | этот артефакт (само-строка — diff-полнота §5, проход-4 LOW-4) |
 
 ## 6. Гейты (ожидания wave-1)
 
@@ -131,7 +134,7 @@ CLAUDE.md-строка — wave-4.
 
 - **② lib-hex (57→0)**: liquidity-* (26) — валенс/reference-маппинг; unit-economics (10) — chart-1..10 индексно; seasonal (7) — sky-шкала → information-тинты; profitability (6) — valence-1..5+neutral; orders-status (5) — status-*; fbs-formatters (3) + chart-colors уже удалён; **2 прохода + триггеры**; визуальный проб Playwright (light: 6 серий сдвиг — дисклоужа §4).
 - **③ components/app/types (57→0)**: expense-chart-config 18, TrendGraph 14, product-charts 9, Elasticity 4, …; 23 legacy-класса → status/tint; **2 прохода + триггеры**.
-- **④ close**: waterfall валенс-семантика; снятие 3 exceptions; baseline → 0; CLAUDE.md scope-контракт (пересчёт состава по прецеденту волны-5(c)); реестр §34 + закрытие C5 и WCAG 1.4.11; **4 прохода**.
+- **④ close**: waterfall валенс-семантика; снятие 3 exceptions (**внимание, проход-4**: PriceHistorySheet-exception описан как «historical #7C3AED», но подавляет 6 hex-литералов файла — при снятии мигрировать все 6, не 1; сюда же module-local CHART_COLORS из §2.2); baseline → 0; CLAUDE.md scope-контракт (пересчёт состава по прецеденту волны-5(c)); реестр §34 + закрытие C5 и WCAG 1.4.11 (light-форк — owner-решение §4); **4 прохода**.
 
 ## 9. Dev Agent Record
 
@@ -144,7 +147,7 @@ CLAUDE.md-строка — wave-4.
 - ENOENT-урок: гард `playwright-static-boundary.test.ts:322` читает `git ls-files` — незастейдженное удаление падает; стейдж до соло-прогона.
 - Гейты: vitest 19573/0 (соло) · lint 0/0 · tsc 0 · boundary 114 bare-exit 0 · docs 0 (95) · locale 4 · lessons 0 · privacy 0.
 
-**Изменённые файлы**: `src/styles/globals.css` · `src/lib/chart-colors.ts` (del) · `src/styles/__tests__/token-test-utils.ts` · `src/styles/__tests__/globals-token-contract.test.ts` · `src/styles/__tests__/globals-compiled-contrast.test.ts` · `scripts/.shadcn-ui-boundary-baseline.txt` · `CLAUDE.md` · реестр §31.
+**Изменённые файлы**: `_bmad-output/.../debt-c5-w1-chart-token-canon.md` (этот артефакт) · `src/styles/globals.css` · `src/lib/chart-colors.ts` (del) · `src/styles/__tests__/token-test-utils.ts` · `src/styles/__tests__/globals-token-contract.test.ts` · `src/styles/__tests__/globals-compiled-contrast.test.ts` · `scripts/.shadcn-ui-boundary-baseline.txt` · `CLAUDE.md` · реестр §31.
 
 ### Post-1st-pass-review fixes (2026-09-11)
 
@@ -226,7 +229,7 @@ Trigger 4 meta-audit + miss-class hunt): **APPROVE-with-riders** — 0 CRITICAL 
 Кодификационные вердикты: (a) пиксель-пины SOUND (8-битная гранулярность — фича, не баг);
 (b) hue-различимость — приемлемый floor; (c) double-lock chart-2 — GOOD (разные инварианты);
 (d) compositeTriplets верифицирован против браузерной модели (±1 LSB; вердикт-флип требует
-±0.02 к порогу — у пина 5.31 запас 18%). Dark AA всех 11 ролей: 7.6–14.0 на background/card.
+±0.02 к порогу — у пина 5.31 запас 18%). Dark AA 11 проверенных ролей (= 10 новых + chart-2): 7.6–14.0 на background/card.
 
 **Главный улов — fix-attestation-vs-disk (новый класс для реестра прецедентов)**: 2 из 12
 клеймов прохода-2 НЕ были на диске при аттестации (§5-таблица: второй `requiredRoles+11`
@@ -253,3 +256,32 @@ Trigger 4 meta-audit + miss-class hunt): **APPROVE-with-riders** — 0 CRITICAL 
 
 Диспозиции: остальные наблюдения прохода-3 (openwiki staleness — прецедент регена; dark
 byte-twin пины — future hardening, не блокер; S<20 gameable — floor принят) — без правок.
+
+### Post-4th-pass-review fixes (2026-09-11)
+
+**Проход-4** (свежий контекст, opus; финальный close/PR-readiness — класс, который in-chain
+проходы систематически пропускают, т.к. финальный нарратив пишется последним): **APPROVE-with-riders,
+merge READY** — 0 CRITICAL / 1 MINOR / 4 LOW. Все 8 клеймов фиксов прохода-3 верифицированы
+на диске grep'ом (класс fix-attestation-vs-disk НЕ повторился); все 15+ аттестованных чисел
+(3.6979/5.3053/65.17%/hue-минимумы/114=91+23/57-37-17-3/19573) воспроизведены ревьюером
+в точности репо-математикой; полный vitest **19573/19573 exit 0** — верифицирован ревьюером
+(и оркестраторским соло-прогоном до этого).
+
+Применённые riders:
+
+1. **MINOR-1 (r4)**: chart-9 light (#6B7280) = **4.8345:1 — AA-PASS**, ошибочно включался в
+   диапазон «1.92–3.76 ниже 4.5» (консервативное направление — оверклейм фейла, но числовые
+   аттестации в этом репо load-bearing). §4 исправлен in-place (диапазон = валенс-семейство +
+   chart-7/8/10; chart-9 назван отдельно); §31.1 — APPEND-ONLY bullet 4 (строка уже была
+   закоммичена). valence-4 (2.80) добавлен в перечисление. Оркестратором пересчитано: 4.8345/2.8031/3.7631 — сходится.
+2. **LOW-1**: §2.2 — уточнено: 3 тёзки = экспортируемые; +2 module-local (`PriceHistorySheet.tsx:26`
+   — hex-носитель под exception → wave-4, не wave-3; `StorageTrendsChart.tsx:32` — var-based).
+3. **LOW-2**: §8-волна ④ — предупреждение: PriceHistorySheet-exception подавляет 6 hex-литералов,
+   при снятии мигрировать все 6.
+4. **LOW-3**: Post-3 «всех 11 ролей» → «11 проверенных ролей (= 10 новых + chart-2)».
+5. **LOW-4**: §5-таблица + §9 дополнены само-строкой артефакта (diff-полнота).
+
+Аттестационный сплит после 4 проходов: reviewer-verified — boundary 114 exit 0, docs 0 (95),
+locale 4, lessons 0, privacy 0, lint 0/0, tsc 0, vitest 19573/0 (полный, ×2: оркестратор + ревьюер);
+author-attested only — физический акт RED-check реверта (численно воспроизведён независимо:
+3.6979 exact) и негативный поиск FAIL по двойникам (дисклоужен как неисчерпывающий в Post-2).
