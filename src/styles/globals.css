@@ -65,6 +65,16 @@
   --color-chart-6: hsl(var(--chart-6));
   --color-chart-positive: hsl(var(--chart-positive));
   --color-chart-negative: hsl(var(--chart-negative));
+  --color-chart-7: hsl(var(--chart-7));
+  --color-chart-8: hsl(var(--chart-8));
+  --color-chart-9: hsl(var(--chart-9));
+  --color-chart-10: hsl(var(--chart-10));
+  --color-valence-1: hsl(var(--valence-1));
+  --color-valence-2: hsl(var(--valence-2));
+  --color-valence-3: hsl(var(--valence-3));
+  --color-valence-4: hsl(var(--valence-4));
+  --color-valence-5: hsl(var(--valence-5));
+  --color-valence-neutral: hsl(var(--valence-neutral));
   --color-chart-reference: hsl(var(--chart-reference));
   --color-chart-target: hsl(var(--chart-target));
   --color-chart-forecast: hsl(var(--chart-forecast));
@@ -170,14 +180,35 @@
     --availability-restricted: 199.354839 18.343195% 33.137255%;
     --availability-unknown: 0 0% 38.039216%;
     --telegram: 200 100% 40%;
+    /* Chart color canon (C5-W1, debt registry §31): every chart color reads from
+       these CSS variables only — var(--chart-N) / Tailwind chart-* utilities.
+       Hex literals and parallel color constants are banned in production source;
+       the boundary checker (contextual-hex + ratchet) enforces the ratchet. */
     --chart-1: 211.929825 80.28169% 41.764706%;
     --chart-2: 277.322835 70.165746% 35.490196%;
     --chart-3: 185.034965 100% 28.039216%;
     --chart-4: 123.037975 46.19883% 33.529412%;
     --chart-5: 27.112971 100% 46.862745%;
     --chart-6: 333.72549 79.274611% 37.843137%;
+    /* chart-7..10 — C5-W1 categorical extension (unit-economics 10-series, index
+       1:1): light values are pixel-identical to the legacy palette slots 6..9. */
+    --chart-7: 45.39823 93.38843% 47.45098%;
+    --chart-8: 0 84.236453% 60.196078%;
+    --chart-9: 220 8.93617% 46.078431%;
+    --chart-10: 173.414634 80.392157% 40%;
     --chart-positive: 123.037975 46.19883% 33.529412%;
     --chart-negative: 0 66.386555% 46.666667%;
+    /* valence-1..5 + neutral — C5-W1 six-tier good→bad scale (profitability),
+       bundles the WCAG 1.4.11 valence-channel owner item. Light values are
+       pixel-identical to the legacy tier hexes; valence-3 ≡ chart-7 and
+       valence-5 ≡ chart-8 are deliberate byte twins (chart-4 ≡ chart-positive
+       precedent). */
+    --valence-1: 142.08589 70.562771% 45.294118%;
+    --valence-2: 83.736264 80.530973% 44.313725%;
+    --valence-3: 45.39823 93.38843% 47.45098%;
+    --valence-4: 24.581498 94.979079% 53.137255%;
+    --valence-5: 0 84.236453% 60.196078%;
+    --valence-neutral: 217.894737 10.614525% 64.901961%;
     --chart-reference: 199.354839 18.343195% 33.137255%;
     --chart-target: 277.322835 70.165746% 35.490196%;
     --chart-forecast: 211.929825 80.28169% 41.764706%;
@@ -239,13 +270,26 @@
     --availability-unknown: 0 0% 74.117647%;
     --telegram: 200 100% 40%;
     --chart-1: 206.712329 89.02439% 67.843137%;
-    --chart-2: 291.25 46.601942% 59.607843%;
+    /* C5-W1: lightness 59.6% → 70% — the storage accent (text-chart-2,
+       ProductTableRow) failed AA on the selected-hover row stack at 3.71:1
+       (wave-6 residual); hue preserved, pair now ≥ 4.5:1 (contract test). */
+    --chart-2: 291.25 46.601942% 70%;
     --chart-3: 186.891892 71.153846% 59.215686%;
     --chart-4: 122.571429 38.461538% 64.313725%;
     --chart-5: 35.730337 100% 65.098039%;
     --chart-6: 339.71831 82.55814% 66.27451%;
+    --chart-7: 45.39823 93.38843% 65%;
+    --chart-8: 0 72.649573% 77.058824%;
+    --chart-9: 220 8.93617% 70%;
+    --chart-10: 173.414634 45% 60%;
     --chart-positive: 122.571429 38.461538% 64.313725%;
     --chart-negative: 0 72.649573% 77.058824%;
+    --valence-1: 122.571429 38.461538% 64.313725%;
+    --valence-2: 83.736264 55% 65%;
+    --valence-3: 45.681818 100% 65.490196%;
+    --valence-4: 24.581498 94.979079% 68%;
+    --valence-5: 0 72.649573% 77.058824%;
+    --valence-neutral: 0 0% 74.117647%;
     --chart-reference: 200 15.625% 62.352941%;
     --chart-target: 291.25 46.601942% 59.607843%;
     --chart-forecast: 206.712329 89.02439% 67.843137%;

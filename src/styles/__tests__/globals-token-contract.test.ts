@@ -4,6 +4,8 @@ import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 import {
+  compositeTriplets,
+  contrastRatio,
   declarationsFor,
   hslTripletToHex,
   parseGlobals,
@@ -75,6 +77,16 @@ const requiredRoles = [
   'chart-tooltip',
   'chart-tooltip-foreground',
   'chart-selection',
+  'chart-7',
+  'chart-8',
+  'chart-9',
+  'chart-10',
+  'valence-1',
+  'valence-2',
+  'valence-3',
+  'valence-4',
+  'valence-5',
+  'valence-neutral',
 ] as const
 
 describe('globals semantic token contract', () => {
@@ -115,6 +127,76 @@ describe('globals semantic token contract', () => {
       expect(dark.has(`--${role}`), `dark --${role}`).toBe(true)
       expect(mappings.get(`--color-${role}`), `theme --color-${role}`).toBe(`hsl(var(--${role}))`)
     }
+  })
+
+  it('pins C5-W1 light chart/valence values pixel-identical to the legacy palette hexes', () => {
+    const pixelContract: Array<[`--${string}`, string]> = [
+      ['--chart-7', '#EAB308'],
+      ['--chart-8', '#EF4444'],
+      ['--chart-9', '#6B7280'],
+      ['--chart-10', '#14B8A6'],
+      ['--valence-1', '#22C55E'],
+      ['--valence-2', '#84CC16'],
+      ['--valence-4', '#F97316'],
+      ['--valence-neutral', '#9CA3AF'],
+    ]
+    for (const [role, hex] of pixelContract) {
+      expect(hslTripletToHex(light.get(role) ?? ''), `light ${role}`).toBe(hex)
+    }
+    // Deliberate byte twins (chart-4 ≡ chart-positive precedent).
+    expect(light.get('--valence-3'), 'valence-3 ≡ chart-7').toBe(light.get('--chart-7'))
+    expect(light.get('--valence-5'), 'valence-5 ≡ chart-8').toBe(light.get('--chart-8'))
+  })
+
+  it('keeps the categorical chart-1..10 scale separable in both themes (C5-W1)', () => {
+    const categorical = [
+      'chart-1',
+      'chart-2',
+      'chart-3',
+      'chart-4',
+      'chart-5',
+      'chart-6',
+      'chart-7',
+      'chart-8',
+      'chart-9',
+      'chart-10',
+    ] as const
+    // Near-grays (S < 20) carry no meaningful hue and are exempt from the hue
+    // gap; saturated slots must keep >= 8deg circular hue separation.
+    const parse = (triplet: string) => {
+      const [hue, saturation, lightness] = triplet.split(/[\s%]+/).map(Number)
+      return { hue, saturation, lightness }
+    }
+    for (const tokens of [light, dark]) {
+      const slots = categorical.map(role => parse(tokens.get(`--${role}`) ?? ''))
+      for (let left = 0; left < slots.length; left += 1) {
+        for (let right = left + 1; right < slots.length; right += 1) {
+          const a = slots[left]
+          const b = slots[right]
+          if (a.saturation < 20 || b.saturation < 20) continue
+          const gap = Math.abs(a.hue - b.hue) % 360
+          const circular = Math.min(gap, 360 - gap)
+          expect(
+            circular,
+            `${categorical[left]}(${a.hue}deg) vs ${categorical[right]}(${b.hue}deg)`
+          ).toBeGreaterThanOrEqual(8)
+        }
+      }
+    }
+  })
+
+  it('dark chart-2 passes AA on the selected-hover row stack (C5-W1 wave-6 residual)', () => {
+    // Canon stack (ProductTableRow selected-hover, cogs page Card mount):
+    // status-information/20 alpha over the card surface. At the pre-C5
+    // lightness (59.6%) this pair measured 3.71:1 — wave-6 deferred it here.
+    const cardDark = dark.get('--card') ?? ''
+    const infoDark = dark.get('--status-information') ?? ''
+    const selectedHoverStack = compositeTriplets(cardDark, infoDark, 0.2)
+    expect(
+      contrastRatio(selectedHoverStack, dark.get('--chart-2') ?? ''),
+      'chart-2 dark on selected-hover stack'
+    ).toBeGreaterThanOrEqual(4.5)
+    expect(dark.get('--chart-2'), 'C5-W1 pinned lightness').toBe('291.25 46.601942% 70%')
   })
 
   it('keeps critical red and state meanings as independent roles', () => {

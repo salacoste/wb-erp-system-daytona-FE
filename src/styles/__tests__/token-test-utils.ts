@@ -79,3 +79,42 @@ export const contrastRatio = (background: string, foreground: string): number =>
   )
   return (values[0] + 0.05) / (values[1] + 0.05)
 }
+
+const rgbToHslTriplet = (rgb: [number, number, number]): string => {
+  const [r255, g255, b255] = rgb.map(channel => channel / 255) as [number, number, number]
+  const max = Math.max(...rgb) / 255
+  const min = Math.min(...rgb) / 255
+  const lightness = (max + min) / 2
+  const delta = max - min
+  let hue = 0
+  let saturation = 0
+  if (delta !== 0) {
+    saturation = lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min)
+    switch (max) {
+      case r255:
+        hue = ((g255 - b255) / delta + (g255 < b255 ? 6 : 0)) * 60
+        break
+      case g255:
+        hue = ((b255 - r255) / delta + 2) * 60
+        break
+      default:
+        hue = ((r255 - g255) / delta + 4) * 60
+    }
+  }
+  const trim = (value: number): string => String(Number(value.toFixed(6)))
+  return `${trim(hue)} ${trim(saturation * 100)}% ${trim(lightness * 100)}%`
+}
+
+// Alpha-composites an overlay HSL triplet over a base one in sRGB (browser
+// alpha blending) and returns the resulting HSL triplet — lets contrast pins
+// reproduce real tinted stacks (e.g. status-information/20 over card) at the
+// token level.
+export const compositeTriplets = (base: string, overlay: string, alpha: number): string => {
+  const baseRgb = hslToRgb(base)
+  const overlayRgb = hslToRgb(overlay)
+  return rgbToHslTriplet([
+    Math.round(baseRgb[0] * (1 - alpha) + overlayRgb[0] * alpha),
+    Math.round(baseRgb[1] * (1 - alpha) + overlayRgb[1] * alpha),
+    Math.round(baseRgb[2] * (1 - alpha) + overlayRgb[2] * alpha),
+  ])
+}

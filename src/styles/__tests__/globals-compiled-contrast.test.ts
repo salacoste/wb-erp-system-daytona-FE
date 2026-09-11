@@ -76,7 +76,18 @@ const textPairs = [
   ['chart-tooltip', 'chart-tooltip-foreground'],
 ] as const
 
-const chartRoles = ['chart-1', 'chart-2', 'chart-3', 'chart-4', 'chart-5', 'chart-6']
+const chartRoles = [
+  'chart-1',
+  'chart-2',
+  'chart-3',
+  'chart-4',
+  'chart-5',
+  'chart-6',
+  'chart-7',
+  'chart-8',
+  'chart-9',
+  'chart-10',
+]
 
 const semanticTextRoles = [
   'primary',
