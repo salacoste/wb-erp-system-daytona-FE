@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:71762b248a356c9a4703c81cf2f078806247203c07ab50cfd0472905aafe0ad8",
+  "pageVersion": "sha256:f04bb60d8e631d89e884d7cd5f659b0e2bae83e9bdbebce5d298d194ab64efaa",
   "claims": [
     {
       "id": "claim_f797db2a25ab4709beca6aff9f520299",
@@ -159,10 +159,62 @@
           "version": "repo-lines-v1:sha256:a12200699e1989e85d205cd12f208eb30922696184c4494cb9b292d478aacc35:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiNGRjNzYyNzUyMGNlZWY2YTQ0OGU5ZGU2OWQxN2QzNTIxNWFjOTZlMWI3ZGQzN2U4Zjk4MWJjMTMxZjRiMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNDhkNWY0Mzg0MzMwM2UyZjJjNTU2YjZmNWU4OTRkODAwMTZiNDY0OGY4ZTgyMDMyNzM4YTlkNmZkZDdmYjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4OTRlZDBmNDFlNTc1NWQ1Yzc3MTYwMzgwNzU0MGNmYWUzODI2MjMxNGU0OTM1NzRiZjE1ZGY2ODRiMDYyNjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkYWYwNzkxOGE2ODE0ODU3ZmU0NWU1MjljNmU1MTM2M2U1Y2ZmODM2NjcyMDI1YWYwY2FhODcwYTcxY2E4MzUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_ff7db8425a3c48778bf0d50debd2bc55",
+      "statement": "useSkuFinancials builds snake_case query params inline (including include_ads/include_stock parity flags defaulting to true), fetches /v1/analytics/sku-financials with skipDataUnwrap: true to preserve the { meta, data, totals } envelope, and normalizes via pure transform functions in src/hooks/sku-financials-transform.ts with backend DTOs in sku-financials-types.ts (split for Epic 74 file-size compliance); staleTime is 30 min mirroring the backend cache TTL.",
+      "evidence": [
+        {
+          "resource": "repo://src/hooks/sku-financials-transform.ts",
+          "version": "repo-file-v1:sha256:2a6704c67f2a7d823b4b9ea86634d72235f78873d0b1a9a4162285c3ab017865"
+        },
+        {
+          "resource": "repo://src/hooks/useSkuFinancials.ts#L49-L95",
+          "version": "repo-lines-v1:sha256:915a80d81fb7cb4a2cb89518b90a37e0abd0cc1c012d3915581bab092777e4ef:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3MDc2NjFkMjE2YzYwMjNlN2YxM2ZhOTQ0OGJjOWZjM2I0Mzc2NTk5N2I1MTc2MzBmMWJmYTcwY2MzMzI1NDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlNzBjYjU2YzYwNTIwYjczMmMyYjFlN2UwZTk1NjU1NWM4MGVmZDEwYzYxYmQ3YzEwZjE4NDg5MDZhMjdhZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1cbc5dafa0374559a114c6974f10bca8",
+      "statement": "The SKU-financials transform preserves null for money/ratio fields per AP#8: profit.gross/operating/operatingMarginPct use `?? null` so a missing value renders \"—\" not \"0 ₽\" (aggregators must coerce at the callsite), costs.cogs is `cogs?.total ?? null` with `missingCogs: cogs === null` carried out-of-band; the only deliberate `?? 0` is other_adjustments (Request #68). Net revenue is derived at the boundary (sales minus returns) while salesQty stays raw without subtracting returns.",
+      "evidence": [
+        {
+          "resource": "repo://src/hooks/sku-financials-transform.ts#L16-L56",
+          "version": "repo-lines-v1:sha256:d16182d1f842536547a77178d911d6a0f1441ea6903483ea24988371978f29e1:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhZTRlYmJhNmIwOTMzYjZkZGM3OTYxODAyZmE0MjhlZmE4OTllMTI0NGZhOGFjNjhkYWNhNWU2OTMzODgyNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwYzkxMmQwOTBhMGU5MzA5MmMyN2RlYzZmMmIxOGVlNWFhNzVmODYwMGQ3NzQ2ZTkyMTYyMTU5MzhiZTA4MjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyNDFlOWVkN2JjNmE2ZTUxNTBmNDc5OWJlOWFhN2U0ODZlYzAxNWE3MTNkOGU2MzM0OWUyMzEwZTVhNjliYjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0NTgzNTY1ZTU4YmZmZDMwNjc3M2Q4ODBlMDdhZWEwOTExMjgxZDNkNjE3MzYzMzExM2QxMDg1NGMyMzk0M2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c20ac2c638644cd9b828f4188277de21",
+      "statement": "The FR-2..FR-5 competitor-parity fields are optional on the backend item (absent unless include_ads/include_stock was sent); the transform attaches a `parity` block with every field `?? null` only when at least one parity field is present (hasAnyParityField), otherwise `parity` is omitted entirely rather than an all-null object.",
+      "evidence": [
+        {
+          "resource": "repo://src/hooks/sku-financials-transform.ts#L57-L110",
+          "version": "repo-lines-v1:sha256:7900f9f90ec17336360a6b7eff9687106a8bc45361524b41bae36cc20062977a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3OTlmMDUyZGMzMzUwYTdhMzI4ODIwODNlNDg1MTRhNjA1ZDU1MmFhMWU2M2M1NWRmYTliYTliNGRkNTYyOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhYmQxNDQ3Y2U3NzdmMTBmYzA0YjE0MGYzN2QzZjQxMmQ4YjcyZjY0MDE2MTFiYmU4ZDczNzQyNGIyZTg1NWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJlOGUyY2NiMGZkMGNkMDliNDFlNTRiZTg3OGI1MWY1ZDJjNTRmMWY1N2RjYzEzZmJiNzg2MjE2NWJhMGQyN2UifQ"
+        },
+        {
+          "resource": "repo://src/hooks/sku-financials-types.ts#L65-L83",
+          "version": "repo-lines-v1:sha256:e61c7c6ca7b61579eba550ec2f785cb42afa9c968e83158817206b0a2fd074ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGM0NTk1ODA0ODk2MjVkNzkwMzgzNWU4MzE3ZDBkMDkyY2MxYmJhMTFjNGQwMjI2YTg3NWM4YmJjYjg5MDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliNjdkM2Q1NTEzYWMzNjQzMjc3MjczMzcwNDhkY2JiMjQ1MTFkZTU4OWNmNzczNjJiZWNkM2RmNjk3MzZhYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiOGYwYzM2ZjRjYzVhZjMzMjJmNGExZDI1ZDM4OGQzY2JkMjMxYjkxNTljYmY1YTA1YTMyY2ZkMTFmNzBmMTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5d1517f1163f412f8547368e0d189bf8",
+      "statement": "useMarginAnalyticsByVariant fetches single-week GET /v1/analytics/weekly/by-variant with manually built params (the endpoint 400-rejects range/comparison/include_* flags) and skipDataUnwrap: true to preserve { data, pagination } so has_more/next_cursor survive for cursor pagination; mapVariantItem maps items to VariantAnalyticsItem where tech_size is canonicalized to string|null (wire numbers coerced to strings, never parsed), revenue_net/total_units are exact while profit_allocated_rub/margin_allocated_pct are approximate and must render with an allocated marker, and all money/margin fields including the parent-nm context block are number|null per AP#8.",
+      "evidence": [
+        {
+          "resource": "repo://src/hooks/useMarginAnalyticsByVariant.ts#L46-L92",
+          "version": "repo-lines-v1:sha256:59e8d978933ebc1d7a2c576ec2195a19871f8e3db6f163a822b6948a4dbe4ba2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1MmFmYjVmMmEwNzQ2Y2JkMDI5ZmVhNmUyNGM2YWNjMTU5Y2VjNjJlZTBkNWRhMjNiN2MxNjc4NTdkZTcwNjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2NTIxMjkxYTk4YjhkOWRiNTZjZGZkMDE4Yzk1ODk2ZjgwNzc2YmE3MGEyZjNkMTUxYzYwMjk2MDFiYmVlNzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFjNWU0NWNjYTAwZjdiODJkYTQ3ZDFmNjBiYjQxZjY4YTYzNjk2ZGUwZjY4OWNlMGIyYTg5MjE5MTNjNTM5NGIifQ"
+        },
+        {
+          "resource": "repo://src/types/variant-analytics.ts",
+          "version": "repo-file-v1:sha256:9b197a1d962dabefaa6c6ad8e8765b361d18fe4aaef386be9489833f56187c41"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.0",
-    "at": "2026-09-09T08:47:58.907Z"
+    "by": "openwiki/0.5.1",
+    "at": "2026-09-11T08:47:52.616Z"
   }
 }

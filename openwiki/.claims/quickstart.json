@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4de731025bba4b47099ddb7ac4ee5d66273a17e7885f30ad162c4546ec3eb208",
+  "pageVersion": "sha256:f9239fca013d8cb7de3a5a835a3ef767677684da46f1c9d59bdaaf46ba5d140f",
   "claims": [
     {
       "id": "claim_07e85bb249e745f69c550323b16664e1",
@@ -86,7 +86,7 @@
     },
     {
       "id": "claim_b6851120b3a344e59b791e5ae2973b00",
-      "statement": "The two migration gate scripts have no npm-run alias and are invoked directly: node scripts/check-shadcn-migration-parity.mjs (Story 174.1 schema-v3 BMAD/route-ledger/OMX parity, 94 = 94 and 76 = 76) and node scripts/check-shadcn-ui-boundary.mjs (Story 174.2 design-system boundary ratchet, current baseline 118 in scripts/.shadcn-ui-boundary-baseline.txt, exit 1 only on increase); both run node:test self-suites first and are excluded from the Vitest run. The entire residual 118 is gated on the owner decision C5 (chart palette), so no boundary waves can proceed without it.",
+      "statement": "The two migration gate scripts have no npm-run alias and are invoked directly: node scripts/check-shadcn-migration-parity.mjs (Story 174.1 schema-v3 BMAD/route-ledger/OMX parity, 94 = 94 and 76 = 76) and node scripts/check-shadcn-ui-boundary.mjs (Story 174.2 design-system boundary ratchet, current baseline 57 in scripts/.shadcn-ui-boundary-baseline.txt, exit 1 only on increase); both run node:test self-suites first and are excluded from the Vitest run. The C5 chart-palette owner decision landed 2026-09-11, so the residual 57 is no longer owner-gated: C5 waves 1-2 executed (118 → 114 → 57) and waves 3-4 (components/app/types hex + 23 legacy classes, waterfall + exception lifts, target baseline 0) own the remainder.",
       "evidence": [
         {
           "resource": "repo://package.json#L17-L53",
@@ -94,7 +94,7 @@
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:f10f7170eeb4986f69d764a4cb97c3f8e9337963222188a647fc4c0ac289d0e4"
+          "version": "repo-file-v1:sha256:1326faec3eb42dc72ddffe46daf3940b932f48b9799f6cbf28e80504e7b34958"
         }
       ]
     },
@@ -202,7 +202,7 @@
     },
     {
       "id": "claim_dddeaa0fe9de402aaeee3fe79bb6eb74",
-      "statement": "Debt-session boundary waves 1-2 (PRs #394/#395) converted financial-summary (58 sites) and margin-family (29 sites) palette usage to semantic tokens, ratcheting the shadcn UI boundary count from 459 to 401 to 372 with 3 owner-accepted exceptions; later waves (through session-8, 2026-09-06) continued the ratchet down to the current baseline 118 in scripts/.shadcn-ui-boundary-baseline.txt.",
+      "statement": "Debt-session boundary waves 1-2 (PRs #394/#395) converted financial-summary (58 sites) and margin-family (29 sites) palette usage to semantic tokens, ratcheting the shadcn UI boundary count from 459 to 401 to 372 with 3 owner-accepted exceptions; subsequent P2 waves (through session-8, 2026-09-06) ratcheted down to 118, which held through sessions 9-11; the C5 epic waves 1-2 (2026-09-11) then lowered the baseline to the current 57 in scripts/.shadcn-ui-boundary-baseline.txt.",
       "evidence": [
         {
           "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L18-L21",
@@ -214,7 +214,7 @@
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:f10f7170eeb4986f69d764a4cb97c3f8e9337963222188a647fc4c0ac289d0e4"
+          "version": "repo-file-v1:sha256:1326faec3eb42dc72ddffe46daf3940b932f48b9799f6cbf28e80504e7b34958"
         }
       ]
     },
@@ -250,15 +250,19 @@
     },
     {
       "id": "claim_2134510cae8d4eec9f8debc679151e77",
-      "statement": "After the debt sessions through 2026-09-06 (handoff chain ending in HANDOFF-2026-09-06-V18-SESSION8), the boundary track is complete: the whole 118 residual (95 chart-hex + 23 legacy classes) is gated on the C5 chart-palette owner decision, with boundary baseline 118 in scripts/.shadcn-ui-boundary-baseline.txt; the remaining backlog is P3-window work (prettier md, route guards, harness restart-per-run, FR-7/AT-matrix/Manager-creds, docs-95 split, pm2 delete 5, CABINET-BROWSER-02 red) plus the owner ledger, per session-8 handoff sections 3.0-3.2.",
+      "statement": "After sessions 9-11 (handoffs HANDOFF-2026-09-09-V19 … HANDOFF-2026-09-10-SESSION11), the unblocked debt backlog is exhausted: remaining work is only owner/BE-blocked plus registered residuals. The C5 chart-palette owner decision landed 2026-09-11 (session-12, 8 decisions in debt-c5-w1-chart-token-canon.md §1): CSS tokens var(--chart-N) are the single canon source, the categorical palette extends to chart-1..10, valence tokens bundle WCAG 1.4.11, and the boundary goal is full 118 → 0 with all 3 exceptions lifted across 4 waves. Wave-1 (#441) deleted the dead src/lib/chart-colors.ts (118 → 114) and wave-2 migrated all remaining src/lib hex sites (→ current baseline 57; src/lib has zero hex literals). Waves 3-4 remain: components/app/types hex (the 57 residual), 23 legacy classes → status/tint tokens, waterfall valence semantics, exception lifts, baseline 0.",
       "evidence": [
         {
-          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md#L28-L52",
-          "version": "repo-lines-v1:sha256:4cd949bcdeaff8169275ebaaec5cf97ff94bd41d4aa2099ba8eb2c8a28b6f4e4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjMjIxMzEwOWY4Njc0ZWM3NTVmZWQwMjZiNzYyMmFmODcxOWQ5ODhlOWNjN2NmOWIyMjAzYWY4MzYwOGMyZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhYWUzNDAwYTZjYzQ4MWU0ZjJhMDUwYzFkYzI5MTU4NjNlZGY0OTc0OGU3ZjZjZDViN2U0MGI4YWYyNTdhMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwNmY5OTk1NDZiNmJiNDEyMjYwZjQwNDM5YTM5NjYxZDVjNzAwYWQzZDE0MmIxZmNmMzU4NTUyNDk2NzhmOGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjNjhhNjhlZTdkMGQwZjM1NmMzNGExZTI1OTA5NzVlNmRmYTE4YWMxY2RiYmVjN2QzYjgwMTQ4NmQwYWEzNGIifQ"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md#L12-L24",
+          "version": "repo-lines-v1:sha256:f4721a16c07d9c1d9d22ccfca26c20f3ef0ab978dd4ba21bb3cca96ddc35e83f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMWZhM2ViMzJhNGU0MDE5ZjFjMjQ3NWE0MTUzMGI4YmI1ZjY1NThiYWM0NGQ4ZGJiYmI2MmFhZjU0NDQwYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkNGVhYWYwNDc2NmU5MzBlZDBhZjllNzA0ZDBmNTA1NWU3OTdhMmNmNzZiNTU5NjM2MzkxZGEyMmI0ZmZhMzAifQ"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-10-SESSION11-FOLLOWUPS-EXECUTED.md#L26-L46",
+          "version": "repo-lines-v1:sha256:b7f42dda0da3e9956da7e18e50a974c68919de071bbf646a64261f654d1af2a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjMjIxMzEwOWY4Njc0ZWM3NTVmZWQwMjZiNzYyMmFmODcxOWQ5ODhlOWNjN2NmOWIyMjAzYWY4MzYwOGMyZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkODJjMWZiYmQwOThkNTI0NjkyMjViYmIyNTQ3NjM0NTkyMzRlOTcxYjZiYmFhM2ExMjY2ODg1M2U1ZjNmZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmNjhhYjlmY2M1NjY4YzY2MTg4MGIzMDAzYWNjMDMwNmMzZmQ2MmJkYWQ0NzJjMDQ5ZjdiOGZkNWFhZmVkODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2OWUyNmY3ZWViYmU5Y2IzMGVkMzExNWU1MTlmMmNkMzFmNDk0NjM0Y2JmZWRjZTJkNmE3NTZhYTIzYTliNmQifQ"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:f10f7170eeb4986f69d764a4cb97c3f8e9337963222188a647fc4c0ac289d0e4"
+          "version": "repo-file-v1:sha256:1326faec3eb42dc72ddffe46daf3940b932f48b9799f6cbf28e80504e7b34958"
         }
       ]
     },
@@ -316,13 +320,31 @@
         },
         {
           "resource": "repo://scripts/run-e2e-isolated.mjs#L1-L40",
-          "version": "repo-lines-v1:sha256:1622b9b1012ce8f646fd519bffe27e2c31648629b04d3253f7f50fc44f757329:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1OWM0Nzg3MmI3MWYxMjU4OTk0Mjg5MjQ2NGU3NjRjMGRiMzUwYzIwYjcyMjI4NjQ1NjE1Y2MzNmUwYTA3MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3ZmFlMGM5YmRjMmY1MWMzYjQzZTAyMDJlY2Q4N2MxMDg2YjAzODZmMDBkNmFjNGQyNTRjZmNmZjU0ZjJlYjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzMWYxODMyNmViMTFjNzZlODMzYmRmZTZjODBlMDU5YjZiOWJjZWQwYWVjMzFkN2RjMmQzOGUwOGYyNTQ4ZDYifQ"
+          "version": "repo-lines-v1:sha256:58af39a971cb59d836fee5267ee241a730ee1a5c632d9463141db5543f24b188:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1OWM0Nzg3MmI3MWYxMjU4OTk0Mjg5MjQ2NGU3NjRjMGRiMzUwYzIwYjcyMjI4NjQ1NjE1Y2MzNmUwYTA3MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3MmZlYjA0Mzk5ZmMzNjM1ZWNkNzBhOWFiYTEzMTNmZDU1ZjkxN2M3NzJlOTQ5ODA5ODJlYmE0MTQ2NGRmYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzMWYxODMyNmViMTFjNzZlODMzYmRmZTZjODBlMDU5YjZiOWJjZWQwYWVjMzFkN2RjMmQzOGUwOGYyNTQ4ZDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ff60236fa1754f41a52d92def031efb6",
+      "statement": "The C5 wave-1 token foundation is live in src/styles/globals.css: --chart-7..10, --valence-1..5, and --valence-neutral declared in both light and dark themes with --color-* mappings, a dark --chart-2 lightness fix raising the selected-hover stack pair to ≥4.5:1 (pinned by a numerical contrast test), and a canon declaration making CSS variables the only legal chart-color source for new code; the production-dead src/lib/chart-colors.ts was deleted in the same wave.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md#L41-L53",
+          "version": "repo-lines-v1:sha256:b7fcff0d571dfc1d64c41c9c235a022c2d2c04dbfb535ba56142df3cd9e2bcf1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0Y2RhYzI2ZTU4YTM2ZDM3ZjExOTEyODgzY2MwNWVmYjhhNDExMGI1NGYwNWJlZGVkZDI3NzY4YmIxYzhmMTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhMzcxM2FkY2VkMjI0MmViMzkxZDhlYzAzZDc2ZjYwMjUwOTQ4NGUzMWYxM2ExNDQ4YjA5ZjI2NWZlNzFiOGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExMDIzMzI1MjA3NDU4NzM5YjczZGI5ODU0MDdhMjNjNjEyNjE3YTc4NTNjNjI5NzJmZjlmM2NhZmI0OWNjZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhMDNhYzNkOGIxMmYzZjRlZjA3OTRjYjQ5YWJiNWE1NzBjZmVmNWY4N2EwMDU1NTc0OGE5YTcwYTgwN2Q5OWMifQ"
+        },
+        {
+          "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
+          "version": "repo-file-v1:sha256:1326faec3eb42dc72ddffe46daf3940b932f48b9799f6cbf28e80504e7b34958"
+        },
+        {
+          "resource": "repo://src/styles/globals.css#L196-L282",
+          "version": "repo-lines-v1:sha256:3223630ded56b10d18c1ee18c788b0e5953ffe11da9e7aabf0b37276e724d50f:eyJzZWxlY3RlZExpbmVDb3VudCI6ODcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlYWE2M2VlNDUzMzcyMjk2ZDUzNzkxOTc3OTIyNDk2MmZkYTU5N2IyYTRhNmYxMTU4N2QyYWU0NDM0MmZjMDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmNGI5OTU1NDRlMTIwNDE3YTMwNTE5OTNjMjc4NThlMzRhNjY0NDlmMzUzYWM0MDY0N2RkYmY2YWNkYjkyZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3MzM3NjdmOTJjZDQwZTM3NjVkZjY5ODg3YTE1NTdlYTFjN2Q1MDZmMTdjYTllMzE3NmFhNDViNDg1NjI0YjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2ZjdjYmI2NmFlMTA3YTVhYjRmMzZkZWRjNTU4NGZkN2VhZGJhYjhhMGE4Yjc1OTZkM2FkOTYyYmZlYTY0OWEifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-10T08:47:50.517Z"
+    "at": "2026-09-11T08:47:52.616Z"
   }
 }

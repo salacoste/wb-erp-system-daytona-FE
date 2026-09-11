@@ -56,10 +56,10 @@ sources:
     resource: repo://src/lib/sanitize-fallback-message.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.1", at: "2026-09-10T08:47:50.517Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
 verified:
   - by: openwiki/0.5.1
-    at: 2026-09-10T08:47:50.517Z
+    at: 2026-09-11T08:47:52.616Z
 ---
 
 # Conventions & Quality Gates
@@ -235,7 +235,7 @@ flowchart TD
     B -- no --> F["exit 1 self-test-failed"]
     B -- yes --> C["scan src production files with LEGACY_PALETTE + CONTEXTUAL_HEX"]
     C --> D["subtract BOUNDARY_EXCEPTIONS suppressed files"]
-    D --> E{"total vs baseline 118?"}
+    D --> E{"total vs baseline 57?"}
     E -- greater --> G["exit 1 FAIL"]
     E -- equal --> H["PASS"]
     E -- less --> I["PASS + ratchet down, lower baseline in same commit"]
@@ -329,3 +329,4 @@ This complements the [Two-Pass Review Discipline](#two-pass-review-discipline): 
 - **Error test pattern** — Always use `mockRejectedValueOnce` (not `mockRejectedValue`)
 - **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
 - **No bare `TODO`** — covered above; `PENDING BACKEND:` / `FUTURE:` / ticket links only
+ above; `PENDING BACKEND:` / `FUTURE:` / ticket links only

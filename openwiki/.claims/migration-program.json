@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:2836f9edf7d74c1181ea68fe6e6d4893114992c261a1288eb4dafca27e251a62",
+  "pageVersion": "sha256:faae2349487d9fa819cd0eabd55537951385bbdc3fb878bad8e652a626263ca9",
   "claims": [
     {
       "id": "claim_7146a57eacad4db2bf7552b903072ad9",
@@ -308,7 +308,7 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:2183735cc241dbb64a49b527a26babb33f227e255a9f8fd3487268cab96b56cb"
+          "version": "repo-file-v1:sha256:71a5c96f044b128bce7d83bda2066fda47da03ae7c8f7f63fe0b2bf6abc43085"
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
@@ -348,7 +348,7 @@
         },
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:2183735cc241dbb64a49b527a26babb33f227e255a9f8fd3487268cab96b56cb"
+          "version": "repo-file-v1:sha256:71a5c96f044b128bce7d83bda2066fda47da03ae7c8f7f63fe0b2bf6abc43085"
         }
       ]
     },
@@ -414,15 +414,15 @@
     },
     {
       "id": "claim_9a42274ef00c48a680e52db938b03cb3",
-      "statement": "The debt-session Vitest floor advanced monotonically 19,363 (program close) → 19,439 (wave-3) → 19,448/19,464 (session-6) → 19,492 (FE-D1) → 19,521/19,537/19,559 (session-8) → 19,570 (session-9 route-guards #427, +11 pins), with each increment shipped in the same PR that updates the CLAUDE.md Accepted Baselines floor (currently ≥ 19570).",
+      "statement": "The debt-session Vitest floor advanced monotonically 19,363 (program close) → 19,439 (wave-3) → 19,448/19,464 (session-6) → 19,492 (FE-D1) → 19,521/19,537/19,559 (session-8) → 19,570 (session-9 route-guards #427, held exactly by sessions-10/11) → 19,573 (C5-W1, +3 token-contract pins — the current CLAUDE.md floor), with each increment shipped in the same PR that updates the CLAUDE.md Accepted Baselines floor.",
       "evidence": [
         {
-          "resource": "repo://CLAUDE.md",
-          "version": "repo-file-v1:sha256:0ed2f8cab5b244c99d7f4deeaded2ed16ddc7cafd4a1afa099a0b88a7cf5c164"
+          "resource": "repo://CLAUDE.md#L153-L154",
+          "version": "repo-lines-v1:sha256:3d7aaccec8927779931c1f60dcfb81f4b9b93898fc8739990dd122501749a6c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTI4Y2FjODA3MTZjYzUzY2M0ODAyZjU1NTlhOTg1ZGIzYmFiOTgxMDE0MmM4OGQyNTkxYTQ1YzkxZTM0ZTJiOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWM5NDliMzE3OTBmOTBiZTNiNzc1YTE5OWMzOTVjMmU2MzJmNTFjZDE5NjEzNjc3NzM5MjI0MzZhYTQzYzZkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
         },
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-route-guards-exact-array.md",
-          "version": "repo-file-v1:sha256:d04d862d54bac033295a98c16c987b95deecd08480950b8da1e377cfc8c26db5"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md",
+          "version": "repo-file-v1:sha256:f7dd4b4d8d505d7688f5a69626011781b42cedd245a81b59b5912fb23a2d4164"
         }
       ]
     },
@@ -520,7 +520,7 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-docs-95-zoning.md",
-          "version": "repo-file-v1:sha256:8bcd0043aa95196dd3bf2d825206db69ccabafb04d6c4cba2c14185d0444f32c"
+          "version": "repo-file-v1:sha256:8d7b3f090717dde3f51daa72a3f640d46df3cc61459e146afd61ff98c7313c2b"
         },
         {
           "resource": "repo://scripts/.check-docs-baseline.txt",
@@ -537,10 +537,82 @@
           "version": "repo-file-v1:sha256:562272d0edfa50f78ee4c0046ac92fab3ff38dee205574f73896906cc83383be"
         }
       ]
+    },
+    {
+      "id": "claim_0d48024174204c7f80165c85228e7e06",
+      "statement": "Session-10 (V20, 2026-09-10) closed its 4-item window with PRs #430-#433 (cleanup 0/0/0 ×4) and two registry §25 micro-closures: the \"unowned surfaces\" were resolved by owner fixation of absence (4 unguarded zones accepted as a documented residual), and the V16 \"pm2 delete 5\" item was a rotted no-op (pm2 jlist shows 0 stale registrations; id 5 is the live wb-repricer-frontend-dev). The docs-95 zoning merged as PR #433 after a pass-1 REJECT (the artifact's own backtick citation matched CITATION_REGEX, the #424 recurrence) and a delta re-pass APPROVE, leaving the P3 backlog exhausted to owner/BE blockers.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-docs-95-zoning.md",
+          "version": "repo-file-v1:sha256:8d7b3f090717dde3f51daa72a3f640d46df3cc61459e146afd61ff98c7313c2b"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
+          "version": "repo-file-v1:sha256:71a5c96f044b128bce7d83bda2066fda47da03ae7c8f7f63fe0b2bf6abc43085"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-10-SESSION10-4-ITEMS-EXECUTED-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:1c315c348c01d1f7fff131815b75118d025e31d09af079d402f44b66b4796184"
+        }
+      ]
+    },
+    {
+      "id": "claim_86c6533b36d84187a36820a660d74095",
+      "statement": "Session-11 (2026-09-10) closed the follow-up tranche with PRs #435-#439 plus a no-op, exhausting the unblocked backlog: FU-1 migrated 7 cwd anchors in 4 source-contract guards to import.meta.url (recon twin-sweep corrected the handoff's \"2 contracts\" to 4 files; orchestrator depth plans wrong in 2 of 4, proven by node-resolve pre-commits; manifest regen set-diff exactly 1 source-SHA of 275); FU-2 codified the repo-wide 170.6 zero-literal canon declaration across 27 files; FU-3 hardened the isolated e2e runner (free-port restore-verify kept as the owner-pinned loud fail-safe; dev-spawn fast-fail aborts readiness within one poll tick behind a try/finally gate; node:test 56→63); FU-4 swept the stale \"(verified W26)\" comment; FU-5 was a no-op (the FR-7 recurrence disclosure already lived in the spec). Live state main 092e7c26: Vitest 19,570/0, boundary 118, 174.3 contracts 33/33, manifest 275/275 == disk.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-fu1-cwd-anchor-contracts.md",
+          "version": "repo-file-v1:sha256:6db6b0c58086bff066bfa2407098ba695b677afd8f074d97cc97071de67db61e"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-fu3-runner-failsafe.md",
+          "version": "repo-file-v1:sha256:f54e418d24bf6cf4c2da6afa3ad7660b855c581dff35814f6f4b728fb6436110"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-10-SESSION11-FOLLOWUPS-EXECUTED.md",
+          "version": "repo-file-v1:sha256:3e80236ec4b50fd7e5521da00cea0e2406296a75383bef14de9fea521f20aa63"
+        }
+      ]
+    },
+    {
+      "id": "claim_42d6bf506d08446fa420314c24a0d7c0",
+      "statement": "The C5 chart-palette epic was unblocked by eight owner decisions on 2026-09-11 (CSS tokens as the sole chart-color canon, categorical chart-1..10, --valence-1..5 + --valence-neutral, waterfall valence semantics, full 118→0 with all 3 boundary exceptions lifted, 4-wave delivery, review mode 4/2/2/4). Waves 1-2 executed: W1 (PR #441) minted +10 token roles ×2 themes in globals.css, fixed dark --chart-2 lightness 59.6%→70% (selected-stack pair 5.31:1, RED-check reproducing 3.6979 ≈ the wave-6 \"3.71\"), deleted the production-dead src/lib/chart-colors.ts, and advanced floor 19,570→19,573; W2 migrated 57 lib-hex sites to tokens with the codified color-mix tint recipe (raw var triplets are not colors — jsdom is blind to CSS-variable resolution; hsl(var(--x)) would re-inflate the boundary). The ui-boundary ratchet fell 118 → 114 → the current 57 (residue = 38 chart-hex + 19 legacy classes: components 37 + app 17 + types 3, owned by C5 waves 3-4). An owner fork remains for wave-4: light valence/chart-7/8/10 as text are 1.92-3.76:1 (below AA; chart-9 light 4.83 passes), so closing the WCAG 1.4.11 bundle in light requires either retuning (breaking the pixel contract) or recorded acceptance of legacy light.",
+      "evidence": [
+        {
+          "resource": "repo://CLAUDE.md#L153-L154",
+          "version": "repo-lines-v1:sha256:3d7aaccec8927779931c1f60dcfb81f4b9b93898fc8739990dd122501749a6c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTI4Y2FjODA3MTZjYzUzY2M0ODAyZjU1NTlhOTg1ZGIzYmFiOTgxMDE0MmM4OGQyNTkxYTQ1YzkxZTM0ZTJiOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWM5NDliMzE3OTBmOTBiZTNiNzc1YTE5OWMzOTVjMmU2MzJmNTFjZDE5NjEzNjc3NzM5MjI0MzZhYTQzYzZkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md",
+          "version": "repo-file-v1:sha256:f7dd4b4d8d505d7688f5a69626011781b42cedd245a81b59b5912fb23a2d4164"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
+          "version": "repo-file-v1:sha256:71a5c96f044b128bce7d83bda2066fda47da03ae7c8f7f63fe0b2bf6abc43085"
+        }
+      ]
+    },
+    {
+      "id": "claim_a10de723dee04c3caa7fdcbe51876f1c",
+      "statement": "The immediate predecessor to the migration program, Epic 165 (Truthful Status & Backend-Ready Backlog), closed with stories 165.1-165.3 done and 165.4 (liquidity trends activation) and 165.5 (per-status backfill retry) deferred because they are backend-gated — 165.4 waits on the backend daily-snapshots contract and 165.5 on the backend per-status retry contracts; the Epics 166-174 shadcn migration program began after that lane settled into its deferred state.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L16-L16",
+          "version": "repo-lines-v1:sha256:10d863c611b229d7ea856083cafaceed0f521738be43739ae3795ca5053658eb:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTBkODYzYzYxMWIyMjlkN2VhODU2MDgzY2FmYWNlZWQwZjUyMTczOGJlNDM3MzlhZTM3OTVjYTUwNTM2NThlYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTBkODYzYzYxMWIyMjlkN2VhODU2MDgzY2FmYWNlZWQwZjUyMTczOGJlNDM3MzlhZTM3OTVjYTUwNTM2NThlYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmE4NTQ0MGMyNzk0MGNmOGM2ZmQxOWQyYTJiYzNkMDNiNWNjZGEwYmVmNTQ5YjA1YjllMTc5ZDhiM2YyNDkyMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmIxMzQ4NmM1NGMwZjdiMGVjOGMxNzdjOWY0NzdhNmE3Y2YyYzJmZDBmNzU0MmViYmFjNmEzNzMwZGRjNDc2ZCJ9"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/epics-162-165-fe.md#L215-L219",
+          "version": "repo-lines-v1:sha256:27c2b3f4d86d9eb4caf369c47a90f51a8be8ad0f0353b6edf5c0e8209456f51f:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGY5YzNiMzU3NDI3MTc1NWVhN2MzMDUxMDU5ZmRhZDYyMGE0NTY0MjQxNjQyMzIwNDQ2ZmY5YzE2Mjg5YWQ4YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDNiYTEyZDdmMTI3NGRjNzgzYWQwM2U2M2MyNjg4ZTU5Y2ZlYWU4NTkwNDljZGNmOGZkNWRhOTBjZTc3MGViYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmY3Y2JhM2M3OWI2YmNhZDhkYzNjMGExY2Y3NzMwYjZkYTIzYTJjOTNlNGUwMTU1Y2EwM2VkYzRlOTM0ODlkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTA4NGViZTNhZTRmOGFkZjYyMzc1Y2FlNzQ3M2EzYTI3ZTA5ZWNiOWI0MzFmM2YzMTNkNjY0YWY1MjhmZmMwOSJ9"
+        },
+        {
+          "resource": "repo://docs/EPICS-AND-STORIES-TRACKER.md#L251-L251",
+          "version": "repo-lines-v1:sha256:dd3d31e56d012f19cbcf4644e2d1ad7cbd4fdcac94ba9b28b6e6dbb344d6eb80:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQzZDMxZTU2ZDAxMmYxOWNiY2Y0NjQ0ZTJkMWFkN2NiZDRmZGNhYzk0YmE5YjI4YjZlNmRiYjM0NGQ2ZWI4MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQzZDMxZTU2ZDAxMmYxOWNiY2Y0NjQ0ZTJkMWFkN2NiZDRmZGNhYzk0YmE5YjI4YjZlNmRiYjM0NGQ2ZWI4MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWE4NGEwNmYyNzg1NmJlZWQzNGEwMjY0MDZkMGRiYjIxZmE1MTE5MDA2N2NkZGEzYjg2MGQ0OGY1ZWVkYWZmYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGRkY2VmMDY2MzE1YWQ2N2ZjODFlY2NiZjcwNjhiM2YyOWJhYmM4M2FhNTFkM2I5MGRhOTU3MDM0YjAyOTE2NiJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-10T08:47:50.517Z"
+    "at": "2026-09-11T08:47:52.616Z"
   }
 }

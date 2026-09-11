@@ -36,6 +36,7 @@ openwiki:
     - _bmad-output/implementation-artifacts/debt-p2-w4-component-families.md
     - _bmad-output/implementation-artifacts/debt-p2-w5-lib-residue.md
     - _bmad-output/implementation-artifacts/debt-p2-w6-warn-on-warn-cluster.md
+    - _bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md
     - docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md
   symbols:
     - PageHeader
@@ -80,26 +81,24 @@ openwiki:
     - PageHeader renders exactly one logical h1 regardless of visual size.
     - Zero and missing stay distinct everywhere: nullish or non-finite metric input never becomes a fabricated zero; terminal states never fabricate retained content or a zero.
     - tailwind.config.ts is removed; Tailwind v4 config is CSS-first in src/styles/globals.css.
-    - Production source carries no legacy Tailwind palette classes or contextual hex/rgb/hsl/oklch literals outside the ratchet baseline (372, lowered from 523 by Story 174.4, then 459→401→372 by the post-program P2 owner-sweep waves 1–2) and the registered BOUNDARY_EXCEPTIONS (3 files; owner/debt ID + manifest mirror required).
+    - Production source carries no legacy Tailwind palette classes or contextual hex/rgb/hsl/oklch literals outside the ratchet baseline (57, lowered from 523 by Story 174.4 → 459 → 401 → 372 → 267 → 118 by the P2 waves, then 114 by C5-W1 and 57 by C5-W2 on 2026-09-11) and the registered BOUNDARY_EXCEPTIONS (3 files; owner/debt ID + manifest mirror required).
   validation_commands:
     - npx vitest run src/styles/__tests__ src/components/ui/__tests__ src/components/product
 sources:
+  - id: openwiki-source-4d882e43298cc53b81cfb2ce
+    resource: repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md
   - id: openwiki-source-608936d71cd48c100e032fd1
     resource: repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md
   - id: openwiki-source-54ef9539556b5103cebfee4c
     resource: repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md
-  - id: openwiki-source-e2ed56eb52eef101706f70c1
-    resource: repo://_bmad-output/implementation-artifacts/debt-p2-w4-component-families.md
-  - id: openwiki-source-5de30f3007b2bc9d89c135fd
-    resource: repo://_bmad-output/implementation-artifacts/debt-p2-w5-lib-residue.md
   - id: openwiki-source-bd7d4cadb47c08a8a3fdb98e
     resource: repo://_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md
   - id: openwiki-source-963badef5db4ea717da0c93c
     resource: repo://_bmad-output/planning-artifacts/ux-design-specification.md
   - id: openwiki-source-61e0371a06d746820bb42371
     resource: repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md
-  - id: openwiki-source-7825c41e82ca828e4e955736
-    resource: repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md
+  - id: openwiki-source-a2371d6362e5db4bc834ad03
+    resource: repo://CLAUDE.md
   - id: openwiki-source-18c74d6f5373cdfcebe82221
     resource: repo://e2e/fixtures/story-174-3/chart-inventory.ts
   - id: openwiki-source-f2a4582a0a553ed13286aad6
@@ -166,10 +165,10 @@ sources:
     resource: repo://src/styles/__tests__/globals-token-contract.test.ts
   - id: openwiki-source-13697ff46e81b49dcb27ba68
     resource: repo://src/styles/globals.css
-generated: { by: "openwiki/0.5.0", at: "2026-09-09T08:47:58.907Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
 verified:
-  - by: openwiki/0.5.0
-    at: 2026-09-09T08:47:58.907Z
+  - by: openwiki/0.5.1
+    at: 2026-09-11T08:47:52.616Z
 ---
 
 # Design System
@@ -181,7 +180,7 @@ flowchart TD
   TOKENS["1. Semantic tokens in src/styles/globals.css"] --> PRIM["2. Generic shadcn primitives in src/components/ui"]
   PRIM --> COMP["3. Product composition families in src/components/product"]
   COMP --> DOMAIN["4. Domain-shared and route-owned UI, Epics 167-173, 76 routes"]
-  DOMAIN --> ENF["5. Enforced boundary: ratchet 372 + exceptions register (174.2, swept 2026-09)"]
+  DOMAIN --> ENF["5. Enforced boundary: ratchet 57 + exceptions register (174.2, P2 waves, C5 waves 2026-09)"]
   ENF --> AUDIT["6. Visual/a11y/functional evidence and close, Epics 174.3-174.5"]
 ```
 
@@ -196,9 +195,18 @@ Before Epic 166, primitives carried hardcoded and light-only palette values (`bg
 `src/styles/globals.css` is the single source of truth for the theme. It uses Tailwind v4 CSS-first configuration:
 
 - `@import 'tailwindcss'` + `@plugin 'tailwindcss-animate'` + a `@custom-variant dark` for class-based dark mode (matching `next-themes`).
-- An `@theme inline` block maps every utility color to an HSL CSS variable: background/foreground, card, popover, muted, secondary, accent, border, input, disabled, ring/ring-offset, brand, primary (+ `primary-pressed`, `primary-subtle`), destructive, **financial** (positive/negative/neutral), **status** (success/warning/error/information/pending, each with foreground), **availability** (available/unavailable/stale/partial/restricted/unknown), telegram, and the full **chart** role set (series 1–6, positive/negative/reference/target/forecast/confidence-band/grid/axis/tooltip/selection).
+- An `@theme inline` block maps every utility color to an HSL CSS variable: background/foreground, card, popover, muted, secondary, accent, border, input, disabled, ring/ring-offset, brand, primary (+ `primary-pressed`, `primary-subtle`), destructive, **financial** (positive/negative/neutral), **status** (success/warning/error/information/pending, each with foreground), **availability** (available/unavailable/stale/partial/restricted/unknown), telegram, and the full **chart** role set: categorical **`chart-1..10`**, valence (`positive`/`negative` + **`valence-1..5`, `valence-neutral`**), reference/target/forecast/confidence-band/grid/axis/tooltip(+foreground)/selection.
 - Typography (`--text-h1` …), spacing, radius, shadow, and animation scales are also defined in `@theme`.
 - Light (`:root`) and dark (`.dark`) blocks assign concrete HSL values to each variable.
+
+**C5-W1 chart/valence token canon (2026-09-11, PR #441)** — the C5 owner decision made CSS tokens the single canon source for chart colors: every chart color must read from these CSS variables (`var(--chart-N)` / Tailwind `chart-*` utilities); hex literals and parallel color constants are banned for new code, and the boundary checker's contextual-hex + ratchet enforcement drives the legacy sites to zero. The wave added ten roles to both themes:
+
+- `--chart-7..10` extend the categorical palette to ten series (unit-economics 10-series, index-mapped 1:1); their light values are pixel-identical to the legacy palette slots 6–9 (#EAB308/#EF4444/#6B7280/#14B8A6).
+- `--valence-1..5` + `--valence-neutral` are the six-tier good→bad scale for profitability (light values pixel-identical to the legacy tier hexes; `valence-3 ≡ chart-7` and `valence-5 ≡ chart-8` are deliberate byte twins following the `chart-4 ≡ chart-positive` precedent). They bundle the WCAG 1.4.11 valence-channel owner item.
+- Dark `--chart-2` lightness was raised 59.6% → 70% (hue preserved): the storage accent (`text-chart-2`) failed AA at 3.71:1 on the selected-hover row stack (the wave-6 residual); the contract test now pins ≥4.5:1 on that composite stack.
+- `src/lib/chart-colors.ts` was deleted in the same wave — it was production-dead (0 importers) and its own header had forbidden retro-migration.
+
+Known owner fork (registered in the C5-W1 artifact): light valence values as *text* on white measure 1.92–3.76:1 (below AA — pixel-preserved legacy rendering, not a regression; only `chart-9` light at 4.83:1 passes). The `semanticTextRoles` AA sweep deliberately excludes valence until the owner decides (retune light values, breaking the pixel contract, or accept legacy-light and close 1.4.11 for dark only).
 
 The JavaScript config was removed: `tailwind.config.ts` is deleted, `postcss.config.js` runs `@tailwindcss/postcss` + autoprefixer, and `components.json` is aligned (`config: ""`, `css: "src/styles/globals.css"`, `cssVariables: true`).
 
@@ -206,9 +214,9 @@ The JavaScript config was removed: `tailwind.config.ts` is deleted, `postcss.con
 
 | File | Asserts |
 |------|---------|
-| `src/styles/__tests__/globals-token-contract.test.ts` | Every required semantic role is declared in `@theme`; utility-to-variable mapping is complete and consistent. |
-| `src/styles/__tests__/globals-compiled-contrast.test.ts` | Real PostCSS-compiled output resolves to concrete colors; foreground/background pairs meet WCAG contrast for light and dark themes. |
-| `src/styles/__tests__/token-test-utils.ts` | Shared `parseGlobals`, `themeInlineRules`, `declarationsFor`, `hslTripletToHex` helpers. |
+| `src/styles/__tests__/globals-token-contract.test.ts` | Every required semantic role (incl. `chart-7..10` and the valence set) is declared in `@theme` and mapped in both themes; the approved red identity values; the C5-W1 light pixel contract (`chart-7..10`, `valence-1/2/4/neutral` ≡ legacy hexes, valence-3/5 ≡ chart-7/8); ≥8° circular hue separation across `chart-1..10` in both themes; dark `chart-2` ≥4.5:1 on the composited selected-hover stack (pinned to the frozen triplet `291.25 46.601942% 70%`). |
+| `src/styles/__tests__/globals-compiled-contrast.test.ts` | Real PostCSS-compiled output resolves to concrete colors (compile pins include `bg-chart-1..10` and `text-valence-1..5`/`-neutral`); the ten chart roles are unique; foreground/background pairs meet WCAG contrast for light and dark themes. |
+| `src/styles/__tests__/token-test-utils.ts` | Shared `parseGlobals`, `themeInlineRules`, `declarationsFor`, `hslTripletToHex`, and (C5-W1) `compositeTriplets`/`rgbToHslTriplet` alpha-compositing helpers for stack contrast pins. |
 
 ## Layer 2 — Generic shadcn primitives
 
@@ -414,7 +422,7 @@ After the program closed, the category-1 residue began its ratchet-driven owner-
 - **Wave 5 — lib residue** (PR #408, 2026-09-05; 12 files / 149 sites, artifact `debt-p2-w5-lib-residue.md`): the `src/lib/*.ts` class-map/formatter/config residues (backfill-utils, campaign-utils, coefficient-types, dimension-types, efficiency-filter-config, efficiency-utils, fbs-analytics-utils, orders-status-config, profitability-utils, sync-status-config, two-level-pricing, unit-economics-formatters) migrated to semantic tokens; 7 of the 12 files were production-dead channels (migrated coherently — only tests observe them). Boundary **267 → 118** (−149 exactly; baseline + CLAUDE.md same commit). New canon: **computed-key collapse** — SOLID-tier maps with `bgColor === bgColorActive` break the two-key computed-bg object literal in `cn()` (later `false` wins → inactive chips lose their background); fixed with a single computed key ternary (`EfficiencyFilterChips.tsx`), and **solid-chip active affordance** is `ring-2 ring-ring ring-offset-1` (a border in the chip's own color is invisible). The CLAUDE.md baseline row is a **scope contract** — the residue composition must be recomputed by a live run, not carried forward as prose.
 - **Wave 6 — warn-on-warn cluster + selected-row stacks** (PR #417, 2026-09-06; artifact `debt-p2-w6-warn-on-warn-cluster.md`): 12 text-contrast FAILs in 6 files (worst: `text-white` Link on solid warning at **1.41 dark**), remedied with fg-on-tint / solid-warning-foreground pairs; boundary unchanged at 118 (semantic tokens only). New canon: contrast pins are valid only for the exact tint+stack measured (bare-bg pins were invalid — 3.04 was really 2.95 on the real stack), and pins are icon-scoped regexes on the exact class, not vacuum color matches. Residual: chart-2 dark selHover 3.71 and warn/40 borders 2.66 → registered with the C5 / 1.4.11 owner riders.
 
-**Boundary track terminal state**: the P2 boundary track is **complete** — the remaining **118 = 95 chart-hex + 23 legacy-palette classes** (lib 61 + components 37 + app 17 + types 3, concentrated in liquidity-*/seasonal/unit-economics-config/chart-colors and hex fields of profitability/orders, plus route chart configs) is **entirely blocked on the owner decision C5 chart-palette** (options: categorical token set — recommended, expanded exceptions, or accept-118). No new boundary wave is possible without a C5 decision; the AA waves after wave 5 (`/80`-sweep, wave 6) all held the baseline at 118 because they moved text to semantic tokens, which sit outside `LEGACY_PALETTE`. The earlier wave-1/2 registered tint sites and the wave-3 follow-up cluster were all addressed by waves 3–6; still open with the owner besides C5: the WCAG 1.4.11 valence channels (tint 1.07–1.21, border 1.52–1.89 < 3:1), `TwoLevelPriceHeader.tsx` `text-primary/70` ₽ glyph, and the `PctBadge colorClass` escape-hatch.
+**Boundary track — from P2 terminal state into the C5 epic**: the P2 track had terminated at **118** (95 chart-hex + 23 legacy-palette classes), entirely blocked on the owner decision C5 chart-palette. That decision landed 2026-09-11 (session-12): CSS tokens are the single canon source; the categorical palette extends to `chart-1..10`; profitability gets `valence-1..5 + neutral` tokens (bundling WCAG 1.4.11); the waterfall gets valence semantics (increase→chart-positive, decrease→chart-negative, total→neutral) with its exception lifted; and the goal is **full 118 → 0 with all 3 exceptions lifted** across four waves. **C5-W1** (PR #441, artifact `_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md`) delivered the token foundation, the canon declaration in `globals.css`, and the dead-file deletion of `src/lib/chart-colors.ts` (−4 sites, boundary **118 → 114**). **C5-W2** (2026-09-11) migrated the 57 lib-hex sites (`liquidity-category-config`, `liquidity-action-benchmark`, `unit-economics-config`, `seasonal-localization`, `profitability-utils`, `orders-status-config`, `liquidity-utils`, `fbs-analytics-formatters`) to semantic tokens (valence/reference mappings, `chart-1..10` index mapping, status tints), lowering the boundary to the current **57**. The remaining residue — **38 chart-hex + 19 legacy-palette classes** (components 37 + app 17 + types 3: `expense-chart-config`, `TrendGraph`, product/elasticity/advertising chart configs, supply-planning-config, …) — is owned by C5 waves 3–4 (components/app/types sweep, then waterfall + exception lifts + baseline 0). Still open with the owner besides the wave roadmap: the WCAG 1.4.11 valence channels and the light-valence-as-text AA fork (see Layer 1), `TwoLevelPriceHeader.tsx` `text-primary/70` ₽ glyph, and the `PctBadge colorClass` escape-hatch.
 
 ## Route presentation source-contract guards (Epics 169–171 canon)
 
@@ -429,7 +437,7 @@ Current guards: `advertising`, `anomalies`, `brand-share` (in `src/components/cu
 
 ### Analytics, liquidity, and FBS sections — `src/components/custom/analytics/*`
 
-The shared analytics family is consumed by the marketing/FBS analytics routes: `BrandShareView.tsx` (170.4 — `id`+`aria-labelledby` filter names, filter context threaded into the chart subtitle, share-axis domain pinned 0–100) with `BrandShareChart`/`Tooltip`/`brand-share-chart-config` and the sr-only `brand-share-sr-table` data alternative; the FBS trends sections (`FbsTrendsChart`/`Legend`/`Tooltip` + `FbsTrendsChartStates`, 169.6) remain registered ratchet residue for their hex/palette marks until their owner sweep; `DataSourceIndicator` likewise. Route-local liquidity sections (`src/app/(dashboard)/analytics/liquidity/`, 169.10) own `liquidity-category-tokens.ts` as the single category token source, with the lib-side liquidity maps (`liquidity-category-config`, `liquidity-action-benchmark`, `liquidity-utils`) now partially token-migrated but still carrying registered hex chart marks (category 1 in the boundary manifest, ratchet-registered for the owner sweep; the pre-existing liquidity e2e failures are owned by 174.4).
+The shared analytics family is consumed by the marketing/FBS analytics routes: `BrandShareView.tsx` (170.4 — `id`+`aria-labelledby` filter names, filter context threaded into the chart subtitle, share-axis domain pinned 0–100) with `BrandShareChart`/`Tooltip`/`brand-share-chart-config` and the sr-only `brand-share-sr-table` data alternative; the FBS trends sections (`FbsTrendsChart`/`Legend`/`Tooltip` + `FbsTrendsChartStates`, 169.6) remain registered ratchet residue for their hex/palette marks until their owner sweep; `DataSourceIndicator` likewise. Route-local liquidity sections (`src/app/(dashboard)/analytics/liquidity/`, 169.10) own `liquidity-category-tokens.ts` as the single category token source, with the lib-side liquidity maps (`liquidity-category-config`, `liquidity-action-benchmark`, `liquidity-utils`) since migrated to the C5 valence/reference tokens by C5-W2 (the pre-existing liquidity e2e failures are owned by 174.4).
 
 ### Price-calculator sections — `src/components/custom/price-calculator/*`
 
@@ -439,7 +447,7 @@ The 71-file mutable manifest migrated by 172.8 (from `AcceptanceStatusBadge` to 
 
 Story 174.2 (feature PR #372) converted the per-route guard canon into a **repository-wide, ratcheted boundary**:
 
-- **Validator**: `scripts/check-shadcn-ui-boundary.mjs` (Node stdlib only) scans all production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, `src/test` excluded; enumeration is relative-first per the 171.8 anchor-safety canon) for two detection classes that form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12/169.11 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing quote/backtick/`]`/`;` lookahead, plus rgba/hsl/hsla/oklch color functions whose first ~40 chars contain a digit or `#`). It reports per-file/per-route/total counts and ratchets against `scripts/.shadcn-ui-boundary-baseline.txt` — a single integer, currently **118** (523 at 174.2 close → 459 by 174.4's live re-run → 401 by wave 1 → 372 by wave 2 → 267 by wave 4 → 118 by wave 5; waves 3, 6, and the `/80`-sweep used only semantic tokens, so the baseline held at 118 since 2026-09-05).
+- **Validator**: `scripts/check-shadcn-ui-boundary.mjs` (Node stdlib only) scans all production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, `src/test` excluded; enumeration is relative-first per the 171.8 anchor-safety canon) for two detection classes that form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12/169.11 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing quote/backtick/`]`/`;` lookahead, plus rgba/hsl/hsla/oklch color functions whose first ~40 chars contain a digit or `#`). It reports per-file/per-route/total counts and ratchets against `scripts/.shadcn-ui-boundary-baseline.txt` — a single integer, currently **57** (523 at 174.2 close → 459 by 174.4's live re-run → 401 by wave 1 → 372 by wave 2 → 267 by wave 4 → 118 by wave 5 → 114 by C5-W1 (2026-09-11, dead `src/lib/chart-colors.ts` deleted) → 57 by C5-W2 (2026-09-11, lib-hex → semantic tokens); waves 3, 6, and the `/80`-sweep used only semantic tokens and held the baseline unchanged).
 - **Ratchet semantics**: `node scripts/check-shadcn-ui-boundary.mjs` exits 0 at or below the baseline and exits 1 only when the total **increases**; any migration that lowers the count must lower the baseline in the same commit. There are no file-level waivers — suppression is only possible via the `BOUNDARY_EXCEPTIONS` map, which requires an owner/debt ID and a 1:1 mirror in category 5 of the classification manifest. Current exceptions (3 files, 22 suppressed matches): the C5 waterfall categorical hex and the two historical `#7C3AED` chart marks (pricing `PriceHistorySheet`, product `FunnelTab`); the F-10 FeedbackButtons exception was lifted 2026-09-02 when its legacy span moved to a solid AA-safe status pair.
 - **Self-suite**: `scripts/__tests__/check-shadcn-ui-boundary.test.mjs` runs 10 node:test cases proving the regexes fire on canonical violations and that enumeration/exclusion logic works, so the scanner itself cannot silently rot.
 - **Classification manifest**: `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md` records every finding in six categories and was **arithmetic-closed at Story 174.2 close** against the original 523 baseline: category 1 (live legacy palette/literals) 514 + category 2 (route-owner-completed residue) 1 + category 6 (comment-only false positives) 8 = **523**. Its §7 update (2026-09-02) records: total 459 = baseline 459 PASS, the FeedbackButtons exception lifted (3 registered / 3 suppressing live matches = 22), self-suite 10/10; the post-program P2 waves 1–5 continued the ratchet-down to **118**, where the boundary track terminated — the entire residue is now C5 chart-palette-owner-gated. Category-1 residue is swept by the ratchet at the owning surface's next touch (C14 owner-sweep pattern, executed in family waves through wave 5).
@@ -513,8 +521,8 @@ Per `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.m
 
 | Debt | Owner / due |
 |------|-------------|
-| Boundary category-1 residue: the counted violations registered in the classification manifest (372 after P2 waves 1–2; mostly `src/lib` class-maps and legacy chart widgets — waves 4–6 pending) — swept by the ratchet at the owning surface's next touch; category-2 `ScheduleVersionForm.tsx` residue reverified at next tariffs owner touch | Ratchet owner-sweep (C14), continuous |
-| Boundary ratchet semantics: "registered" = baseline-grandfathered (**118**, lowered 523→459→401→372→267→118 by 174.4 and P2 waves 1–5; waves 3/6 and the /80-sweep held it unchanged), exit-1 only on increase (locale-percent precedent); comment-only category-6 noise stays counted | Accepted exception, continuous |
+| Boundary category-1 residue: the counted violations registered in the classification manifest (57 after C5-W1/W2 on 2026-09-11 — 38 chart-hex + 19 legacy-palette classes, components 37 + app 17 + types 3, e.g. `expense-chart-config`, `TrendGraph`, product/elasticity/advertising chart configs) — owned by the C5 waves 3–4 sweep; category-2 `ScheduleVersionForm.tsx` residue reverified at next tariffs owner touch | Ratchet owner-sweep (C5 waves 3–4), in flight |
+| Boundary ratchet semantics: "registered" = baseline-grandfathered (**57**, lowered 523→459→401→372→267→118 by 174.4 and P2 waves 1–5, then 114 by C5-W1 and 57 by C5-W2; waves 3/6 and the /80-sweep held it unchanged), exit-1 only on increase (locale-percent precedent); comment-only category-6 noise stays counted | Accepted exception, continuous |
 | locale-percent ratchet at 4; docs check citation-state drift | Continuous ratchets, not blockers |
 
 ## When to consult this page
@@ -538,4 +546,8 @@ Token edits additionally require `npm run build` because the compiled CSS is wha
 ```bash
 node scripts/check-shadcn-ui-boundary.mjs                          # exit 1 only on increase past 118
 node --test scripts/__tests__/check-shadcn-ui-boundary.test.mjs   # scanner self-suite (10 cases)
+```
+ests__/check-shadcn-ui-boundary.test.mjs   # scanner self-suite (10 cases)
+```
+s   # scanner self-suite (10 cases)
 ```

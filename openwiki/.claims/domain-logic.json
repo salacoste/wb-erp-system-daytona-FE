@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:68aed5b147f351a92657796cc9b186ccf7555729bb4248e1b959e0d3fe0c79e2",
+  "pageVersion": "sha256:b6c50a714bc2b8618223284d151db32e1f7233e1607d4add0a54c9bc620ea1cd",
   "claims": [
     {
       "id": "claim_9bfdc04061f14b3bb2bb441081e614c3",
@@ -244,11 +244,11 @@
     },
     {
       "id": "claim_1012e7b621eb4c2c8f76d9d89a245b20",
-      "statement": "Profitability uses a shared six-status taxonomy with fixed operating-margin thresholds: excellent >25%, good 15–25%, warning 5–15%, critical 0–5%, loss <0%, unknown = COGS not assigned — declared both in EXTENDED_STATUS_CONFIG (profitability-utils.ts, with colors/classes/recommendations) and ProfitabilityStatus/PROFITABILITY_COLORS/PROFITABILITY_LABELS (sku-financials/core.ts, 168.11 /15-chip token classes).",
+      "statement": "Profitability uses a shared six-status taxonomy with fixed operating-margin thresholds: excellent >25%, good 15–25%, warning 5–15%, critical 0–5%, loss <0%, unknown = COGS not assigned (null margin also maps to unknown) — declared in EXTENDED_STATUS_CONFIG with valence color tokens, semantic status bg/text classes (P2 wave-5 measured), labels, and recommendations, classified by getProfitabilityStatus, and mirrored in ProfitabilityStatus/PROFITABILITY_COLORS (168.11 /15-chip token classes)/PROFITABILITY_LABELS in sku-financials/core.ts.",
       "evidence": [
         {
-          "resource": "repo://src/lib/profitability-utils.ts#L47-L99",
-          "version": "repo-lines-v1:sha256:a91598e41c6782d118a835012d27515138f0451826134cd6d372afa565570237:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YmNhMmZiYTJiMTc5MDUzNDg1ZTE4YzFjMmVlOTUzNTc0MzYwNGJhZmZhYjk2MDBlYWI3MTNjOWZlNjU4ZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwZjRlNDFlN2VmYTYzMzQ0NDZhZDkyNzllZjUyZmE0MWI3ZDBhZWNjYTJkZTE3MDgwODliNTJhYzBmNzNiY2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViODY2Y2U2N2M1MGU4NTRmMGRjOWRiM2IyY2NkNDM1ODRhNDU3ZGUyNzJhYWM0ODdkNTZhNWE1Yzc3MTllZDIifQ"
+          "resource": "repo://src/lib/profitability-utils.ts#L47-L142",
+          "version": "repo-lines-v1:sha256:92598dc35bb248446e44f25654fa2ad79876890758ce69c8824fa935b4598431:eyJzZWxlY3RlZExpbmVDb3VudCI6OTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YmNhMmZiYTJiMTc5MDUzNDg1ZTE4YzFjMmVlOTUzNTc0MzYwNGJhZmZhYjk2MDBlYWI3MTNjOWZlNjU4ZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwZjRlNDFlN2VmYTYzMzQ0NDZhZDkyNzllZjUyZmE0MWI3ZDBhZWNjYTJkZTE3MDgwODliNTJhYzBmNzNiY2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
           "resource": "repo://src/types/sku-financials/core.ts#L44-L70",
@@ -344,7 +344,7 @@
       "evidence": [
         {
           "resource": "repo://src/lib/liquidity-utils.ts#L84-L176",
-          "version": "repo-lines-v1:sha256:76d1f0543db59666beb7288d5d2a8773115de095fd6ff41b9efbdd99d02eaa90:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzYzdhMzhmYjI2NjU5NTJmNTJjNWEyYjk2MWUxOWMwNmFkYzY4NDU3MTNiNDJiZGY0MmZlZDU2NzMyYjdjYmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkYjE3MzhiOTNmNjZhN2MwMTM0NzI2Y2YwYWYzNTA0MWQ3ZDdhODI5YjA1YjUyYjkxNGUxYjBiNzEwZWNiYmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "version": "repo-lines-v1:sha256:6dce5ffa43b965cb927c62d46a88ba97e126905c5b98ff0a4f5966d48e884361:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzYzdhMzhmYjI2NjU5NTJmNTJjNWEyYjk2MWUxOWMwNmFkYzY4NDU3MTNiNDJiZGY0MmZlZDU2NzMyYjdjYmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkYjE3MzhiOTNmNjZhN2MwMTM0NzI2Y2YwYWYzNTA0MWQ3ZDdhODI5YjA1YjUyYjkxNGUxYjBiNzEwZWNiYmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -387,10 +387,24 @@
           "version": "repo-lines-v1:sha256:bfcaaa2f72ac130fdf5518baf9172eda97c6a417e8a1510dbec887160491c27c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlYWYyMmNmMDczMjU5MmMyNDcxNDFjYmU2MWVmYTExMDEyNjEyZjVhMzEyMmI5YWY5YmJhZjUyZjU3MjRkMTk0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3NzU2OTUyYzU0OTI0ZTU4NGE0ZTk4YWJlODYwYjBmNDgxMTNmMDkwODUxNGIxOGY3MTUwOWQ3OGE2MTVmZmMxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwY2JhYjRlM2ZkZjczNWIwMzkwYzFkZWY3ZmJlMDNhMWViMDA3YzJhOTVlYmJkY2Q5Y2I4NmVjOTEwZWU4MTEyIn0"
         }
       ]
+    },
+    {
+      "id": "claim_d5245b9f729d4f29b6e725646a767283",
+      "statement": "useMarginAnalyticsByBrand and useMarginAnalyticsByVariant share margin-analytics-query-keys.ts (query config, param builder for week/range/comparison/includeCogs+includeAds+includeStock parity flags, extractItems normalization); all filters are part of the TanStack key and the hooks are disabled without a week or full range; item mapping preserves nulls end-to-end (?? null / ?? undefined, never ?? 0), preferring backend roi (percent 0–100, null when COGS=0) and profit_per_unit with FE recompute fallback.",
+      "evidence": [
+        {
+          "resource": "repo://src/hooks/useMarginAnalyticsByBrand.ts#L148-L193",
+          "version": "repo-lines-v1:sha256:c645522318506715a52ea06cb55c68d1f59715de9da7f8a87e15564a30110fa7:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiMDU5YjZjMDkyN2FiZWFjZGRlYTgyMTM3ODY4NzkyODRjZGQyOGVkOTk5OTA2ZDYyM2U3YTdlYWMzMDBlMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1NTYxNmZjZTkwY2Q1MjFlMTNkY2UzZDdiNzhlN2I1MzdkMzk1Y2NmNDZkZDgxYzkyYTMwYTFjNzNjNDEyNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://src/hooks/useMarginAnalyticsByBrand.ts#L28-L103",
+          "version": "repo-lines-v1:sha256:ee41aa85f3a7f57ddaac8c727b92ac9aed5a962a345431827a82500d5680be1b:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczMDUzMzcyODU5NWFlZjY1NjIzMWE5ZWVmMzkzMTZjYjQwNmNjZWM5NzE5ZmEwZDI0M2Y0ZTA3NjhmYjcxM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3OGZkNjI5NjZhZDBjN2YyMzBlMmUwZDRiMzlkMDc4OGE3NjJkM2Q5NzBmNzQxM2Y2ZGE3MGNhYWEyYzllNzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5Mzc3NjA5ODIwM2NjZDZiYmQxMjBkMTljN2YzZmIwNDhhMDlhMDg4ZGIyZTc5Nzk1NjQ4Y2U3ZDhhMzdmNTYifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.0",
-    "at": "2026-09-09T08:47:58.907Z"
+    "by": "openwiki/0.5.1",
+    "at": "2026-09-11T08:47:52.616Z"
   }
 }

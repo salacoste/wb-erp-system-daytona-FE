@@ -1,32 +1,32 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:95450fb313b6594458705dcbed21fe122898990640ead29c772cde2d1235fc7b",
+  "pageVersion": "sha256:c9cd893335ca79b6965e6c6af4042a5fe0deb4fbea56c1679d7903ca8278c9b7",
   "claims": [
     {
       "id": "claim_633e3a28dfd14bdc90dc2ba40c9dfdd4",
-      "statement": "src/styles/globals.css is the single theme source of truth using Tailwind v4 CSS-first configuration: @import 'tailwindcss', @plugin 'tailwindcss-animate', a class-based dark custom-variant, an @theme inline block mapping utility colors to HSL CSS variables covering background/card/popover/brand/primary/destructive/financial/status/availability/telegram and the full chart role set, with light :root and .dark concrete values; tailwind.config.ts is deleted and components.json points at globals.css with cssVariables enabled.",
+      "statement": "src/styles/globals.css is the single theme source of truth using Tailwind v4 CSS-first configuration: @import 'tailwindcss', @plugin 'tailwindcss-animate', a class-based dark custom-variant, an @theme inline block mapping utility colors to HSL CSS variables covering background/card/popover/brand/primary/destructive/financial/status/availability/telegram and the full chart role set — categorical chart-1..10 (extended by C5-W1), valence-1..5 + valence-neutral, positive/negative, reference/target/forecast/confidence-band/grid/axis/tooltip/selection — with light :root and .dark concrete values; src/lib/chart-colors.ts was deleted as production-dead by C5-W1; tailwind.config.ts is deleted and components.json points at globals.css with cssVariables enabled.",
       "evidence": [
         {
-          "resource": "repo://src/styles/globals.css",
-          "version": "repo-file-v1:sha256:ee21bcd653ddbe582301d7ec45ab39fa776be3cc57e0afb9ff9450e0b7879b6e"
+          "resource": "repo://src/styles/globals.css#L183-L221",
+          "version": "repo-lines-v1:sha256:15b37998e791a2e812c0497632c90eb9f21710918b3acdefb86e874e5d5a0d42:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlZTMxNDVhYTE4OWM0NTIzMjMyOWFhMGQ2MDNlMDc2YjYwYzM4YWZlZTg4MWQ1MDg0YzVhOTVhNGNhODUxNDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5ODVlMDI4NThjNDg3ZTU2ODNhMjFlOWMxNDRhMDMzMTQyYzRkYTFhZmU3ZTMxN2E1Y2U5ZjM5YThiM2VlZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3M2IyN2M1NjczOWM3YjRjMGM1ZGRjYTQ0ZDRlOWNhMTE2MTcxM2MzNzhjMWJhNDQ1YjMyYjI4ODcwNjY1NDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhNzAyNjZkN2RhODY3N2YyODY1MzUyMmQ0NGVlOWI2MGZiMDQ1NjRmY2JjYTkyNzA3ODI5OTVmZGUyZGRhMmIifQ"
+        },
+        {
+          "resource": "repo://src/styles/globals.css#L60-L86",
+          "version": "repo-lines-v1:sha256:7b6fba5e8f9ab9753894fb46d7db2af239720454a36b8a199e2e2344c89a2f0e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkZjViMmE3NzQ5MzIyZjI1NDU4MzQzZTQzNWI2OTI0YmEwNzc2MzFiYjM2M2Y0MDZlNzFmMGNmOWY4ZDU5N2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0N2FiOTZhNWNmYjA3NDYzMGY2YjNhNjNmYjc1NzQ3OWQxNjkyMDYzMzg2MjkxYzk1NjNlMDkzMTMyZDEzZjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjMzc0YzI2MzJlNzE5MGIzODgxNzAwOWNkMDY3YzQ1YTc3MTY2NWU0Njk3MjY3ZWQ5YWEwMDA3Njg3NjA0NzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEzYzUyZGFjYzBjNjg1NThkMmFiYzIxM2Q3M2Q5NmUzYTY5YTg3YzhjZTEzZTE4MWI4YzZiNDM1ZGI5NWQ0MDAifQ"
         }
       ]
     },
     {
       "id": "claim_97752045dd374f1fa9c156d76602b424",
-      "statement": "The token layer is regression-tested by src/styles/__tests__/globals-token-contract.test.ts (every required semantic role declared and mapped) and globals-compiled-contrast.test.ts (real PostCSS-compiled output resolves to concrete colors and foreground/background pairs meet WCAG contrast in both themes), which is why token edits additionally require npm run build.",
+      "statement": "The token layer is regression-tested by src/styles/__tests__/globals-token-contract.test.ts (every required semantic role declared and mapped in both themes; C5-W1 light pixel contract for chart-7..10 and valence-1/2/4/neutral against the legacy hexes with valence-3/5 ≡ chart-7/8 byte twins; ≥8° circular hue separation across chart-1..10; dark chart-2 ≥4.5:1 on the composited selected-hover stack, pinned to the frozen triplet 291.25 46.601942% 70%) and globals-compiled-contrast.test.ts (real PostCSS-compiled output resolves to concrete colors with compile pins for bg-chart-1..10 and text-valence-*; foreground/background pairs meet WCAG contrast in both themes), which is why token edits additionally require npm run build.",
       "evidence": [
         {
-          "resource": "repo://src/styles/__tests__/globals-compiled-contrast.test.ts",
-          "version": "repo-file-v1:sha256:e51019a1057cdd658ef37177ad7cf923541d50147a9715dece3d2c0e84e6c80a"
+          "resource": "repo://src/styles/__tests__/globals-compiled-contrast.test.ts#L14-L120",
+          "version": "repo-lines-v1:sha256:365148978a22f7c393c54b057bae64ea1917e28f80785d436f57b02b014141cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiOWMxNmE1NjNjMjk0MmFhNDI5MWQ3OGI4NzM4MGRlNjFhMjhjOGUzM2E5OWY4ZjMwOWYzNDBjOGZiM2QzYzRlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwNTFlOTE5NTMwMjJmYjIwZTUwNGU4NTIxZjliYmZiYTUxOGNlZmUzZjU2MDgwNDc1OWVmNTI3M2E2NTU5OGVmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmZGIyNjJiYWNmYzZmZmU0YmNjYzM0ZWVjNjRjZmMxYTYyMDljZDRhYjIyZWQ4ZmJlNTczNDY1NGM2ZmU3OGMyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MGFlZjZmZTBkNzU2NWFiNzg4MDk2NDU4NmQ2YmYxMjgyY2JjNzViODA3MDI4MGJhZGFkM2Y4MTc2NmQzZTg0In0"
         },
         {
-          "resource": "repo://src/styles/__tests__/globals-token-contract.test.ts",
-          "version": "repo-file-v1:sha256:418437bdd87bc7c58a1b9b20a075988abc9558e218342acc3cd9c63b0cdaf86e"
-        },
-        {
-          "resource": "repo://src/styles/globals.css",
-          "version": "repo-file-v1:sha256:ee21bcd653ddbe582301d7ec45ab39fa776be3cc57e0afb9ff9450e0b7879b6e"
+          "resource": "repo://src/styles/__tests__/globals-token-contract.test.ts#L132-L208",
+          "version": "repo-lines-v1:sha256:809907d42584c406067fa163944c37d8d2612dce0ac27fdb7bf1dc6382da29c9:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1MzhjM2ViMjNiNGM1M2EyYTE5YWIzZDg1Zjg3Mzg4ZGQ3YjRmMDJiYjAzNWVmMzQ5OWE3MDBiNmJlMGEzNTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhZDE3OGNjMzZiMmMyZDRiNmY5ZmY1OWY0Nzk0M2UzNDJhMzY3ZmU5YzVlMGY3Y2ExMzc1ZjA1NzM2MzZkZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViOGVlZjA1ZDYxMWZhYTRhOTdkMmMxYTY2YTg0MTIxZDVjYzJkNGQzOTZkN2YxOTlhN2Q5NjI1NjBhYWFmNmIifQ"
         }
       ]
     },
@@ -108,23 +108,19 @@
     },
     {
       "id": "claim_12cb3fbbcc314d0f97169faa64a63920",
-      "statement": "Story 174.2 enforces a repository-wide design-system boundary: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt, whose current value is 118 (523 at 174.2 close → 459 by 174.4's live re-run → 401 by P2 wave 1 financial-summary → 372 by wave 2 margin → 267 by wave 4 component-families (−105, PR #407) → 118 by wave 5 lib-residue (−149, PR #408, 2026-09-05), each drop lowering the baseline same-commit; waves 3/6 and the /80-sweep held it unchanged); it exits 0 at-or-below the baseline and 1 only on increase, and suppression requires a BOUNDARY_EXCEPTIONS entry with an owner/debt ID mirrored in the classification manifest — 3 entries remain (C5 waterfall categorical hex and two historical #7C3AED chart marks, 22 suppressed matches) after the F-10 FeedbackButtons exception was lifted 2026-09-02; the scanner has a 10-case self-test suite. The boundary track is complete (reconfirmed on main 0b95e963, 2026-09-06: boundary 118 = baseline, 3 exceptions): the entire 118 residue (95 chart-hex + 23 legacy-palette classes: lib 61 + components 37 + app 17 + types 3) is blocked on the C5 chart-palette owner decision — no further boundary wave is possible without it.",
+      "statement": "Story 174.2 enforces a repository-wide design-system boundary: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt, whose current value is 57 (523 at 174.2 close → 459 by 174.4 → 401 by P2 wave 1 → 372 by wave 2 → 267 by wave 4 → 118 by wave 5, all 2026-09-05 and earlier → 114 by C5-W1 2026-09-11 which deleted the dead src/lib/chart-colors.ts → 57 by C5-W2 2026-09-11 which migrated the 57 lib-hex sites to semantic tokens); it exits 0 at-or-below the baseline and 1 only on increase, and suppression requires a BOUNDARY_EXCEPTIONS entry with an owner/debt ID mirrored in the classification manifest — 3 entries remain (C5 waterfall categorical hex and two historical #7C3AED chart marks) and all three are scheduled to be lifted by C5 wave 4; the scanner has a 10-case self-test suite. The remaining 57 residue (38 chart-hex + 19 legacy-palette classes: components 37 + app 17 + types 3) is owned by C5 waves 3–4 executing the owner-approved 118→0 plan.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-w4-component-families.md",
-          "version": "repo-file-v1:sha256:97e3023ae2f2e11f622ba0d92920313869eeb12615e246c772d80f356b4596ef"
+          "resource": "repo://CLAUDE.md#L154-L154",
+          "version": "repo-lines-v1:sha256:ac949b31790f90be3b775a199c395c2e632f51cd1961367773922436aa43c6d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWM5NDliMzE3OTBmOTBiZTNiNzc1YTE5OWMzOTVjMmU2MzJmNTFjZDE5NjEzNjc3NzM5MjI0MzZhYTQzYzZkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWM5NDliMzE3OTBmOTBiZTNiNzc1YTE5OWMzOTVjMmU2MzJmNTFjZDE5NjEzNjc3NzM5MjI0MzZhYTQzYzZkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDk1OGI5MDczZjQ4NWM1ZGI2ZmI5NzIyZjg2OTAxMWExMGQwNjJhODVjMTRlNzc3M2MzMmE3OTBmMGE2OGYzOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
         },
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-w5-lib-residue.md",
-          "version": "repo-file-v1:sha256:e7c636a29211c07e6e7e57b91ca4985d13ad327fbfc87a5e22bf07371ca1323d"
-        },
-        {
-          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
-          "version": "repo-file-v1:sha256:7fbcf0890522e8786b8ea390d121e5ab7349e465bb48c92a3f621fe0d6e1588a"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md#L12-L31",
+          "version": "repo-lines-v1:sha256:24da2e741c2c2dc270d798efbee2f5c9328d9e39e589599fcfe463f2aa00571a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMWZhM2ViMzJhNGU0MDE5ZjFjMjQ3NWE0MTUzMGI4YmI1ZjY1NThiYWM0NGQ4ZGJiYmI2MmFhZjU0NDQwYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExMjIyZTkyNWUyNGI2MGM3NzU4NTFjNzAyY2IyM2ZiNjY0NzUwZjc3MTA4MDdjNWI2YzI3ZDk1ZWUxZDIxN2IifQ"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:f10f7170eeb4986f69d764a4cb97c3f8e9337963222188a647fc4c0ac289d0e4"
+          "version": "repo-file-v1:sha256:1326faec3eb42dc72ddffe46daf3940b932f48b9799f6cbf28e80504e7b34958"
         },
         {
           "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L33-L52",
@@ -315,10 +311,28 @@
           "version": "repo-lines-v1:sha256:4204e6b5901b36bf6c176757cce3c8f5eafe2d138cff22aa6568fbd560edf6be:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzMmY5ZDJhMjdiZmE0NDZkM2JjNjdmODdhZmI5NzMxYzRlMTYyNzFhMzgzZjUzZjNkNTU5ZDllZjc3NzMzNWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmNWVjYjQ5ZWRlZTdmMzYwZTljYmM2YjZhNDkwZjk3MWJlMTA4ZDBmMjkzMjkxYWM1ZjU4NjE0OWVmNTk4NTcifQ"
         }
       ]
+    },
+    {
+      "id": "claim_39db448e515c41c78e57cb0d8f33ff99",
+      "statement": "The C5 owner decision (2026-09-11) made CSS tokens the single canon source for chart colors: chart colors must read from var(--chart-N) / Tailwind chart-* utilities only, hex literals and parallel constants are banned for new code, and the categorical palette extends to chart-1..10 (light values of chart-7..10 pixel-identical to the legacy unit-economics palette slots 6–9) with a valence-1..5 + valence-neutral six-tier profitability scale bundling the WCAG 1.4.11 owner item; dark chart-2 lightness was raised to 70% to pass AA (≥4.5:1) on the selected-hover row stack, fixing the wave-6 3.71:1 residual. A registered owner fork remains: light valence values as text on white measure 1.92–3.76:1 (below AA, pixel-preserved legacy rendering; only chart-9 passes at 4.83:1), and semanticTextRoles deliberately excludes valence until the owner decides between retuning light values or accepting legacy-light and closing 1.4.11 for dark only.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md#L55-L103",
+          "version": "repo-lines-v1:sha256:18fc051d47fe379d2ff7f5b533ba46f2e2f44cf6545a5951769f00686326a02c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYmFmMGZlNTZkOGFhZmVjNmNkMTEwNmJhN2ZhNjZiNDdlMTFkNDc0M2U4MTFlY2I3YzRmNTE4N2VkM2Q1NTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzYTEzY2ExNTQ2M2Y0NGRlOTk5OTE1NzkwMWFmMjdlNGFjOTMzODc1MjUxODdkZDFiZjUyMjAxMzU5NDlhNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiYjE3MjgzYmVjZDRlNDY4NGNkMDRjY2FjOTJhN2JhYTY0ODJjZGZlNzA3NGI0MTA3OWM1MTE4MDE5MWU1ODYifQ"
+        },
+        {
+          "resource": "repo://src/styles/globals.css#L183-L212",
+          "version": "repo-lines-v1:sha256:5bc28fa89b736406416c6cd0f9d1e592a1988119eec382a1ae6bc8ab27f6e398:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlZTMxNDVhYTE4OWM0NTIzMjMyOWFhMGQ2MDNlMDc2YjYwYzM4YWZlZTg4MWQ1MDg0YzVhOTVhNGNhODUxNDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlZTUxN2ZlNjA3YTNhYzczOTdiNzg2ZmQ5Y2ZhY2U1YmUwZjk1NzJiYjliYzlmMTE5ZWMwMTQ1YmI3MGM0MWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3M2IyN2M1NjczOWM3YjRjMGM1ZGRjYTQ0ZDRlOWNhMTE2MTcxM2MzNzhjMWJhNDQ1YjMyYjI4ODcwNjY1NDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjMDg1MTYyZDM1NDZhYWIwMWU2MDdlMjA4NWIxN2MwMjM2OTkwYWYwMThjNmM4YWE0NjUwMGZlMGQ5YjdhNmMifQ"
+        },
+        {
+          "resource": "repo://src/styles/globals.css#L273-L277",
+          "version": "repo-lines-v1:sha256:bb15d31b955d77764231a0711863f5347208f773737da29d1fe5a72cb8f77e77:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTFjZmVkMjUwZGM3MTM2NjkyNzAwODhjYmI0NTJkNTg3NzAwMWFjY2VkMDU1MjhlMDFkOWU5YWExNDE2OWM5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjlhNzM0Zjg1YWU0ZmUyNmY3YWVhMWE0YzRhOTRkMTg4ZDE0NGIzOGYyMmM5Yjc2YjA0ZTRiYmZiOTEyZDk0YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjUwNDA1NmEzZDRkZTEzYzA5MDQ4ZTk1YmJjYjdkMTg3YmU2ZWM4NWFmZTZhYmU3MDQ4YjUxYzcwOGM3MTFjYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjBmZDZjYTExYmM4M2Y2NTVlMWUxYWVlNTRkN2IxNmE5MWU2MTRmNDVlZmYwMWQ2NTk2NzNjZTM4OWJhODczMSJ9"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.0",
-    "at": "2026-09-09T08:47:58.907Z"
+    "by": "openwiki/0.5.1",
+    "at": "2026-09-11T08:47:52.616Z"
   }
 }

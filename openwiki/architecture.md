@@ -58,10 +58,10 @@ sources:
     resource: repo://src/stores/authStore.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "openwiki/0.5.0", at: "2026-09-09T08:47:58.907Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
 verified:
-  - by: openwiki/0.5.0
-    at: 2026-09-09T08:47:58.907Z
+  - by: openwiki/0.5.1
+    at: 2026-09-11T08:47:52.616Z
 ---
 # Architecture
 
@@ -274,6 +274,4 @@ Local runtime truth: the Next.js dev/start servers bind to **port 3100** (`next 
 | `postcss.config.js` | `@tailwindcss/postcss` + autoprefixer (Tailwind v4 compiler contract) |
 | `components.json` | shadcn/ui CLI metadata aligned to Tailwind v4 (`config: ""`, CSS variables, new-york style) |
 | `src/config/features.ts` | Feature-flag registry — `epic37MergedGroups` (enabled / `useRealApi` mock-vs-real API switch / debug) and `jamUrls`; driven by `NEXT_PUBLIC_EPIC_37_*` and `NEXT_PUBLIC_JAM_*` variables |
-| `.env.example` | Environment variable names (see [Testing & Operations](testing-and-ops.md)) |
- and `NEXT_PUBLIC_JAM_*` variables |
-| `.env.example` | Environment variable names (see [Testing & Operations](testing-and-ops.md)) |
+| `.env.example` | Environment variable names — `NEXT_PUBLIC_API_URL` (local backend at `http://localhost:3000`, endpoints start with `/v1/`, no `/api` suffix), app name/version, `NEXT_PUBLIC_ENABLE_*` flags, `NEXT_PUBLIC_MIXPANEL_TOKEN`, `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME` (token itself is backend-only) |

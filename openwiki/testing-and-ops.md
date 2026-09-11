@@ -78,10 +78,10 @@ sources:
     resource: repo://test-utils/outbound-network-policy.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.1", at: "2026-09-10T08:47:50.517Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
 verified:
   - by: openwiki/0.5.1
-    at: 2026-09-10T08:47:50.517Z
+    at: 2026-09-11T08:47:52.616Z
 ---
 # Testing & Operations
 
@@ -95,7 +95,7 @@ verified:
 | Plugin | `@vitejs/plugin-react` |
 | Coverage | V8 provider (text/json/json-summary/html reporters), output `coverage/local` |
 | Fake timers | `shouldAdvanceTime: true` (waitFor/MSW compatibility) |
-| Full-suite floor | ≥ 19,118 tests passing across 1,234 test files (0 failed) — raised after Story 174.2-FE; a full `npm test -- --run` run must not regress this floor |
+| Full-suite floor | ≥ 19,118 tests passing across 1,234 test files (0 failed) — raised after Story 174.2-FE; the current accepted CLAUDE.md baseline is ≥ 19,573 / 0 failed; a full `npm test -- --run` run must not regress this floor |
 
 ### Test setup (`src/test/`)
 Setup files run in explicit list order (`sequence.setupFiles: 'list'`) defined by `VITEST_SETUP_FILES` in `vitest.config.ts`. Order is load-bearing: the outbound network guard must install **before** any general setup or MSW import, or module-evaluation-time network attempts would escape the guard.
@@ -323,7 +323,6 @@ Story 162.2 introduced a reproducible localhost preflight that gates every local
 | Full suite | `npm run test:e2e:full` | Same preflight, full suite |
 | Diagnostics only | `npm run test:e2e:preflight` | Validate config + services, print the exact next command (no Playwright launch) |
 | UI mode | `npm run test:e2e:ui` | Full suite with Playwright UI |
-<!-- openwiki: broken internal link [#isolated-e2e-runner-restart-per-run] heading anchor "isolated-e2e-runner-restart-per-run" does not exist in /openwiki/testing-and-ops.md. Fix the href or restore the target, then delete this comment. -->
 | Isolated restart-per-run | `npm run test:e2e:isolated` | tmp worktree + own dev server + guaranteed PM2 restore (see [Isolated E2E Runner](#isolated-e2e-runner-restart-per-run)) |
 
 **Preflight** (`scripts/e2e-preflight.mjs`) validates the `.env.e2e` configuration and probes both localhost services (`:3100/login`, `:3000/v1/health`) before Playwright collection. It removes only the two ignored auth-state files (`e2e/.auth/user.json`, `e2e/.auth/manager.json`) and regenerates them through the live setup-project login flow. `--no-deps` is rejected by both the preflight and `playwright.config.ts` because Chromium relies on the setup project for a fresh `user.json`. Playwright arguments forward after `--` (e.g., `npm run test:e2e -- --list`).
@@ -333,6 +332,37 @@ Story 162.2 introduced a reproducible localhost preflight that gates every local
 **Mutation safety**: `@mutating` specs stay excluded by default (see `e2e/fixtures/mutation-guard.ts`). Enabling requires all three opt-ins: `E2E_ENABLE_MUTATIONS=true`, `E2E_MUTATION_TARGET=sandbox`, `E2E_MUTATION_ACK=I_UNDERSTAND_THIS_MUTATES_TEST_DATA`. Full setup, backend-seed, argument-forwarding, and recovery guidance is in `e2e/README.md`.
 
 **Test**: `scripts/e2e-preflight.test.mjs` (runs under `node --test`, excluded from Vitest). The preflight never prints credential values, response bodies, headers, cookies, tokens, or storage state.
+
+## Isolated E2E Runner (restart-per-run)
+
+**Script**: `scripts/run-e2e-isolated.mjs` · **Planning/pure units**: `scripts/lib/e2e-isolated-plan.mjs` · **Test**: `scripts/run-e2e-isolated.test.mjs` (runs under `node --test` with fully injected effect seams) · **npm alias**: `npm run test:e2e:isolated`
+
+A per-run orchestration that gives one E2E run a private frontend: a detached `git worktree add --detach` tmp checkout of committed `HEAD` (a dirty working tree only warns — the worktree tests committed code, not uncommitted edits), a symlinked `node_modules`, and copies of `.env.local`/`.env.e2e` forced to mode 600 (env files carry backend secrets and must not sit world-readable in the sticky tmp worktree). It stops the shared pm2 process `wb-repricer-frontend-dev` when pm2 owns `:3100`, boots its own `npx next dev --webpack -p 3100` inside the worktree, runs the suite as `npm run test:e2e:full` there (so the preflight gate and handshake still apply — `RUN_COMMAND` in `e2e-isolated-plan.mjs` is the single source of truth), and then guarantees teardown: kill the detached dev process group, `pm2 restart` (only if a stop actually happened — `summary.swapped` gates it), restore verification, and worktree removal (`--keep-worktree` preserves it as evidence, including its chmod-600 env copies).
+
+<!-- openwiki: mermaid parse failed and this diagram was converted to a text fence so it does not break rendering. Fix the diagram source and restore the mermaid fence. Parser error: Heuristic: a semicolon inside a label breaks rendering; rephrase the label. -->
+```text
+flowchart TD
+    HEAD["git rev-parse HEAD"] --> WT["git worktree add --detach tmp"]
+    WT --> ENV["symlink node_modules; cp -p .env* + chmod 600"]
+    CLS["classifyPort3100 lsof + ps pid table"] -->|free| BOOT
+    CLS -->|pm2-owned| STOP["pm2 stop wb-repricer-frontend-dev"]
+    CLS -->|foreign| ABORT["abort fail-closed before any state change"]
+    STOP --> BOOT["spawn detached npx next dev -p 3100"]
+    ENV --> BOOT
+    BOOT --> READY["readiness poll any HTTP status"]
+    READY --> RUN["npm run test:e2e:full in worktree"]
+    RUN --> TD["teardown: kill dev group; pm2 restart if swapped"]
+    TD --> RV["restore verify: HTTP 200 /login + pm2 online + pm2-owned"]
+    RV --> RM["worktree remove + prune"]
+```
+
+Figure: the runner classifies port ownership before touching any state, swaps in an isolated worktree dev server, runs the full wrapper-gated suite, and restores/verifies the shared pm2 server in a guaranteed teardown.
+
+**Fail-closed port classification.** Before any state change, `:3100` is read via `lsof -ti tcp:3100 -sTCP:LISTEN` (the address token must immediately follow `-i` and `-sTCP:LISTEN` must come last — darwin getopt otherwise parses the port as a filename) and matched against the full `ps -axo pid=,ppid=` process table: `'free'`, `'pm2-owned'` (pm2 pid or any descendant — next dev owns the socket through its children), or `'foreign'`. `'foreign'`, an unreadable process table, or an lsof spawn/exit failure aborts the run (an orphaned worktree dev server left by a SIGKILLed runner is caught this way). `buildPlan` additionally aggregates all preflight problems (worktree path exists, missing env files, pm2 process not found) into one error before provisioning.
+
+**Restore attestation.** A verified restore requires, simultaneously and re-read fresh on every poll: HTTP 200 on `http://localhost:3100/login`, pm2 `jlist` status `'online'`, and `:3100` classified `'pm2-owned'` from a fresh process table — HTTP-200 alone can be a false positive. Unverified restore forces exit code 1 with a CRITICAL stderr warning even if the suite passed; teardown step errors surface as `teardownErrors[]` without changing the exit code.
+
+**Signal and fast-fail semantics.** Ctrl+C (SIGINT/SIGTERM) is recorded and handled at phase boundaries and inside the readiness poll; during the suite it is deferred until the spawn returns, then re-raised after the JSON summary drains. A second Ctrl+C while teardown is running is deliberately swallowed so the pm2 restore cannot be killed mid-flight. Dev-boot failures fast-fail the readiness poll within one tick — a dev spawn `'error'` or an `'exit'` before readiness is attested as `devSpawnError` / `devExitedBeforeReady` (+ `devExitCode`/`devExitSignal`, preferring the signal name) with the thrown error naming the actual cause instead of a generic readiness timeout. Summary writes are drain-aware (resolved on the write callback) so piped stdout/stderr cannot drop the attestation JSON or CRITICAL warning before `process.exit`. Pin seams (`RUN_E2E_ISOLATED_PM2/_LSOF/_GIT/_PS/_NPM/_NPX`) let hardened environments redirect tool lookups; `ln`/`cp`/`chmod` in provisioning are intentionally unseamed coreutils.
 
 ### Historical SPP exact-command harness
 
@@ -522,67 +552,6 @@ The orchestrator's command list was the integration point for the [Outbound Netw
 
 ### `frontend-quality.yml` — removed
 The self-hosted `frontend-quality.yml` workflow (ESLint, type-check, governed coverage certification, privacy guard) was removed when the project replaced hosted certification with local validation gates. Its quality checks now run locally via the commands in [Conventions & Quality Gates](conventions-and-quality.md). There is currently no required GitHub Actions status check enforcing them.
-
-### `openwiki-update.yml` — OpenWiki Documentation Update
-Refreshes the generated `openwiki/**` pages. Authoritative contract in `.github/workflows/openwiki-update.yml`.
-
-| Aspect | Detail |
-|--------|--------|
-| **Triggers** | Schedule (daily `47 8 * * *` UTC) + manual `workflow_dispatch`. A manual dispatch must target a branch ref (not a tag or other ref) and must not target `main`; the `Validate manual dispatch ref` step rejects anything else before checkout. |
-| **Runner** | Self-hosted `wb-ci-fe` (`runs-on: [self-hosted, Linux, X64, wb-ci-fe]`), Node.js 24, 60 min timeout |
-| **Concurrency** | `openwiki-frontend` group, `cancel-in-progress: false` |
-| **Provider** | Anthropic protocol through `https://api.z.ai/api/anthropic`, model `glm-5.2` (`OPENWIKI_PROVIDER: anthropic`, `ANTHROPIC_API_KEY` from the `ZAI_API_KEY` secret) |
-| **Generator** | `npx --yes openwiki@0.3.0 code --update --print` in an isolated per-run `npm_config_cache` under `RUNNER_TEMP` |
-
-**Commit and publish rules** (enforced by the `Commit OpenWiki updates`, `Open pull request for scheduled main refresh`, and `Push updates back to dispatched branch` steps):
-- `actions/checkout` runs with `persist-credentials: false`, so no token is stored in `.git/config` after checkout.
-- After generation, the workflow restores `.github/workflows/openwiki-update.yml`, every `AGENTS.md`, `CLAUDE.md`, and `openwiki/INSTRUCTIONS.md` to their committed `HEAD` versions so only generated pages are committed.
-- `git add -A -- openwiki/ ':(top,exclude)openwiki/INSTRUCTIONS.md'` is the only staging command: it stages generated `openwiki/**` output while explicitly excluding `openwiki/INSTRUCTIONS.md`. The step refuses to commit if any change is staged outside `openwiki/`, if unexpected unstaged tracked changes remain, or if any untracked or ignored file is present.
-- **Scheduled run on `main`** → commits, creates a unique `automation/openwiki-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}` branch (including the attempt so failed-publication reruns use a fresh branch), pushes it with a temporary `x-access-token:${GH_TOKEN}` remote URL that is restored to a credential-free origin via an `EXIT` trap, and opens a PR against `main` through the GitHub REST API (`POST /repos/{owner}/{repo}/pulls` with `curl`); the PR title/body are built with `node`. There is no `gh` CLI dependency and no auto-merge.
-- **Manual dispatch on a non-`main` branch** → commits and pushes the generated commit back to that same branch using the same credential-isolated remote-url pattern.
-- **Manual dispatch on `main`** → rejected before checkout.
-
-> Never edit generated `openwiki/**` pages by hand; update source/docs and let the workflow regenerate. The workflow never force-pushes and never pushes directly to `main`.
-
-## Running Locally
-
-The dev and production servers both use port **3100**; never run both simultaneously.
-
-| Mode | Command | Notes |
-|------|---------|-------|
-| Development | `npm run dev` | Hot reload, no caching |
-| Production | `npm run build && npm run start` | Built `.next/` served via `next start -p 3100` |
-
-The previous PM2 process manager configuration (`ecosystem.config.js`, `pm2-switch-*.sh`, `.conductor/` scripts) was removed; local lifecycle helpers now live under `scripts/` (e.g., `start-fresh-next-dev.mjs` via `npm run dev:clean` / `npm run restart:safe`).
-
-## Environment Variables
-
-From `.env.example` (names only — never commit actual values):
-
-| Variable | Purpose |
-|----------|---------|
-| `NEXT_PUBLIC_API_URL` | Backend API URL (no `/api` suffix; default `http://localhost:3000`) |
-| `NEXT_PUBLIC_APP_NAME` | Application name |
-| `NEXT_PUBLIC_APP_VERSION` | Application version |
-| `NEXT_PUBLIC_ENABLE_ANALYTICS` | Feature flag |
-| `NEXT_PUBLIC_ENABLE_WEBSOCKET` | Feature flag |
-| `NEXT_PUBLIC_MIXPANEL_TOKEN` | Mixpanel analytics (Epic 37) |
-| `NEXT_PUBLIC_ENABLE_DEV_TOOLS` | Development-only tools |
-| `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME` | Telegram bot username (Epic 34-FE) |
-
-### E2E-specific (`.env.e2e.example`)
-
-| Variable | Purpose |
-|----------|---------|
-| `E2E_BASE_URL` | Frontend origin (required, exact `http://localhost:3100`) |
-| `E2E_API_URL` | Backend origin (required, exact `http://localhost:3000`) |
-| `E2E_TEST_EMAIL` / `E2E_TEST_PASSWORD` | Owner credentials matching the backend seed (required) |
-| `E2E_MANAGER_EMAIL` / `E2E_MANAGER_PASSWORD` | Optional Manager pair; set both or leave both blank |
-| `E2E_WB_TOKEN` | Optional token for legacy fixture integration scenarios |
-| `E2E_ENABLE_MUTATIONS` / `E2E_MUTATION_TARGET` / `E2E_MUTATION_ACK` | Three-part opt-in to un-gate `@mutating` specs (see [Local E2E Preflight](#local-e2e-preflight)) |
-eflight)) |
-ng` specs (see [Local E2E Preflight](#local-e2e-preflight)) |
-uard) was removed when the project replaced hosted certification with local validation gates. Its quality checks now run locally via the commands in [Conventions & Quality Gates](conventions-and-quality.md). There is currently no required GitHub Actions status check enforcing them.
 
 ### `openwiki-update.yml` — OpenWiki Documentation Update
 Refreshes the generated `openwiki/**` pages. Authoritative contract in `.github/workflows/openwiki-update.yml`.

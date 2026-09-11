@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e4ec447f7f7bcd26da0f61b5e586ee803e96675dc924c0797f8f14433eb778e2",
+  "pageVersion": "sha256:a3f99d9e63229a2b8db3475efc96ddce85522964a79ac749db6c775eb688b8e3",
   "claims": [
     {
       "id": "claim_2c9c1829b6b846cd913111aee59b6f27",
@@ -323,10 +323,24 @@
           "version": "repo-lines-v1:sha256:be62be7449778b34b53afd4f5f298c14382a50e7eff32755f3b52bdbf75fb50e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViNDkyM2Y3ZWQxMDM2MjAzMzUzYWRjNWQxODI3YWNkNTkwOGI0NWE1MTY2Mjc3MmUzMDdiYjc4NTcyYjA0MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYTdjYmFjYTExYzlmNTE3M2E1NzAzNjA1ZjIzOTAzZDYyMjgyM2E3YmNhYTVkZGUyNzRlMzFlODAxNGIyYzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRiODJjYThhMDNlZTlhY2Y5YjMzMTRkNjkzMzU1NzU4YjUyNDVjODY4MTdmNmZmNGY1NjVjNGE2NTMwZjZlZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_d2c25307a377432ca97579c1f9bede89",
+      "statement": ".env.example declares NEXT_PUBLIC_API_URL pointing at the local backend on port 3000 with /v1/-prefixed endpoints (no /api suffix), plus NEXT_PUBLIC_APP_NAME/VERSION, NEXT_PUBLIC_ENABLE_ANALYTICS/WEBSOCKET/DEV_TOOLS flags, an optional NEXT_PUBLIC_MIXPANEL_TOKEN, and NEXT_PUBLIC_TELEGRAM_BOT_USERNAME (frontend-only; the bot token is backend-only).",
+      "evidence": [
+        {
+          "resource": "repo://.env.example",
+          "version": "repo-file-v1:sha256:b720e8d0efdcfca5c4172696691ac8e17e6a684c4561608144e224f19aa37d7a"
+        },
+        {
+          "resource": "repo://src/lib/env.ts",
+          "version": "repo-file-v1:sha256:d884444a2cbb07ea0beda4e612da5fa0795777426f7b4f9d6562fb256e896217"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.0",
-    "at": "2026-09-09T08:47:58.907Z"
+    "by": "openwiki/0.5.1",
+    "at": "2026-09-11T08:47:52.616Z"
   }
 }

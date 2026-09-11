@@ -4,17 +4,25 @@ title: "API Layer & Normalizers"
 description: "API client singleton with auto-injected auth and cabinet headers, D-2 single-flight reactive 401 refresh with one replay, the global mutation-retry policy that never retries 4xx, WB token error mapping and fallback-message sanitization, the Boundary Normalizer Pattern with AP#8 null semantics, the Story 169.14 paid-storage import result contract and polling lifecycle, CSV export infrastructure, the NEW-7/172.10 finances documents flow, and the communications gated write-back with async 202 job polling."
 tags: [api-client, boundary-normalizer, reactive-401-refresh, mutation-retry, anti-pattern-8, paid-storage-import, csv-export, finances-documents]
 verified:
-  - by: openwiki/0.5.0
-    at: 2026-09-09T08:47:58.907Z
+  - by: openwiki/0.5.1
+    at: 2026-09-11T08:47:52.616Z
 sources:
   - id: openwiki-source-8d0f263ceba491caec34db6c
     resource: repo://src/app/providers.tsx
   - id: openwiki-source-2c8624d7bc54216518aad6e6
     resource: repo://src/components/custom/wb-token-form-helpers.ts
+  - id: openwiki-source-38142b7bc02f6b7b442681da
+    resource: repo://src/hooks/sku-financials-transform.ts
+  - id: openwiki-source-9b957481c5f7053098cd706c
+    resource: repo://src/hooks/sku-financials-types.ts
   - id: openwiki-source-247f2948ae5a0063ab2a20e3
     resource: repo://src/hooks/useDownloadDocument.ts
+  - id: openwiki-source-6b4d2f5ce6d204e79d1e9984
+    resource: repo://src/hooks/useMarginAnalyticsByVariant.ts
   - id: openwiki-source-3177abcefd75baab3663fb5b
     resource: repo://src/hooks/useSanityCheck.ts
+  - id: openwiki-source-e43393bcfc97ba793d4a8f16
+    resource: repo://src/hooks/useSkuFinancials.ts
   - id: openwiki-source-e10bb3a45d5860b37b52d448
     resource: repo://src/lib/__tests__/api-interceptors.test.ts
   - id: openwiki-source-b3e9ea042734f0848c410d92
@@ -41,7 +49,9 @@ sources:
     resource: repo://src/services/cabinets.service.ts
   - id: openwiki-source-57a6295c7260bc5f8b372d73
     resource: repo://src/types/api.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
+  - id: openwiki-source-41740c7db8b80479f12ec88f
+    resource: repo://src/types/variant-analytics.ts
+generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
 ---
 # API Layer & Normalizers
 
@@ -217,6 +227,31 @@ Focused tests: `src/lib/api/__tests__/advertising-analytics-normalizer.test.ts` 
 - `normalize<Name>Response` — endpoint response normalizer
 - `to<Type>` — scalar/enum coercion
 - `normalize<Name>` — per-item normalizer
+
+## Hook-Layer Transforms (normalizers living in `src/hooks/`)
+
+Not every boundary transform lives under `src/lib/api/`. Two domains keep their backend-shape types and transform functions beside the hook because there is no dedicated API-client module — the hook builds the request and normalizes inline. Both are canonical AP#8 case studies.
+
+### Per-SKU financials (`useSkuFinancials` + transform modules)
+
+`src/hooks/useSkuFinancials.ts` (Epic 31) fetches `GET /v1/analytics/sku-financials` with **snake_case query params built in the hook** (`sort_by`, `sort_order`, `include_visibility`, and the FR-2..FR-5 parity flags `include_ads`/`include_stock`, both defaulting to `true` so the share/parity columns populate out of the box). It uses `skipDataUnwrap: true` because the envelope is `{ meta, data, totals }` — without it `apiClient` would hoist the `data` array and lose `meta`/`totals`. `staleTime` 30 min mirrors the backend cache TTL; `gcTime` 1 hour.
+
+The transform itself is split for file-size compliance (Epic 74): backend snake_case DTOs in `src/hooks/sku-financials-types.ts` (`BackendSkuItem` with `cogs: BackendCogs | null`, nullable `gross_profit`/`operating_profit`/`operating_margin_pct`, and optional parity fields absent unless their flag was sent), pure mapping in `src/hooks/sku-financials-transform.ts`:
+
+- **Net revenue is derived at the boundary**: `revenue.net = sales.revenue_net − returns.revenue_net` (gross likewise), while quantities stay raw — `salesQty` does **not** subtract returns.
+- **AP#8 (Story 87.3-FE)**: `profit.gross`/`operating`/`operatingMarginPct` preserve `null` when COGS/profit data is missing (`item.gross_profit ?? null`) so the UI renders "—" instead of a misleading "0 ₽"; downstream aggregators must coerce at the callsite (e.g. `profit.operating ?? 0` only when summing). `costs.cogs` likewise `item.cogs?.total ?? null`, and `missingCogs: item.cogs === null` carries the reason out-of-band. The one deliberate `?? 0` is `other_adjustments` (Request #68 — a known-zero contract).
+- **Parity spreading**: when any FR-2..FR-5 field is present (`hasAnyParityField`), the item gains a `parity` block (`advertisingCost`, `drrPct`, `sppRub`, `sppPct`, stock counts/value, tax-allocated net profit…) with every field `?? null` — never `?? 0`. When the flags were not sent, `parity` is **omitted entirely** (optional-property semantics), not an all-null object.
+
+### Variant analytics (`useMarginAnalyticsByVariant` + `mapVariantItem`)
+
+FR-7 (#221): `src/hooks/useMarginAnalyticsByVariant.ts` fetches `GET /v1/analytics/weekly/by-variant?week=YYYY-Www` — **single-week only**; the endpoint rejects range/comparison/`include_*` params (400 `UNSUPPORTED_MODE`), so the hook builds params manually instead of via the shared `buildMarginAnalyticsParams`. It uses `skipDataUnwrap: true` to preserve the full `{ data, pagination }` envelope — the shared `extractItems` only reads `.meta`, so `has_more`/`next_cursor` would be silently lost and cursor pagination would break.
+
+The per-item normalizer `mapVariantItem` maps raw items to `VariantAnalyticsItem` (`src/types/variant-analytics.ts`), whose field semantics are live-verified contract:
+
+- **`tech_size` is canonicalized to `string | null`**: WB returns size as a *string* ("0", "65-135", "42"), occasionally as a number on the wire — numbers are coerced to strings, preserved verbatim, never parsed to a number.
+- **Exact vs allocated honesty**: `revenue_net` and `total_units` are exact per-variant; `profit_allocated_rub` and `margin_allocated_pct` are **approximate** ("распределено по доле выручки варианта") and must render with the allocated marker, never as exact (Defensive Frontend Principle). All money/margin fields — including the parent-nm context block (`revenue_gross`, `cogs`, `profit`, margins) — are `number | null` (AP#8).
+
+Focused tests: `src/hooks/__tests__/useMarginAnalyticsByVariant.test.ts` pins the `tech_size` string-coercion (`42` → `'42'`, `null` → `null`) and full-item mapping.
 
 ## Paid Storage Import — Authoritative Result Contract (Story 169.14)
 

@@ -29,6 +29,8 @@ sources:
     resource: repo://src/components/custom/useCabinetCreationRecovery.ts
   - id: openwiki-source-ca40daf89ea98ab131d36ff4
     resource: repo://src/hooks/financial/useWeeklyFinancialSeries.ts
+  - id: openwiki-source-434e19ac3bc9ec7cdfaa175e
+    resource: repo://src/hooks/useMarginAnalyticsByBrand.ts
   - id: openwiki-source-e6c63f5a090d825e57444dba
     resource: repo://src/lib/__tests__/roi-profit-utils.test.ts
   - id: openwiki-source-8e7e58eae241bb5c791600ca
@@ -89,10 +91,10 @@ sources:
     resource: repo://src/types/analytics-returns.ts
   - id: openwiki-source-dbb29a8befd1ef6fd6b187fb
     resource: repo://src/types/sku-financials/core.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-09T08:47:58.907Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
 verified:
-  - by: openwiki/0.5.0
-    at: 2026-09-09T08:47:58.907Z
+  - by: openwiki/0.5.1
+    at: 2026-09-11T08:47:52.616Z
 ---
 # Domain Logic
 
@@ -127,7 +129,7 @@ Key design decisions:
 
 **File**: `src/lib/profitability-utils.ts`
 
-`EXTENDED_STATUS_CONFIG` (`EXTENDED_STATUS_CONFIG` in `src/lib/profitability-utils.ts`) defines six profitability tiers with thresholds, hex colors, Tailwind classes, Russian labels, and actionable recommendations:
+`EXTENDED_STATUS_CONFIG` defines six profitability tiers with thresholds, valence color tokens (`var(--color-valence-1..5)` / `valence-neutral`, C5-W2), semantic Tailwind bg/text classes (P2 wave-5 contrast-measured over the table row and its hover stack — excellent/loss/critical solid pairs, good/warning soft tint + `text-foreground`), Russian labels, and actionable recommendations:
 
 | Status | Threshold (margin %) |
 |--------|-----------|
@@ -138,7 +140,9 @@ Key design decisions:
 | loss | < 0% |
 | unknown | COGS not assigned |
 
-The same six-status taxonomy and thresholds are declared in `ProfitabilityStatus` (`src/types/sku-financials/core.ts`), which also carries `PROFITABILITY_COLORS` (Story 168.11 `/15`-chip classes with `text-foreground`) and `PROFITABILITY_LABELS` (Russian, `unknown` → «Нет COGS»).
+`getProfitabilityStatus(marginPct, hasCogs)` is the classifier: no COGS or a null/undefined margin → `unknown` (AP#8 boundary-honest sentinel); otherwise the threshold ladder above (≥25/≥15/≥5/≥0, else `loss`). `ALL_PROFITABILITY_STATUSES` fixes the filter order and `getStatusConfig` exposes the config.
+
+The same six-status taxonomy and thresholds are declared in `ProfitabilityStatus` (`src/types/sku-financials/core.ts`), which also carries `PROFITABILITY_COLORS` (Story 168.11 `/15`-chip classes with `text-foreground`) and `PROFITABILITY_LABELS` (Russian, `unknown` → «Нет COGS»). A third sibling set lives in `PROFITABILITY_STATUS_CONFIG` (`src/lib/unit-economics-config.ts`): the single token-based tier set with `minMargin`/`maxMargin` bounds shared with the 168.9 legend. Its `getProfitabilityConfig(status)` guards against backend enum drift (F-49) — the parameter is widened to `string` and an out-of-union value falls through to the neutral grey `UNKNOWN_PROFITABILITY_CONFIG` sentinel instead of throwing on `undefined.color` (the F-39 crash class).
 
 ### ROI & profit per unit (`src/lib/roi-profit-utils.ts`)
 
@@ -153,6 +157,10 @@ The same six-status taxonomy and thresholds are declared in `ProfitabilityStatus
 `efficiencyConfig` maps five advertising efficiency statuses (`excellent`/`good`/`moderate`/`poor`/`loss` plus boundary-honest `unknown`) to Russian labels, Lucide icons, Tailwind bg/text/border/icon-color classes, classification descriptions (ROAS/ROI ranges, e.g. excellent = ROAS ≥ 5.0 / ROI ≥ 100%), and recommendations. Since the P2 wave-5 palette pass the color fields are semantic status tokens (not hex/legacy Tailwind channels); note the source itself documents that `bgColor`/`textColor`/`borderColor` currently have **no live production reader** (labels/icons only) — mapped with the same dual-green collapse (excellent solid vs good soft) as the filter config below. Alert dismissal state (`ALERT_DISMISS_KEY`, `get/set/clearAlertDismissState`, `shouldShowLossAlert`) is re-exported from the extracted `efficiency-alert-state.ts`; accessor helpers (`getEfficiencyColor`, `getRoasColorClass`, `isLossStatus`, …) live in `efficiency-accessors.ts` (file-size split). Focused tests: `src/lib/__tests__/efficiency-utils.test.ts`, `efficiency-alert-state.test.ts`, `efficiency-filter-config.test.ts`.
 
 `src/lib/efficiency-filter-config.ts` (Story 63.4-FE) is the sibling config for the **filter chips** on the advertising dashboard: `efficiencyFilterConfig` carries per-status chip styling with separate inactive/active backgrounds (`bgColor` vs `bgColorActive` — soft tiers darken on activation), `FILTER_ORDER` fixes the chip order best→worst, and `calculateEfficiencyCounts(items)` groups `AdvertisingItem[]` by `efficiency_status` into an `EfficiencyCountsSummary` so each chip shows its live count.
+
+### Margin analytics by brand / by variant (`src/hooks/useMarginAnalyticsByBrand.ts`, `useMarginAnalyticsByVariant.ts`)
+
+The brand- and variant-level margin hooks (extracted from `useMarginAnalytics.ts` for file-size compliance) share `margin-analytics-query-keys.ts` — `MARGIN_ANALYTICS_QUERY_CONFIG`, `buildMarginAnalyticsParams()` (which serializes week / `weekStart`+`weekEnd` range / comparison / `includeCogs`+`includeAds`+`includeStock` parity flags / cursor+limit), and `extractItems()` (array-or-enveloped response normalization). Each hook is `enabled` only with a week or a full date range, and every filter (including the parity flags) is part of the TanStack key, so toggles produce separate cache entries. Item mapping (`mapBrandItem`/`mapVariantItem`) preserves nulls end-to-end per AP#8: money/ratio fields map `?? null` (or `?? undefined` for the legacy `MarginAnalyticsAggregated` optional fields), never `?? 0` — including the FR-2..FR-5 competitor-parity pass-through (`advertising_cost`, `drr_pct`, `spp_rub/pct`, `stock_fbs/fbo/total`, …). Backend `roi` (percent 0–100, null when COGS = 0) and `profit_per_unit` are preferred, with the row component falling back to the FE recompute in `roi-profit-utils.ts`.
 
 ### Per-week financial series (`src/hooks/financial/useWeeklyFinancialSeries.ts`)
 
@@ -423,6 +431,14 @@ The entire analytics system operates on **ISO weeks anchored to Moscow timezone*
 | `src/lib/iso-week/comparison.ts` | Period comparison utilities |
 | `src/lib/date-utils.ts` / `src/lib/date-range-utils.ts` | General date manipulation |
 
+## Orders Status Config (`src/lib/orders-status-config.ts`)
+
+Story 63.7-FE config for the dashboard orders-status breakdown chart: `ORDER_STATUS_CONFIG` maps the four WB order statuses (`complete`, `confirm`, `new`, `cancel`) to Russian labels, a chart color (`var(--color-status-*)` token as the chart discriminator, C5-W2), and semantic bg/text Tailwind classes with muted fallbacks for enum drift. `getStatusLabel`/`getStatusColor`/`getStatusBgClass`/`getStatusTextClass` are the accessors; the fixed display order runs most-positive → most-negative (complete → confirm → new → cancel).
+
+## FBS Analytics Formatters (`src/lib/fbs-analytics-formatters.ts`)
+
+Chart/formatting half of the FBS historical analytics (365 days) module, extracted from `fbs-analytics-utils.ts`: `MetricVisibility` + `DEFAULT_METRIC_VISIBILITY` (orders/revenue visible, cancellations hidden) drive the legend toggles; `CHART_LINE_COLORS` assigns semantic chart tokens per series; `METRIC_LABELS` supplies the Russian labels. `formatChartDate()` renders `DD.MM` for ISO dates and `Www` (year stripped) for `YYYY-Www` week strings, falling back to the raw string on an unparseable date; `formatTooltipDate()` renders `DD.MM.YYYY` / «Неделя ww, yyyy».
+
 ## Formatters
 
 All formatters use **Russian locale** (`ru-RU`) for number/currency display.
@@ -525,7 +541,7 @@ The write-side (reply to feedback, answer question, send chat message, pin/unpin
 | Aspect | Detail |
 |--------|--------|
 | **Status predicates** | `src/lib/communications-writeback-utils.ts` — single source of truth for `isWritebackPolling` / `isWritebackCompleted` / `isWritebackDisabledError` / `writebackErrorMessage`. Re-exported by `src/types/communications/writeback.ts`. |
-| **Coordinator** | `useWritebackJob` (`src/hooks/useWritebackJob.ts`) wraps mutation → 202 → poll → terminal; fires `onTerminal` once per **attempt** (`attemptKey = jobId#attempt`); captures action kind at fire time; distinguishes poll-error from job-failed. The `setJobId` attempt nonce re-arms the poll for a deterministic chat jobId (dedup) so retrying a timed-out send works — see [API Layer & Normalizers — Retry-rearm](api-and-normalizers.md#retry-rearm-for-deterministic-chat-jobids-new-2-fast-follow). |
+| **Coordinator** | `useWritebackJob` (`src/hooks/useWritebackJob.ts`) wraps mutation → 202 → poll → terminal; fires `onTerminal` once per **attempt** (`attemptKey = jobId#attempt`); captures action kind at fire time; distinguishes poll-error from job-failed. The `setJobId` attempt nonce re-arms the poll for a deterministic chat jobId (dedup) so retrying a timed-out send works — see [Anti-Pattern #8](api-and-normalizers.md#anti-pattern-8-preserve-null-money-and-ratio-values). |
 | **UX copy** | RU-only messages: `WRITEBACK_DISABLED_MESSAGE` (403 kill-switch), `WRITEBACK_INFLIGHT_MESSAGE` (Отправляется…), `WRITEBACK_TIMEOUT_MESSAGE` (poll deadline). Raw BE/English error.message is NEVER shown to the user. |
 
 **Components**: `FeedbackWriteControls` / `QuestionWriteControls` / `PinnedWriteControls` (per-section write controls), `ChatComposer` + `ReplyForm`, `ConfirmAction`, `WritebackStatus` (`src/app/(dashboard)/communications/components/`). **Focused tests**: `communications-writeback.test.ts`, `communications-writeback-msw.test.ts`, `useCommunicationsWriteback.test.ts` (incl. retry-rearm regression), `useWritebackJob.test.ts`, `communications-writeback-utils.test.ts`, `QuestionWriteControls.test.tsx` (incl. timeout-toast).
@@ -533,3 +549,4 @@ The write-side (reply to feedback, answer question, send chat message, pin/unpin
 ## Backfill Retry (Story 165.5)
 
 The backfill admin page (`/settings/backfill`) exposes **per-source retry** controls for failed backfill pipelines. The backend exposes two separate retry endpoints — `POST /v1/admin/backfill/report/retry` and `POST /v1/admin/backfill/analytics/retry` — keyed by `BackfillRetrySource` (`'reports' | 'analytics'`, `src/types/backfill.ts`). `retryBackfill()` (`src/lib/api/backfill.ts`) routes to the correct path via a `RETRY_PATH` map and normalizes the response (`{ success, message }` with an attempt counter) through `normalizeRetryBackfillResponse`. The UI disambiguates the failed state so the operator retries only the failed source's pipeline. **Focused tests**: `src/lib/api/__tests__/backfill-retry.test.ts`, `BackfillRetryControls.test.tsx`, `e2e/settings/backfill-admin.spec.ts`.
+ols.test.tsx`, `e2e/settings/backfill-admin.spec.ts`.
