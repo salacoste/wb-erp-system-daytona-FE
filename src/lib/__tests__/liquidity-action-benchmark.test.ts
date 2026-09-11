@@ -69,19 +69,19 @@ describe('trend insight helpers (improvement / warning / info=default)', () => {
   const cases: { type: TrendInsightType; color: string; icon: string; bg: string }[] = [
     {
       type: 'improvement',
-      color: '#22C55E',
+      color: 'var(--color-valence-1)',
       icon: '📈',
       bg: 'bg-status-success/10 border-status-success/20',
     },
     {
       type: 'warning',
-      color: '#F97316',
+      color: 'var(--color-valence-4)',
       icon: '⚠️',
       bg: 'bg-status-warning/10 border-status-warning/20',
     },
     {
       type: 'info',
-      color: '#3B82F6',
+      color: 'var(--color-status-information)',
       icon: 'ℹ️',
       bg: 'bg-status-information/10 border-status-information/20',
     },

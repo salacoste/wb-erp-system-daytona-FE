@@ -26,13 +26,13 @@ describe('ORDER_STATUS_CONFIG', () => {
     ])
   })
 
-  it('has concrete Russian labels + hex colors', () => {
+  it('has concrete Russian labels + chart-discriminator token colors (C5-W2)', () => {
     expect(ORDER_STATUS_CONFIG.complete.label).toBe('Выполнено')
-    expect(ORDER_STATUS_CONFIG.complete.color).toBe('#22C55E')
+    expect(ORDER_STATUS_CONFIG.complete.color).toBe('var(--color-status-success)')
     expect(ORDER_STATUS_CONFIG.confirm.label).toBe('Подтверждено')
     expect(ORDER_STATUS_CONFIG.new.label).toBe('Новый')
     expect(ORDER_STATUS_CONFIG.cancel.label).toBe('Отменено')
-    expect(ORDER_STATUS_CONFIG.cancel.color).toBe('#EF4444')
+    expect(ORDER_STATUS_CONFIG.cancel.color).toBe('var(--color-status-error)')
   })
 })
 

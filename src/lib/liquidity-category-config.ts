@@ -15,9 +15,9 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
   highly_liquid: {
     label: 'Высоколиквидный',
     labelShort: 'Ликвид.',
-    color: '#22C55E', // Green-500
-    bgColor: '#DCFCE7', // Green-100
-    bgClass: 'bg-green-500',
+    color: 'var(--color-valence-1)', // C5-W2: valence good (light pixel-identical to legacy Green-500)
+    bgColor: 'color-mix(in srgb, var(--color-valence-1) 14%, var(--color-card))', // theme-aware tint
+    bgClass: 'bg-valence-1', // C5-W2 token utility (light ≡ legacy green-500)
     textClass: 'text-white',
     icon: '🟢',
     minDays: 0,
@@ -27,9 +27,9 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
   medium: {
     label: 'Средняя ликвидность',
     labelShort: 'Средний',
-    color: '#EAB308', // Yellow-500
-    bgColor: '#FEF9C3', // Yellow-100
-    bgClass: 'bg-yellow-500',
+    color: 'var(--color-valence-3)', // C5-W2 (light ≡ legacy Yellow-500)
+    bgColor: 'color-mix(in srgb, var(--color-valence-3) 18%, var(--color-card))', // theme-aware tint
+    bgClass: 'bg-valence-3',
     textClass: 'text-white',
     icon: '🟡',
     minDays: 31,
@@ -39,9 +39,9 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
   low: {
     label: 'Низкая ликвидность',
     labelShort: 'Низкий',
-    color: '#F97316', // Orange-500
-    bgColor: '#FED7AA', // Orange-200
-    bgClass: 'bg-orange-500',
+    color: 'var(--color-valence-4)', // C5-W2 (light ≡ legacy Orange-500)
+    bgColor: 'color-mix(in srgb, var(--color-valence-4) 28%, var(--color-card))', // theme-aware tint
+    bgClass: 'bg-valence-4',
     textClass: 'text-white',
     icon: '🟠',
     minDays: 61,
@@ -51,9 +51,9 @@ export const LIQUIDITY_CATEGORY_CONFIG: Record<LiquidityCategory, LiquidityCateg
   illiquid: {
     label: 'Неликвид',
     labelShort: 'Неликвид',
-    color: '#EF4444', // Red-500
-    bgColor: '#FEE2E2', // Red-100
-    bgClass: 'bg-red-500',
+    color: 'var(--color-valence-5)', // C5-W2 (light ≡ legacy Red-500)
+    bgColor: 'color-mix(in srgb, var(--color-valence-5) 14%, var(--color-card))', // theme-aware tint
+    bgClass: 'bg-valence-5',
     textClass: 'text-white',
     icon: '🔴',
     minDays: 91,

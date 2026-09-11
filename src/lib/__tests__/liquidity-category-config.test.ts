@@ -37,17 +37,17 @@ describe('LIQUIDITY_CATEGORY_CONFIG', () => {
 
 describe('concrete config values', () => {
   it('highly_liquid: green, label/icon/target', () => {
-    expect(getLiquidityStatusColor('highly_liquid')).toBe('#22C55E')
-    expect(getLiquidityStatusBgColor('highly_liquid')).toBe('#DCFCE7')
+    expect(getLiquidityStatusColor('highly_liquid')).toBe('var(--color-valence-1)')
+    expect(getLiquidityStatusBgColor('highly_liquid')).toBe('color-mix(in srgb, var(--color-valence-1) 14%, var(--color-card))')
     expect(getLiquidityStatusLabel('highly_liquid')).toBe('Высоколиквидный')
     expect(getLiquidityStatusLabelShort('highly_liquid')).toBe('Ликвид.')
     expect(getLiquidityStatusIcon('highly_liquid')).toBe('🟢')
-    expect(getLiquidityBadgeClasses('highly_liquid')).toBe('bg-green-500 text-white')
+    expect(getLiquidityBadgeClasses('highly_liquid')).toBe('bg-valence-1 text-white')
     expect(getLiquidityTargetShare('highly_liquid')).toBe('> 50%')
   })
 
   it('illiquid: red, label/icon/target', () => {
-    expect(getLiquidityStatusColor('illiquid')).toBe('#EF4444')
+    expect(getLiquidityStatusColor('illiquid')).toBe('var(--color-valence-5)')
     expect(getLiquidityStatusLabel('illiquid')).toBe('Неликвид')
     expect(getLiquidityStatusIcon('illiquid')).toBe('🔴')
     expect(getLiquidityTargetShare('illiquid')).toBe('< 5%')

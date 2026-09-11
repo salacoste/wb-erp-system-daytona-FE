@@ -295,8 +295,8 @@ describe('Heatmap (optional)', () => {
     R()
     // Color scale is defined and applied via Cell fills
     expect(screen.getByText('Декабрь')).toBeInTheDocument()
-    expect(SEASONAL_COLORS.heatmap.low).toBe('#E0F2FE')
-    expect(SEASONAL_COLORS.heatmap.peak).toBe('#075985')
+    expect(SEASONAL_COLORS.heatmap.low).toBe('color-mix(in srgb, var(--color-chart-1) 22%, var(--color-card))')
+    expect(SEASONAL_COLORS.heatmap.peak).toBe('color-mix(in srgb, var(--color-chart-1) 70%, var(--color-foreground))')
   })
   it('formats hour as 24-hour format', () => {
     ok()
@@ -572,9 +572,9 @@ describe('TDD Verification', () => {
     expect(MSR.December).toBe('Дек')
     expect(WSR.Monday).toBe('Пн')
     expect(WSR.Sunday).toBe('Вс')
-    expect(SEASONAL_COLORS.bar.default).toBe('#3B82F6')
-    expect(SEASONAL_COLORS.bar.peak).toBe('#22C55E')
-    expect(SEASONAL_COLORS.bar.low).toBe('#EF4444')
+    expect(SEASONAL_COLORS.bar.default).toBe('var(--color-chart-1)')
+    expect(SEASONAL_COLORS.bar.peak).toBe('var(--color-chart-positive)')
+    expect(SEASONAL_COLORS.bar.low).toBe('var(--color-chart-negative)')
   })
   it('mock data: December peak, July low, Saturday peak, utils available', () => {
     const dec = mMP.find(m => m.month === 'December')

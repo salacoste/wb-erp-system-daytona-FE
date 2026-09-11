@@ -128,16 +128,16 @@ export function formatPeakHour(hour: number): string {
 export const SEASONAL_COLORS = {
   /** Bar chart colors */
   bar: {
-    default: '#3B82F6', // Blue - default bars
-    peak: '#22C55E', // Green - peak highlight
-    low: '#EF4444', // Red - low highlight
+    default: 'var(--color-chart-1)', // C5-W2: default bars
+    peak: 'var(--color-chart-positive)', // C5-W2: peak highlight
+    low: 'var(--color-chart-negative)', // C5-W2: low highlight
   },
   /** Heatmap gradient colors (light to dark) */
   heatmap: {
-    low: '#E0F2FE', // Light blue
-    medium: '#38BDF8', // Medium blue
-    high: '#0284C7', // Dark blue
-    peak: '#075985', // Darkest blue
+    low: 'color-mix(in srgb, var(--color-chart-1) 22%, var(--color-card))', // C5-W2: theme-aware depth tint
+    medium: 'color-mix(in srgb, var(--color-chart-1) 55%, var(--color-card))',
+    high: 'color-mix(in srgb, var(--color-chart-1) 85%, var(--color-card))',
+    peak: 'color-mix(in srgb, var(--color-chart-1) 70%, var(--color-foreground))', // darker than chart-1 in light, brighter in dark
   },
 } as const
 
