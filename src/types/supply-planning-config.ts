@@ -19,15 +19,15 @@ export interface RiskStatusConfig {
   label: string
   /** Short label for compact views (e.g., "Нет") */
   labelShort: string
-  /** Primary color hex (e.g., "#1F2937") */
+  /** Primary color value (theme-aware token string) */
   color: string
-  /** Background color for light badges (e.g., "#F3F4F6") */
+  /** Background color for light badges (theme-aware token string) */
   bgColor: string
   /** Emoji icon for quick visual (e.g., "⬛") */
   icon: string
   /** Lucide icon component name (e.g., "PackageX") */
   lucideIcon: string
-  /** Tailwind bg class for solid badges (e.g., "bg-gray-800") */
+  /** Tailwind bg class for solid badges (semantic bg utility) */
   bgClass: string
   /** Tailwind text class for solid badges (e.g., "text-white") */
   textClass: string

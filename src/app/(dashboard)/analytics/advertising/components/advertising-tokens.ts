@@ -54,7 +54,7 @@ export function getRoasTierTextClass(roas: number | null | undefined): string {
 /**
  * ROI inline text color — percent-domain thresholds (iter-84) preserved.
  * Bands: ≥50 success, ≥20 warning, ≥0 warning (weak-but-positive gets
- * attention — old palette was text-orange-600), <0 error.
+ * attention — old palette was an orange inline text), <0 error.
  *
  * DELIBERATE 5→3 inline-text collapse (3-status-token canon, round-1 F1/F2):
  * old green/emerald (excellent/good) collapse to one success text, old
@@ -72,7 +72,7 @@ export function getRoiTextClass(roi: number): string {
 
 /**
  * Campaign status dot color — WB status codes (Story 33.5 AC2) mapped to
- * status tokens; unknown codes → muted (was bg-gray-400 fallback).
+ * status tokens; unknown codes → muted (legacy neutral-gray fallback).
  */
 const CAMPAIGN_STATUS_DOT_TOKENS: Record<number, string> = {
   9: 'bg-status-success', // Active

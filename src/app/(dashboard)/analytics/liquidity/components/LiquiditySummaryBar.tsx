@@ -20,7 +20,7 @@ interface LiquiditySummaryBarProps {
  * Story 7.2: Liquidity Page Structure
  *
  * Story 169.10: icon chips migrated from light-only /100-pastel pairs
- * (bg-blue-100 text-blue-600 etc.) to solid semantic pairs (169.9 canon).
+ * (legacy /100-pastel blue pairs) to solid semantic pairs (169.9 canon).
  * The legacy lib helper getFrozenCapitalStatusClass (returns light-only
  * text-*-600 utilities) is no longer applied; the danger tier is mapped
  * locally using the SAME thresholds the lib documents:

@@ -33,7 +33,7 @@ export function TrendTooltip({
   const dataPoint = payload[0].payload
   return (
     <div className="rounded-lg border bg-white p-3 shadow-md">
-      <p className="font-semibold text-gray-900 mb-2">{dataPoint.week}</p>
+      <p className="font-semibold text-foreground mb-2">{dataPoint.week}</p>
       {payload.map(entry => (
         <p key={entry.dataKey} className="text-sm" style={{ color: entry.color }}>
           {METRIC_LABELS[entry.dataKey] ?? entry.dataKey}:{' '}

@@ -101,8 +101,8 @@ export function ElasticitySkuChart({ elasticity, profitMaxPrice }: ElasticitySku
             yAxisId="demand"
             type="monotone"
             dataKey="demand"
-            stroke="#3B82F6"
-            fill="#3B82F6"
+            stroke="var(--color-chart-1)"
+            fill="var(--color-chart-1)"
             fillOpacity={0.15}
             name="Спрос"
             strokeWidth={2}
@@ -111,13 +111,13 @@ export function ElasticitySkuChart({ elasticity, profitMaxPrice }: ElasticitySku
             <ReferenceLine
               yAxisId="demand"
               x={profitMaxPrice}
-              stroke="#22C55E"
+              stroke="var(--color-chart-positive)"
               strokeWidth={2}
               strokeDasharray="6 3"
               label={{
                 value: `Оптимум: ${formatCurrency(profitMaxPrice)}`,
                 fontSize: 11,
-                fill: '#22C55E',
+                fill: 'var(--color-chart-positive)',
                 position: 'top',
               }}
             />
