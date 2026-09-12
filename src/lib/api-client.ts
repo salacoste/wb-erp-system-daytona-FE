@@ -124,8 +124,8 @@ class ApiClient {
         // Wave C (owner decision 2, 2026-09-12): central sanitization — every
         // ApiError.message from an HTTP response is scrubbed via the FE-D3
         // canon sanitizer (secrets/stacks/paths/JWT; truncate ≤200; benign
-        // single-line text passes through byte-identical (multiline/NBSP
-        // whitespace-normalized)), so all downstream echo sites (JSX/toast
+        // single-line text passes through byte-identical; multiline/NBSP
+        // whitespace-normalized), so all downstream echo sites (JSX/toast
         // `error.message`) are covered at this single choke point.
         // Status/headers/retryAfter/data are untouched (Retry-After contract).
         const apiError = new ApiError(

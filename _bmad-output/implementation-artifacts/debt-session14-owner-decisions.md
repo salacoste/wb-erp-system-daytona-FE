@@ -20,7 +20,7 @@
 |---|---|---|---|
 | A | `debt/a2-organictab-tier` | решения 1 | ✅ SHIPPED (см. §4-A) |
 | B | `debt/financial-sign-canon` | решения 5 + 3 (док-строка фриза + канон-декларация) | ✅ SHIPPED — **код-контент NO-OP** (C2/трио/класс протухли, закрыты §37; канон-декларация + фриз-строка — CLAUDE.md/§37; см. §4-B) |
-| C | `debt/apiclient-central-sanitize` | решение 2 | ⏳ |
+| C | `debt/apiclient-central-sanitize` | решение 2 | ✅ SHIPPED (2-pass: RC→APPROVE merge-ready; см. §4-C + реестр §38) |
 | D | `debt/logger-central-redact` | решение 4 | ⏳ |
 
 **Порядок**: A (изолированный файл) → B (токен-домен, декларация канона) → C (apiClient) → D (logger).
@@ -60,3 +60,14 @@ muted-foreground, fg-on-tint обязателен, financial-foreground отло
 **Ревью**: doc-only process-cleanup (Epic 107-A-2 scope: inline-verify допустим) — все evidence
 живые grep'ы оркестратора этого окна; гейты docs/lessons прогнаны. Sub-AA /10-пары price-calculator
 (pass-2 F1) — НЕ в скоупе, остаются ⏳.
+
+## 4-C. Wave C record: apiClient центральная санитизация (2026-09-12)
+
+Полный рекорд — реестр §38 (APPEND-ONLY). Кратко: 2 construction-сайта санитизированы; HIGH-обход
+через errorData (api-wb-token-errors) закрыт проходом-1; слэш-date over-scrub санитайзера ужесточён;
+telegram-эгресс обёрнут; 8 новых пинов; api.test репин на санитизированную рекомендацию; манифест
+реген (set-diff 1 sha). Гейты: СОЛО **19592/19592** (флор 19592 в CLAUDE.md) · tsc 0 · boundary
+0=0/0 · privacy 0. Ревью: pass-1 RC (1H/2M/4L — все applied/accepted-documented), pass-2 APPROVE
+merge-ready (fix-attestation line-exact, `||`-цепь и регекс-трейсы подтверждены). Trigger-аудит:
+p1 = 7 > 5 → pass-2 (исполнен); p2 = 0 blocking ≤ 5; кумулятив 9 < 12 → 2 прохода достаточны
+(не-кодификационная волна).
