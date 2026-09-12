@@ -430,3 +430,39 @@ X-кнопка без hover — соответствует wave-6 канону (
 + конфляция-тип задокументирован. Кросс-волновый byte-claim аудит прохода-2: все оставшиеся клеймы ≡
 верифицированы TRUE (chart-9≡#6B7280 / valence-neutral≡#9CA3AF / brand≡#E53935 / chart-10≡#14B8A6 /
 chart-7≡#EAB308 — только где старое значение совпадает). Merge-ready.
+
+---
+
+## 12. Wave-4 record: waterfall + exceptions close — финал эпика C5 (2026-09-12, ветка `debt/c5-w4-waterfall-close`)
+
+### 12.0 Мини-план + owner-решения шага-0 (записаны до имплементации)
+
+**Owner-опрос (шаг 0, 2026-09-12, AskUserQuestion)**:
+
+1. **WCAG 1.4.11 light-форк → решение (a)**: закрывается для dark (7.6–14.0:1) + компонентных пар
+   (waterfall-валенс; warn/40 бордеры 2.66 → пары ≥3:1 по wave-6 рецептам; TrendGraph-баннер 5.00:1
+   AA-pass — вердикт документируется); легаси-light (валенс-семейство + chart-7/8/10 как текст
+   1.92–3.76:1) принимается осознанным форком — дисклоужа в CLAUDE.md Design System + реестр.
+   chart-9 light 4.83 — AA-PASS, вне форка.
+2. **Исторические метки #7C3AED → мигрировать** на ближайшую роль (`var(--color-chart-2)`) в
+   PriceHistorySheet + FunnelTab; exceptions №2/№3 снимаются (в развитие owner-решения ⑥).
+
+**Шаги (handoff §3.1, не перенумеровывать)**: 1 рекон (explore/sonnet, suppressed-файлы читаются
+напрямую) → 2 waterfall валенс-семантика (increase→`var(--color-chart-positive)`,
+decrease→`var(--color-chart-negative)`, total→нейтраль по рендеру; double-source §191 закрывается;
+exception №1 снимается) → 3 PriceHistorySheet ВСЕ 6 hex + FunnelTab + exceptions №2/№3 + self-тесты
+чекера → 4 тёзки CHART_COLORS (chart-config:22 / cost-breakdown-types:40 / storage-trends-config:15;
+module-local StorageTrendsChart:32 — сверить) → 5 WCAG 1.4.11 по решению (a) → 6 гейты +
+computed-style проб → 7 доки/закрытие (этот §12, реестр §34, CLAUDE.md терминальная строка + канон
+в Design System) → 8 четыре ревью-прохода → PR → merge.
+
+**Префлайт (V20 §0.3b)**: execution-manifest.json в репо отсутствует (легитимное empty first-run
+состояние по manifest-reader) → **0 пинов** на трогаемые файлы; chart-inventory пинов нет. Boundary на
+старте: 0=0 PASS, exceptions = 3 registered / 3 suppressing (сверено живым прогоном
+`/tmp/c5w4-bootstrap-boundary.log`); окружение: Node 24.18.0, main `a9a031e8`, BE :3000 healthy,
+FE :3100 → 200.
+
+**Гейты-цель**: boundary **0=0 И «exceptions = 0 registered»** (↑ = STOP) · vitest ≥19573+Δ/0 СОЛО ·
+lint 0/0 · tsc 0 (bare) · docs 0 · locale 4 · lessons 0 · privacy 0 bare · контракт-тесты 174.3 ·
+computed-style проб: waterfall (increase/decrease/total) + PriceHistorySheet marks + FunnelTab —
+формы резолвятся, rgb сверяются с globals.css (НЕ скриншоты, НЕ jsdom — прецедент (d)).
