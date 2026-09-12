@@ -182,6 +182,115 @@ describe('ApiClient', () => {
         expect((error as ApiError).status).toBe(0)
       }
     })
+
+    // Wave C (owner decision 2, 2026-09-12): central sanitization at the
+    // ApiError construction choke point — the canon FE-D3 sanitizer
+    // (sanitizeFallbackMessage) scrubs secret-like content before the
+    // message reaches any downstream echo site.
+    it(
+      'sanitizes credentialed URLs and JWTs in HTTP error messages',
+      { timeout: 5000 },
+      async () => {
+        mockFetch.mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: 'Internal Server Error',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            message:
+              'Auth failed: postgresql://admin:s3cret@db.internal:5432/wb (eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.sig)',
+          }),
+        })
+
+        try {
+          await apiClient.get('/v1/test')
+          expect.fail('Should have thrown ApiError')
+        } catch (error) {
+          expect(error).toBeInstanceOf(ApiError)
+          const message = (error as ApiError).message
+          expect(message).not.toContain('postgresql://')
+          expect(message).not.toContain('s3cret')
+          expect(message).not.toContain('eyJ')
+          expect(message).toContain('Auth failed')
+          expect((error as ApiError).status).toBe(500)
+        }
+      }
+    )
+
+    it(
+      'passes benign classification-sentinel messages through byte-identical (WB API token)',
+      { timeout: 5000 },
+      async () => {
+        const sentinel = 'Unauthorized: WB API token missing or invalid'
+        mockFetch.mockResolvedValueOnce({
+          ok: false,
+          status: 401,
+          statusText: 'Unauthorized',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({ message: sentinel }),
+        })
+
+        try {
+          await apiClient.get('/v1/test')
+          expect.fail('Should have thrown ApiError')
+        } catch (error) {
+          expect(error).toBeInstanceOf(ApiError)
+          expect((error as ApiError).message).toBe(sentinel)
+          expect((error as ApiError).isWbTokenError).toBe(true)
+        }
+      }
+    )
+
+    it(
+      'truncates oversized HTTP error messages to the 200-code-point bound',
+      { timeout: 5000 },
+      async () => {
+        // Hard-cut input (single long token, no interior space past midpoint)
+        // → deterministic 200-code-point slice + ellipsis (mirrors the
+        // wave-2 item-3 pin on the sanitizer's own unit tests).
+        const oversized = `Ошибка: ${'ж'.repeat(220)}`
+        expect(Array.from(oversized).length).toBeGreaterThan(200)
+        mockFetch.mockResolvedValueOnce({
+          ok: false,
+          status: 422,
+          statusText: 'Unprocessable Entity',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({ message: oversized }),
+        })
+
+        try {
+          await apiClient.get('/v1/test')
+          expect.fail('Should have thrown ApiError')
+        } catch (error) {
+          const message = (error as ApiError).message
+          expect(Array.from(message).length).toBe(201) // 200 + ellipsis
+          expect(message.endsWith('…')).toBe(true)
+          expect(message).not.toBe(oversized)
+        }
+      }
+    )
+
+    it(
+      'sanitizes secret-like transport error messages on the network path',
+      { timeout: 5000 },
+      async () => {
+        mockFetch.mockRejectedValueOnce(
+          new Error('connect ECONNREFUSED redis://:p4ss@cache.internal:6379')
+        )
+
+        try {
+          await apiClient.get('/v1/test')
+          expect.fail('Should have thrown ApiError')
+        } catch (error) {
+          expect(error).toBeInstanceOf(ApiError)
+          const message = (error as ApiError).message
+          expect(message).not.toContain('redis://')
+          expect(message).not.toContain('p4ss')
+          expect(message).toContain('ECONNREFUSED')
+          expect((error as ApiError).status).toBe(0)
+        }
+      }
+    )
   })
 
   describe('Response transformation', () => {

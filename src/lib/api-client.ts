@@ -17,6 +17,7 @@ import {
   trackTelegramNetworkError,
   logApiError,
 } from './api-interceptors'
+import { sanitizeFallbackMessage } from './sanitize-fallback-message'
 
 /** Centralized API Client — auto-injects JWT token and Cabinet ID headers */
 class ApiClient {
@@ -116,7 +117,17 @@ class ApiClient {
         trackTelegramApiError(endpoint, response.status, errorMessage)
         logApiError(response.status, errorMessage, !!isJson, errorData)
 
-        const apiError = new ApiError(errorMessage, response.status, errorData)
+        // Wave C (owner decision 2, 2026-09-12): central sanitization — every
+        // ApiError.message from an HTTP response is scrubbed via the FE-D3
+        // canon sanitizer (secrets/stacks/paths/JWT; truncate ≤200; benign
+        // text passes through byte-identical), so all downstream echo sites
+        // (JSX/toast `error.message`) are covered at this single choke point.
+        // Status/headers/retryAfter/data are untouched (Retry-After contract).
+        const apiError = new ApiError(
+          sanitizeFallbackMessage(errorMessage),
+          response.status,
+          errorData
+        )
         // Retry-After extraction for 429/503 (Story 96.9-FE, Story 96.12-FE)
         const retryAfter = extractRetryAfter(
           response.status,
@@ -160,7 +171,10 @@ class ApiClient {
         logger.error('Network error:', errorMessage)
       }
 
-      throw new ApiError(errorMessage, 0, error)
+      // Wave C: transport-layer messages are locally generated today, but the
+      // same choke-point guarantee applies — a proxy/extension-injected or
+      // future transport error must not echo secrets verbatim either.
+      throw new ApiError(sanitizeFallbackMessage(errorMessage), 0, error)
     }
   }
 
