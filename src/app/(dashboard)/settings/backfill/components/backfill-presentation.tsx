@@ -53,7 +53,7 @@ const STATUS_PRESENTATION: Record<BackfillStatus, { label: string; className: st
   not_started: { label: 'Не начат', className: 'border-border bg-muted text-muted-foreground' },
   pending: {
     label: 'В очереди',
-    className: 'border-status-warning/40 bg-status-warning/10 text-foreground',
+    className: 'border-status-warning bg-status-warning/10 text-foreground',
   },
   in_progress: {
     label: 'Выполняется',
@@ -69,7 +69,7 @@ const STATUS_PRESENTATION: Record<BackfillStatus, { label: string; className: st
   },
   paused: {
     label: 'Приостановлено',
-    className: 'border-status-warning/40 bg-status-warning/10 text-foreground',
+    className: 'border-status-warning bg-status-warning/10 text-foreground',
   },
 }
 

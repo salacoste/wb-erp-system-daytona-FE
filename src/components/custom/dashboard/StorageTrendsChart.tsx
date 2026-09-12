@@ -29,6 +29,9 @@ import {
 
 // Chart color scheme (Story 172.1 tokens): the storage series keeps its
 // categorical tone via chart-2; null/absent points render muted.
+// Same-name note: module-local to this dashboard widget — distinct from the
+// exported CHART_COLORS in analytics/storage/components/storage-trends-config.ts
+// (the /analytics/storage route palette, Story 169.12). Both are var()-based.
 const CHART_COLORS = {
   line: 'var(--color-chart-2)',
   nullPoint: 'var(--color-muted-foreground)',

@@ -42,7 +42,7 @@ export function TariffFormStatus({
         <Alert
           role="status"
           aria-label="Часть значений тарифов недоступна"
-          className="border-status-warning/40 bg-status-warning/10"
+          className="border-status-warning bg-status-warning/10"
         >
           <Info aria-hidden="true" className="h-4 w-4 text-status-warning" />
           <AlertTitle>Часть текущих значений не получена от сервера</AlertTitle>

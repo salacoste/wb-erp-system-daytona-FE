@@ -42,7 +42,7 @@ const VARIANTS = {
     title: 'Цена витрины (аноним, с промо)',
   },
   stale: {
-    className: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+    className: 'border-status-warning bg-status-warning/10 text-status-warning',
     label: 'Витрина · устарела',
     title: 'Нет свежего наблюдения ≤24ч — использована цена продавца',
   },

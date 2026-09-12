@@ -196,6 +196,6 @@ describe('GrossProfitSection — coverage warning uses status-warning (168.3)', 
     )
     expect(findByToken(container, 'bg-status-warning')).toBeDefined()
     expect(findByToken(container, 'text-status-warning-foreground')).toBeDefined()
-    expect(findByToken(container, 'border-status-warning/40')).toBeDefined()
+    expect(findByToken(container, 'border-status-warning')).toBeDefined()
   })
 })

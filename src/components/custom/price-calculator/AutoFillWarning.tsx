@@ -40,7 +40,7 @@ export function AutoFillWarning({ type, message, dismissible = true }: AutoFillW
   return (
     <Alert
       variant="default"
-      className="border-status-warning/40 bg-status-warning/10"
+      className="border-status-warning bg-status-warning/10"
       role="alert"
       aria-live="polite"
     >

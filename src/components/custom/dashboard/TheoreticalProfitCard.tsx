@@ -152,7 +152,7 @@ function Header({ isComplete }: { isComplete: boolean }): React.ReactElement {
       </div>
       <div className="flex items-center gap-2">
         {!isComplete && (
-          <Badge variant="outline" className="border-status-warning/40 text-status-warning">
+          <Badge variant="outline" className="border-status-warning text-status-warning">
             <AlertTriangle className="mr-1 h-3 w-3" />
             Неполные данные
           </Badge>

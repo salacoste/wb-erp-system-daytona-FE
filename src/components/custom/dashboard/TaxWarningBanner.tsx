@@ -35,7 +35,7 @@ export function TaxWarningBanner({
   return (
     <div
       role="alert"
-      className="flex items-center justify-between rounded-lg border border-status-warning/40 bg-status-warning/10 px-4 py-3"
+      className="flex items-center justify-between rounded-lg border border-status-warning bg-status-warning/10 px-4 py-3"
     >
       <div className="flex items-center gap-3">
         {/* p2-wave-6: icon = non-text channel on warn/10 over bg>muted/50

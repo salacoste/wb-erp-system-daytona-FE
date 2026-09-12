@@ -89,7 +89,7 @@ export function MissingCogsAlert({
                     bg-card chip + warn text = 4.81/13.38 (bg-tint-on-solid would not composite). */}
                 <Badge
                   variant="outline"
-                  className="cursor-help border-status-warning/40 bg-card text-status-warning"
+                  className="cursor-help border-status-warning bg-card text-status-warning"
                   tabIndex={0}
                 >
                   {missingCount} {pluralizeProduct(missingCount)}
@@ -117,7 +117,7 @@ export function MissingCogsAlert({
           // Aggregate-level usages (by-brand/by-category margin banner, dashboard) pass no
           // nmId list — render a bare count badge WITHOUT a tooltip, so keyboard users never
           // land on a help affordance that only said «Список недоступен».
-          <Badge variant="outline" className="border-status-warning/40 bg-card text-status-warning">
+          <Badge variant="outline" className="border-status-warning bg-card text-status-warning">
             {missingCount} {pluralizeProduct(missingCount)}
           </Badge>
         )}

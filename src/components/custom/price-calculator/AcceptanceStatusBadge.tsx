@@ -52,7 +52,7 @@ const COLOR_CLASSES: Record<string, string> = {
   destructive: 'bg-status-error/10 text-status-error border-status-error/30',
   success: 'bg-status-success text-status-success-foreground border-status-success/40',
   default: 'bg-muted text-foreground border-border',
-  warning: 'bg-status-warning text-status-warning-foreground border-status-warning/40',
+  warning: 'bg-status-warning text-status-warning-foreground border-status-warning',
   // D-4 (2026-09-02): high moved from the /15 tint to a solid pair (173.12 canon) — WCAG 1.4.3
   // in both themes; border stays a tint (outside the 1.4.3 text-contrast scope).
   // P2 /10-family follow-up (2026-09-02): warning also moved to a solid pair — high re-differentiates

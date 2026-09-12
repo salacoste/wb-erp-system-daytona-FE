@@ -63,7 +63,7 @@ export function TaxSystemSection({
         </RadioGroup>
 
         {taxSystem === null && (
-          <div className="flex items-start gap-2 rounded-md border border-status-warning/40 bg-status-warning/10 p-3 text-sm">
+          <div className="flex items-start gap-2 rounded-md border border-status-warning bg-status-warning/10 p-3 text-sm">
             <TriangleAlert
               aria-hidden="true"
               className="mt-0.5 size-5 shrink-0 text-status-warning"

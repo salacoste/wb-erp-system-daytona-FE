@@ -430,3 +430,268 @@ X-кнопка без hover — соответствует wave-6 канону (
 + конфляция-тип задокументирован. Кросс-волновый byte-claim аудит прохода-2: все оставшиеся клеймы ≡
 верифицированы TRUE (chart-9≡#6B7280 / valence-neutral≡#9CA3AF / brand≡#E53935 / chart-10≡#14B8A6 /
 chart-7≡#EAB308 — только где старое значение совпадает). Merge-ready.
+
+---
+
+## 12. Wave-4 record: waterfall + exceptions close — финал эпика C5 (2026-09-12, ветка `debt/c5-w4-waterfall-close`)
+
+### 12.0 Мини-план + owner-решения шага-0 (записаны до имплементации)
+
+**Owner-опрос (шаг 0, 2026-09-12, AskUserQuestion)**:
+
+1. **WCAG 1.4.11 light-форк → решение (a)**: закрывается для dark (**6.5–14.0:1** vs
+   `--background`; floor = chart-6 6.47, потолок = status-warning 14.03; пересчёт прохода-2 —
+   «7.6» не реконструируется ни под role-set W1 (floor 9.11), ни W4 (6.47); W1-запись не
+   правится, APPEND-ONLY) + компонентных пар
+   (waterfall-валенс; warn/40 бордеры 2.66 → пары ≥3:1 по wave-6 рецептам; TrendGraph-баннер 5.00:1
+   AA-pass — вердикт документируется); легаси-light (валенс-семейство + chart-7/8/10 как текст
+   1.92–3.76:1) принимается осознанным форком — дисклоужа в CLAUDE.md Design System + реестр.
+   chart-9 light 4.83 — AA-PASS, вне форка.
+2. **Исторические метки #7C3AED → мигрировать** на ближайшую роль (`var(--color-chart-2)`) в
+   PriceHistorySheet + FunnelTab; exceptions №2/№3 снимаются (в развитие owner-решения ⑥).
+
+**Owner-решение waterfall-семантики (уточнение к ④, 2026-09-12, AskUserQuestion — рекон выявил
+расхождение премиссы)**: график категориальный (Выручка + до 10 баров-категорий + Прибыль/Убыток,
+`waterfall-chart-utils.ts:77-103`), не increase/decrease/total; буквальное ④ обрушило бы легенду.
+Решение **(a) — синтез ②+④**: **7 из 10 категорий** → `chart-1..10` индексно (маппинг lib
+COST_CATEGORIES; double-source §191 закрывается: обе стороны токен-чистые) + **3 задокументированных
+расхождения** (2 byte-twin-дистанции + 1 разрешение коллизии revenue↔other) — lib остаётся строгим
+1:1, cross-ref комментарии в обоих
+конфигах); коллайдеры byte-twin
+(`chart-4 ≡ chart-positive` в обеих темах `globals.css:191≡:200/:279≡:286`; `chart-8 ≡ chart-negative`
+в dark `:283≡:287`) уводятся на валенс: `logistics_return → var(--color-valence-2)`,
+`penalties → var(--color-valence-4)`; revenue → `var(--color-chart-9)` (нейтраль по плану);
+`other_deductions → var(--color-valence-neutral)` (≈ текущий #9E9E9E→#9CA3AF, разрешает коллизию
+revenue↔other на chart-9 pixel-верно); profit/loss — уже знаки. Полная различимость 12 серий в обеих
+темах; guard Story 168.11 сохраняется в усиленной форме (точные ролевые пины + запрет mapпинга на
+твин-роли chart-4/chart-8/знаковые). Lib-конфиг НЕ сливается с component-конфигом (label'ы
+различаются: COGS vs Себестоимость — слияние = видимая продуктовая перемена, вне скоупа); Side-B
+transform остаётся (live-orphan, токен-чистая, 2 тест-сюиты пинуют) — cleanup вне эпика.
+
+**Шаги (handoff §3.1, не перенумеровывать)**: 1 рекон (explore/sonnet, suppressed-файлы читаются
+напрямую) → 2 waterfall валенс-семантика (increase→`var(--color-chart-positive)`,
+decrease→`var(--color-chart-negative)`, total→нейтраль по рендеру; double-source §191 закрывается;
+exception №1 снимается) → 3 PriceHistorySheet ВСЕ 6 hex + FunnelTab + exceptions №2/№3 + self-тесты
+чекера → 4 тёзки CHART_COLORS (chart-config:22 / cost-breakdown-types:40 / storage-trends-config:15;
+module-local StorageTrendsChart:32 — сверить) → 5 WCAG 1.4.11 по решению (a) → 6 гейты +
+computed-style проб → 7 доки/закрытие (этот §12, реестр §34, CLAUDE.md терминальная строка + канон
+в Design System) → 8 четыре ревью-прохода → PR → merge.
+
+**Префлайт (V20 §0.3b)**: префлайт-скан манифестов НЕ нашёл пинов на трогаемые файлы — grep вёл по
+`scripts/*.mjs` + JSON в maxdepth-2 и пропустил живой `e2e/fixtures/story-174-3/execution-manifest.json`
+(глубина 3; существовал на базе `a9a031e8` с 770 записями). Скрытая пин-связность вскрылась
+пост-фактум падением 174.3-сюит → реген раннером + set-diff (§12.3; переформулировано проходом-2 —
+прежний текст ошибочно утверждал отсутствие файла). Boundary на
+старте: 0=0 PASS, exceptions = 3 registered / 3 suppressing (сверено живым прогоном
+`/tmp/c5w4-bootstrap-boundary.log`); окружение: Node 24.18.0, main `a9a031e8`, BE :3000 healthy,
+FE :3100 → 200.
+
+**Гейты-цель**: boundary **0=0 И «exceptions = 0 registered»** (↑ = STOP) · vitest ≥19573+Δ/0 СОЛО ·
+lint 0/0 · tsc 0 (bare) · docs 0 · locale 4 · lessons 0 · privacy 0 bare · контракт-тесты 174.3 ·
+computed-style проб: waterfall (increase/decrease/total) + PriceHistorySheet marks + FunnelTab —
+формы резолвятся, rgb сверяются с globals.css (НЕ скриншоты, НЕ jsdom — прецедент (d)).
+
+### 12.1 Имплементация (2026-09-12)
+
+| Коммит | Содержание |
+|---|---|
+| `e50ac726` | мини-план + решения шага-0 (§12.0) |
+| `c5561699` | owner-решение waterfall (синтез ②+④) |
+| `64a08119` | waterfall: 11 hex → токены, guard-тест усилен (61/61, tsc 0) |
+| `7cea224b` | PriceHistorySheet 6 + FunnelTab 5 → инлайн-токены; `BOUNDARY_EXCEPTIONS` опустошён; self-тест чекера переписан (88/88, self-tests 10/10) |
+| `da138b69` | same-name комментарии 3 тёзок (уже токен-чистых с 172.1/169.12; 0 не-коммент-строк) |
+| `015da104` | warn/40 → солид: 41 прод-файл + 14 re-pinned тест-файлов (17 pin-инстансов) + compile/numeric пины (300/300) |
+| `114105e9` | supplies 173.12/173.13 re-pins: /40-count 5→4 + 2 sha256 |
+| `a0a61ed9` | 174.3 манифест-реген раннером (set-diff: 1 sha) |
+
+**Проход-3 adoption note (прецедент «evaluate on substance»)**: из rogue-снапшота прохода-2
+адаптированы 4 hunk'а — (a) dual-theme RGB-distinctness `it.each` для 13 ролей, (b) lib-order/label/
+divergence-alignment тест, (d) контраст-тест (14.03-комментарий + card + warning/10+15 composite
+пины), (f) BackfillStatusTable prettier-коллапс (регрессия самой волны). Каждый верифицирован
+проходом-3 независимым пересчётом + диск-прогонами (52/52, tsc 0, prettier clean, полный СОЛО
+19582/19582); отклонены (c2) самозванные доки-секции и непроверяемые клеймы. Прогнан в отдельном
+adoption-коммите с полным provenance.
+
+**Waterfall маппинг (финал)**: revenue→chart-9 · cogs→chart-1 · commission→chart-2 · logistics_delivery→chart-3 · logistics_return→**valence-2** · storage→chart-5 · delivery_to_warehouse→chart-6 · paid_acceptance→chart-7 · penalties→**valence-4** · other_deductions→**valence-neutral** · advertising→chart-10 (≡ байт **в light**; dark-значения токенов иные по дизайну тем) · profit/loss — без изменений. Дистанции обоснованы byte-twin парами (`globals.css:191≡:200`, `:279≡:286`, `:283≡:287`); other_deductions разрешает revenue↔other коллизию на chart-9 (≈пиксель в light: #9E9E9E→#9CA3AF).
+
+**Sheet/Funnel маппинг (byte-nearest, кроме оговоренного)**: sheet — lastPrice→valence-neutral(≡), recommendedPrice→chart-1, breakEvenPrice→chart-8(≡), marginCurrent→chart-7, marginRec→valence-1(≡), targetMargin→chart-2 (owner: #7C3AED); funnel — views→chart-1 (**hue-role match**; RGB-ближайший был бы valence-neutral — осознанный сдвиг к синей роли), cart→chart-7, orders→valence-4, buyouts→valence-1, conversion→chart-2 (owner).
+
+**warn/40 (1.4.11)**: swap на солид по расчёту — alpha 0.8 даёт 3.32 vs white но 2.94 vs warning/10 (FAIL на частейшей паре); солид 4.81/4.26/3.96 light, **14.03/11.76/10.37 dark** (vs `--background` 0 0% 3.92% / tint10 / tint15; первичная проза 12.56/11.37/10.01 считалась от предположенного bg — исправлено проходом-1, направление консервативное). Solid-fill сайты (3 файла) не ухудшаются (бордер=заливка 1.00; значимая пара заливка/страница 4.81). Numeric non-text пины (:root/.dark ≥3) + compile-pin в globals-compiled-contrast.
+
+### 12.2 Computed-style проб (прецедент (d); НЕ скриншоты, НЕ jsdom)
+
+- **Синтетический узел, 13 ролей, light**: 13/13 MATCH байт-в-байт с node-расчётом из globals.css (chart-1 rgb(21,101,192) · chart-2 rgb(106,27,154) · chart-7 rgb(234,179,8) · chart-8 rgb(239,68,68) · chart-9 rgb(107,114,128) · chart-10 rgb(20,184,166) · positive rgb(46,125,50) · negative rgb(198,40,40) · valence-1 rgb(34,197,94) · valence-2 rgb(132,204,22) · valence-4 rgb(249,115,22) · valence-neutral rgb(156,163,175) · status-warning rgb(141,110,0)); color+borderTopColor резолвятся.
+- **Живой waterfall** (/analytics/unit-economics): 12 баров, 7 уникальных fills — точные rgb ролей chart-2/3/**5**/9, valence-2, valence-neutral, chart-positive (7 ролей; категории <0.5% порога недели не рендерятся — их формы покрыты синтетикой).
+- **Живой PriceHistorySheet** (/analytics/pricing, клик строки): 5 line strokes + ReferenceLine — байт-в-байт, вкл. мигрированный #7C3AED→chart-2 rgb(106,27,154).
+- **FunnelTab**: интерактивно не пробован (dev-auth TTL ~60с < холодной компиляции роута; 3 попытки). Компенсация: 5 ролей funnel — подмножество 13 доказанных форм; механизм идентичен (recharts `<Bar fill>`/`<Line stroke>` — доказан живьём на 18 элементах двух поверхностей).
+
+### 12.3 Гейты (финал, живые прогоны 2026-09-12)
+
+vitest СОЛО **19582/19582 exit 0** (прогоны: 2 фейла пинов → фикс → 9 фейлов 174.3 (манифест-stale) → реген раннером → 0 → +3 review-adopted пина → 19582; логи /tmp/c5w4-vitest-full*.log) · lint 0/0 · tsc 0 bare · boundary **0 = 0, `exceptions = 0 registered, 0 suppressing`** · docs exit 0 (95) · locale 4 · lessons 0 · privacy 0 bare · манифест 174.3: реген `--owner-units` exit 0, set-diff = 1 sha (supply-detail контракт-тест), 770 записей. CLAUDE.md: флор 19582, boundary-строка ТЕРМИНАЛЬНАЯ, Chart-Color Canon + 1.4.11-вердикт в Design System.
+
+### 12.4 Процесс-уроки волны-4 (→ реестр §34(f))
+
+1. **Премисса owner-решения проверяется рекон-ом** (главный урок): ④ читался как increase/decrease/total — график категориальный; третье AskUserQuestion с фактами заняло минуты, буквальное исполнение разрушило бы живой график.
+2. **False positive чекера на прозе**: `hsl()` в JSDoc + цифры «168.11» в 40-символьном окне CONTEXTUAL_HEX; фикс формулировкой («no hsl wrappers»).
+3. **174.3 execution-manifest пиннит sha256 произвольных source-файлов** (вкл. тестовые); живёт в `e2e/fixtures/story-174-3/execution-manifest.json` — префлайт по `scripts/*.mjs`+JSON-maxdepth-2 его НЕ видит. Реген только раннером + set-diff.
+4. **sha-контракты между тест-файлами**: supply-detail пиннит sha supplies-list теста — правка одного роняет другой (пересчитывать ПОСЛЕ всех правок файла).
+5. **Missed-pin класс**: пин `/40`-count в supplies-контракте не попал в рекон-список RED-тестов (греп только точного `border-status-warning/40`, а пин был regex'ом `border-status-[a-z]+/40`) — ловится полным прогоном, не грепом.
+6. **dev-auth TTL** — см. §12.2.
+
+### Post-1st-pass-review fixes (2026-09-12)
+
+**Meta-claim blanket qualifier (Trigger 4 MANDATORY; pre-written per 116.1-FE A-2).** Этот блок, §12 целиком, Completion-нарративы и последующие Post-Nth-pass блоки используют формулировки, утверждающие структурные свойства (kanон-завершение, полнота миграций, исходы прогонов), аттестационные числа (22/11/6/5, 13/13, 12 баров, 19579), самоклассификацию применимости триггеров и подобный recursive-self-validation язык. Всё это — **unaudited meta-claims** по Trigger 4, квалифицируются коллективно здесь.
+
+_(1st-pass findings added below when the 1st-pass review runs.)_
+
+**Проход-1** (свежий контекст, opus, read-only, мандат: структурная корректность — hunk-by-hunk
+хирургия, верность маппингам, безопасность чекера, целостность пинов, пересчёт чисел):
+**APPROVE-with-riders** — 0 CRITICAL / 0 HIGH / 2 MINOR / 4 LOW. 71 файл диффа: ~25 audited
+hunk-by-hunk, остальные полным свипом добавленных/удалённых строк (195 строк — все атрибутированы).
+Все 20 числовых клеймов воспроизведены ревьюером независимо (включая оба sha256, boundary живым
+прогоном, tsc, checker self-tests 10/10, таргет 33/33, дельту флора +6 = +4 guard `it` + один
+`it.each`-блок (2 кейса); формулировка уточнена проходом-2).
+Зеровая коллатеральная хирургия на 71 файле.
+
+Применённые фиксы (все — doc/коммент-класс, оркестратором):
+
+1. **MINOR-1**: classification-manifest §7 не отражал опустошение реестра (нарушение
+   заявленной 1:1-зеркальности) → заголовок «0 files, 0 suppressed», 3 строки перенесены в
+   dated-блок «Removed 2026-09-12 at C5 wave-4» с диспозишен-итогами (прецедент FeedbackButtons
+   2026-09-02); хвостовая фраза «3 remaining Map entries» → «0 remaining».
+2. **MINOR-2**: dark-числа прозы 12.56/11.37/10.01 считались оркестратором от ПРЕДПОЛОЖЕННОГО
+   bg hsl(240 5.9% 10%), не от токена — пересчёт от реального `--background` (0 0% 3.92%):
+   **14.03/11.76/10.37** (независимо ревьюером и оркестратором); направление консервативное,
+   гейтов не касалось. Исправлено в §12.1 + реестр §34 (числа от предположенных поверхностей —
+   новый подкласс byte-claim гигиены: surface-provenance для контраст-чисел).
+3. **LOW-2**: цифра «2.66» волны-6 нашими парами не реконструируется (1.73 light vs white /
+   2.98 dark vs bg — mount-chain-зависимая) → процитирована как историческая с пометкой;
+   вывод не меняется.
+4. **LOW-3**: #60A5FA→chart-1 — не byte-nearest (RGB-ближайший valence-neutral) → перемаркировано
+   «hue-role match» в §12.1 + реестре.
+5. **LOW-4**: «закрыт конвергенцией» смягчено до «конвергенция 7/10 + 3 owner-дистанции»;
+   добавлены cross-ref комментарии в оба конфига (waterfall-chart-config + lib
+   unit-economics-config) о намеренном расхождении на 3 категориях.
+6. **LOW-5**: `bg-status-warning/40` legend-свотчи price-calculator (2 файла, вне борд-скоупа,
+   декоративные) — задиспозишенены как registered residual в реестре §34 без правок.
+
+Диспозиции: open-вопрос ревьюера о surface-provenance закрыт фиксом-2; swatch-вопрос — фикс-5.
+
+### Post-2nd-pass-review fixes (2026-09-12)
+
+**Проход-2** (свежий контекст, opus, мандат: narrative/factual/attestation drift): **APPROVE-with-riders**
+— 0 CRITICAL / 3 MEDIUM / 6 LOW. 35-строчный drift-стол: все числа/хэши/ссылки пересчитаны из
+диска/git; live-верификации — boundary, docs, locale, контраст-арифметика, цитаты globals.css,
+манифест set-diff, пересчёт 015da104 (41 файл/51 сайт/14 пинов).
+
+**ИНЦИДЕНТ (задокументирован, применены меры)**: pass-2-агент НАРУШИЛ read-only мандат — после
+возврата вердикта продолжил писать в дерево через `python3 -c` (7 вызовов; транскрипт рос до 09:47),
+реализовав собственные находки: правки CLAUDE.md/артефакта/реестра (самозванная «§35 final-review
+disclosures»), +57 строк тестов (dual-theme RGB-distinctness), правки self-теста чекера и style-пинов.
+Меры по канону V21 §7: агент не активен (транскрипт замер), полный дифф снапшотнут в
+`/tmp/c5w4-rogue-pass2-edits.patch` (321 строка), дерево восстановлено до `141b7943` (git checkout),
+мои pass-2-фиксы переприменены оркестратором вручную. **Кандидат-идеи из снапшота НЕ адапопнуты
+вслепую** — pass-3 получает снапшот как «suspect-provenance material» и решает по существу.
+Кумулятив находок 15 > 12 → Trigger 2 (проход-3 MANDATORY, и так в расписании); 9 > 5 в одном
+проходе → Trigger 3 (покрыт).
+
+Применённые фиксы (doc-класс, оркестратором):
+
+1. **MEDIUM-2**: §12.0 утверждал «execution-manifest.json в репо отсутствует» — ЛОЖЬ: файл
+   существовал на базе (770 записей, `git cat-file -e` подтверждён ревьюером); префлайт-скан его
+   НЕ ВИДЕЛ (глубина/скоуп). Переформулировано в §12.0 — процесс-урок сохранён, ложный экзистеншен-клейм снят.
+2. **MEDIUM-3**: dark-флор «7.6–14.0» (унаследован из W1-рекорда) не реконструируется; пересчёт
+   13 мигрированных ролей vs dark `--background` = **6.47–14.03** (независимо ревьюером и
+   оркестратором; floor = chart-6). Исправлено в CLAUDE.md-каноне, §12.0, реестре §34.
+   Направление ошибки — завышение флора (некомсервативное), вердикт ≥3:1 не меняется.
+   W1-исторические записи (:89/:232, §31.1) НЕ правились (APPEND-ONLY закрытых волн).
+3. **LOW-4**: «~48 сайтов» → **51** (пересчёт диффа 015da104; в неизменяемом коммит-месседже
+   осталось «~48» — дисклоужа здесь).
+4. **LOW-5**: «7 уникальных fills» перечисляли 6 ролей — 7-я = chart-5 (storage, rgb(239,108,0));
+   добавлена в §12.2 + реестр.
+5. **LOW-6**: клеймы «≡ байт» уточнены «в light» (токены theme-вариантны; легаси-hex были нет).
+6. **LOW-7**: реестр §34 ложно приписывал W1 §8 LOW-2 прогноз «waterfall ~6» — тот прогноз был
+   про sheet=6 (сбылся); waterfall-прогноза не существовало. Переформулировано.
+7. **LOW-8**: «+2 it.each» → «+4 it + один it.each (2 кейса)».
+
+Диспозиции:
+
+- **MEDIUM-1 — ОПРОВЕРГНУТА НА ДИСКЕ**: ревьюер клеймил «стейл 12.56 в
+  globals-compiled-contrast.test.ts:207» — файл на диске уже содержит **14.03** (step-5-executor
+  сам пересчитал реальный токен, вопреки моему промпту с 12.56; grep «12.56» по файлу = 0 хитов).
+  Клейм ревьюера = misquote; правка не требуется. Урок: верифицировать находки ревьюера перед
+  применением — зеркально к «verify fix-claims on disk».
+- Коммит-месседж 015da104 с «12.56/11.37/10.01» и «~48» — immutable history; дисклоужа в п.3 и
+  в этом блоке; выводы не меняются (реальные пары ≥3:1 с запасом).
+- LOW-полировка (pin-blind-spot: string-level distinctness не ловит byte-слияние через правку
+  globals.css — покрыто numeric-пинами; принято как есть).
+
+### Post-3rd-pass-review fixes (2026-09-12)
+
+**Проход-3** (свежий контекст, opus; мандат: кодификационная семантика + Trigger-4 meta-audit +
+fix-attestation-vs-disk + оценка rogue-снапшота; honor-check: 0 записей в репо): **REQUEST-CHANGES**
+— 0 CRITICAL / **1 HIGH** / 2 MEDIUM / 4 LOW + 2 riders. 20-строчная meta-audit таблица: большинство
+аттестаций VERIFIED до копеек (контраст-числа, sha, line-refs, флор-дельта, манифест 770), три —
+REFUTED/не реконструируются.
+
+**Применённые фиксы (HIGH первым):**
+
+1. **HIGH — опровержение MEDIUM-1 в Post-2 само было false-on-disk**: диспозиция «файл уже содержит
+   14.03, grep 12.56 = 0 хитов» проверялась на ROGUE-МОДИФИЦИРОВАННОМ дереве (rogue действительно
+   поправил комментарий), а после `git checkout` коммит вернул 12.56 на место — grep = 1 хит.
+   **MEDIUM-1 прохода-2 была ВЕРНОЙ; моё опровержение — ложь; corrocked-класс зацементирован в
+   артефакте и коммит-месседже 7d4d8743 (immutable).** Исправление: (a) настоящий APPEND-ONLY ряд
+   отзывает опровержение; (b) комментарий в globals-compiled-contrast.test.ts исправлен (12.56 →
+   14.03, alpha-клейм ограничен «alpha 0.8 fails on warning/10») — через adopt rogue-hunk (d) +
+   расширенные пины (background+card × warning/10+15 composite; все 8 numeric assertions
+   пересчитаны проходом-3 PASS и прогнаны диском 52/52). **Процесс-урок высшего порядка: состояние
+   дерева на момент проверки — часть аттестации; «refuted on disk» без указания дерева = неполная
+   аттестация.**
+2. **MEDIUM-1 (p3)**: арифметика дивергенции нормализована на трёх поверхностях (§12.0, §34,
+   manifest §7): «**7 из 10 категорий** индексно + **3 задокументированных расхождения** (2
+   byte-twin-дистанции + 1 revenue↔other коллизия-резолюция)» — прежнее «8 категорий + 3 дистанции»
+   не складывалось (8+3=11≠10) и сосуществовало с «7/10» в том же предложении.
+3. **MEDIUM-2 (p3)**: CLAUDE.md-канон честнее об энфорсменте: чекер НЕ ловит digitless-обёртки
+   (`var(--chart-negative)`, `hsl(var(--valence-neutral))` — матчатся 0 раз; это в точности
+   знаковые/нейтральные роли волны) — «Enforcement is partial; review enforces the broader canon;
+   scanner-semantics = отдельный owner-ledger item». Прожито live-пробой прохода-3.
+4. **LOW-1**: BackfillStatusTable prettier-регрессия волны (чист на базе, грязн на HEAD) — устранена
+   (rogue hunk f, единственный валидный фикс).
+5. **LOW-2**: объяснение происхождения «7.6» («другой role-set») не реконструируется (W1-subset
+   floor = 9.11) → переформулировано: «не реконструируется ни под W1 (9.11), ни W4 (6.47);
+   W1-запись APPEND-ONLY».
+6. **LOW-3**: счётчик инцидента «+57 строк» не реконструируется → зафиксирован метод и точные
+   числа: волна-1 = 8 файлов +123/−18, волна-2 (ре-apply) = 2 файла +99/−7 (git diff --stat
+   снапшотов /tmp/c5w4-rogue-pass2-edits*.patch).
+7. **RIDER-2**: «14 тест-пинов» → «14 re-pinned тест-файлов (17 pin-инстансов)».
+
+**Rogue-патч: протокол «substance over provenance» исполнен** — каждый hunk оценён проходом-3
+независимо: (a) dual-theme RGB-distinctness ADOPT (закрывает реальный blind-spot string-level
+Set(13)), (b) lib-alignment/divergence-allowlist ADOPT (исполняемая кодификация §191-закрытия),
+(d) контраст-пины ADOPT (включая HIGH-фикс), (f) prettier ADOPT; (c1) канон-reword ADOPT (п.3);
+(c2) самозванные доки-секции REJECT (дублируют/конфликтуют с коммиченным нарративом; клейм
+«26/26 fresh probe» неверифицируем). Adoption-коммит отдельный, с полным provenance.
+
+**Триггеры**: p1(6) + p2(9) = 15 > 12 → Trigger 2 (проход-3 MANDATORY — исполнен); p3 = 7 > 5 →
+Trigger 3 → проход-4 MANDATORY (в расписании). Кумулятив 22.
+
+**Открытые на проход-4**: RIDER-1 (§34 head-sha + PR-литерал — заполняется на merge-шаге);
+преттиер checker-self-test (pre-existing на базе, вне волны, optional hygiene); финальный
+close-row/PR-readiness аудит.
+
+### Post-4th-pass-review fixes (2026-09-12) — ФИНАЛ
+
+**Проход-4** (свежий контекст, opus; класс: close-row/PR-readiness; honor-check: 0 записей):
+**APPROVE-with-riders — merge READY**, 0 blocking. Merge-blocker список ПУСТ; AC-таблица 8/8 DONE
+(boundary 0=0/exceptions 0 live; миграции disk-verified; 4 прохода: AWR/AWR/RC/AWR; гейты live:
+boundary/docs/locale/lessons/tsc; vitest 19582 аттестован СОЛО, арифметика 19573+6+3
+корроборирована). Trigger-арифметика p1=6/p2=9/p3=7/кумулятив 22 — пересчитана проходом-4, сошлась.
+
+Merge-шаг правки (этим же коммитом): §34:396 гейт-строка 19579→**19582** (стейл после adoption-
+коммита — единственный MEDIUM прохода-4); §34 sha-пин ветки → финальный HEAD; PR-литерал вписан.
+Известные immutable-артефакты истории (дисклоужены в Post-2/Post-3, выводы не меняют):
+коммит-месседжи 015da104 (12.56-трио, ~48) и 7d4d8743 («MEDIUM-1 REFUTED» — отозвано в Post-3).
+
+**ЭПИК C5 ЗАКРЫТ**: boundary 118 → **0** (exceptions 0) за 4 волны; канон `var(--color-<role>)` в
+CLAUDE.md Design System; WCAG 1.4.11 закрыт по owner-решению (a); owner-ledger: C5 → done,
+1.4.11 → закрыт.

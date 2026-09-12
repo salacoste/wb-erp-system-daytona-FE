@@ -102,7 +102,7 @@ function BoxTypeTariffCard({ tariffs, compact }: { tariffs: BoxTypeTariffs; comp
         {tariffs.storage.usingStorageFallback && (
           <Badge
             variant="outline"
-            className="h-4 border-status-warning/40 px-1 text-[10px] text-status-warning"
+            className="h-4 border-status-warning px-1 text-[10px] text-status-warning"
             title="Backend вернул нулевой тариф хранения; используется значение по умолчанию"
           >
             замещ.

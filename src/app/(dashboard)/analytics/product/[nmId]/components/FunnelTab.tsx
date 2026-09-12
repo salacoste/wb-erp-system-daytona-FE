@@ -23,15 +23,6 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
-// Colors from funnel-overlay-config.ts conventions
-const COLORS = {
-  views: '#60A5FA',
-  cart: '#FBBF24',
-  orders: '#FB923C',
-  buyouts: '#4ADE80',
-  conversion: '#7C3AED',
-} as const
-
 interface FunnelTabProps {
   dates: FunnelDayItem[]
   totals: FunnelTotals
@@ -121,15 +112,30 @@ export function FunnelTab({ dates, totals }: FunnelTabProps) {
                   }}
                 />
                 <Legend />
-                <Bar yAxisId="counts" dataKey="views" fill={COLORS.views} name="Просмотры" />
-                <Bar yAxisId="counts" dataKey="cart" fill={COLORS.cart} name="В корзину" />
-                <Bar yAxisId="counts" dataKey="orders" fill={COLORS.orders} name="Заказы" />
-                <Bar yAxisId="counts" dataKey="buyouts" fill={COLORS.buyouts} name="Выкупы" />
+                <Bar
+                  yAxisId="counts"
+                  dataKey="views"
+                  fill="var(--color-chart-1)"
+                  name="Просмотры"
+                />
+                <Bar yAxisId="counts" dataKey="cart" fill="var(--color-chart-7)" name="В корзину" />
+                <Bar
+                  yAxisId="counts"
+                  dataKey="orders"
+                  fill="var(--color-valence-4)"
+                  name="Заказы"
+                />
+                <Bar
+                  yAxisId="counts"
+                  dataKey="buyouts"
+                  fill="var(--color-valence-1)"
+                  name="Выкупы"
+                />
                 <Line
                   yAxisId="pct"
                   type="monotone"
                   dataKey="conversion"
-                  stroke={COLORS.conversion}
+                  stroke="var(--color-chart-2)"
                   strokeWidth={2}
                   dot={false}
                   name="Конверсия"

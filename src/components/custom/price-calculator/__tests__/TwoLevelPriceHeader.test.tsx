@@ -119,7 +119,7 @@ describe('TwoLevelPriceHeader', () => {
         // Pass-2: border /30 → /40 (PR #384 canon parity with GrossProfitSection chip).
         expect(indicator).toHaveClass('bg-status-warning')
         expect(indicator).toHaveClass('text-status-warning-foreground')
-        expect(indicator).toHaveClass('border-status-warning/40')
+        expect(indicator).toHaveClass('border-status-warning')
       })
 
       it('uses the negative financial role when gap < 10%', () => {

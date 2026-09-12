@@ -144,7 +144,16 @@ export function getStatusFromMargin(marginPct: number): ProfitabilityStatus {
   return 'loss'
 }
 
-/** Cost categories for waterfall chart (ordered by typical impact) */
+/**
+ * Cost categories (ordered by typical impact).
+ *
+ * Cross-ref: the LIVE waterfall palette is
+ * `analytics/unit-economics/components/waterfall-chart-config.ts` (C5 wave-4),
+ * which intentionally diverges from this strict chart-1..10 1:1 mapping on 3
+ * categories (logistics_return/penalties/other_deductions → valence distance
+ * offsets vs sign-token byte-twins). This lib map stays 1:1 (owner ②); labels
+ * here differ deliberately (analytics wording vs chart legend wording).
+ */
 export const COST_CATEGORIES: CostCategoryConfig[] = [
   { key: 'cogs', label: 'Себестоимость', color: 'var(--color-chart-1)', group: 'cogs' },
   { key: 'commission', label: 'Комиссия WB', color: 'var(--color-chart-2)', group: 'wb_fees' },

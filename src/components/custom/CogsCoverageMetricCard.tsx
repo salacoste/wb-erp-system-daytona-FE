@@ -57,7 +57,7 @@ function getBadgeClass(coverage: number): string {
   if (coverage >= 100)
     return 'border-status-success/40 bg-status-success/10 text-status-success hover:bg-status-success/10'
   if (coverage >= 50)
-    return 'border-status-warning/40 bg-status-warning/10 text-status-warning hover:bg-status-warning/10'
+    return 'border-status-warning bg-status-warning/10 text-status-warning hover:bg-status-warning/10'
   return 'border-status-error/40 bg-status-error/10 text-status-error hover:bg-status-error/10'
 }
 

@@ -100,7 +100,7 @@ export function GrossProfitSection({
                   grossMarginPct && grossMarginPct >= 25
                     ? 'bg-financial-positive/5 text-financial-positive'
                     : grossMarginPct && grossMarginPct >= 15
-                      ? 'bg-status-warning text-status-warning-foreground border border-status-warning/40'
+                      ? 'bg-status-warning text-status-warning-foreground border border-status-warning'
                       : 'bg-financial-negative/5 text-financial-negative'
                 )}
               >
@@ -121,7 +121,7 @@ export function GrossProfitSection({
         // compositing). All inner content pairs with the solid amber: text-foreground on solid
         // warning = 3.35 light FAIL, so inner text/icon use status-warning-foreground; the
         // progress bar flips to foreground-on-amber.
-        <div className="bg-status-warning text-status-warning-foreground border border-status-warning/40 rounded-lg p-4">
+        <div className="bg-status-warning text-status-warning-foreground border border-status-warning rounded-lg p-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-status-warning-foreground mt-0.5 flex-shrink-0" />
             <div>

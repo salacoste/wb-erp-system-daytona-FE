@@ -121,7 +121,7 @@ export function CloseSupplyDialog({
           <AlertDialogDescription asChild>
             <div className="space-y-3">
               {/* Warning message */}
-              <div className="rounded-md border border-status-warning/40 bg-status-warning/10 p-3 text-sm text-foreground">
+              <div className="rounded-md border border-status-warning bg-status-warning/10 p-3 text-sm text-foreground">
                 После закрытия поставки вы не сможете добавлять или удалять заказы.
               </div>
 

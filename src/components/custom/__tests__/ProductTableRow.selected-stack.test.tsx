@@ -74,7 +74,7 @@ describe('ProductTableRow — wave-6 selected-stack contrast pins', () => {
   it('orphan warn chip uses fg-on-tint over the warn/10 tint (all row states)', () => {
     renderRow({ is_orphan: true }, true)
     const badge = screen.getByText('отчёт')
-    expect(badge).toHaveClass('bg-status-warning/10', 'border-status-warning/40', 'text-foreground')
+    expect(badge).toHaveClass('bg-status-warning/10', 'border-status-warning', 'text-foreground')
     expect(badge.className).not.toContain('text-status-warning')
   })
 })

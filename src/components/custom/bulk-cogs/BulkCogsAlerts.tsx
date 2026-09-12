@@ -63,7 +63,7 @@ export function BulkCogsAlerts({
 
       {/* No Margin Recalculation Warning */}
       {resultData.succeeded > 0 && !resultData.marginRecalculation && (
-        <Alert variant="default" className="border-status-warning/40 bg-status-warning/10">
+        <Alert variant="default" className="border-status-warning bg-status-warning/10">
           <AlertCircle className="h-4 w-4 text-status-warning" />
           <AlertDescription className="text-status-warning">
             <div className="mb-1 font-medium">Пересчёт маржи не требуется</div>

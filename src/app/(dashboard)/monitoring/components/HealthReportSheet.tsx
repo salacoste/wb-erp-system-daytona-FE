@@ -32,7 +32,7 @@ const STATUS_CFG: Record<OverallStatus, { label: string; cls: string }> = {
   },
   degraded: {
     label: 'Деградация',
-    cls: 'bg-status-warning/10 text-status-warning border-status-warning/40',
+    cls: 'bg-status-warning/10 text-status-warning border-status-warning',
   },
   critical: {
     label: 'Критично',

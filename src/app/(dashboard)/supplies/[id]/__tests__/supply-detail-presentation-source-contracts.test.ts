@@ -67,11 +67,11 @@ const STORY_173_12_HASH_PINNED = [
 
 const STORY_173_12_SHARED_SHA256: Record<(typeof STORY_173_12_HASH_PINNED)[number], string> = {
   'src/components/custom/supplies/SupplyStatusBadge.tsx':
-    'dad90d3de45a9f903fa99378391e78ac55cb703ccf14360a2436ec93939b5705',
+    '00404b9698e9e8cbde4557c1cabd4643313e484484fbe1bdbbb24473e83adcb4',
   'src/components/custom/supplies/index.ts':
     '41ca3c6affc652b3b5446fbf94f17f45976f1619397efa7690492c2da4fc9d14',
   'src/app/(dashboard)/supplies/__tests__/supplies-list-presentation-source-contracts.test.ts':
-    '6feddfbaf67c9ac906977ef9f4b091facbebbc4a121bd4a5202a12ca1064a73a',
+    'a3973a19689fb6deb5f0b33a8737dd705130bb935c7bdaf942e4d6c36940468f',
 }
 
 const LEGACY_PALETTE =
@@ -141,8 +141,9 @@ describe('Story 173.13 supply detail presentation source contracts', () => {
   })
 
   it('keeps Story 173.12 shared surfaces outside the detail-owned manifest', () => {
-    // Byte-identity contract with the 173.12 guard — hashes and paths are
-    // untouched by the 172.10 conversion.
+    // Byte-identity contract with the 173.12 guard — paths are untouched by
+    // the 172.10 conversion; hashes re-pinned when C5 wave-4 swapped the warn
+    // border to solid (WCAG 1.4.11) and updated the /40 count pin.
     for (const file of STORY_173_12_HASH_PINNED) {
       expect(detailOwnedFiles()).not.toContain(file.split('/').pop())
       const contents = readFileSync(srcPath(file), 'utf8')

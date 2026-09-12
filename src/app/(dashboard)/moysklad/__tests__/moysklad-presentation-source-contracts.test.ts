@@ -84,7 +84,7 @@ describe('Story 172.13 moysklad presentation source contracts', () => {
 
   it('warning banner pin: identical shape in all three tables', () => {
     const shape =
-      /border border-status-warning\/40 bg-status-warning\/10 p-3 text-sm text-status-warning/
+      /border border-status-warning bg-status-warning\/10 p-3 text-sm text-status-warning/
     for (const name of [
       'MoyskladStockTable.tsx',
       'MoyskladVariantsTable.tsx',
@@ -96,7 +96,7 @@ describe('Story 172.13 moysklad presentation source contracts', () => {
 
   it('recalc + link + headline pins', () => {
     expect(readFileSync(component('CogsRecalcBadge.tsx'), 'utf8')).toMatch(
-      /border-status-warning\/40 bg-status-warning\/10 text-status-warning whitespace-nowrap/
+      /border-status-warning bg-status-warning\/10 text-status-warning whitespace-nowrap/
     )
     expect(readFileSync(component('MoyskladMappingRow.tsx'), 'utf8')).toMatch(
       /text-primary hover:underline/

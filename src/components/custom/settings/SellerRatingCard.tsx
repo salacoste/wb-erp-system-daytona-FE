@@ -59,7 +59,7 @@ export function SellerRatingCard({ cabinetId }: { cabinetId: string }) {
               <Alert
                 role="status"
                 aria-live="polite"
-                className="mb-4 border-status-warning/40 bg-status-warning/10"
+                className="mb-4 border-status-warning bg-status-warning/10"
               >
                 <AlertTriangle aria-hidden="true" className="h-4 w-4 text-status-warning" />
                 <AlertDescription>

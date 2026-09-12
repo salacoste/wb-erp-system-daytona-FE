@@ -80,7 +80,7 @@ export const efficiencyConfig: Record<EfficiencyStatus, EfficiencyConfig> = {
     icon: AlertTriangle,
     bgColor: 'bg-status-warning/15',
     textColor: 'text-foreground',
-    borderColor: 'border-status-warning/40',
+    borderColor: 'border-status-warning',
     iconColor: 'text-status-warning',
     description: 'ROAS 2.0–3.0, ROI 20–50%',
     recommendation: 'Проанализируйте ключевые слова и таргетинг',

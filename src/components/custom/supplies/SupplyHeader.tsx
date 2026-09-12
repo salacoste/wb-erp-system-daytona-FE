@@ -98,7 +98,7 @@ export function SupplyHeader({
                         variant="outline"
                         onClick={onCloseSupply}
                         disabled={!canClose || isLoading}
-                        className="border-status-warning/40 text-status-warning hover:bg-status-warning/10 hover:text-status-warning"
+                        className="border-status-warning text-status-warning hover:bg-status-warning/10 hover:text-status-warning"
                       >
                         <Lock className="mr-2 h-4 w-4" aria-hidden="true" />
                         Закрыть поставку

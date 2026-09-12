@@ -3,6 +3,7 @@ import tailwindcssPostcss from '@tailwindcss/postcss'
 import { describe, expect, it } from 'vitest'
 
 import {
+  compositeTriplets,
   contrastRatio,
   declarationsFor,
   globalsPath,
@@ -24,6 +25,7 @@ const semanticClasses = [
   'text-financial-positive',
   'text-financial-negative',
   'text-status-warning',
+  'border-status-warning',
   'text-status-information',
   'text-availability-unavailable',
   'text-availability-unknown',
@@ -198,6 +200,31 @@ describe('compiled semantic utilities and contrast', () => {
         contrastRatio(tokens.get(`--${surface}`) ?? '', tokens.get('--ring') ?? ''),
         `${selector} ring/${surface}`
       ).toBeGreaterThanOrEqual(3)
+    }
+  })
+
+  // C5-W4 step-5 (WCAG 1.4.11): warn/40 borders were swapped to solid
+  // `border-status-warning` — alpha 0.8 fails ≥3:1 on warning/10 in light;
+  // the solid border passes (light 4.81 vs white, dark 14.03
+  // vs background). Pin the non-text floor on base surfaces and the actual
+  // warning/10 + warning/15 fills used by components in each theme.
+  it.each([':root', '.dark'])('%s warning border meets non-text contrast', selector => {
+    const tokens = declarationsFor(root, selector)
+    const warning = tokens.get('--status-warning') ?? ''
+    for (const surface of ['background', 'card'] as const) {
+      const base = tokens.get(`--${surface}`) ?? ''
+      expect(
+        contrastRatio(base, warning),
+        `${selector} status-warning/${surface}`
+      ).toBeGreaterThanOrEqual(3)
+
+      for (const alphaPct of [10, 15]) {
+        const fill = compositeTriplets(base, warning, alphaPct / 100)
+        expect(
+          contrastRatio(fill, warning),
+          `${selector} status-warning/${surface} warning/${alphaPct}`
+        ).toBeGreaterThanOrEqual(3)
+      }
     }
   })
 

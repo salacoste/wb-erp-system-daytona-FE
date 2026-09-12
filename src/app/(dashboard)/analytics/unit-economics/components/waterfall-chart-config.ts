@@ -6,23 +6,30 @@
  */
 
 /**
- * Color scheme from UX specs
- * Story 168.11: profit/loss migrated to chart sign tokens. The 10 categorical cost
- * colors intentionally remain hex — collapsing 13 series onto 11 tokens would force
- * profit↔advertising / loss↔penalties collisions (tier-collapse guard, see record).
+ * Color scheme — C5 wave-4 token migration (owner decision (a), 2026-09-12):
+ * every value is a full-form `var(--color-*)` presentation token (no raw hex,
+ * no hsl wrappers). Story 168.11's tier-collapse concern (13 series must stay
+ * visually distinct) is preserved by distance offsets — logistics_return maps to
+ * valence-2 and penalties to valence-4 because chart-4/chart-8 are byte-twins of
+ * chart-positive/chart-negative in at least one theme. Same-name/cross-ref note:
+ * this is the LIVE waterfall palette — it intentionally diverges from lib
+ * unit-economics-config COST_CATEGORIES (which stays strict chart-1..10 1:1) on
+ * exactly the 3 distance-offset categories; both configs are token-clean. Canon
+ * form, exact role mapping and pairwise distinctness are enforced by
+ * __tests__/waterfall-chart-config.test.ts.
  */
 export const WATERFALL_COLORS = {
-  revenue: '#2196F3', // Blue - starting point
-  cogs: '#FF9800', // Orange - significant cost
-  commission: '#9C27B0', // Purple - WB brand
-  logistics_delivery: '#00BCD4', // Teal - movement
-  logistics_return: '#4DD0E1', // Cyan - related to delivery
-  storage: '#795548', // Brown - warehouse
-  paid_acceptance: '#FFC107', // Amber - processing
-  penalties: '#F44336', // Red - negative
-  other_deductions: '#9E9E9E', // Gray - misc
-  advertising: '#14B8A6', // Teal - marketing
-  delivery_to_warehouse: '#06B6D4', // Cyan - seller delivery cost
+  revenue: 'var(--color-chart-9)', // Neutral start bar
+  cogs: 'var(--color-chart-1)', // COGS — primary cost
+  commission: 'var(--color-chart-2)', // WB commission
+  logistics_delivery: 'var(--color-chart-3)', // Buyer delivery
+  logistics_return: 'var(--color-valence-2)', // Return logistics (distance offset: chart-4 ≡ chart-positive)
+  storage: 'var(--color-chart-5)', // Warehouse storage
+  paid_acceptance: 'var(--color-chart-7)', // Paid acceptance fee
+  penalties: 'var(--color-valence-4)', // Penalties (distance offset: chart-8 ≡ chart-negative)
+  other_deductions: 'var(--color-valence-neutral)', // Misc deductions (avoids revenue collision on chart-9)
+  advertising: 'var(--color-chart-10)', // Marketing spend
+  delivery_to_warehouse: 'var(--color-chart-6)', // Seller delivery to warehouse
   profit: 'var(--color-chart-positive)', // Positive outcome (168.11 token)
   loss: 'var(--color-chart-negative)', // Negative outcome (168.11 token)
 }

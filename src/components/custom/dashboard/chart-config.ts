@@ -18,6 +18,9 @@
 // light theme) — review pass 1 finding. Latent registry identity to remember:
 // chart-negative equals primary in the light theme (harmless today — they
 // never share a canvas; review pass 2 note).
+// Same-name note: this is the dashboard daily-breakdown palette — distinct
+// from price-calculator/cost-breakdown-types.ts and
+// analytics/storage/components/storage-trends-config.ts (their own CHART_COLORS).
 
 export const CHART_COLORS = {
   orders: 'var(--color-chart-1)',

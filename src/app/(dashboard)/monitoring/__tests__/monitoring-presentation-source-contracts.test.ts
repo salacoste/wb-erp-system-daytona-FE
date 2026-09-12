@@ -126,7 +126,7 @@ describe('Story 172.12 monitoring presentation source contracts', () => {
   it('severity banner pin: healthy/degraded/critical + critical/warning/info on status tokens', () => {
     const sheet = readFileSync(component('HealthReportSheet.tsx'), 'utf8')
     expect(sheet).toMatch(/bg-status-success\/10 text-status-success border-status-success\/40/)
-    expect(sheet).toMatch(/bg-status-warning\/10 text-status-warning border-status-warning\/40/)
+    expect(sheet).toMatch(/bg-status-warning\/10 text-status-warning border-status-warning(?!\/)/)
     expect(sheet).toMatch(/bg-status-error\/10 text-status-error border-status-error\/40/)
     const body = readFileSync(component('HealthReportSheetBody.tsx'), 'utf8')
     expect(body).toMatch(/bg-status-information\/10 text-status-information/)

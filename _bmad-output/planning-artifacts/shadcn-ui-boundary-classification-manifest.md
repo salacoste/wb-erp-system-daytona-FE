@@ -217,15 +217,17 @@ src/types/supplies/helpers.ts
 
 </details>
 
-## 7. Category 5 — registered exceptions (3 files, 22 suppressed matches; must equal `BOUNDARY_EXCEPTIONS`)
+## 7. Category 5 — registered exceptions (0 files, 0 suppressed matches; must equal `BOUNDARY_EXCEPTIONS` — register emptied at C5-W4, 2026-09-12)
+
+Removed 2026-09-12 at C5 wave-4 (all 3 migrated to `var(--color-*)` tokens; historical rows preserved here; the register is now EMPTY and `scripts/__tests__/check-shadcn-ui-boundary.test.mjs` pins `size === 0`):
 
 | path | category | evidence / disposition |
 |------|----------|------------------------|
-| `src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts` | 5 | C5 (debt registry §3.2) waterfall categorical hex — 11 suppressed matches (:15-25, Material palette); registered chart exception until chart-palette owner decision |
-| `src/app/(dashboard)/analytics/pricing/components/PriceHistorySheet.tsx` | 5 | historical `#7C3AED` chart mark — 6 suppressed matches (:27-32); 170.x carry-out, classified not migrated |
-| `src/app/(dashboard)/analytics/product/[nmId]/components/FunnelTab.tsx` | 5 | historical `#7C3AED` chart mark — 5 suppressed matches (:28-32); 170.x carry-out, classified not migrated |
+| `src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts` | 5 | C5 (debt registry §3.2) waterfall categorical hex — 11 suppressed matches (:15-25, Material palette); **owner decision (a) 2026-09-12: ②+④ synthesis — 7 of 10 categories chart-1..10 index-aligned + 3 documented divergences (valence-2/valence-4/valence-neutral; 2 byte-twin distance offsets + 1 revenue↔other collision resolution), guard Story 168.11 strengthened; migrated, exception lifted** |
+| `src/app/(dashboard)/analytics/pricing/components/PriceHistorySheet.tsx` | 5 | historical `#7C3AED` chart mark — 6 suppressed matches (:27-32); 170.x carry-out; **migrated to byte-nearest roles (owner: #7C3AED → chart-2), exception lifted** |
+| `src/app/(dashboard)/analytics/product/[nmId]/components/FunnelTab.tsx` | 5 | historical `#7C3AED` chart mark — 5 suppressed matches (:28-32); 170.x carry-out; **migrated to nearest roles (#7C3AED → chart-2), exception lifted** |
 
-Removed 2026-09-02 (historical row preserved here): `src/components/custom/ai/FeedbackButtons.tsx` | 5 | F-10 WCAG 1.4.3 documented contrast exception — `text-green-700` (#15803d, ≈6.5:1 claim), comment at :16; 2 suppressed matches (:16, :65) — **PB-4 fixed via solid pair (debt D-3), exception lifted** from `BOUNDARY_EXCEPTIONS`; the table above now mirrors the 3 remaining Map entries.
+Removed 2026-09-02 (historical row preserved here): `src/components/custom/ai/FeedbackButtons.tsx` | 5 | F-10 WCAG 1.4.3 documented contrast exception — `text-green-700` (#15803d, ≈6.5:1 claim), comment at :16; 2 suppressed matches (:16, :65) — **PB-4 fixed via solid pair (debt D-3), exception lifted** from `BOUNDARY_EXCEPTIONS`; the table above now mirrors the 0 remaining Map entries.
 
 ### Story 174.5 disposition (2026-09-02)
 

@@ -112,7 +112,7 @@ export function MonitorPageContent() {
         <>
           {/* Inline refetch-error chip when we have cached data but the refetch failed */}
           {isError && (
-            <div className="rounded-md border border-status-warning/40 bg-status-warning/10 px-4 py-2 text-sm text-status-warning flex items-center justify-between">
+            <div className="rounded-md border border-status-warning bg-status-warning/10 px-4 py-2 text-sm text-status-warning flex items-center justify-between">
               <span>Не удалось обновить. Показаны кэшированные данные.</span>
               <Button variant="ghost" size="sm" onClick={() => void refetch()}>
                 Повторить
@@ -142,7 +142,7 @@ export function MonitorPageContent() {
             <Skeleton className="h-32 w-full" data-testid="monitor-pipeline-skeleton" />
           )}
           {pipelineQuery.isError && !pipelineQuery.data && (
-            <div className="rounded-md border border-status-warning/40 bg-status-warning/10 p-4 text-sm text-status-warning flex items-center justify-between">
+            <div className="rounded-md border border-status-warning bg-status-warning/10 p-4 text-sm text-status-warning flex items-center justify-between">
               <span>Не удалось загрузить состояние пайплайнов.</span>
               <Button variant="ghost" size="sm" onClick={() => void pipelineQuery.refetch()}>
                 Повторить
