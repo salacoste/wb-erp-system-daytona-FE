@@ -192,6 +192,32 @@ describe('sanitizeFallbackMessage (FE-D3 rider pins — direct unit level)', () 
     expect(sanitizeFallbackMessage(message)).toBe(message)
   })
 
+  it('rider-2c: verbal-SQL «delete from» over-scrubs the benign «saved views» tail (accepted, pinned)', () => {
+    // Wave C pass-1 rider 4a: bare "delete from" eats to end-of-line, so the
+    // UI-feature phrase "delete from saved views" loses its benign tail.
+    // Accepted trade-off — the scrub fails SAFE (over-removes, never
+    // under-removes) — pinned so the behavior stays a documented choice.
+    const result = sanitizeFallbackMessage(
+      'Не удалось открыть страницу «delete from saved views» в разделе настроек'
+    )
+    expect(result).not.toContain('delete from')
+    expect(result).not.toContain('saved views')
+  })
+
+  it('wave-C pass-1: slash-dates pass through with dates INTACT (path-pattern tightening)', () => {
+    // The POSIX-path scrub requires a non-purely-numeric first segment, so
+    // «2024/01/15» no longer matches as a path (was mangled to «2024»).
+    const message = 'Запись создана 2024/01/15, обновлена 2024/02/20'
+    expect(sanitizeFallbackMessage(message)).toBe(message)
+  })
+
+  it('wave-C pass-1: real POSIX paths are still scrubbed after the slash-date tightening', () => {
+    const result = sanitizeFallbackMessage('log tail: /var/log/app/server.log')
+    expect(result).not.toContain('/var/log')
+    expect(result).not.toContain('server.log')
+    expect(result).toContain('log tail')
+  })
+
   it('rider-5: non-string input returns the generic fallback instead of throwing', () => {
     expect(sanitizeFallbackMessage(undefined as unknown as string)).toBe(
       'Произошла неизвестная ошибка. Попробуйте снова.'

@@ -10,6 +10,12 @@ import type { ApiError as CabinetApiError } from '@/types/cabinet'
 // retry. Aliased — @/types/cabinet exports an ApiError *interface* of the
 // same name; the class here is the runtime error type from @/types/api.
 import { ApiError as ApiErrorClass } from '@/types/api'
+// Wave C pass-1 (2026-09-12): data-DERIVED message fragments bypass the
+// apiClient boundary sanitize (they are read from apiError.data here), so the
+// 400 / INVALID_TOKEN / TOKEN_VALIDATION_FAILED branches scrub them at this
+// re-wrap. The 403/404/401 pass-through branches need no re-scrub — their
+// messages were already sanitized at the apiClient construction choke point.
+import { sanitizeFallbackMessage } from '@/lib/sanitize-fallback-message'
 
 /**
  * Handle errors from WB token update API call
@@ -28,10 +34,15 @@ export function handleWbTokenUpdateError(error: unknown): never {
 
     if (apiError.status === 400) {
       const details = apiError.data as CabinetApiError | undefined
+      // Wave C: data-derived fragments (recommendation/message) carry raw
+      // backend text — sanitize. The benign literal fallback passes through
+      // the sanitizer byte-identical (pinned).
       throw new ApiErrorClass(
-        details?.details?.[0]?.recommendation ||
-          details?.message ||
-          'Invalid token or missing X-Cabinet-Id header',
+        sanitizeFallbackMessage(
+          details?.details?.[0]?.recommendation ||
+            details?.message ||
+            'Invalid token or missing X-Cabinet-Id header'
+        ),
         apiError.status,
         apiError.data
       )
@@ -58,9 +69,14 @@ export function handleWbTokenUpdateError(error: unknown): never {
 
     const details = apiError.data as CabinetApiError | undefined
     if (details?.code === 'INVALID_TOKEN') {
+      // Wave C: sanitize only the data-DERIVED recommendation. The fallback
+      // literal is locally authored and embeds the public seller-portal URL —
+      // passing IT through the sanitizer would strip the recovery link.
+      const recommendation = details.details?.[0]?.recommendation
       throw new ApiErrorClass(
-        details.details?.[0]?.recommendation ||
-          'WB API token is invalid or expired. Please check your token or get a new one from https://seller.wildberries.ru/',
+        recommendation
+          ? sanitizeFallbackMessage(recommendation)
+          : 'WB API token is invalid or expired. Please check your token or get a new one from https://seller.wildberries.ru/',
         apiError.status,
         apiError.data
       )
@@ -77,9 +93,13 @@ export function handleWbTokenUpdateError(error: unknown): never {
         apiError.data
       )
     } else if (details?.code === 'TOKEN_VALIDATION_FAILED') {
+      // Wave C: data-derived recommendation is sanitized; the benign local
+      // fallback passes through the sanitizer byte-identical.
       throw new ApiErrorClass(
-        details.details?.[0]?.recommendation ||
-          'Token validation failed. Please verify your token is correct.',
+        sanitizeFallbackMessage(
+          details.details?.[0]?.recommendation ||
+            'Token validation failed. Please verify your token is correct.'
+        ),
         apiError.status,
         apiError.data
       )
