@@ -210,7 +210,9 @@ include_liquidation_scenarios should not exist
 includeCogs should not exist
 ```
 
-- Frontend: `src/hooks-v1/useMarginTrends.ts:70`
+- Frontend (RESOLVED): the param was removed — the successor hook
+  `src/hooks/useMarginTrends.ts` no longer sends `includeCogs` (the historical
+  `src/hooks-v1/` tree was deleted 2026-03-12; original citation pointed there)
 - Fix: remove `includeCogs` param or add to backend DTO
 
 ### BUG #3: `/supplies` — API 400
