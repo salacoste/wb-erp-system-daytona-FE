@@ -21,7 +21,7 @@
 | A | `debt/a2-organictab-tier` | решения 1 | ✅ SHIPPED (см. §4-A) |
 | B | `debt/financial-sign-canon` | решения 5 + 3 (док-строка фриза + канон-декларация) | ✅ SHIPPED — **код-контент NO-OP** (C2/трио/класс протухли, закрыты §37; канон-декларация + фриз-строка — CLAUDE.md/§37; см. §4-B) |
 | C | `debt/apiclient-central-sanitize` | решение 2 | ✅ SHIPPED (2-pass: RC→APPROVE merge-ready; см. §4-C + реестр §38) |
-| D | `debt/logger-central-redact` | решение 4 | ⏳ |
+| D | `debt/logger-central-redact` | решение 4 | ✅ SHIPPED (2-pass: AWR→APPROVE merge-ready; same-class clone после rider-1; см. §4-D + реестр §39) |
 
 **Порядок**: A (изолированный файл) → B (токен-домен, декларация канона) → C (apiClient) → D (logger).
 B объявляет `financial-*` каноном — C/D от токенов не зависят, порядок C↔D свободный.
@@ -71,3 +71,11 @@ telegram-эгресс обёрнут; 8 новых пинов; api.test репи
 merge-ready (fix-attestation line-exact, `||`-цепь и регекс-трейсы подтверждены). Trigger-аудит:
 p1 = 7 > 5 → pass-2 (исполнен); p2 = 0 blocking ≤ 5; кумулятив 9 < 12 → 2 прохода достаточны
 (не-кодификационная волна).
+
+## 4-D. Wave D record: logger центральный redact (2026-09-12)
+
+Полный рекорд — реестр §39. Кратко: warn/error → redactSensitive (131 сайт закрыт без касания);
+2-коммитная эволюция identity-carve-out → same-class clone после обязательного rider-1 прохода-1
+(ApiError.data raw-body leak); 12 пинов (не-вакуальны по 4 осям); debug/info нетронуты (пин).
+Гейты: СОЛО **19604/19604** (флор 19604 в CLAUDE.md) · tsc 0 · boundary 0=0/0 · privacy 0.
+Остатки-дисклоужи: stack verbatim, name benign, {}-коллапс не-plain объектов (doc-line) — §39.
