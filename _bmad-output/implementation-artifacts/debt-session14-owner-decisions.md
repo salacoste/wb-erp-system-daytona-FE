@@ -19,7 +19,7 @@
 | Волна | Ветка | Скоуп | Статус |
 |---|---|---|---|
 | A | `debt/a2-organictab-tier` | решения 1 | ✅ SHIPPED (см. §4-A) |
-| B | `debt/financial-sign-canon` | решения 5 + 3 (док-строка фриза + канон-декларация) | ⏳ |
+| B | `debt/financial-sign-canon` | решения 5 + 3 (док-строка фриза + канон-декларация) | ✅ SHIPPED — **код-контент NO-OP** (C2/трио/класс протухли, закрыты §37; канон-декларация + фриз-строка — CLAUDE.md/§37; см. §4-B) |
 | C | `debt/apiclient-central-sanitize` | решение 2 | ⏳ |
 | D | `debt/logger-central-redact` | решение 4 | ⏳ |
 
@@ -43,3 +43,20 @@ fix-клеймы — grep до коммита; гейты BARE; boundary 0=0/exc
 **Гейты (live, HEAD ветки)**: vitest СОЛО **19584/19584 exit 0** (флор 19582 +2) · tsc 0 bare · boundary 0=0, exceptions 0/0 · eslint 0/0 (2 файла; effective 170 строк < 200) · live `/80` = 0. CLAUDE.md-флор → 19584 тем же PR. Computed-style проб не требуется (числа контраста дважды независимо пересчитаны + статическая природа изменения); визуальный проб иконки — по желанию owner на живой странице.
 
 **Дисклоужи**: surface-лейблы: «2.92 / 4.23 / 4.66» в ранних аттестациях = light-only (dark проходит на всех альфах — 5.11/7.76/8.55); в финальном guard-комменте все числа помечены. Row :15 sweep-артефакта суперсессирована APPEND-рядом (не правилась in-place).
+
+## 4-B. Wave B record: financial-sign канон (2026-09-12, ветка `debt/financial-sign-canon`) — DOC-ONLY
+
+**Префлайт-результат (Story-105.2 снова спас волну)**: весь код-контент решения 5 оказался УЖЕ
+исполнен прежними волнами, реестровые строки оставались открытыми: C2 MarginDisplay — токен-чист
+(0 legacy-классов; boundary 0=0 корроборирует системно); контраст-трио — исправлено P2 wave-3
+(2026-09-05) + pass-2 selected-stack хардненинг, всё in-file с измерениями
+(`unit-economics-config.ts:18-35`); GrossProfitSection/CashflowRowPrimitives — уже fg-on-tint
+(`CashflowRowPrimitives.tsx:126`). Свидетельство и закрытия строк — реестр §37.
+
+**Поставлено (doc-only)**: CLAUDE.md — канон-декларация sign-valence (financial-* = канон, zero =
+muted-foreground, fg-on-tint обязателен, financial-foreground отложен, tier = нетекстовый канал);
+реестр §37 — решения 3 (сканер-фриз подтверждён) и 5 + no-op закрытия C2/трио/класса.
+
+**Ревью**: doc-only process-cleanup (Epic 107-A-2 scope: inline-verify допустим) — все evidence
+живые grep'ы оркестратора этого окна; гейты docs/lessons прогнаны. Sub-AA /10-пары price-calculator
+(pass-2 F1) — НЕ в скоупе, остаются ⏳.
