@@ -447,6 +447,21 @@ chart-7≡#EAB308 — только где старое значение совп
 2. **Исторические метки #7C3AED → мигрировать** на ближайшую роль (`var(--color-chart-2)`) в
    PriceHistorySheet + FunnelTab; exceptions №2/№3 снимаются (в развитие owner-решения ⑥).
 
+**Owner-решение waterfall-семантики (уточнение к ④, 2026-09-12, AskUserQuestion — рекон выявил
+расхождение премиссы)**: график категориальный (Выручка + до 10 баров-категорий + Прибыль/Убыток,
+`waterfall-chart-utils.ts:77-103`), не increase/decrease/total; буквальное ④ обрушило бы легенду.
+Решение **(a) — синтез ②+④ с двумя дистанциями**: 8 категорий → `chart-1..10` индексно (= lib
+COST_CATEGORIES, double-source §191 закрывается конвергенцией маппинга); коллайдеры byte-twin
+(`chart-4 ≡ chart-positive` в обеих темах `globals.css:191≡:200/:279≡:286`; `chart-8 ≡ chart-negative`
+в dark `:283≡:287`) уводятся на валенс: `logistics_return → var(--color-valence-2)`,
+`penalties → var(--color-valence-4)`; revenue → `var(--color-chart-9)` (нейтраль по плану);
+`other_deductions → var(--color-valence-neutral)` (≈ текущий #9E9E9E→#9CA3AF, разрешает коллизию
+revenue↔other на chart-9 pixel-верно); profit/loss — уже знаки. Полная различимость 12 серий в обеих
+темах; guard Story 168.11 сохраняется в усиленной форме (точные ролевые пины + запрет mapпинга на
+твин-роли chart-4/chart-8/знаковые). Lib-конфиг НЕ сливается с component-конфигом (label'ы
+различаются: COGS vs Себестоимость — слияние = видимая продуктовая перемена, вне скоупа); Side-B
+transform остаётся (live-orphan, токен-чистая, 2 тест-сюиты пинуют) — cleanup вне эпика.
+
 **Шаги (handoff §3.1, не перенумеровывать)**: 1 рекон (explore/sonnet, suppressed-файлы читаются
 напрямую) → 2 waterfall валенс-семантика (increase→`var(--color-chart-positive)`,
 decrease→`var(--color-chart-negative)`, total→нейтраль по рендеру; double-source §191 закрывается;
