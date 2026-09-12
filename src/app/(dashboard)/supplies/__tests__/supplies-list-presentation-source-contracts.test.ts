@@ -124,8 +124,9 @@ describe('Story 173.12 supplies-list presentation source contracts', () => {
     expect(src).toMatch(/'border-status-pending\/40'/)
     expect(src).toMatch(/'text-status-success'/)
     expect(src).toMatch(/'text-status-error'/)
-    // All five borders on /40 (banner-shape canon).
-    expect(src.match(/border-status-[a-z]+\/40/g)).toHaveLength(5)
+    // Four borders on /40 (banner-shape canon); the warn border went solid in
+    // C5 wave-4 (WCAG 1.4.11) — no alpha passes >=3:1 on all adjacent surfaces.
+    expect(src.match(/border-status-[a-z]+\/40/g)).toHaveLength(4)
   })
 
   it('sync indicator pin: ok/error icons on status tokens', () => {
