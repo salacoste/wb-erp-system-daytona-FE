@@ -11,8 +11,11 @@
  * no hsl wrappers). Story 168.11's tier-collapse concern (13 series must stay
  * visually distinct) is preserved by distance offsets — logistics_return maps to
  * valence-2 and penalties to valence-4 because chart-4/chart-8 are byte-twins of
- * chart-positive/chart-negative in at least one theme. Canon form, exact role
- * mapping and pairwise distinctness are enforced by
+ * chart-positive/chart-negative in at least one theme. Same-name/cross-ref note:
+ * this is the LIVE waterfall palette — it intentionally diverges from lib
+ * unit-economics-config COST_CATEGORIES (which stays strict chart-1..10 1:1) on
+ * exactly the 3 distance-offset categories; both configs are token-clean. Canon
+ * form, exact role mapping and pairwise distinctness are enforced by
  * __tests__/waterfall-chart-config.test.ts.
  */
 export const WATERFALL_COLORS = {

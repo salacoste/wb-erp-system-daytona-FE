@@ -450,8 +450,10 @@ chart-7≡#EAB308 — только где старое значение совп
 **Owner-решение waterfall-семантики (уточнение к ④, 2026-09-12, AskUserQuestion — рекон выявил
 расхождение премиссы)**: график категориальный (Выручка + до 10 баров-категорий + Прибыль/Убыток,
 `waterfall-chart-utils.ts:77-103`), не increase/decrease/total; буквальное ④ обрушило бы легенду.
-Решение **(a) — синтез ②+④ с двумя дистанциями**: 8 категорий → `chart-1..10` индексно (= lib
-COST_CATEGORIES, double-source §191 закрывается конвергенцией маппинга); коллайдеры byte-twin
+Решение **(a) — синтез ②+④ с двумя дистанциями**: 8 категорий → `chart-1..10` индексно (маппинг lib
+COST_CATEGORIES; double-source §191 закрывается: обе стороны токен-чистые, конвергенция 7/10 +
+3 задокументированные owner-дистанции — lib остаётся строгим 1:1, cross-ref комментарии в обоих
+конфигах); коллайдеры byte-twin
 (`chart-4 ≡ chart-positive` в обеих темах `globals.css:191≡:200/:279≡:286`; `chart-8 ≡ chart-negative`
 в dark `:283≡:287`) уводятся на валенс: `logistics_return → var(--color-valence-2)`,
 `penalties → var(--color-valence-4)`; revenue → `var(--color-chart-9)` (нейтраль по плану);
@@ -497,9 +499,9 @@ computed-style проб: waterfall (increase/decrease/total) + PriceHistorySheet
 
 **Waterfall маппинг (финал)**: revenue→chart-9 · cogs→chart-1 · commission→chart-2 · logistics_delivery→chart-3 · logistics_return→**valence-2** · storage→chart-5 · delivery_to_warehouse→chart-6 · paid_acceptance→chart-7 · penalties→**valence-4** · other_deductions→**valence-neutral** · advertising→chart-10 (≡ байт) · profit/loss — без изменений. Дистанции обоснованы byte-twin парами (`globals.css:191≡:200`, `:279≡:286`, `:283≡:287`); other_deductions разрешает revenue↔other коллизию на chart-9 (≈пиксель: #9E9E9E→#9CA3AF).
 
-**Sheet/Funnel маппинг (byte-nearest)**: sheet — lastPrice→valence-neutral(≡), recommendedPrice→chart-1, breakEvenPrice→chart-8(≡), marginCurrent→chart-7, marginRec→valence-1(≡), targetMargin→chart-2 (owner: #7C3AED); funnel — views→chart-1, cart→chart-7, orders→valence-4, buyouts→valence-1, conversion→chart-2 (owner).
+**Sheet/Funnel маппинг (byte-nearest, кроме оговоренного)**: sheet — lastPrice→valence-neutral(≡), recommendedPrice→chart-1, breakEvenPrice→chart-8(≡), marginCurrent→chart-7, marginRec→valence-1(≡), targetMargin→chart-2 (owner: #7C3AED); funnel — views→chart-1 (**hue-role match**; RGB-ближайший был бы valence-neutral — осознанный сдвиг к синей роли), cart→chart-7, orders→valence-4, buyouts→valence-1, conversion→chart-2 (owner).
 
-**warn/40 (1.4.11)**: swap на солид по расчёту — alpha 0.8 даёт 3.32 vs white но 2.94 vs warning/10 (FAIL на частейшей паре); солид 4.81/4.26/3.96 light, 12.56/11.37/10.01 dark. Solid-fill сайты (3 файла) не ухудшаются (бордер=заливка 1.00; значимая пара заливка/страница 4.81). Numeric non-text пины (:root/.dark ≥3) + compile-pin в globals-compiled-contrast.
+**warn/40 (1.4.11)**: swap на солид по расчёту — alpha 0.8 даёт 3.32 vs white но 2.94 vs warning/10 (FAIL на частейшей паре); солид 4.81/4.26/3.96 light, **14.03/11.76/10.37 dark** (vs `--background` 0 0% 3.92% / tint10 / tint15; первичная проза 12.56/11.37/10.01 считалась от предположенного bg — исправлено проходом-1, направление консервативное). Solid-fill сайты (3 файла) не ухудшаются (бордер=заливка 1.00; значимая пара заливка/страница 4.81). Numeric non-text пины (:root/.dark ≥3) + compile-pin в globals-compiled-contrast.
 
 ### 12.2 Computed-style проб (прецедент (d); НЕ скриншоты, НЕ jsdom)
 
@@ -526,3 +528,35 @@ vitest СОЛО **19579/19579 exit 0** (3 прогона: 2 фейла пино�
 **Meta-claim blanket qualifier (Trigger 4 MANDATORY; pre-written per 116.1-FE A-2).** Этот блок, §12 целиком, Completion-нарративы и последующие Post-Nth-pass блоки используют формулировки, утверждающие структурные свойства (kanон-завершение, полнота миграций, исходы прогонов), аттестационные числа (22/11/6/5, 13/13, 12 баров, 19579), самоклассификацию применимости триггеров и подобный recursive-self-validation язык. Всё это — **unaudited meta-claims** по Trigger 4, квалифицируются коллективно здесь.
 
 _(1st-pass findings added below when the 1st-pass review runs.)_
+
+**Проход-1** (свежий контекст, opus, read-only, мандат: структурная корректность — hunk-by-hunk
+хирургия, верность маппингам, безопасность чекера, целостность пинов, пересчёт чисел):
+**APPROVE-with-riders** — 0 CRITICAL / 0 HIGH / 2 MINOR / 4 LOW. 71 файл диффа: ~25 audited
+hunk-by-hunk, остальные полным свипом добавленных/удалённых строк (195 строк — все атрибутированы).
+Все 20 числовых клеймов воспроизведены ревьюером независимо (включая оба sha256, boundary живым
+прогоном, tsc, checker self-tests 10/10, таргет 33/33, дельту флора +6 = +4 guard its +2 it.each).
+Зеровая коллатеральная хирургия на 71 файле.
+
+Применённые фиксы (все — doc/коммент-класс, оркестратором):
+
+1. **MINOR-1**: classification-manifest §7 не отражал опустошение реестра (нарушение
+   заявленной 1:1-зеркальности) → заголовок «0 files, 0 suppressed», 3 строки перенесены в
+   dated-блок «Removed 2026-09-12 at C5 wave-4» с диспозишен-итогами (прецедент FeedbackButtons
+   2026-09-02); хвостовая фраза «3 remaining Map entries» → «0 remaining».
+2. **MINOR-2**: dark-числа прозы 12.56/11.37/10.01 считались оркестратором от ПРЕДПОЛОЖЕННОГО
+   bg hsl(240 5.9% 10%), не от токена — пересчёт от реального `--background` (0 0% 3.92%):
+   **14.03/11.76/10.37** (независимо ревьюером и оркестратором); направление консервативное,
+   гейтов не касалось. Исправлено в §12.1 + реестр §34 (числа от предположенных поверхностей —
+   новый подкласс byte-claim гигиены: surface-provenance для контраст-чисел).
+3. **LOW-2**: цифра «2.66» волны-6 нашими парами не реконструируется (1.73 light vs white /
+   2.98 dark vs bg — mount-chain-зависимая) → процитирована как историческая с пометкой;
+   вывод не меняется.
+4. **LOW-3**: #60A5FA→chart-1 — не byte-nearest (RGB-ближайший valence-neutral) → перемаркировано
+   «hue-role match» в §12.1 + реестре.
+5. **LOW-4**: «закрыт конвергенцией» смягчено до «конвергенция 7/10 + 3 owner-дистанции»;
+   добавлены cross-ref комментарии в оба конфига (waterfall-chart-config + lib
+   unit-economics-config) о намеренном расхождении на 3 категориях.
+6. **LOW-5**: `bg-status-warning/40` legend-свотчи price-calculator (2 файла, вне борд-скоупа,
+   декоративные) — задиспозишенены как registered residual в реестре §34 без правок.
+
+Диспозиции: open-вопрос ревьюера о surface-provenance закрыт фиксом-2; swatch-вопрос — фикс-5.
