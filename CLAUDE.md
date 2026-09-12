@@ -429,6 +429,8 @@ All chart/status color values in TS read **only** from CSS variables: strings = 
 
 **WCAG 1.4.11 verdict (owner decision (a), 2026-09-12)**: closed for **dark theme (6.5–14.0:1 vs background; floor chart-6, ceiling status-warning) + component pairs** (waterfall sign/category bars, warn borders ≥3:1 solid `border-status-warning`, TrendGraph banner 5.00:1 AA-pass). **Legacy-light is accepted**: light valence family + chart-7/8/10 as TEXT on white = 1.92–3.76:1 (pixel-identical to legacy; chart-9 light = 4.83 AA-PASS, outside the fork). All valence consumers are fills/swatches, not text — this preserves legacy rendering, not a regression.
 
+**Sign-valence canon (owner decision 5, 2026-09-12)**: `financial-positive` / `financial-negative` / `financial-neutral` are the repo canon for financial +/-/neutral (margins, profit/loss, iROAS tiers); zero/absent = `muted-foreground`. Colored text never sits on its own tint — use `text-foreground` on the tint (fg-on-tint; selected-stack-safe per P2 wave-3 pass-2). `financial-foreground` is DEFERRED (fg-on-tint covers it; revisit only if solid financial chips are requested). Tier intensity on text uses a non-text channel (A2 precedent: full token + dimmed icon), never alpha on text.
+
 ### Typography
 | Element | Size/Weight | Usage |
 |---------|------------|-------|
