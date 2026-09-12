@@ -7,6 +7,7 @@
  * correlation table showing organic vs ad-attributed cart breakdown with confidence.
  */
 
+import { CheckCircle2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency, formatNumber, formatPercentage } from '@/lib/utils'
 import type { CorrelationDayItem, IncrementalRoasData } from '@/types/unified-product'
@@ -17,19 +18,34 @@ interface OrganicTabProps {
   iroas: IncrementalRoasData | null
 }
 
-/** iROAS interpretation → Russian label + color class. */
-function iroasLabel(interp: string | null): { text: string; cls: string } {
-  if (!interp) return { text: 'Нет данных', cls: 'text-muted-foreground' }
+/** iROAS interpretation → Russian label + color class + optional icon channel. */
+function iroasLabel(interp: string | null): { text: string; cls: string; icon: string | null } {
+  if (!interp) return { text: 'Нет данных', cls: 'text-muted-foreground', icon: null }
   // 168.7: raw green/red/yellow → semantic tokens. Tier-collapse guard: the 4
   // interpretation tiers keep distinct intensity — highly_effective = full
-  // positive, effective = /80 (idiom from 168.3/168.6), NOT collapsed.
-  const map: Record<string, { text: string; cls: string }> = {
-    highly_effective: { text: 'Очень эффективно', cls: 'text-financial-positive' },
-    effective: { text: 'Эффективно', cls: 'text-financial-positive/80' },
-    marginal: { text: 'На грани', cls: 'text-status-warning' },
-    ineffective: { text: 'Неэффективно', cls: 'text-financial-negative' },
+  // positive, effective = full positive TOO, but the distance moved to a
+  // NON-TEXT channel (owner decision (a), 2026-09-12; debt-p2-80-sweep A2):
+  // the old `text-financial-positive/80` failed WCAG 1.4.3 as TEXT (3.51:1,
+  // no passing alpha exists between /80 and full), so both positive tiers now
+  // render full-token text (5.13:1 light / 9.38 dark) and the icon brightness
+  // carries the tier: effective = opacity-80 icon (3.51:1 light / 6.34:1 dark,
+  // ≥3:1 non-text per 1.4.11), highly_effective = full-opacity icon. Idiom
+  // from 168.3/168.6 preserved — 4 tiers, NOT collapsed. No alpha on any text.
+  const map: Record<string, { text: string; cls: string; icon: string | null }> = {
+    highly_effective: {
+      text: 'Очень эффективно',
+      cls: 'text-financial-positive',
+      icon: 'text-financial-positive',
+    },
+    effective: {
+      text: 'Эффективно',
+      cls: 'text-financial-positive',
+      icon: 'text-financial-positive opacity-80',
+    },
+    marginal: { text: 'На грани', cls: 'text-status-warning', icon: null },
+    ineffective: { text: 'Неэффективно', cls: 'text-financial-negative', icon: null },
   }
-  return map[interp] ?? { text: interp, cls: 'text-muted-foreground' }
+  return map[interp] ?? { text: interp, cls: 'text-muted-foreground', icon: null }
 }
 
 export function OrganicTab({ correlation, iroas }: OrganicTabProps) {
@@ -49,7 +65,12 @@ export function OrganicTab({ correlation, iroas }: OrganicTabProps) {
             <p className="text-2xl font-bold">
               {iroas?.iROAS != null ? formatNumber(iroas.iROAS) : '—'}
             </p>
-            <p className={`text-xs mt-1 font-medium ${verdict.cls}`}>{verdict.text}</p>
+            <p className={`text-xs mt-1 font-medium inline-flex items-center gap-1 ${verdict.cls}`}>
+              {verdict.icon && (
+                <CheckCircle2 aria-hidden="true" className={`size-3.5 shrink-0 ${verdict.icon}`} />
+              )}
+              {verdict.text}
+            </p>
           </CardContent>
         </Card>
 

@@ -1,8 +1,12 @@
 /**
- * OrganicTab unit tests — Story 168.7 (shadcn semantic-token migration).
- * Pins the 4 iROAS interpretation tiers (incl. positive vs positive/80
- * intensity distinction) and the 3 confidence branches, plus a scoped
- * legacy DOM guard against raw-palette classes.
+ * OrganicTab unit tests — Story 168.7 (shadcn semantic-token migration),
+ * re-pinned per owner decision (a) 2026-09-12 (debt-p2-80-sweep A2):
+ * positive tiers both carry FULL `text-financial-positive` text (5.13:1 AA;
+ * the old /80 variant failed WCAG 1.4.3) and the tier distance moved to the
+ * non-text icon channel — effective = opacity-80 icon (3.51:1 ≥3 non-text,
+ * 1.4.11), highly_effective = full-opacity icon. `text-financial-positive/80`
+ * is pinned as FORBIDDEN (re-inflation guard). Also pins the 3 confidence
+ * branches and a scoped legacy DOM guard against raw-palette classes.
  */
 
 import { describe, it, expect } from 'vitest'
@@ -46,31 +50,45 @@ function verdictByLabel(text: string): HTMLElement {
 
 describe('OrganicTab — 168.7 semantic tokens', () => {
   describe('iroasLabel tiers (4 distinct intensities, no tier-collapse)', () => {
-    it('highly_effective → text-financial-positive (full)', () => {
+    it('highly_effective → full positive text + full-opacity check icon', () => {
       render(<OrganicTab correlation={[]} iroas={makeIroas('highly_effective')} />)
       const el = verdictByLabel('Очень эффективно')
       expect(el.classList.contains('text-financial-positive')).toBe(true)
       expect(el.classList.contains('text-financial-positive/80')).toBe(false)
+      const icon = el.querySelector('svg')
+      expect(icon).not.toBeNull()
+      expect(icon?.classList.contains('text-financial-positive')).toBe(true)
+      expect(icon?.classList.contains('opacity-80')).toBe(false)
     })
 
-    it('effective → text-financial-positive/80 (weaker intensity)', () => {
+    it('effective → full positive text (NO /80 re-inflation) + dimmed icon channel', () => {
       render(<OrganicTab correlation={[]} iroas={makeIroas('effective')} />)
       const el = verdictByLabel('Эффективно')
-      expect(el.classList.contains('text-financial-positive/80')).toBe(true)
-      expect(el.classList.contains('text-financial-positive')).toBe(false)
+      // Text channel: full token only — /80 failed WCAG 1.4.3 (3.51:1).
+      expect(el.classList.contains('text-financial-positive')).toBe(true)
+      expect(el.classList.contains('text-financial-positive/80')).toBe(false)
+      // Non-text channel: opacity-80 icon carries the tier distance from
+      // highly_effective (3.51:1 light / 6.34:1 dark ≥ 3:1 per WCAG 1.4.11).
+      const icon = el.querySelector('svg')
+      expect(icon).not.toBeNull()
+      expect(icon?.classList.contains('text-financial-positive')).toBe(true)
+      expect(icon?.classList.contains('opacity-80')).toBe(true)
+      expect(icon?.getAttribute('aria-hidden')).toBe('true')
     })
 
-    it('marginal → text-status-warning (full, single warning tier)', () => {
+    it('marginal → text-status-warning (full, single warning tier, no icon)', () => {
       render(<OrganicTab correlation={[]} iroas={makeIroas('marginal')} />)
       const el = verdictByLabel('На грани')
       expect(el.classList.contains('text-status-warning')).toBe(true)
       expect(el.classList.contains('text-status-warning/80')).toBe(false)
+      expect(el.querySelector('svg')).toBeNull()
     })
 
-    it('ineffective → text-financial-negative', () => {
+    it('ineffective → text-financial-negative (no icon)', () => {
       render(<OrganicTab correlation={[]} iroas={makeIroas('ineffective')} />)
       const el = verdictByLabel('Неэффективно')
       expect(el.classList.contains('text-financial-negative')).toBe(true)
+      expect(el.querySelector('svg')).toBeNull()
     })
   })
 
