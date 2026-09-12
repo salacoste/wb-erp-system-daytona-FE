@@ -73,7 +73,7 @@ export const COEFFICIENT_STATUS_CONFIG: Record<CoefficientStatus, CoefficientSta
     color: 'yellow',
     bgColor: 'bg-status-warning/15',
     textColor: 'text-foreground',
-    borderColor: 'border-status-warning/40',
+    borderColor: 'border-status-warning',
     minValue: 1.01,
     maxValue: 1.5,
   },

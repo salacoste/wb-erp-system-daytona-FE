@@ -506,7 +506,7 @@ describe('Story 42.3-FE: Styling', () => {
     it('badge uses warning outline variant on solid alert host', () => {
       render(<MissingCogsAlert {...createMockProps()} />)
       const badge = screen.getByText('45 товаров')
-      expect(badge.className).toContain('border-status-warning/40')
+      expect(badge.className).toContain('border-status-warning')
       expect(badge.className).toContain('text-status-warning')
       expect(badge.className).toContain('bg-card')
     })

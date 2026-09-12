@@ -71,7 +71,7 @@ export function ProductTableRow({
                       every state. Valence = tint + border. */}
                   <Badge
                     variant="outline"
-                    className="text-[10px] px-1 py-0 h-4 border-status-warning/40 bg-status-warning/10 text-foreground"
+                    className="text-[10px] px-1 py-0 h-4 border-status-warning bg-status-warning/10 text-foreground"
                   >
                     отчёт
                   </Badge>

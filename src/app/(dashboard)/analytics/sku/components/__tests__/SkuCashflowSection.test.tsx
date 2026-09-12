@@ -101,7 +101,7 @@ describe('SkuCashflowSection', () => {
       .getByText('ИТОГО общекабинетные расходы')
       .closest('div.flex.items-center.justify-between')
     expect(row!.classList.contains('bg-status-warning/15')).toBe(true)
-    expect(row!.classList.contains('border-status-warning/40')).toBe(true)
+    expect(row!.classList.contains('border-status-warning')).toBe(true)
     // P2 wave-3 pass-1: the old /20 badge on the /15 row over the gradient card measured
     // 2.79 light in-situ (ANCHOR-3) → solid warning-foreground chip (4.81/11.41 over any base).
     const badge = screen.getByText(/−9\.0%/)

@@ -113,7 +113,7 @@ export function QuietHoursTimePickers({
       {/* Overnight Period Hint */}
       {/* Ref: Story 34.4-FE AC#4 - Conditional hint for overnight periods */}
       {quietHours.from && quietHours.to && isOvernightPeriod(quietHours.from, quietHours.to) && (
-        <Alert className="border-status-warning/40 bg-status-warning/10">
+        <Alert className="border-status-warning bg-status-warning/10">
           <div className="flex items-start gap-2">
             <span className="text-xl" aria-hidden="true">
               &#128161;

@@ -31,7 +31,7 @@ export function ReportPendingBanner({
   return (
     <Alert
       variant="default"
-      className="border-status-warning/40 bg-status-warning/10"
+      className="border-status-warning bg-status-warning/10"
       role="status"
       aria-live="polite"
     >
@@ -47,7 +47,7 @@ export function ReportPendingBanner({
           <Button
             variant="outline"
             size="sm"
-            className="mt-2 border-status-warning/40 text-status-warning hover:bg-status-warning/10"
+            className="mt-2 border-status-warning text-status-warning hover:bg-status-warning/10"
             onClick={() => setWeek(latestAvailableWeek)}
           >
             Показать последнюю доступную неделю ({latestAvailableWeek})

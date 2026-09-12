@@ -52,7 +52,7 @@ function WarningAlert({ children, className }: { children: React.ReactNode; clas
     <Alert
       role="status"
       aria-live="polite"
-      className={cn('border-status-warning/40 bg-status-warning/10', className)}
+      className={cn('border-status-warning bg-status-warning/10', className)}
     >
       <AlertTriangle aria-hidden="true" className="h-4 w-4 text-status-warning" />
       <AlertDescription>{children}</AlertDescription>

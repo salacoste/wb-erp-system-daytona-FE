@@ -45,17 +45,17 @@ const SEVERITY_META: Record<StatusSeverity, SeverityMeta> = {
   },
   dataGaps: {
     icon: AlertTriangle,
-    tone: 'border-status-warning/40 bg-status-warning/10 text-foreground',
+    tone: 'border-status-warning bg-status-warning/10 text-foreground',
     iconTone: 'text-status-warning',
   },
   missingCogs: {
     icon: AlertTriangle,
-    tone: 'border-status-warning/40 bg-status-warning/10 text-foreground',
+    tone: 'border-status-warning bg-status-warning/10 text-foreground',
     iconTone: 'text-status-warning',
   },
   tax: {
     icon: AlertTriangle,
-    tone: 'border-status-warning/40 bg-status-warning/10 text-foreground',
+    tone: 'border-status-warning bg-status-warning/10 text-foreground',
     iconTone: 'text-status-warning',
   },
   incompleteWeek: {
@@ -65,7 +65,7 @@ const SEVERITY_META: Record<StatusSeverity, SeverityMeta> = {
   },
   reportPending: {
     icon: Clock,
-    tone: 'border-status-warning/40 bg-status-warning/10 text-foreground',
+    tone: 'border-status-warning bg-status-warning/10 text-foreground',
     iconTone: 'text-status-warning',
   },
 }

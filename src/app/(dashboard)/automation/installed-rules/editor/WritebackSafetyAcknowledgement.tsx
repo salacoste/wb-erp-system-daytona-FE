@@ -33,7 +33,7 @@ export function WritebackSafetyAcknowledgement({
   const checkboxId = 'writeback-ack'
   return (
     <section
-      className="rounded-md border border-status-warning/40 bg-status-warning/10 p-4"
+      className="rounded-md border border-status-warning bg-status-warning/10 p-4"
       aria-labelledby={`${checkboxId}-title`}
       data-testid="writeback-safety"
     >

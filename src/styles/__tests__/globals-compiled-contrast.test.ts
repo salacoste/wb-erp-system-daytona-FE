@@ -24,6 +24,7 @@ const semanticClasses = [
   'text-financial-positive',
   'text-financial-negative',
   'text-status-warning',
+  'border-status-warning',
   'text-status-information',
   'text-availability-unavailable',
   'text-availability-unknown',
@@ -199,6 +200,18 @@ describe('compiled semantic utilities and contrast', () => {
         `${selector} ring/${surface}`
       ).toBeGreaterThanOrEqual(3)
     }
+  })
+
+  // C5-W4 step-5 (WCAG 1.4.11): warn/40 borders were swapped to solid
+  // `border-status-warning` — no alpha composite passes ≥3:1 on all adjacent
+  // light surfaces, the solid border does (light 4.81 vs white, dark 12.56
+  // vs background). Pin the non-text floor on the page surface per theme.
+  it.each([':root', '.dark'])('%s warning border meets non-text contrast', selector => {
+    const tokens = declarationsFor(root, selector)
+    expect(
+      contrastRatio(tokens.get('--background') ?? '', tokens.get('--status-warning') ?? ''),
+      `${selector} status-warning/background`
+    ).toBeGreaterThanOrEqual(3)
   })
 
   it.each([':root', '.dark'])(

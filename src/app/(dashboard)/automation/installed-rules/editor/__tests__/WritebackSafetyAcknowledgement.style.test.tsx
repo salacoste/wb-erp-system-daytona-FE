@@ -41,7 +41,7 @@ describe('WritebackSafetyAcknowledgement — wave-6 contrast pins', () => {
   it('panel keeps the warning tint idiom: bg + border on status-warning', () => {
     renderAck(false)
     const section = screen.getByTestId('writeback-safety')
-    expect(section).toHaveClass('bg-status-warning/10', 'border-status-warning/40')
+    expect(section).toHaveClass('bg-status-warning/10', 'border-status-warning')
   })
 
   it('AlertTriangle icon keeps full warn (non-text ≥3:1 channel)', () => {

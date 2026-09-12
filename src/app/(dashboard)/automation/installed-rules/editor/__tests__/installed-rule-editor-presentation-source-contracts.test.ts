@@ -77,7 +77,9 @@ describe('Story 172.4 installed-rule-editor presentation source contracts', () =
 
   it('writeback-safety pin: acknowledgement panel on status-warning tokens', () => {
     const safety = readFileSync(join(editorDirectory, 'WritebackSafetyAcknowledgement.tsx'), 'utf8')
-    expect(safety).toMatch(/border-status-warning\/40/)
+    // C5-W4 step-5: alpha modifier dropped (WCAG 1.4.11) — boundary-aware
+    // lookahead keeps the pin regression-blind to a reintroduced /40.
+    expect(safety).toMatch(/border-status-warning(?!\/)/)
     expect(safety).toMatch(/bg-status-warning\/10/)
     // p2-wave-6: body regression is guarded by the sibling runtime style test
     // (WritebackSafetyAcknowledgement.style.test); this contract pins the icon

@@ -162,7 +162,7 @@ describe('BackfillStatusTable', () => {
     [
       'pending',
       'В очереди',
-      ['border-status-warning/40', 'bg-status-warning/10', 'text-foreground'],
+      ['border-status-warning', 'bg-status-warning/10', 'text-foreground'],
     ],
     [
       'in_progress',
@@ -178,7 +178,7 @@ describe('BackfillStatusTable', () => {
     [
       'paused',
       'Приостановлено',
-      ['border-status-warning/40', 'bg-status-warning/10', 'text-foreground'],
+      ['border-status-warning', 'bg-status-warning/10', 'text-foreground'],
     ],
   ] as const)('maps %s to the text-labelled semantic presentation', (status, label, classNames) => {
     render(

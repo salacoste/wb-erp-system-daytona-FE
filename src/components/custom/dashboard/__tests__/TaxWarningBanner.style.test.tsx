@@ -55,7 +55,7 @@ describe('TaxWarningBanner — wave-6 contrast pins', () => {
   it('banner keeps the warning tint idiom: bg + border + icon channels', () => {
     render(<TaxWarningBanner taxConfigured={false} />)
     const alert = screen.getByRole('alert')
-    expect(alert).toHaveClass('bg-status-warning/10', 'border-status-warning/40')
+    expect(alert).toHaveClass('bg-status-warning/10', 'border-status-warning')
     expect(alert.querySelector('svg')).toHaveClass('text-status-warning')
   })
 })

@@ -117,7 +117,7 @@ export function OrderPickerContent({
 
       {/* Near Limit Warning */}
       {isNearLimit && (
-        <Alert variant="default" className="border-status-warning/40 bg-status-warning/10">
+        <Alert variant="default" className="border-status-warning bg-status-warning/10">
           <AlertTriangle className="h-4 w-4 text-status-warning" aria-hidden="true" />
           <AlertDescription className="text-status-warning">
             {isAtLimit

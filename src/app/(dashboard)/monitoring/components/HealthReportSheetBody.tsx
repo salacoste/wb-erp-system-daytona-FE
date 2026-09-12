@@ -17,7 +17,7 @@ const SEV_CFG: Record<string, { label: string; cls: string }> = {
   },
   warning: {
     label: 'Внимание',
-    cls: 'bg-status-warning/10 text-status-warning border-status-warning/40',
+    cls: 'bg-status-warning/10 text-status-warning border-status-warning',
   },
   info: {
     label: 'Инфо',

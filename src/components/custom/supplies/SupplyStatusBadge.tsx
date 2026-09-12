@@ -43,7 +43,7 @@ const STATUS_CONFIG: Record<
     label: 'Закрыта',
     color: 'text-status-warning-foreground' /* WCAG: solid pair — tint was 4.06:1 @12px */,
     bgColor: 'bg-status-warning',
-    borderColor: 'border-status-warning/40',
+    borderColor: 'border-status-warning',
     Icon: PackageCheck,
   },
   DELIVERING: {

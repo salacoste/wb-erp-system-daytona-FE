@@ -24,7 +24,7 @@ export function CogsRecalcBadge() {
         <TooltipTrigger asChild>
           <Badge
             variant="outline"
-            className="border-status-warning/40 bg-status-warning/10 text-status-warning whitespace-nowrap"
+            className="border-status-warning bg-status-warning/10 text-status-warning whitespace-nowrap"
           >
             себестоимость обновлена
           </Badge>

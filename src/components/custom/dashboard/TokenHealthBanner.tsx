@@ -79,7 +79,7 @@ export function TokenHealthBanner() {
   }
 
   return (
-    <Alert className="mx-4 mt-2 border-status-warning/40 bg-status-warning/10">
+    <Alert className="mx-4 mt-2 border-status-warning bg-status-warning/10">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2">
           {/* p2-wave-6: icon = non-text channel on warn/10 over background:

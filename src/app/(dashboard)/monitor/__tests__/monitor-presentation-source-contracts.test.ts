@@ -97,7 +97,7 @@ describe('Story 172.11 monitor presentation source contracts', () => {
     expect(src).toMatch(/text-3xl font-bold tracking-tight text-foreground/)
     // Two warning banners (stale + partial): tokens counted separately — the
     // layout utilities (px-4 py-2 text-sm) sit between them in className.
-    expect(src.match(/border-status-warning\/40 bg-status-warning\/10/g)).toHaveLength(2)
+    expect(src.match(/border-status-warning bg-status-warning\/10/g)).toHaveLength(2)
     expect(src.match(/text-sm text-status-warning/g)).toHaveLength(2)
     expect(src).toMatch(/border-destructive\/40 bg-destructive\/10/)
     expect(src).toMatch(/text-sm text-destructive/)

@@ -138,7 +138,7 @@ function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExp
           text → text-foreground (fg-on-tint) — colored text composites over the gradient
           card base and fails AA at any alpha (warn/15 row in-situ = 11.64 light / 9.98 dark as foreground;
           text-status-warning here measured 2.79-4.2 light). Valence = tint + border. */}
-      <div className="border-t-2 border-status-warning/40 my-2" />
+      <div className="border-t-2 border-status-warning my-2" />
       <div className="text-sm font-medium text-foreground px-2">
         Удержания из выплаты (общекабинетные расходы):
       </div>
@@ -146,7 +146,7 @@ function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExp
       <CashflowExpenseGrid cabinetExpenses={cabinetExpenses} pct={pct} />
 
       {/* Total Cabinet Expenses */}
-      <div className="flex items-center justify-between p-3 bg-status-warning/15 rounded-lg border border-status-warning/40">
+      <div className="flex items-center justify-between p-3 bg-status-warning/15 rounded-lg border border-status-warning">
         <div className="flex items-center gap-2">
           <span className="text-foreground font-bold text-lg">−</span>
           <span className="text-sm font-medium text-foreground">ИТОГО общекабинетные расходы</span>

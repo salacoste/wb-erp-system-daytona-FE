@@ -125,7 +125,7 @@ describe('AcceptanceStatusBadge', () => {
       const badge = screen.getByText('×1,25').closest('[class*="bg-"]')
       expect(badge).toHaveClass('bg-status-warning')
       expect(badge).toHaveClass('text-status-warning-foreground')
-      expect(badge).toHaveClass('border-status-warning/40')
+      expect(badge).toHaveClass('border-status-warning')
     })
 
     it('renders high badge with the emphasized warning role', () => {
@@ -447,7 +447,7 @@ describe('AcceptanceStatusBadge - Calendar Integration Support', () => {
       { coefficient: -1, expectedBorder: 'border-status-error/30' },
       { coefficient: 0, expectedBorder: 'border-status-success/40' },
       { coefficient: 1, expectedBorder: 'border-border' },
-      { coefficient: 1.25, expectedBorder: 'border-status-warning/40' },
+      { coefficient: 1.25, expectedBorder: 'border-status-warning' },
       { coefficient: 1.65, expectedBorder: 'border-status-warning/60' },
     ]
 

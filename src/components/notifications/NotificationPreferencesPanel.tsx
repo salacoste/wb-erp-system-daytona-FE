@@ -142,7 +142,7 @@ export function NotificationPreferencesPanel({
 
         {/* AC5: Unsaved Changes Warning */}
         {hasUnsavedChanges && (
-          <Alert className="border-status-warning/40 bg-status-warning/10 text-foreground">
+          <Alert className="border-status-warning bg-status-warning/10 text-foreground">
             &#9888;&#65039; У вас есть несохранённые изменения
           </Alert>
         )}

@@ -26,7 +26,7 @@ export type SortColumn = 'mapeUnits' | 'mapeRevenue'
 export const EVALUATION_STATUS_BADGE_CLASS: Record<ModelStatus, string> = {
   active: 'border-status-success/40 bg-status-success/10 text-status-success',
   training: 'border-status-information/40 bg-status-information/10 text-status-information',
-  degraded: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+  degraded: 'border-status-warning bg-status-warning/10 text-status-warning',
   retired: 'border-border bg-muted text-muted-foreground',
   rolled_back: 'border-border bg-muted text-muted-foreground',
   failed: 'border-status-error/40 bg-status-error/10 text-status-error',

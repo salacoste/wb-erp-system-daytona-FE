@@ -62,7 +62,7 @@ const AC1_BADGE_VARIANTS = [
     color: 'warning',
     bgClass: 'bg-status-warning',
     textClass: 'text-status-warning-foreground',
-    borderClass: 'border-status-warning/40',
+    borderClass: 'border-status-warning',
     icon: '⚠️',
     description: 'Повышенная стоимость (1.01-1.50)',
   },
