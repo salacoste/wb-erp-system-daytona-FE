@@ -14,15 +14,29 @@ const isDev = process.env.NODE_ENV === 'development'
  * residual: 131 logger.warn/error call sites bypass the logApiError redaction
  * path, so the redactor is applied here instead of at each site.
  *
- * Error instances pass through intact: redactSensitive's JSON-only contract
- * collapses non-plain objects to {} (message/stack are non-enumerable), which
- * would gut always-visible diagnostics. Strings and plain objects — including
- * body echoes — are redacted; redactSensitive is idempotent, so the logApiError
- * path (which already redacts before calling logger.error) is safe under
- * double application.
+ * Error instances are cloned same-class (Object.create keeps the prototype, so
+ * `instanceof ApiError` and `name` survive) with prototype/message/stack
+ * preserved: message and every enumerable own prop (ApiError carries the raw
+ * response body as `data`, api-client.ts constructor param prop) are passed
+ * through redactSensitive; identity is intentionally lost — irrelevant for a
+ * console sink.
+ *
+ * Non-Error non-plain objects (Date/Map/Set/class instances without enumerable
+ * own props) collapse to {} per redactSensitive's JSON-only contract — pass
+ * primitives, plain objects, or Errors. redactSensitive is idempotent, so the
+ * logApiError path (which already redacts before calling logger.error) is safe
+ * under double application.
  */
 function redactArg(arg: unknown): unknown {
-  return arg instanceof Error ? arg : redactSensitive(arg)
+  if (!(arg instanceof Error)) return redactSensitive(arg)
+  const clone = Object.create(Object.getPrototypeOf(arg)) as Error & Record<string, unknown>
+  const clonedMessage = redactSensitive(arg.message)
+  if (typeof clonedMessage === 'string') clone.message = clonedMessage
+  clone.stack = arg.stack
+  for (const [key, val] of Object.entries(arg)) {
+    clone[key] = key === 'stack' ? arg.stack : redactSensitive(val)
+  }
+  return clone
 }
 
 /** Debug-level log — API request/response tracing. No-op in production. */

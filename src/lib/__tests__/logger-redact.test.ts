@@ -3,21 +3,23 @@
  *
  * logger.warn/logger.error wrap every arg with the canon FE-D9 redactor
  * (redactSensitive) so the 131 call sites that bypass logApiError are covered
- * WITHOUT touching them. Error instances are carved out — redactSensitive's
- * JSON-only contract collapses them to {} (message/stack non-enumerable).
+ * WITHOUT touching them. Error instances become same-class clones with their
+ * enumerable own props (ApiError.data carries the raw response body) and
+ * message redacted — prototype/message-shape/stack preserved.
  *
  * Coverage map:
  *   warn/error redact secrets, keep benign fields .... describe('warn/error redact')
  *   idempotency through the real logApiError path .... describe('double-redaction safety')
  *   debug/info stay unredacted (dev-only tracing) .... describe('debug/info unchanged')
  *   '[warn]'/'[error]' prefixes preserved ............ asserted in every redact pin
- *   Error-instance passthrough ....................... describe('Error passthrough')
+ *   Error same-class clone, own props redacted ....... describe('Error clones')
  */
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { logger } from '../logger'
 import { redactSensitive } from '../redact-utils'
 import { logApiError } from '../api-interceptors'
+import { ApiError } from '@/types/api'
 
 // Secrets assembled from parts (F1, redact-utils.test.ts precedent): a 12+ char
 // literal directly after a token-ish name would match the check:privacy
@@ -134,21 +136,69 @@ describe('debug/info stay unredacted (dev-only tracing)', () => {
   })
 })
 
-describe('Error instances pass through intact', () => {
+describe('Error instances become same-class redacted clones', () => {
   afterEach(() => {
     vi.restoreAllMocks()
   })
 
-  it('warn/error preserve the Error identity, message and stack', () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  it('plain Error: identity dropped, prototype/message/stack preserved byte-identical', () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     const err = new Error('route failed with detail')
 
-    logger.warn('warn path:', err)
     logger.error('error path:', err)
 
-    expect(warnSpy.mock.calls[0][2]).toBe(err)
-    expect(errorSpy.mock.calls[0][2]).toBe(err)
-    expect(errorSpy).toHaveBeenCalledWith('[error]', 'error path:', err)
+    const received = errorSpy.mock.calls[0][2]
+    expect(received).toBeInstanceOf(Error)
+    expect(received).not.toBe(err)
+    expect(received).toHaveProperty('message', 'route failed with detail')
+    expect(received).toHaveProperty('stack', err.stack)
+  })
+
+  it('Error with a secret-bearing message gets the message redacted', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const err = new Error(`denied for Bearer ${WB_TOKEN}`)
+
+    logger.warn('warn path:', err)
+
+    const received = warnSpy.mock.calls[0][2]
+    expect(received).toBeInstanceOf(Error)
+    expect(received).toHaveProperty('message', 'denied for Bearer [REDACTED]')
+    expect(received).toHaveProperty('stack', err.stack)
+  })
+
+  it('ApiError: instanceof/name kept, status kept, data body deep-redacted, benign fields kept', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const apiErr = new ApiError('request failed: boom', 429, {
+      password: 'Short1abc',
+      token: JWT,
+      keepMe: 'visible',
+      nested: { secret: JWT, note: 'ok' },
+    })
+
+    logger.error('api failed:', apiErr)
+
+    const received = errorSpy.mock.calls[0][2]
+    expect(received).toBeInstanceOf(ApiError)
+    expect(received).toBeInstanceOf(Error)
+    expect(received).not.toBe(apiErr)
+    expect(received).toHaveProperty('name', 'ApiError')
+    expect(received).toHaveProperty('message', 'request failed: boom')
+    expect(received).toHaveProperty('stack', apiErr.stack)
+    expect(received).toHaveProperty('status', 429)
+    expect(received).toHaveProperty('data.password', '[REDACTED]')
+    expect(received).toHaveProperty('data.token', '[REDACTED]')
+    expect(received).toHaveProperty('data.keepMe', 'visible')
+    expect(received).toHaveProperty('data.nested.secret', '[REDACTED]')
+    expect(received).toHaveProperty('data.nested.note', 'ok')
+  })
+
+  it('the caller Error is never mutated', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const apiErr = new ApiError('request failed: boom', 429, { password: 'Short1abc' })
+
+    logger.error('api failed:', apiErr)
+
+    expect(apiErr.data).toEqual({ password: 'Short1abc' })
+    expect(errorSpy.mock.calls[0][2]).not.toHaveProperty('data.password', 'Short1abc')
   })
 })
