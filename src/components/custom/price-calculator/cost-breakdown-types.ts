@@ -36,7 +36,14 @@ export interface ChartSegment {
   inputPct: number
 }
 
-/** Color palette for chart segments (fix #9: teal for acquiring instead of green) */
+/**
+ * Color palette for chart segments (fix #9: teal for acquiring instead of green).
+ *
+ * Same-name note: this is the price-calculator cost-breakdown series palette —
+ * distinct from dashboard/chart-config.ts (daily-breakdown series) and
+ * analytics/storage/components/storage-trends-config.ts (storage trends).
+ * Values are C5 canon var(--color-*) tokens (C5 wave-4 namesake hygiene).
+ */
 export const CHART_COLORS = {
   commission_wb: 'var(--color-chart-1)',
   acquiring: 'var(--color-chart-2)',
