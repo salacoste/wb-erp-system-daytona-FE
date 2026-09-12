@@ -114,14 +114,19 @@ class ApiClient {
           `API Error: ${response.statusText}`
         )
 
-        trackTelegramApiError(endpoint, response.status, errorMessage)
+        // Wave C pass-1 rider: analytics egress gets the SANITIZED message —
+        // the raw text must not leave the boundary via metrics either.
+        // logApiError keeps the raw message (its WB-token classification +
+        // redactSensitive contract is pinned on raw shapes; it never renders).
+        trackTelegramApiError(endpoint, response.status, sanitizeFallbackMessage(errorMessage))
         logApiError(response.status, errorMessage, !!isJson, errorData)
 
         // Wave C (owner decision 2, 2026-09-12): central sanitization — every
         // ApiError.message from an HTTP response is scrubbed via the FE-D3
         // canon sanitizer (secrets/stacks/paths/JWT; truncate ≤200; benign
-        // text passes through byte-identical), so all downstream echo sites
-        // (JSX/toast `error.message`) are covered at this single choke point.
+        // single-line text passes through byte-identical (multiline/NBSP
+        // whitespace-normalized)), so all downstream echo sites (JSX/toast
+        // `error.message`) are covered at this single choke point.
         // Status/headers/retryAfter/data are untouched (Retry-After contract).
         const apiError = new ApiError(
           sanitizeFallbackMessage(errorMessage),

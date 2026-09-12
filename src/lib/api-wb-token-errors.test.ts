@@ -42,6 +42,31 @@ describe('handleWbTokenUpdateError (FE-D1: preserve type + status)', () => {
     expect(thrown.message).toBe('Invalid token or missing X-Cabinet-Id header')
   })
 
+  it('sanitizes secret-like content in data-derived 400 recommendations (Wave C pass-1)', () => {
+    // The 400 branch reads its message from apiError.data — a path that
+    // bypasses the apiClient construction sanitize. The recommendation must
+    // be scrubbed here: JWT + credentialed URL must not survive, status must.
+    const thrown = catchAsApiError(
+      new ApiError('Invalid token', 400, {
+        code: 'INVALID_TOKEN',
+        details: [
+          {
+            field: 'token',
+            issue: 'rejected',
+            recommendation:
+              'Token check failed: postgresql://admin:s3cret@host/db (eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.sig)',
+          },
+        ],
+      })
+    )
+    expect(thrown).toBeInstanceOf(ApiError)
+    expect(thrown.status).toBe(400)
+    expect(thrown.message).not.toContain('postgresql://')
+    expect(thrown.message).not.toContain('s3cret')
+    expect(thrown.message).not.toContain('eyJ')
+    expect(thrown.message).toContain('Token check failed')
+  })
+
   it('carries the original data through (getErrorMessage reads data.code)', () => {
     const data = { code: 'INVALID_TOKEN', message: 'wb rejected', details: [] }
     const thrown = catchAsApiError(new ApiError('Invalid token', 400, data))

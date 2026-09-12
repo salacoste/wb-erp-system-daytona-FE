@@ -21,12 +21,20 @@ const SCRUB_PATTERNS: RegExp[] = [
   /\bstack:\s*\S.*$/gim, // stack-dump markers — MUST precede the at-rule, else a bare "stack:" literal survives
   /^\s*at\s.*$/gm, // V8 stack frames ("    at fn (file:1:1)")
   /\b[a-z][a-z0-9+.-]*:\/\/\S+/gi, // scheme-agnostic URLs (postgresql://user:pass@host, redis://:pw@host, …)
-  /(?:[A-Za-z]:)?(?:\/[\w.@+-]+){2,}/g, // POSIX absolute paths (>=2 segments)
+  // POSIX absolute paths (>=2 segments). Wave C pass-1 rider: the first
+  // segment must not be purely numeric, else slash-dates ("2024/01/15") are
+  // mangled to "2024". Accepted trade-off: genuinely numeric-first paths
+  // ("/2024/x") now escape this scrub class — dates are the far more
+  // frequent benign shape in user-facing messages.
+  /(?:[A-Za-z]:)?\/(?!\d+(?:\/|$))[\w.@+-]+(?:\/[\w.@+-]+)+/g,
   /(?:\\[\w.@+-]+){2,}/g, // Windows paths
   // SQL fragments in verbal form (one-token object + target verb — avoids
   // two-token benign-prose false hits like "please select a cabinet from the
   // list"; one-token objects ("select one from") still over-scrub — accepted;
-  // DDL verbs (drop/truncate/alter table) eat to end-of-line incl. benign tail)
+  // DDL verbs (drop/truncate/alter table) AND bare "delete from" eat to
+  // end-of-line incl. benign tails, e.g. the UI-feature phrase
+  // "delete from saved views" loses everything after the verb — accepted,
+  // pinned rider-2c in wb-token-form-helpers.test.ts)
   /\b(?:select\s+\S+\s+from\b|insert\s+into\b|delete\s+from\b|update\s+\S+\s+set\b|drop\s+table\b|truncate\s+table\b|alter\s+table\b)[^;\n]*/gi,
   /\bprisma[\w.:-]*/gi, // ORM internals (single benign-word collateral — accepted trade-off, internal marker class)
   /\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g, // full JWT header.payload.signature (short signatures <40 chars)
