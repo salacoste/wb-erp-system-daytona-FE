@@ -678,3 +678,20 @@ Trigger 3 → проход-4 MANDATORY (в расписании). Кумулят
 **Открытые на проход-4**: RIDER-1 (§34 head-sha + PR-литерал — заполняется на merge-шаге);
 преттиер checker-self-test (pre-existing на базе, вне волны, optional hygiene); финальный
 close-row/PR-readiness аудит.
+
+### Post-4th-pass-review fixes (2026-09-12) — ФИНАЛ
+
+**Проход-4** (свежий контекст, opus; класс: close-row/PR-readiness; honor-check: 0 записей):
+**APPROVE-with-riders — merge READY**, 0 blocking. Merge-blocker список ПУСТ; AC-таблица 8/8 DONE
+(boundary 0=0/exceptions 0 live; миграции disk-verified; 4 прохода: AWR/AWR/RC/AWR; гейты live:
+boundary/docs/locale/lessons/tsc; vitest 19582 аттестован СОЛО, арифметика 19573+6+3
+корроборирована). Trigger-арифметика p1=6/p2=9/p3=7/кумулятив 22 — пересчитана проходом-4, сошлась.
+
+Merge-шаг правки (этим же коммитом): §34:396 гейт-строка 19579→**19582** (стейл после adoption-
+коммита — единственный MEDIUM прохода-4); §34 sha-пин ветки → финальный HEAD; PR-литерал вписан.
+Известные immutable-артефакты истории (дисклоужены в Post-2/Post-3, выводы не меняют):
+коммит-месседжи 015da104 (12.56-трио, ~48) и 7d4d8743 («MEDIUM-1 REFUTED» — отозвано в Post-3).
+
+**ЭПИК C5 ЗАКРЫТ**: boundary 118 → **0** (exceptions 0) за 4 волны; канон `var(--color-<role>)` в
+CLAUDE.md Design System; WCAG 1.4.11 закрыт по owner-решению (a); owner-ledger: C5 → done,
+1.4.11 → закрыт.
