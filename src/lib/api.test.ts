@@ -170,8 +170,12 @@ describe('updateWbToken', () => {
       json: async () => mockError,
     })
 
+    // Wave C (owner decision 2): the INVALID_TOKEN recommendation is
+    // server-derived, so the apiClient boundary sanitizes it — the URL class
+    // is scrubbed. User-facing recovery guidance (incl. the WB link) comes
+    // from the wb-token-form-helpers fixed copy, not the raw server string.
     await expect(updateWbToken(cabinetId, keyName, 'invalid-token', jwtToken)).rejects.toThrow(
-      'Get a new token from https://seller.wildberries.ru/'
+      'Get a new token from'
     )
   })
 
