@@ -102,6 +102,7 @@ describe('OrganicTab — 168.7 semantic tokens', () => {
       )
       const el = verdictByLabel('super_effective')
       expect(el.classList.contains('text-muted-foreground')).toBe(true)
+      expect(el.classList.contains('text-financial-positive')).toBe(false)
       expect(el.querySelector('svg')).toBeNull()
     })
 
