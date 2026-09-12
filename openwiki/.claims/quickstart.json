@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:f9239fca013d8cb7de3a5a835a3ef767677684da46f1c9d59bdaaf46ba5d140f",
+  "pageVersion": "sha256:5acdbf8c58b319d55b6becb41838ae62fe776b384e0aba4036f746cb924630ea",
   "claims": [
     {
       "id": "claim_07e85bb249e745f69c550323b16664e1",
@@ -86,7 +86,7 @@
     },
     {
       "id": "claim_b6851120b3a344e59b791e5ae2973b00",
-      "statement": "The two migration gate scripts have no npm-run alias and are invoked directly: node scripts/check-shadcn-migration-parity.mjs (Story 174.1 schema-v3 BMAD/route-ledger/OMX parity, 94 = 94 and 76 = 76) and node scripts/check-shadcn-ui-boundary.mjs (Story 174.2 design-system boundary ratchet, current baseline 57 in scripts/.shadcn-ui-boundary-baseline.txt, exit 1 only on increase); both run node:test self-suites first and are excluded from the Vitest run. The C5 chart-palette owner decision landed 2026-09-11, so the residual 57 is no longer owner-gated: C5 waves 1-2 executed (118 → 114 → 57) and waves 3-4 (components/app/types hex + 23 legacy classes, waterfall + exception lifts, target baseline 0) own the remainder.",
+      "statement": "The two migration gate scripts have no npm-run alias and are invoked directly: node scripts/check-shadcn-migration-parity.mjs (Story 174.1 schema-v3 BMAD/route-ledger/OMX parity, 94 = 94 and 76 = 76) and node scripts/check-shadcn-ui-boundary.mjs (Story 174.2 design-system boundary ratchet, exit 1 only on increase); both run node:test self-suites first and are excluded from the Vitest run. The boundary gate is now TERMINAL: C5 wave-4 (PR #446, 2026-09-12) emptied the BOUNDARY_EXCEPTIONS register and the baseline in scripts/.shadcn-ui-boundary-baseline.txt is 0, so any new legacy-UI usage fails the gate; a re-added exception requires an owner/debt ID and a manifest mirror.",
       "evidence": [
         {
           "resource": "repo://package.json#L17-L53",
@@ -94,7 +94,11 @@
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:1326faec3eb42dc72ddffe46daf3940b932f48b9799f6cbf28e80504e7b34958"
+          "version": "repo-file-v1:sha256:9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+        },
+        {
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L33-L35",
+          "version": "repo-lines-v1:sha256:113d6c4f06a79416bbe329a01dd582f33bee094e81bd816d72c76bb3f6d5136c:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDQ1NmU2M2ZiNmJhNTFlZGJmZTk2ZTZhNGI3MzJmNWQ4Mjk1ZjAxNjAwYjJjNWQ5NzhiYTFjYjRmMzY4Mzc2MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQyMDQ3MmQ5MTYwYTU1ZjA2YWM1NWMzZTI1MjQwMDZlYWZhYWJmMWY2MzlmZDU0YzUxYjQ0OTg0MTM3MmNlMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjllYWUzYWI5YWVjYjI2YmZmMGVkNWJlNjQxZjI2NzkyMTJiZTdmZGQxNGYwZTNkMTEyOGZhNzMyZDIwMmY2NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTUyZWMxOTE3MjExYjRiNTlhZDVjNmVhYzBlYzU5MmVjNzY2MTZkNDY4NjAyYTk5ZWVmZDMyNWNmYTU3MGViNCJ9"
         }
       ]
     },
@@ -202,7 +206,7 @@
     },
     {
       "id": "claim_dddeaa0fe9de402aaeee3fe79bb6eb74",
-      "statement": "Debt-session boundary waves 1-2 (PRs #394/#395) converted financial-summary (58 sites) and margin-family (29 sites) palette usage to semantic tokens, ratcheting the shadcn UI boundary count from 459 to 401 to 372 with 3 owner-accepted exceptions; subsequent P2 waves (through session-8, 2026-09-06) ratcheted down to 118, which held through sessions 9-11; the C5 epic waves 1-2 (2026-09-11) then lowered the baseline to the current 57 in scripts/.shadcn-ui-boundary-baseline.txt.",
+      "statement": "Debt-session boundary waves 1-2 (PRs #394/#395) converted financial-summary (58 sites) and margin-family (29 sites) palette usage to semantic tokens, ratcheting the shadcn UI boundary count from 459 to 401 to 372 with 3 owner-accepted exceptions; subsequent P2 waves (through session-8, 2026-09-06) ratcheted down to 118, which held through sessions 9-11; the C5 epic waves 1-2 (2026-09-11) lowered the baseline to 57, and C5 waves 3-4 (through session-13, PR #446, 2026-09-12) brought it to terminal 0 with all 3 exceptions lifted, matching scripts/.shadcn-ui-boundary-baseline.txt = 0.",
       "evidence": [
         {
           "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L18-L21",
@@ -213,8 +217,12 @@
           "version": "repo-lines-v1:sha256:cc6e354c815789bb3466359f8e662ca51093e8cffae9563d76b270976ad577af:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjY3MzMwZDQwN2Y5ODVhYzNhYjk2ODEyM2QxYzU3NjQxODg3ZTdhNGIyZThkZjFkMGRmZDE2MTVhZjZhZWMzZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGFkZjc4NGJiNGU1ZWY2NzhhZTI4NzU2ZWYyMmY2YWIyOTZiNzExZmIyNTlkMTIzNTgyYTkwMGVjMGNjY2UwOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmJiMjAyZDkyZGRiMjUzMzI3MmEzMWU4N2FiMGMzYzE1NWIxNjFkOTJmYmNkM2YxZjU0MjViZjM5MDU1ZDA5YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTA2Zjk5OTU0NmI2YmI0MTIyNjBmNDA0MzlhMzk2NjFkNWM3MDBhZDNkMTQyYjFmY2YzNTg1NTI0OTY3OGY4YSJ9"
         },
         {
+          "resource": "repo://docs/HANDOFF-2026-09-12-SESSION13-C5-COMPLETE-OWNER-DECISION-QUEUE.md#L13-L18",
+          "version": "repo-lines-v1:sha256:c2be34b11d7717d0ef4159143df5c78e0852b496759af545cd4d886f85b91134:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzM5NWJkNWYxNDQ4NTg5MzNmMmMyYzU0MWY0NjEwMTc5NTExMzY1MjMzNWM2NDYwNzZkYWNiODNmNWRjMWNjZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzgzOTYzMDM2NDAzNmRiYWIyODg3Yzc0YWQ2ZTdmNjFhNWUzNDM0MDIxMjIwOTE5ZDk1NGM1ZWVmM2QxZGEyMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDAxZjJlYzE3NTkzYzEwNTRlYjQ2MzY3ZDg0NTNlZjI0YTE3M2NlOTZiNzExN2Q5MWY5YTY4ZDQ0ZmVmOGIwMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGE0MjM1N2RiNjM2ZTFkM2ZiZmYyZDI4MTQxYjZjYzVhYzEwNjg5ODIzOGNjYTkzNTg3OTM3YTc1MzE1ZmVhYiJ9"
+        },
+        {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:1326faec3eb42dc72ddffe46daf3940b932f48b9799f6cbf28e80504e7b34958"
+          "version": "repo-file-v1:sha256:9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
         }
       ]
     },
@@ -250,19 +258,19 @@
     },
     {
       "id": "claim_2134510cae8d4eec9f8debc679151e77",
-      "statement": "After sessions 9-11 (handoffs HANDOFF-2026-09-09-V19 … HANDOFF-2026-09-10-SESSION11), the unblocked debt backlog is exhausted: remaining work is only owner/BE-blocked plus registered residuals. The C5 chart-palette owner decision landed 2026-09-11 (session-12, 8 decisions in debt-c5-w1-chart-token-canon.md §1): CSS tokens var(--chart-N) are the single canon source, the categorical palette extends to chart-1..10, valence tokens bundle WCAG 1.4.11, and the boundary goal is full 118 → 0 with all 3 exceptions lifted across 4 waves. Wave-1 (#441) deleted the dead src/lib/chart-colors.ts (118 → 114) and wave-2 migrated all remaining src/lib hex sites (→ current baseline 57; src/lib has zero hex literals). Waves 3-4 remain: components/app/types hex (the 57 residual), 23 legacy classes → status/tint tokens, waterfall valence semantics, exception lifts, baseline 0.",
+      "statement": "The C5 chart-palette epic is terminally CLOSED (session-13, 2026-09-12, PR #446): all four waves executed — wave-1 token foundation and dead chart-colors.ts deletion (118 → 114), wave-2 src/lib hex migration (→ 57), waves 3-4 components/app/types hex, 23 legacy classes → status/tint tokens, and the 22 suppressed waterfall/PriceHistorySheet/FunnelTab sites, ending at boundary 0 = baseline 0 with the exceptions register emptied and WCAG 1.4.11 closed (warn/40 borders → solid pairs). Remaining backlog is no longer implementation work: only owner-decision items with prepared AskUserQuestion requests (A2 OrganicTab /80 tier, apiClient sanitization ~131 .tsx, financial tokens/logger-redact bundle, docs-baseline zone enforcement) plus BE-side follow-ups, and implementing an owner-decision item without an owner answer is prohibited (V21 §8).",
       "evidence": [
         {
           "resource": "repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md#L12-L24",
           "version": "repo-lines-v1:sha256:f4721a16c07d9c1d9d22ccfca26c20f3ef0ab978dd4ba21bb3cca96ddc35e83f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMWZhM2ViMzJhNGU0MDE5ZjFjMjQ3NWE0MTUzMGI4YmI1ZjY1NThiYWM0NGQ4ZGJiYmI2MmFhZjU0NDQwYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkNGVhYWYwNDc2NmU5MzBlZDBhZjllNzA0ZDBmNTA1NWU3OTdhMmNmNzZiNTU5NjM2MzkxZGEyMmI0ZmZhMzAifQ"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-09-10-SESSION11-FOLLOWUPS-EXECUTED.md#L26-L46",
-          "version": "repo-lines-v1:sha256:b7f42dda0da3e9956da7e18e50a974c68919de071bbf646a64261f654d1af2a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjMjIxMzEwOWY4Njc0ZWM3NTVmZWQwMjZiNzYyMmFmODcxOWQ5ODhlOWNjN2NmOWIyMjAzYWY4MzYwOGMyZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkODJjMWZiYmQwOThkNTI0NjkyMjViYmIyNTQ3NjM0NTkyMzRlOTcxYjZiYmFhM2ExMjY2ODg1M2U1ZjNmZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmNjhhYjlmY2M1NjY4YzY2MTg4MGIzMDAzYWNjMDMwNmMzZmQ2MmJkYWQ0NzJjMDQ5ZjdiOGZkNWFhZmVkODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2OWUyNmY3ZWViYmU5Y2IzMGVkMzExNWU1MTlmMmNkMzFmNDk0NjM0Y2JmZWRjZTJkNmE3NTZhYTIzYTliNmQifQ"
+          "resource": "repo://docs/HANDOFF-2026-09-12-SESSION13-C5-COMPLETE-OWNER-DECISION-QUEUE.md#L1-L18",
+          "version": "repo-lines-v1:sha256:1c38f82784d2b8e87d1790e4f01f9a9acec6cb8f45136358dc587e1e86bd16a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzYzI3Y2E4YmU1MThlNmE1ZjgxODQ0ZmZiY2Q3ZTJiODJiYzZmYjU4MDZmNjc5YjlmMzZjYjc0NzNmY2Q0Y2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4Mzk2MzAzNjQwMzZkYmFiMjg4N2M3NGFkNmU3ZjYxYTVlMzQzNDAyMTIyMDkxOWQ5NTRjNWVlZjNkMWRhMjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhNDIzNTdkYjYzNmUxZDNmYmZmMmQyODE0MWI2Y2M1YWMxMDY4OTgyMzhjY2E5MzU4NzkzN2E3NTMxNWZlYWIifQ"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:1326faec3eb42dc72ddffe46daf3940b932f48b9799f6cbf28e80504e7b34958"
+          "version": "repo-file-v1:sha256:9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
         }
       ]
     },
@@ -326,25 +334,29 @@
     },
     {
       "id": "claim_ff60236fa1754f41a52d92def031efb6",
-      "statement": "The C5 wave-1 token foundation is live in src/styles/globals.css: --chart-7..10, --valence-1..5, and --valence-neutral declared in both light and dark themes with --color-* mappings, a dark --chart-2 lightness fix raising the selected-hover stack pair to ≥4.5:1 (pinned by a numerical contrast test), and a canon declaration making CSS variables the only legal chart-color source for new code; the production-dead src/lib/chart-colors.ts was deleted in the same wave.",
+      "statement": "The C5 wave-1 token foundation is live in src/styles/globals.css: --chart-7..10, --valence-1..5, and --valence-neutral declared with --color-* mappings, a dark --chart-2 lightness fix raising the selected-hover stack pair to ≥4.5:1 (pinned by a numerical contrast test), and a canon declaration making CSS variables the only legal chart-color source for new code; the production-dead src/lib/chart-colors.ts was deleted in the same wave, and the valence channel's WCAG 1.4.11 commitment was closed by C5 wave-4 (2026-09-12).",
       "evidence": [
         {
           "resource": "repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md#L41-L53",
           "version": "repo-lines-v1:sha256:b7fcff0d571dfc1d64c41c9c235a022c2d2c04dbfb535ba56142df3cd9e2bcf1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0Y2RhYzI2ZTU4YTM2ZDM3ZjExOTEyODgzY2MwNWVmYjhhNDExMGI1NGYwNWJlZGVkZDI3NzY4YmIxYzhmMTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhMzcxM2FkY2VkMjI0MmViMzkxZDhlYzAzZDc2ZjYwMjUwOTQ4NGUzMWYxM2ExNDQ4YjA5ZjI2NWZlNzFiOGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExMDIzMzI1MjA3NDU4NzM5YjczZGI5ODU0MDdhMjNjNjEyNjE3YTc4NTNjNjI5NzJmZjlmM2NhZmI0OWNjZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhMDNhYzNkOGIxMmYzZjRlZjA3OTRjYjQ5YWJiNWE1NzBjZmVmNWY4N2EwMDU1NTc0OGE5YTcwYTgwN2Q5OWMifQ"
         },
         {
-          "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:1326faec3eb42dc72ddffe46daf3940b932f48b9799f6cbf28e80504e7b34958"
+          "resource": "repo://docs/HANDOFF-2026-09-12-SESSION13-C5-COMPLETE-OWNER-DECISION-QUEUE.md#L13-L18",
+          "version": "repo-lines-v1:sha256:c2be34b11d7717d0ef4159143df5c78e0852b496759af545cd4d886f85b91134:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzM5NWJkNWYxNDQ4NTg5MzNmMmMyYzU0MWY0NjEwMTc5NTExMzY1MjMzNWM2NDYwNzZkYWNiODNmNWRjMWNjZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzgzOTYzMDM2NDAzNmRiYWIyODg3Yzc0YWQ2ZTdmNjFhNWUzNDM0MDIxMjIwOTE5ZDk1NGM1ZWVmM2QxZGEyMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDAxZjJlYzE3NTkzYzEwNTRlYjQ2MzY3ZDg0NTNlZjI0YTE3M2NlOTZiNzExN2Q5MWY5YTY4ZDQ0ZmVmOGIwMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGE0MjM1N2RiNjM2ZTFkM2ZiZmYyZDI4MTQxYjZjYzVhYzEwNjg5ODIzOGNjYTkzNTg3OTM3YTc1MzE1ZmVhYiJ9"
         },
         {
-          "resource": "repo://src/styles/globals.css#L196-L282",
-          "version": "repo-lines-v1:sha256:3223630ded56b10d18c1ee18c788b0e5953ffe11da9e7aabf0b37276e724d50f:eyJzZWxlY3RlZExpbmVDb3VudCI6ODcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlYWE2M2VlNDUzMzcyMjk2ZDUzNzkxOTc3OTIyNDk2MmZkYTU5N2IyYTRhNmYxMTU4N2QyYWU0NDM0MmZjMDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmNGI5OTU1NDRlMTIwNDE3YTMwNTE5OTNjMjc4NThlMzRhNjY0NDlmMzUzYWM0MDY0N2RkYmY2YWNkYjkyZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3MzM3NjdmOTJjZDQwZTM3NjVkZjY5ODg3YTE1NTdlYTFjN2Q1MDZmMTdjYTllMzE3NmFhNDViNDg1NjI0YjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2ZjdjYmI2NmFlMTA3YTVhYjRmMzZkZWRjNTU4NGZkN2VhZGJhYjhhMGE4Yjc1OTZkM2FkOTYyYmZlYTY0OWEifQ"
+          "resource": "repo://src/styles/globals.css#L196-L210",
+          "version": "repo-lines-v1:sha256:92524cb58252035477322a5595dbcd7456f53bb093fca666ea2f1eeeb64d08db:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlYWE2M2VlNDUzMzcyMjk2ZDUzNzkxOTc3OTIyNDk2MmZkYTU5N2IyYTRhNmYxMTU4N2QyYWU0NDM0MmZjMDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjYjY2ZjQzNjQ5MGY1OTI0ZjBkYjhkMzMwZGRjMjk4NWMxMTY5YzkzYzk2OTcxZTU4YmJhOGFiNTA3YmRhYmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3MzM3NjdmOTJjZDQwZTM3NjVkZjY5ODg3YTE1NTdlYTFjN2Q1MDZmMTdjYTllMzE3NmFhNDViNDg1NjI0YjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1OWJlMTFiMGI1ODI3YjQ4NThmYzkyODk3MTVmNTlhYjZiMThmZDEzOTlmY2MxMDk5MTJhMDExYmVlYWI4OTgifQ"
+        },
+        {
+          "resource": "repo://src/styles/globals.css#L60-L80",
+          "version": "repo-lines-v1:sha256:21885de665cbe89fe79210b388c2cddcbef420cd4db2fe8a5abbfdc054e5fd5d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkZjViMmE3NzQ5MzIyZjI1NDU4MzQzZTQzNWI2OTI0YmEwNzc2MzFiYjM2M2Y0MDZlNzFmMGNmOWY4ZDU5N2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwYTIwNjI1YzI5YTkwNDFlNzk4YjU0NmM0ODMxNmQzYzllNWE0YWNmNWEyYzM0YjkxMjllZGM4MjMyMTEwZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjMzc0YzI2MzJlNzE5MGIzODgxNzAwOWNkMDY3YzQ1YTc3MTY2NWU0Njk3MjY3ZWQ5YWEwMDA3Njg3NjA0NzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJkMmVkNDQyZGM1MThjNDdlYjU3MzEzODlkYjExNTRiMDE3ZTQ4MzU2Zjk3MzY4NjFlMWIwNDhhMGNlNGU1NjcifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-11T08:47:52.616Z"
+    "at": "2026-09-12T08:47:52.090Z"
   }
 }

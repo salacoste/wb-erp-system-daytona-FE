@@ -116,9 +116,6 @@ sources:
   - id: openwiki-source-72aa0e35fae33f199ccac4c2
     resource: repo://src/test/story-174-3-surface-contract.test.ts
 generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
-verified:
-  - by: openwiki/0.5.1
-    at: 2026-09-11T08:47:52.616Z
 ---
 
 

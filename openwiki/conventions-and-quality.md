@@ -56,10 +56,10 @@ sources:
     resource: repo://src/lib/sanitize-fallback-message.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-12T08:47:52.090Z" }
 verified:
   - by: openwiki/0.5.1
-    at: 2026-09-11T08:47:52.616Z
+    at: 2026-09-12T08:47:52.090Z
 ---
 
 # Conventions & Quality Gates
@@ -180,7 +180,7 @@ Each story closes only when every quality gate matches its accepted baseline (th
 | Dot-locale percent | `npm run check:locale-percent` | Ratchet ↓ — current count 4 in `scripts/.locale-percent-baseline.txt` (started at ~108); lower the baseline when migrating |
 | AP#8 normalizer | `npm run check:anti-pattern-8-normalizer` | Ratchet guard vs baseline (`scripts/.anti-pattern-8-normalizer-baseline.txt`) |
 | ESLint | `npm run lint` | 0 errors, 0 warnings (zero-warning policy, `--max-warnings 0` in `lint` + `lint:fix`, Story 164.4) |
-| Vitest | `npm test -- --run` | ≥ 19570 passing / 0 failed (floor: 19118 after 174.2 dead-test deletion; then +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite debt-FE-D9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, +12 reactive-refresh suite D-2/PB-3, +3 wave-3 AA re-pins, +9 /80-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, +22 wave-6 WCAG style pins, +11 route-guards exact-array pins, session-9; additions OK, regressions not; skipped informational) |
+| Vitest | `npm test -- --run` | ≥ 19582 passing / 0 failed (floor: 19118 after 174.2 dead-test deletion; then +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite debt-FE-D9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, +12 reactive-refresh suite D-2/PB-3, +3 wave-3 AA re-pins, +9 /80-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, +22 wave-6 WCAG style pins, +11 route-guards exact-array pins, session-9, +3 C5-W1 token-contract/stack pins, +9 C5-W4 waterfall guard rewrite / numeric contrast / supplies re-pins / review-adopted pins; additions OK, regressions not; skipped informational) |
 | E2E bare skips | `npm run check:e2e-bare-skips` + `scripts/check-e2e-bare-skips.test.mjs` | No bare `.skip` without reason in owned E2E specs |
 | Max-lines cross-check | `npm run check:max-lines` | Matches the ESLint `max-lines` caps (200 source / 800 test) |
 | Privacy console guard | `npm run check:privacy` | 0 forbidden `console.*` calls in PII-adjacent files (see [Testing & Operations](testing-and-ops.md#privacy-console-check)) |
@@ -189,7 +189,7 @@ Each story closes only when every quality gate matches its accepted baseline (th
 | Playwright static boundary | `npx vitest run src/test/playwright-static-boundary.test.ts` | No raw `@playwright/test` imports / dynamic code outside approved modules |
 | E2E vacuous assertions (AP#6) | `npm run check:e2e-assertions` + `src/test/e2e-vacuous-assertions.test.ts` | AST scanner finds tautological assertions (`>= 0`, `\|\| true`, always-true) in owned E2E specs; self-test under `npm test` |
 | E2E fixed waits (AP#7) | `npm run check:e2e-waits` + `src/test/e2e-fixed-waits.test.ts` | AST scanner finds `waitForTimeout`, raw `setTimeout`, and arbitrary wait helpers (`sleep`/`delay`/`pause`) in owned E2E specs; self-test under `npm test` |
-| shadcn UI boundary | `node scripts/check-shadcn-ui-boundary.mjs` | 118 = ratchet baseline in `scripts/.shadcn-ui-boundary-baseline.txt` (exit 1 only on increase; ↓149 lib-residue wave-5, 2026-09-05 P2; was 267 after wave-4 ↓105 component families; earlier 372 after wave-2 ↓29 Margin family; original Story 174.2 baseline 523; residue = 95 chart-hex + 23 legacy-palette classes: lib 61 + components 37 + app 17 + types 3, all deferred to the C5-owner) — see below |
+| shadcn UI boundary | `node scripts/check-shadcn-ui-boundary.mjs` | **TERMINAL: 0 = baseline 0 AND `exceptions = 0 registered`** (C5 complete 2026-09-12: all 22 suppressed sites migrated — waterfall 11, PriceHistorySheet 6, FunnelTab 5; the register emptied and the baseline dropped to 0; canon in Design System § Chart-Color Canon). **Any increase = STOP** — see below |
 | shadcn migration parity | `node scripts/check-shadcn-migration-parity.mjs` | Schema-v3 model validates clean: 94 BMAD stories = 94 OMX plans, 76 source routes = 76 route-ledger rows, zero defect codes (Story 174.1-FE) — see below |
 
 ### Ratchet gate behavior
@@ -235,7 +235,7 @@ flowchart TD
     B -- no --> F["exit 1 self-test-failed"]
     B -- yes --> C["scan src production files with LEGACY_PALETTE + CONTEXTUAL_HEX"]
     C --> D["subtract BOUNDARY_EXCEPTIONS suppressed files"]
-    D --> E{"total vs baseline 57?"}
+    D --> E{"total vs baseline 0?"}
     E -- greater --> G["exit 1 FAIL"]
     E -- equal --> H["PASS"]
     E -- less --> I["PASS + ratchet down, lower baseline in same commit"]
@@ -329,4 +329,3 @@ This complements the [Two-Pass Review Discipline](#two-pass-review-discipline): 
 - **Error test pattern** — Always use `mockRejectedValueOnce` (not `mockRejectedValue`)
 - **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
 - **No bare `TODO`** — covered above; `PENDING BACKEND:` / `FUTURE:` / ticket links only
- above; `PENDING BACKEND:` / `FUTURE:` / ticket links only

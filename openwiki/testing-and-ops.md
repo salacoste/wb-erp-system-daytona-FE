@@ -78,10 +78,10 @@ sources:
     resource: repo://test-utils/outbound-network-policy.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-12T08:47:52.090Z" }
 verified:
   - by: openwiki/0.5.1
-    at: 2026-09-11T08:47:52.616Z
+    at: 2026-09-12T08:47:52.090Z
 ---
 # Testing & Operations
 
@@ -95,7 +95,7 @@ verified:
 | Plugin | `@vitejs/plugin-react` |
 | Coverage | V8 provider (text/json/json-summary/html reporters), output `coverage/local` |
 | Fake timers | `shouldAdvanceTime: true` (waitFor/MSW compatibility) |
-| Full-suite floor | ≥ 19,118 tests passing across 1,234 test files (0 failed) — raised after Story 174.2-FE; the current accepted CLAUDE.md baseline is ≥ 19,573 / 0 failed; a full `npm test -- --run` run must not regress this floor |
+| Full-suite floor | ≥ 19,118 tests passing across 1,234 test files (0 failed) — raised after Story 174.2-FE; the current accepted CLAUDE.md baseline is ≥ 19,582 / 0 failed; a full `npm test -- --run` run must not regress this floor |
 
 ### Test setup (`src/test/`)
 Setup files run in explicit list order (`sequence.setupFiles: 'list'`) defined by `VITEST_SETUP_FILES` in `vitest.config.ts`. Order is load-bearing: the outbound network guard must install **before** any general setup or MSW import, or module-evaluation-time network attempts would escape the guard.
@@ -125,7 +125,7 @@ Tests are co-located with source in `__tests__/` directories:
 ### Full-suite floor history
 The floor is a floor, not a substitute for fresh per-story validation. It moves down legitimately only when tests are provably deleted with their production owners:
 
-- **Current accepted baseline (CLAUDE.md, `npm test -- --run`): ≥ 19,559 passing / 0 failed.** That is the 19,118 floor established by Story 174.2-FE (2026-08-31) plus +237 tests from the Story 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), +12 reactive-refresh tests (D-2/PB-3), +3 wave-3 AA re-pins, +9 `/80`-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, and +22 wave-6 WCAG style pins. The 174.2 floor itself moved from 19,874/1,256 by an exact −756 tests / −22 files, entirely from 65 proven-dead test files deleted together with their dead production owners (import-closure proved per file, reviewer-verified) — no live test was deleted.
+- **Current accepted baseline (CLAUDE.md, `npm test -- --run`): ≥ 19,582 passing / 0 failed.** That is the 19,118 floor established by Story 174.2-FE (2026-08-31) plus +237 tests from the Story 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), +12 reactive-refresh tests (D-2/PB-3), +3 wave-3 AA re-pins, +9 `/80`-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, +22 wave-6 WCAG style pins, +11 route-guards exact-array pins (session-9), +3 C5-W1 token-contract/stack pins, and +9 from the C5-W4 window (waterfall guard rewrite, numeric contrast, supplies re-pins, and review-adopted pins). The 174.2 floor itself moved from 19,874/1,256 by an exact −756 tests / −22 files, entirely from 65 proven-dead test files deleted together with their dead production owners (import-closure proved per file, reviewer-verified) — no live test was deleted.
 - **Per-story peaks are historical**, not the current bar: e.g. the 19,874 peak observed after Story 173.13 was superseded by the legitimate 174.2 dead-test deletion, then by the 174.3/174.4/debt-FE-D9 additions. Record the current accepted baseline, not historical counts, when validating. When a story legitimately moves a baseline, update the CLAUDE.md table in the same PR.
 - `vitest.config.ts` excludes the two `node:test`-only self-suites (`scripts/__tests__/check-shadcn-migration-parity.test.mjs`, `scripts/__tests__/check-shadcn-ui-boundary.test.mjs`) from the Vitest run — they run under `node --test` from their own scripts instead.
 
@@ -309,7 +309,7 @@ The Epics 166–174 shadcn migration added two Node-based gate scripts. Neither 
 Schema-v3 parity validator over three corpora: the BMAD story artifact (`_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md`, 94 stories with 12 pinned `EVIDENCE_FIELDS` and per-epic section profiles), the master OMX plan (`.omx/plans/shadcn-full-ui-migration-master.md`, ownership/dependency SHA-256 fingerprints, expected base SHA, backend-exception lifecycle records for 167.8/169.14), and the route ledger (exactly 76 rows). It proves 94 BMAD stories = 94 OMX plans and 76 source routes = 76 ledger rows with unique owners and linked implementation artifacts. It is filesystem-only (dependency-free), runs a deterministic mutation self-suite (`scripts/__tests__/check-shadcn-migration-parity.test.mjs`, 33 cases over a deep-cloned real corpus asserting exact `{ code, identity }` defect records) before validating the canonical corpus, and emits one machine-readable report plus one human summary per run.
 
 ### `check-shadcn-ui-boundary.mjs` (Story 174.2)
-Design-system boundary ratchet over production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, and `src/test/**` excluded; enumeration is relative-first so foreign worktree paths cannot re-enter). Two detection classes form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing lookahead, plus rgba/hsl/hsla/oklch color functions). Violation counts are grouped per route, totaled, and compared against the single-integer baseline `scripts/.shadcn-ui-boundary-baseline.txt` (**118**, after the 2026-09-05 wave-5 lib-residue sweep ↓149 from 267; history: born at 523 in 174.2, 401 after the 174.4 re-run, ↓58 wave-1 and ↓29 wave-2 plus the D-4 `/15→/5` fold-in to 372, ↓105 wave-4 component families to 267; residue = 95 chart-hex + 23 legacy-palette classes across lib 61 / components 37 / app 17 / types 3, deferred to the C5 owner): a plain run exits 0 at or below the baseline, exits 1 only on increase, and a decrease must lower the baseline in the same commit. There are no file-level waivers — suppression is only via the exported `BOUNDARY_EXCEPTIONS` map (3 files: the C5 waterfall categorical hex and two historical `#7C3AED` chart marks; the former F-10 WCAG-contrast exception was lifted 2026-09-02 when PB-4 was fixed), each entry carrying an owner/debt ID and mirrored 1:1 in the classification manifest. Self-suite: `scripts/__tests__/check-shadcn-ui-boundary.test.mjs` (10 `node:test` cases proving the regexes and enumeration logic). See [Design System — boundary enforcement](design-system.md) for the canon's regex details and the arithmetic-closed manifest.
+Design-system boundary ratchet over production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, and `src/test/**` excluded; enumeration is relative-first so foreign worktree paths cannot re-enter). Two detection classes form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing lookahead including `;`, plus rgba/hsl/hsla/oklch color functions). Violation counts are grouped per route, totaled, and compared against the single-integer baseline `scripts/.shadcn-ui-boundary-baseline.txt`. **The gate is now TERMINAL at 0** (C5 complete 2026-09-12): baseline 0 **and** `exceptions = 0 registered`. The `BOUNDARY_EXCEPTIONS` map ships empty — the last three exceptions (waterfall-chart-config.ts, PriceHistorySheet.tsx, FunnelTab.tsx; 22 suppressed sites: waterfall 11, PriceHistorySheet 6, FunnelTab 5) were lifted in C5 wave-4 when their hex literals migrated to `var(--color-*)` design tokens (the earlier F-10 WCAG-contrast exception had already been lifted 2026-09-02 via PB-4). The regex canon itself now lives in [Design System — Chart-Color Canon](design-system.md); any violation or new exception request is a STOP. History: born at 523 in 174.2, 401 after the 174.4 re-run, ↓58 wave-1 and ↓29 wave-2 plus the D-4 `/15→/5` fold-in to 372, ↓105 wave-4 component families to 267, ↓149 wave-5 lib-residue sweep to 118, ↓61 through C5-W1/W2 to 57, and finally ↓57 to 0 at C5 completion. A plain run exits 0 at or below the baseline, exits 1 on any increase, and a decrease must lower the baseline in the same commit (now vacuous at 0 — any change is an increase). The script runs its 10-case `node:test` self-suite (`scripts/__tests__/check-shadcn-ui-boundary.test.mjs`) first and fails fast if it fails. See [Design System — boundary enforcement](design-system.md) for the canon's regex details and the arithmetic-closed manifest.
 
 A concrete repaired example of AP#6 (vacuous assertion): the `e2e/login-dashboard.spec.ts` "displays trend graph" check used a `[data-testid="trend-graph"]` selector that only matched unit-test mocks — the real `TrendGraph` never rendered it — and its `.or()` recharts fallback matched the always-mounted `DailyBreakdownChart`, so the test stayed green even if `TrendGraph` were deleted. The contract now puts `data-testid` on the real `TrendGraph` Card (`src/components/custom/TrendGraph.tsx`), and the test expands the «Аналитика» disclosure first (lazy unmount) with no `.or()` fallback. When adding data-testid contracts, bind them to the real component, not to mocks, and prefer expanding collapsed containers over broad `or()` fallbacks.
 
@@ -339,11 +339,10 @@ Story 162.2 introduced a reproducible localhost preflight that gates every local
 
 A per-run orchestration that gives one E2E run a private frontend: a detached `git worktree add --detach` tmp checkout of committed `HEAD` (a dirty working tree only warns — the worktree tests committed code, not uncommitted edits), a symlinked `node_modules`, and copies of `.env.local`/`.env.e2e` forced to mode 600 (env files carry backend secrets and must not sit world-readable in the sticky tmp worktree). It stops the shared pm2 process `wb-repricer-frontend-dev` when pm2 owns `:3100`, boots its own `npx next dev --webpack -p 3100` inside the worktree, runs the suite as `npm run test:e2e:full` there (so the preflight gate and handshake still apply — `RUN_COMMAND` in `e2e-isolated-plan.mjs` is the single source of truth), and then guarantees teardown: kill the detached dev process group, `pm2 restart` (only if a stop actually happened — `summary.swapped` gates it), restore verification, and worktree removal (`--keep-worktree` preserves it as evidence, including its chmod-600 env copies).
 
-<!-- openwiki: mermaid parse failed and this diagram was converted to a text fence so it does not break rendering. Fix the diagram source and restore the mermaid fence. Parser error: Heuristic: a semicolon inside a label breaks rendering; rephrase the label. -->
-```text
+```mermaid
 flowchart TD
     HEAD["git rev-parse HEAD"] --> WT["git worktree add --detach tmp"]
-    WT --> ENV["symlink node_modules; cp -p .env* + chmod 600"]
+    WT --> ENV["symlink node_modules · cp -p .env* + chmod 600"]
     CLS["classifyPort3100 lsof + ps pid table"] -->|free| BOOT
     CLS -->|pm2-owned| STOP["pm2 stop wb-repricer-frontend-dev"]
     CLS -->|foreign| ABORT["abort fail-closed before any state change"]
@@ -351,7 +350,7 @@ flowchart TD
     ENV --> BOOT
     BOOT --> READY["readiness poll any HTTP status"]
     READY --> RUN["npm run test:e2e:full in worktree"]
-    RUN --> TD["teardown: kill dev group; pm2 restart if swapped"]
+    RUN --> TD["teardown — kill dev group, pm2 restart if swapped"]
     TD --> RV["restore verify: HTTP 200 /login + pm2 online + pm2-owned"]
     RV --> RM["worktree remove + prune"]
 ```

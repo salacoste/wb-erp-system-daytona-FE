@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c9cd893335ca79b6965e6c6af4042a5fe0deb4fbea56c1679d7903ca8278c9b7",
+  "pageVersion": "sha256:18f83b71f4e4f81c6ad38cdabb9042f041c1660d5890b756f1f4841a556f0bfb",
   "claims": [
     {
       "id": "claim_633e3a28dfd14bdc90dc2ba40c9dfdd4",
@@ -18,11 +18,11 @@
     },
     {
       "id": "claim_97752045dd374f1fa9c156d76602b424",
-      "statement": "The token layer is regression-tested by src/styles/__tests__/globals-token-contract.test.ts (every required semantic role declared and mapped in both themes; C5-W1 light pixel contract for chart-7..10 and valence-1/2/4/neutral against the legacy hexes with valence-3/5 ≡ chart-7/8 byte twins; ≥8° circular hue separation across chart-1..10; dark chart-2 ≥4.5:1 on the composited selected-hover stack, pinned to the frozen triplet 291.25 46.601942% 70%) and globals-compiled-contrast.test.ts (real PostCSS-compiled output resolves to concrete colors with compile pins for bg-chart-1..10 and text-valence-*; foreground/background pairs meet WCAG contrast in both themes), which is why token edits additionally require npm run build.",
+      "statement": "The token layer is regression-tested by src/styles/__tests__/globals-token-contract.test.ts (every required semantic role declared and mapped in both themes; C5-W1 light pixel contract for chart-7..10 and valence-1/2/4/neutral against the legacy hexes with valence-3/5 ≡ chart-7/8 byte twins; ≥8° circular hue separation across chart-1..10; dark chart-2 ≥4.5:1 on the composited selected-hover stack, pinned to the frozen triplet 291.25 46.601942% 70%) and globals-compiled-contrast.test.ts (real PostCSS-compiled output resolves to concrete colors with boundary-aware compile pins for bg-chart-1..10 and text-valence-*; all foreground/background pairs incl. the five status solid pairs meet WCAG AA in both themes; every semanticTextRoles entry is ≥4.5:1 on background and card; focus ring ≥3:1; and since C5-W4 the solid status-warning border is ≥3:1 against background/card and the composited warning/10 and warning/15 fills), which is why token edits additionally require npm run build.",
       "evidence": [
         {
-          "resource": "repo://src/styles/__tests__/globals-compiled-contrast.test.ts#L14-L120",
-          "version": "repo-lines-v1:sha256:365148978a22f7c393c54b057bae64ea1917e28f80785d436f57b02b014141cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiOWMxNmE1NjNjMjk0MmFhNDI5MWQ3OGI4NzM4MGRlNjFhMjhjOGUzM2E5OWY4ZjMwOWYzNDBjOGZiM2QzYzRlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwNTFlOTE5NTMwMjJmYjIwZTUwNGU4NTIxZjliYmZiYTUxOGNlZmUzZjU2MDgwNDc1OWVmNTI3M2E2NTU5OGVmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmZGIyNjJiYWNmYzZmZmU0YmNjYzM0ZWVjNjRjZmMxYTYyMDljZDRhYjIyZWQ4ZmJlNTczNDY1NGM2ZmU3OGMyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MGFlZjZmZTBkNzU2NWFiNzg4MDk2NDU4NmQ2YmYxMjgyY2JjNzViODA3MDI4MGJhZGFkM2Y4MTc2NmQzZTg0In0"
+          "resource": "repo://src/styles/__tests__/globals-compiled-contrast.test.ts#L124-L259",
+          "version": "repo-lines-v1:sha256:97b0af96343d079468954f581b1bd5f85586006763e1635b4fe952fcad8c14bc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4NTgxYWUwNjJhNWNmOGQzYTYyNDllOGQyYzliNmEyZWIxNzdhOWM4N2U5MWVhZWM3OGQ0NDY3ZDBjY2IxZWYzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI4NTgwYjc2NTE4ZGFlOTc5ZmFlYmQwMjM2N2EyOTI5MmE1MGQ5NzYwOTIyNTFhMzhhNmNlMzA4ODBiYTQyODI1IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzOTFlMDFkZjU2MDZiMjI1ZThiMjIxZTM0NmRiYmJkZTBhZjQwNTE0MjBiODI1NDcwMjE0YzhmOTI0MmY3MWY4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         },
         {
           "resource": "repo://src/styles/__tests__/globals-token-contract.test.ts#L132-L208",
@@ -108,23 +108,19 @@
     },
     {
       "id": "claim_12cb3fbbcc314d0f97169faa64a63920",
-      "statement": "Story 174.2 enforces a repository-wide design-system boundary: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt, whose current value is 57 (523 at 174.2 close → 459 by 174.4 → 401 by P2 wave 1 → 372 by wave 2 → 267 by wave 4 → 118 by wave 5, all 2026-09-05 and earlier → 114 by C5-W1 2026-09-11 which deleted the dead src/lib/chart-colors.ts → 57 by C5-W2 2026-09-11 which migrated the 57 lib-hex sites to semantic tokens); it exits 0 at-or-below the baseline and 1 only on increase, and suppression requires a BOUNDARY_EXCEPTIONS entry with an owner/debt ID mirrored in the classification manifest — 3 entries remain (C5 waterfall categorical hex and two historical #7C3AED chart marks) and all three are scheduled to be lifted by C5 wave 4; the scanner has a 10-case self-test suite. The remaining 57 residue (38 chart-hex + 19 legacy-palette classes: components 37 + app 17 + types 3) is owned by C5 waves 3–4 executing the owner-approved 118→0 plan.",
+      "statement": "Story 174.2's repository-wide design-system boundary is now TERMINAL: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt, whose value is 0; the BOUNDARY_EXCEPTIONS map is `new Map([])` — empty. The descent was 523 at 174.2 close → 459 (174.4) → 401 → 372 → 267 → 118 (P2 waves 1–5) → 114 (C5-W1, deleted dead src/lib/chart-colors.ts) → 57 (C5-W2, lib-hex → semantic tokens) → 0 (C5 waves 3–4, 2026-09-12, which migrated the final 57 residue and all 22 suppressed sites). The scanner exits 0 at-or-below baseline and 1 on any increase — with baseline 0 any new palette class or contextual hex fails the gate — and has a 10-case self-test suite. CLAUDE.md L154 records the terminal gate (canon documented in Design System § Chart-Color Canon).",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L154-L154",
-          "version": "repo-lines-v1:sha256:ac949b31790f90be3b775a199c395c2e632f51cd1961367773922436aa43c6d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWM5NDliMzE3OTBmOTBiZTNiNzc1YTE5OWMzOTVjMmU2MzJmNTFjZDE5NjEzNjc3NzM5MjI0MzZhYTQzYzZkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWM5NDliMzE3OTBmOTBiZTNiNzc1YTE5OWMzOTVjMmU2MzJmNTFjZDE5NjEzNjc3NzM5MjI0MzZhYTQzYzZkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDk1OGI5MDczZjQ4NWM1ZGI2ZmI5NzIyZjg2OTAxMWExMGQwNjJhODVjMTRlNzc3M2MzMmE3OTBmMGE2OGYzOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
-        },
-        {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md#L12-L31",
-          "version": "repo-lines-v1:sha256:24da2e741c2c2dc270d798efbee2f5c9328d9e39e589599fcfe463f2aa00571a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMWZhM2ViMzJhNGU0MDE5ZjFjMjQ3NWE0MTUzMGI4YmI1ZjY1NThiYWM0NGQ4ZGJiYmI2MmFhZjU0NDQwYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExMjIyZTkyNWUyNGI2MGM3NzU4NTFjNzAyY2IyM2ZiNjY0NzUwZjc3MTA4MDdjNWI2YzI3ZDk1ZWUxZDIxN2IifQ"
+          "version": "repo-lines-v1:sha256:832dadcf9940165ecad679cbad4d8d6c031076ed86d29f34286692d4f5c55f06:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODMyZGFkY2Y5OTQwMTY1ZWNhZDY3OWNiYWQ0ZDhkNmMwMzEwNzZlZDg2ZDI5ZjM0Mjg2NjkyZDRmNWM1NWYwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODMyZGFkY2Y5OTQwMTY1ZWNhZDY3OWNiYWQ0ZDhkNmMwMzEwNzZlZDg2ZDI5ZjM0Mjg2NjkyZDRmNWM1NWYwNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjU1YzIyNDE3NzhmZjUxYzE3MTY0NGQ4NjgwYjQ4NmRlNmViNmE5NjYxMWVmNTFmOTFkYWVjYjA4Yjg5ODM4NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:1326faec3eb42dc72ddffe46daf3940b932f48b9799f6cbf28e80504e7b34958"
+          "version": "repo-file-v1:sha256:9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
         },
         {
           "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L33-L52",
-          "version": "repo-lines-v1:sha256:422d1730b989b30121fc14171a21b8e65d455b1e8a8ad634145a0309b6aee274:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YzQwNmE2Y2Y1OTZjMTM1NGRjYmU5OTI2ZjljZjE4NGE3N2E3ZmMwOWIxYWFiY2QzN2ViOGNiYjc1MGU2NmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2M2FhZTM5YWQ1OWZhZjMyZDNhMDQ1OGI4OTM0NmU4ZTg4ZTkxZmRkNDA0NTQwM2E4OGEwNjdlYjU2Mjk5NjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5ZWFlM2FiOWFlY2IyNmJmZjBlZDViZTY0MWYyNjc5MjEyYmU3ZmRkMTRmMGUzZDExMjhmYTczMmQyMDJmNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4YzkxOGVhM2M5MGQ0NWNhZTBjZGJiNmJkMTkwYTA1Y2NkZTYwNzk1YjZjYTMxZWU1ZmM4YzlmYWMxZTcyM2EifQ"
+          "version": "repo-lines-v1:sha256:e02c01ece30b9793b9a2f374a398ecaab768ec44ecc0f5425728a360c3caf2e3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0NTZlNjNmYjZiYTUxZWRiZmU5NmU2YTRiNzMyZjVkODI5NWYwMTYwMGIyYzVkOTc4YmExY2I0ZjM2ODM3NjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmYmE1Mjg5MWIxNmVlNTY4ZjhmYTE2MGE3M2E4ZGI3NWVlZDMzMTY4MWFhMTZiNGM2N2M3MGYxMzIyY2RiZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5ZWFlM2FiOWFlY2IyNmJmZjBlZDViZTY0MWYyNjc5MjEyYmU3ZmRkMTRmMGUzZDExMjhmYTczMmQyMDJmNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVkY2FmMzQ5OTYwMWZmY2Q3OTdhMjU2N2FkMzA5OGVkZDU5ZjU0MDc4MDBlYTY1NmRkZDg4ZjUxNTJhNDFhZjkifQ"
         }
       ]
     },
@@ -224,11 +220,11 @@
     },
     {
       "id": "claim_0b600166038d4e9aa256f15749b417dd",
-      "statement": "Semantic-token honesty is pinned by exact classList DOM tests: pnl-waterfall semantic-tokens.test.tsx pins text-financial-positive, the AA-contrast idiom of a bg-financial-positive/10 tint with foreground text (text-financial-positive explicitly absent on the tinted row), named help/formula tooltip buttons, rejection of a widened legacy-palette regex, and — since P2 wave 3 — GrossProfitSection's solid bg-status-warning + text-status-warning-foreground pairs for both the COGS-coverage warning block and the 15-25% margin chip branch (border-status-warning/40); sku-financials ProfitabilityBadge.test.tsx pins the /15 chip idiom (bg-financial-negative/15 + text-foreground, explicitly not text-financial-negative), Russian-locale margin formatting, and a no-fabricated-zero fallback to the status label when marginPct is null.",
+      "statement": "Semantic-token honesty is pinned by exact classList DOM tests: pnl-waterfall semantic-tokens.test.tsx pins text-financial-positive, the AA-contrast idiom of a bg-financial-positive/10 tint with foreground text (text-financial-positive explicitly absent on the tinted row), named help/formula tooltip buttons, rejection of a widened legacy-palette regex, and — since P2 wave 3 — GrossProfitSection's solid bg-status-warning + text-status-warning-foreground pairs for both the COGS-coverage warning block and the 15-25% margin chip branch (border-status-warning included); sku-financials ProfitabilityBadge.test.tsx pins the /15 chip idiom (bg-financial-negative/15 + text-foreground, explicitly not text-financial-negative), Russian-locale margin formatting, and a no-fabricated-zero fallback to the status label when marginPct is null. GrossProfitSection is fully tokenized since the C5-W4 waterfall migration.",
       "evidence": [
         {
-          "resource": "repo://src/components/custom/pnl-waterfall/__tests__/semantic-tokens.test.tsx#L158-L200",
-          "version": "repo-lines-v1:sha256:e51a59471bf5ddd75bc1f7ecfbea88f09e01535960541c7ef759ef91c9eb6f9e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiOTQ1MGFmNDliYWU5YmU0ZTgzMGNhODRjZmUwODRlOWM5MzhkODEwNTAzZTgwODVmMTRlNTQ4NmUwNWUyNGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlZjBiOWRjMmI1ZTFiOWFiZWNiZjJmMTAxNWE0NTIzY2IyYTc1MWVlZDgyNDQyYTBhNzA4ODBmZmNhZjliZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1ODBiNzY1MThkYWU5NzlmYWViZDAyMzY3YTI5MjkyYTUwZDk3NjA5MjI1MWEzOGE2Y2UzMDg4MGJhNDI4MjUifQ"
+          "resource": "repo://src/components/custom/pnl-waterfall/__tests__/semantic-tokens.test.tsx#L158-L199",
+          "version": "repo-lines-v1:sha256:8d3bb88036d8353ab4be32ed964ad655cbe9a8fdb9416350bb1c11ea95e9a54a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiOTQ1MGFmNDliYWU5YmU0ZTgzMGNhODRjZmUwODRlOWM5MzhkODEwNTAzZTgwODVmMTRlNTQ4NmUwNWUyNGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxZTNmMjg5NWE4ZDI3M2M5OGI3MzJlYmVmYjVlZWYwZTQ1ZjQ4ZGY4NjZiZDFlYjI3NGM3NzE2ODdmNjAwOWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlZjBiOWRjMmI1ZTFiOWFiZWNiZjJmMTAxNWE0NTIzY2IyYTc1MWVlZDgyNDQyYTBhNzA4ODBmZmNhZjliZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxYjIwODJhZGQ5YTI5ZTA2MmU2MGQ0NmRiYTFlMWY3YzUzYTBlMDUwYjg4MTE4YzExMDIxOGJjY2UwNTUyZDAifQ"
         },
         {
           "resource": "repo://src/components/custom/pnl-waterfall/__tests__/semantic-tokens.test.tsx#L87-L103",
@@ -304,7 +300,7 @@
         },
         {
           "resource": "repo://src/components/custom/pnl-waterfall/GrossProfitSection.tsx#L94-L142",
-          "version": "repo-lines-v1:sha256:cbf35a51080e5e8c77f05be7543bb489c5f9fc43971d6b0434ed31792c234ff4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllMTk2OWQzMzFhMmJkOTkyNDY2ZTIxNzE4NDI3Y2ZjOGM0MDMzOTNkZWRkMzgzNjgwOWE3YTRiZTlmNTc4NjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyYjhhZTk3NmNmMGRhMzA5NDdlNTY1MThiNzU3YmE3NDlkMWVhYzU0ZTMxMWQ3MzllMmVlMmRmZjY1NzdhYjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExYmNkNDk3ZjVhNThjOGM3MGRmMThkZTk2MmUzZGIxODhmMDYyNjMwMTZlODZmZDFmYWM0NDc3NDNjZDY2ZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMxN2YxYzBhMzNmYTkxYmVmYmQzODEyZWNiODlkNTc0ZTA0NThkNzBjYjZlMTZjYjAyMTk2N2FjNzhhNzNhMmEifQ"
+          "version": "repo-lines-v1:sha256:5bd0cf629229887b84438fe96648160727830d28badb3db9eae3b0eb4b8828be:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllMTk2OWQzMzFhMmJkOTkyNDY2ZTIxNzE4NDI3Y2ZjOGM0MDMzOTNkZWRkMzgzNjgwOWE3YTRiZTlmNTc4NjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyYjhhZTk3NmNmMGRhMzA5NDdlNTY1MThiNzU3YmE3NDlkMWVhYzU0ZTMxMWQ3MzllMmVlMmRmZjY1NzdhYjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExYmNkNDk3ZjVhNThjOGM3MGRmMThkZTk2MmUzZGIxODhmMDYyNjMwMTZlODZmZDFmYWM0NDc3NDNjZDY2ZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMxN2YxYzBhMzNmYTkxYmVmYmQzODEyZWNiODlkNTc0ZTA0NThkNzBjYjZlMTZjYjAyMTk2N2FjNzhhNzNhMmEifQ"
         },
         {
           "resource": "repo://src/components/custom/price-calculator/MarginSlider.tsx#L30-L52",
@@ -329,10 +325,50 @@
           "version": "repo-lines-v1:sha256:bb15d31b955d77764231a0711863f5347208f773737da29d1fe5a72cb8f77e77:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTFjZmVkMjUwZGM3MTM2NjkyNzAwODhjYmI0NTJkNTg3NzAwMWFjY2VkMDU1MjhlMDFkOWU5YWExNDE2OWM5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjlhNzM0Zjg1YWU0ZmUyNmY3YWVhMWE0YzRhOTRkMTg4ZDE0NGIzOGYyMmM5Yjc2YjA0ZTRiYmZiOTEyZDk0YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjUwNDA1NmEzZDRkZTEzYzA5MDQ4ZTk1YmJjYjdkMTg3YmU2ZWM4NWFmZTZhYmU3MDQ4YjUxYzcwOGM3MTFjYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjBmZDZjYTExYmM4M2Y2NTVlMWUxYWVlNTRkN2IxNmE5MWU2MTRmNDVlZmYwMWQ2NTk2NzNjZTM4OWJhODczMSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_a0018647d97e422b96ee2cf77cee08b2",
+      "statement": "Chart-Color Canon: the CSS variables in src/styles/globals.css are the single canon source for chart colors — categorical series map onto chart-1..10, profitability tiers onto valence-1..5 + valence-neutral, signed outcomes onto chart-positive/negative, and chrome onto chart-grid/axis/tooltip roles; hex literals and parallel color constants are banned (enforced by the terminal boundary gate). Byte-twin awareness is required at mapping sites (chart-4 ≡ chart-positive, chart-8 ≡ chart-negative, valence-3/5 ≡ chart-7/8), handled by documented distance offsets: the live unit-economics waterfall palette (waterfall-chart-config.ts) uses full-form var(--color-*) tokens with logistics_return→valence-2, penalties→valence-4, and other_deductions→valence-neutral, pinned by waterfall-chart-config.test.ts. Canon examples include ElasticitySkuChart (var(--color-chart-1) area, var(--color-chart-positive) reference line), FbsTrendsChart (var(--color-chart-grid) with sr-only data alternative), the advertising route-local tier-token map (solid status pairs for extreme tiers, /15 tints mid-tier, muted unknown), and the dashboard chart-config categorical map over chart-1..6 + primary.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/advertising/components/advertising-tokens.ts#L29-L39",
+          "version": "repo-lines-v1:sha256:6272de3f4adf271d5df086806f01fac768eb948e5c4e01d53b87427f2d977391:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlZDc4NzY3YTAxMzNkYjk1Njg0OThmZTRhMjllNTQxYzRhNzY1YmM0OWMwYmZkZDkxOWZjMTg3MWIxZjJjMDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgzMGY1MWQyNjAzYTM5MzgwMzgwODk1MjE4NjFlYTFhNDI2NGUwZDg1ZWI0NmM4NjgyZWFjYWQ1OTQ0NmJhMTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2ZmZiNTUzNzgyYTAwNGI4ZGNiNGI1ZjJiNDAwZjY4NDJlYzQ4OTQyMWQyYjFhZTRmYmE4MWMwM2UyZjJlY2YifQ"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/pricing/components/ElasticitySkuChart.tsx#L100-L123",
+          "version": "repo-lines-v1:sha256:d27cd3cd5f01c84d1c7e7a294b07ca1a0dafbbe0e17208e2ce3492f992d90b97:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3ODBkNDUwYTA5NDYzMjNkMTY1MzA0ZDZjMmQ0NzI4YTZlZTNmNDZlNzYxM2U5OTc4MzhjMzU2ZmJjMjU5ODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhNDE0MzY3NjZiMmY4YzRmZDcwNzZlOWE3YmUyZmIzYzI0NTcyODIyOGJjYjlkYzNhNzZmNTFhNWE0MGMxZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0MDQ0ZDVmY2U5Y2UyNzk4ZDZkZGE2N2UzOGM2MTY0ZWUyODI4ZWIzMDQ3NmQyZjcwYzQwZDIwYmNkMjdjNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY3N2Q2NmVhZmM2NTBjZmM2ZTMwOWI1NzMyNDRkNTlmYmYzYjQ1YzUyOGQyMjdkOTc2ZDNjNjg4Nzc2YjQ2NGUifQ"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts#L8-L35",
+          "version": "repo-lines-v1:sha256:08a11ae3343ea9a76fdae796fea9c848bbc2488779b9110912fdca189de63ffe:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4Mzc5Y2EzYjNlODQxZTNkZDg2MWNkYzE4NDkzYTQ0Y2I1NmU4MDVkZmQ3YzY0YTM1M2QyMDg2ZGRmNjc3MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhZDFhNmQxNTM3ZDI1NGI4Y2JiMTQ3NWVhZTJjNjc4YjYxZWQ3OGZiYzljMmNmMWU1MjQwODYyMDdlNjlkYzUifQ"
+        },
+        {
+          "resource": "repo://src/components/custom/analytics/FbsTrendsChart.tsx#L92-L92",
+          "version": "repo-lines-v1:sha256:6bdf45cab906003b21e605b71c243e01548fa03d6a832b1bcbc40b88030d0112:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmJkZjQ1Y2FiOTA2MDAzYjIxZTYwNWI3MWMyNDNlMDE1NDhmYTAzZDZhODMyYjFiY2JjNDBiODgwMzBkMDExMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmJkZjQ1Y2FiOTA2MDAzYjIxZTYwNWI3MWMyNDNlMDE1NDhmYTAzZDZhODMyYjFiY2JjNDBiODgwMzBkMDExMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2E0ZDYwOWUzODUxMGM4MjNlNTlmYjBjMWFlYTY3MDA4NWMzNTljNWVlNTQwNjI5M2Y4ODhlNjg5NzRlZmM3YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODJkMDA1NGM2YmU5ZDJjZjgyYjQ3OTA1NzExZjRhNGZlZGQ1ZTY1YmQ5ZWQ2OTE3MjQ0MGExMTlkMWRmYjM1MiJ9"
+        },
+        {
+          "resource": "repo://src/components/custom/dashboard/chart-config.ts#L25-L34",
+          "version": "repo-lines-v1:sha256:907fe8d59f7b974a169e62e00991886f1c91731ae78d878b574b9e26d82711b0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1OGQ3OWFkNzBlZTk0MzliZDY1YjM4YTI5YWFjNGEzZDA5MzIxYzIyNDZlZWE2MThlNTg3ZjE3NDFkZTE0MTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3NWVkOTUyNDE5OWNmY2RjMjIyM2Y4NTczN2Q2NmNhYmEyNGM2OWU4Y2U3OWEwMTY1NWE2ZjVkYmQ1ZDllNjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVjNDFmY2FjMmI0OWUwYTNkYjhjOGRmYzk3OTFlZWYyOTMyYjUzYTZhMjU3NzNlNjVjMGE1NGU5ZDI5ZDZhZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4YTIwODE2N2NiOTg2ZjEzYzFmNTVjNDQ5MDMyNmEwY2FhZDlhYTYzNWQ0OTRmNjExZmUyY2ZjNjQ2OWE4ZWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c60d60a8d573473ab358e4e80d571a6a",
+      "statement": "The Chart-Color Canon migration is complete: the 22 formerly suppressed sites — the C5 waterfall's 11, PriceHistorySheet's 6, and FunnelTab's 5 — all now use canon tokens, the BOUNDARY_EXCEPTIONS register was emptied, and the boundary baseline reached 0 (C5 complete 2026-09-12). GrossProfitSection and the pnl-waterfall family are fully tokenized after the C5-W4 waterfall migration, which also swapped warn/40 alpha borders to solid border-status-warning with new compiled-contrast non-text pins.",
+      "evidence": [
+        {
+          "resource": "repo://CLAUDE.md#L154-L154",
+          "version": "repo-lines-v1:sha256:832dadcf9940165ecad679cbad4d8d6c031076ed86d29f34286692d4f5c55f06:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODMyZGFkY2Y5OTQwMTY1ZWNhZDY3OWNiYWQ0ZDhkNmMwMzEwNzZlZDg2ZDI5ZjM0Mjg2NjkyZDRmNWM1NWYwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODMyZGFkY2Y5OTQwMTY1ZWNhZDY3OWNiYWQ0ZDhkNmMwMzEwNzZlZDg2ZDI5ZjM0Mjg2NjkyZDRmNWM1NWYwNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjU1YzIyNDE3NzhmZjUxYzE3MTY0NGQ4NjgwYjQ4NmRlNmViNmE5NjYxMWVmNTFmOTFkYWVjYjA4Yjg5ODM4NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
+        },
+        {
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L39-L39",
+          "version": "repo-lines-v1:sha256:1b567ec28f4536ed9313228a778476e80ef92d37e98032d5bda01f1374cf363b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWI1NjdlYzI4ZjQ1MzZlZDkzMTMyMjhhNzc4NDc2ZTgwZWY5MmQzN2U5ODAzMmQ1YmRhMDFmMTM3NGNmMzYzYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWI1NjdlYzI4ZjQ1MzZlZDkzMTMyMjhhNzc4NDc2ZTgwZWY5MmQzN2U5ODAzMmQ1YmRhMDFmMTM3NGNmMzYzYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTUyZWMxOTE3MjExYjRiNTlhZDVjNmVhYzBlYzU5MmVjNzY2MTZkNDY4NjAyYTk5ZWVmZDMyNWNmYTU3MGViNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNThjOTE4ZWEzYzkwZDQ1Y2FlMGNkYmI2YmQxOTBhMDVjY2RlNjA3OTViNmNhMzFlZTVmYzhjOWZhYzFlNzIzYSJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-11T08:47:52.616Z"
+    "at": "2026-09-12T08:47:52.090Z"
   }
 }

@@ -18,8 +18,8 @@ sources:
     resource: repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md
   - id: openwiki-source-dd73bf43340fba783fd95443
     resource: repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md
-  - id: openwiki-source-37d2a81b58da127060ecee8c
-    resource: repo://docs/HANDOFF-2026-09-10-SESSION11-FOLLOWUPS-EXECUTED.md
+  - id: openwiki-source-d194306cbc079c845e475aad
+    resource: repo://docs/HANDOFF-2026-09-12-SESSION13-C5-COMPLETE-OWNER-DECISION-QUEUE.md
   - id: openwiki-source-012193b44418d77f0463a518
     resource: repo://docs/ORCHESTRATOR-PROMPT-2026-09-10-V20-DEBT-CONTINUATION-OMC-SUBAGENTS.md
   - id: openwiki-source-c66fd1b858bdd6d97345f065
@@ -32,6 +32,8 @@ sources:
     resource: repo://scripts/.check-docs-baseline.txt
   - id: openwiki-source-a6d59436db4440630eef1244
     resource: repo://scripts/.shadcn-ui-boundary-baseline.txt
+  - id: openwiki-source-bdeb846005a65a32b569a6d3
+    resource: repo://scripts/check-shadcn-ui-boundary.mjs
   - id: openwiki-source-02888236bcd9b1d1d663f151
     resource: repo://scripts/generate-story-174-3-scope-register.mjs
   - id: openwiki-source-e8dafb8ad730440a037549d9
@@ -42,10 +44,10 @@ sources:
     resource: repo://scripts/run-story-174-3-state-evidence.mjs
   - id: openwiki-source-13697ff46e81b49dcb27ba68
     resource: repo://src/styles/globals.css
-generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-12T08:47:52.090Z" }
 verified:
   - by: openwiki/0.5.1
-    at: 2026-09-11T08:47:52.616Z
+    at: 2026-09-12T08:47:52.090Z
 ---
 
 # WB ERP System — Frontend OpenWiki
@@ -98,11 +100,11 @@ Chain: V19 (`docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXE
 - **route-guards exact-array unification** (PR #427): 33 deviants across 3 waves; the 174.3 execution manifest regenerated with `--owner-units` (3 hash updates, 275/275 == disk). Test floor 19,559 → 19,570.
 - **session-10**: cwd-anchoring of 4 sibling guards (tax, shipments, sku-packaging, box-types) to the `import.meta.url` 170.6 canon (#430); the harness restart-per-run generalized into `npm run test:e2e:isolated` / `scripts/run-e2e-isolated.mjs` (#431, node:test 56, five review passes); FR-7 re-pin + AT-matrix written owner-accept + Manager-creds optional (#432); docs-95 baseline re-zoned CANONICAL 1 / CANDIDATE 4 / ARCHIVAL 90 (#433).
 - **session-11 follow-ups** (§3.4): FU-4 stale "verified W26" comment (#435/#436), FU-1 cwd-anchor contracts 2→4 files/7 anchors (#437), FU-2 canon-comment harmonization across 27 files (#438), FU-3 isolated-runner fail-safe hardening — dev spawn error/exit-before-ready aborts readiness within one poll tick, ps/jlist corruption pins, node:test 63/63 (#439), FU-5 no-op. Live main `092e7c26`: vitest 19,570/0.
-- **C5 epic (session-12, 2026-09-11)** — the chart-palette owner decision landed (8 decisions, artifact §1): CSS tokens `var(--chart-N)` are the single canon; categorical palette extends to `chart-1..10`; valence tokens `--valence-1..5`/`--valence-neutral` bundle WCAG 1.4.11; waterfall moves to valence semantics; **boundary target is full 118 → 0 with all 3 exceptions lifted**; delivery in 4 waves. Wave-1 (#441): `--chart-7..10` + valence tokens in `globals.css`, dark `--chart-2` contrast fix (3.71 → ≥4.5 pinned by test), dead `src/lib/chart-colors.ts` deleted → boundary 118 → 114. Wave-2: all remaining `src/lib` hex sites migrated → **current baseline 57** (`scripts/.shadcn-ui-boundary-baseline.txt` = 57; `src/lib` has zero hex literals). Waves 3-4 remain: components/app/types hex migration (the residual 57), the 23 legacy classes → status/tint tokens, waterfall + exception removal, final baseline 0.
+- **C5 epic — terminally CLOSED (2026-09-12)**. The chart-palette owner decision landed in session-12 (8 decisions, artifact §1): CSS tokens `var(--chart-N)` are the single canon; categorical palette extends to `chart-1..10`; valence tokens `--valence-1..5`/`--valence-neutral` bundle WCAG 1.4.11; waterfall moves to valence semantics; boundary target full 118 → 0 with all 3 exceptions lifted; delivered in 4 waves. Wave-1 (#441): `--chart-7..10` + valence tokens in `globals.css`, dark `--chart-2` contrast fix (3.71 → ≥4.5 pinned by test), dead `src/lib/chart-colors.ts` deleted → boundary 118 → 114. Wave-2: all remaining `src/lib` hex migrated → 57. Waves 3-4 (through session-13, PR #446): components/app/types hex migrated, the 23 legacy classes → status/tint tokens, waterfall/PriceHistorySheet/FunnelTab exception sites migrated (22 suppressed sites), `BOUNDARY_EXCEPTIONS` emptied, warn/40 borders → solid pairs (light 4.81 / dark 14.03), WCAG 1.4.11 closed. Final gate state on main: **boundary 0 = baseline 0, exceptions 0 registered — TERMINAL**. Session-13 record: `docs/HANDOFF-2026-09-12-SESSION13-C5-COMPLETE-OWNER-DECISION-QUEUE.md`.
 
-Live gate state: Vitest floor 19,570 (session-11 verified) raised to ≥ 19,573 by C5 wave-1 · lint 0/0 · tsc 0 · build `--webpack` 0 · **boundary 57 = baseline** (exceptions slated for removal in C5 wave-4) · docs 95 (zoned 1/4/90) · locale 4 · lessons 0 · privacy exit 0 (bare run, never piped — a pipe eats the exit code) · 174.3 contracts 33/33 · manifest 275/275 == disk. Environment: Node **24.18.0** (PATH-pinned; Node 26 breaks webpack), PM2 frontend on :3100, backend on :3000; after a Mac reboot restore Docker → `pm2 resurrect`.
+Live gate state: Vitest floor **19,582** (session-13 verified, solo run exit 0) · lint 0/0 · tsc 0 · build `--webpack` 0 · **boundary 0 = baseline, exceptions 0 registered (TERMINAL)** · docs 0 · locale 4 · lessons 0 · privacy exit 0 (bare run, never piped — a pipe eats the exit code) · cleanup 0/0/0 · 174.3 contracts 33/33 · manifest 275/275 == disk. Environment: Node **24.18.0** (PATH-pinned; Node 26 breaks webpack), PM2 frontend on :3100, backend on :3000; after a Mac reboot restore Docker → `pm2 resurrect`.
 
-Remaining backlog: C5 waves 3-4 (the 57 residual → 0), then owner-ledger items (WCAG 1.4.11 valence channels — bundled into C5; light-valence-as-text AA fork decision due in wave 2 scope; A2 OrganicTab /80; apiClient-wide sanitization ~128 .tsx; financial tokens / logger-redact; docs-baseline zone enforcement; free-port restore-verify fail-safe semantics) and BE follow-ups (remote publish of the D-2 refresh branch, FE-D3-residual NestJS filters, BE-seed for Manager-creds). Route backend-blocking work to `docs/request-backend/` (e.g. `docs/request-backend/230-auth-refresh-endpoint-missing.md`).
+Remaining backlog: no unblocked implementation items — only owner-decision items with prepared AskUserQuestion requests (A2 OrganicTab `/80` tier; apiClient-wide sanitization ~131 `.tsx` echo sites; financial tokens / logger-redact / scanner-semantics bundle; docs-baseline zone enforcement — low priority) and BE follow-ups (remote publish of the D-2 refresh branch, FE-D3-residual NestJS filters, BE-seed for Manager-creds). Implementing any owner-decision item without an owner answer is prohibited (V21 §8). Route backend-blocking work to `docs/request-backend/` (e.g. `docs/request-backend/230-auth-refresh-endpoint-missing.md`).
 
 ## Overview
 
@@ -159,7 +161,7 @@ Migration and Story 174.3 gates have **no `npm run` alias** — invoke them dire
 
 ```bash
 node scripts/check-shadcn-migration-parity.mjs   # Story 174.1: BMAD ↔ route ledger ↔ OMX plan parity (94 = 94, 76 = 76)
-node scripts/check-shadcn-ui-boundary.mjs        # Story 174.2: design-system boundary ratchet (current baseline 57, fails only on increase)
+node scripts/check-shadcn-ui-boundary.mjs        # Story 174.2: design-system boundary ratchet — TERMINAL (baseline 0, 0 registered exceptions; still fails on any increase)
 node scripts/run-story-174-3-state-evidence.mjs  # Story 174.3: fail-closed state-evidence runner (modes: --owner-units / --owner-browsers / --dedicated-routes / --owners / --defaults / --all)
 node scripts/run-story-174-3-real-browser-zoom.mjs  # Story 174.3: headed macOS real-browser 200% zoom orchestrator (all 76 routes × both themes)
 node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate the expanded-scope register from origin/main
@@ -174,7 +176,7 @@ node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate 
 | App structure / route groups / auth store (including D-1 `ensureSessionNonce`, D-2 nonce-preserving `refreshToken`, and FE-D5 `cabinetCreationLock` Web Locks) / environment & API configuration | [Architecture](architecture.md) |
 | api-client transport, error semantics, the D-2 reactive 401 single-flight refresh interceptor, and the FE-D3/fe-d3-family `sanitizeFallbackMessage` fallback sanitization | [API Client and Normalizers](api-and-normalizers.md) |
 | Financial summary math, margin/liquidity calculations, cabinet creation and settlement flows, task-role semantics (including the quality-wave `ScenarioUrgencyTier` work) | [Domain Logic](domain-logic.md) |
-| Gate / baseline / ratchet work, including `check-shadcn-ui-boundary.mjs` (current baseline 57, fails only on increase; residual migrates to 0 via C5 waves 3-4) and `check-shadcn-migration-parity.mjs` self-suites | [Conventions & Quality Gates](conventions-and-quality.md) |
+| Gate / baseline / ratchet work, including `check-shadcn-ui-boundary.mjs` (TERMINAL: baseline 0 and 0 registered exceptions since C5 wave-4, 2026-09-12; still fails on any increase) and `check-shadcn-migration-parity.mjs` self-suites | [Conventions & Quality Gates](conventions-and-quality.md) |
 | Test / e2e / automation work, including the story-174-3 e2e runner tooling (`e2e/support/story-174-3-runner-*.ts`, real-browser-zoom and state-evidence runners, fixture corpus under `e2e/fixtures/story-174-3/`) and the D-1 two-tab nonce-nulling e2e, and the isolated restart-per-run e2e orchestrator (`npm run test:e2e:isolated`) | [Testing & Operations](testing-and-ops.md) |
 
 ## Wiki Map
@@ -185,3 +187,4 @@ node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate 
 - **[Domain Logic](domain-logic.md)** — financial-summary math, margin/liquidity calculations, cabinet creation/settlement, and task-role semantics.
 - **[Migration Program (Epics 166–174)](migration-program.md)** — per-epic/story status ledger, route ledger (76/76 verified), parity validation, Story 174.3 evidence pipeline, orchestration process, and the final 94/94 closeout.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174.3 evidence runners.
+g standards/gates and the testing strategy with the story-174.3 evidence runners.

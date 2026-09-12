@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:9fa3c093b44ef3c1e343dea5c6a0c1013a8073d46c685720ca8cc59e31b12452",
+  "pageVersion": "sha256:f6ec3bd269ee3bb24e656d2d0ad284a04b9c107db2917e3e765cf904beb30173",
   "claims": [
     {
       "id": "claim_34d4e9ec9e0249299eb57f3e06db8784",
@@ -18,11 +18,11 @@
     },
     {
       "id": "claim_6f40c953f4a54d4f9d1a5f2db9c186a0",
-      "statement": "The current accepted full Vitest baseline (CLAUDE.md accepted-baselines table, `npm test -- --run`) is ≥ 19,573 passing / 0 failed. That value is the 19,118 floor set by Story 174.2-FE (2026-08-31) — itself an exact −756 tests / −22 files from 19,874/1,256 by deletion of 65 proven-dead test files (import-closure proved, no live test deleted) — plus +237 tests from the 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), +12 reactive-refresh tests (D-2/PB-3), +3 wave-3 AA re-pins, +9 /80-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, +22 wave-6 WCAG style pins, +11 route-guards exact-array pins (session-9), and +3 C5-W1 token-contract/stack pins. Earlier per-story peaks such as 19,874 are historical; the baseline is not a substitute for fresh per-story validation, and a story that legitimately moves it must update the table in the same PR.",
+      "statement": "The current accepted full Vitest baseline (CLAUDE.md accepted-baselines table, `npm test -- --run`) is ≥ 19,582 passing / 0 failed. That value is the 19,118 floor set by Story 174.2-FE (2026-08-31) — itself an exact −756 tests / −22 files from 19,874/1,256 by deletion of 65 proven-dead test files (import-closure proved, no live test deleted) — plus +237 tests from the 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), +12 reactive-refresh tests (D-2/PB-3), +3 wave-3 AA re-pins, +9 /80-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, +22 wave-6 WCAG style pins, +11 route-guards exact-array pins (session-9), +3 C5-W1 token-contract/stack pins, and +9 from the C5-W4 window (waterfall guard rewrite, numeric contrast, supplies re-pins, review-adopted pins). Earlier per-story peaks such as 19,874 are historical; the baseline is not a substitute for fresh per-story validation, and a story that legitimately moves it must update the table in the same PR.",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L153-L156",
-          "version": "repo-lines-v1:sha256:bb90d34f72190fb686e756bf113108123c9e27c42ea7c5c324c741d369e6a416:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTI4Y2FjODA3MTZjYzUzY2M0ODAyZjU1NTlhOTg1ZGIzYmFiOTgxMDE0MmM4OGQyNTkxYTQ1YzkxZTM0ZTJiOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
+          "version": "repo-lines-v1:sha256:0e431e14a5f84b15ff1177ac0e5ee67dab83786df2fb02062839d82097045d30:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTBhMjFmNmU5NDE1YjRmZDUxOWM4ZDliOTU3YzVjZjk4OTkwODQwZmZmY2EyZmM3ZTRmYzc1YjJjZWZhY2QwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
         },
         {
           "resource": "repo://vitest.config.ts",
@@ -114,23 +114,23 @@
     },
     {
       "id": "claim_9ad59c57b01b44fcaf18f91c92f97884",
-      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2, no npm alias — invoke with `node scripts/…`) scans production src/**/*.{ts,tsx} (tests, __tests__, .d.ts, src/test excluded; relative-first enumeration) for LEGACY_PALETTE and CONTEXTUAL_HEX violations using the superset regex canon, groups them per route, totals them, and ratchets against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt (57 as of the 2026-09-11 C5-W2 lib-hex→semantic-token sweep ↓57 plus the C5-W1 dead lib/chart-colors.ts removal ↓4; history: 118 after the 2026-09-05 wave-5 lib-residue sweep ↓149 from 267; born at 523 in 174.2, 401 after the 174.4 re-run, ↓58 wave-1 and ↓29 wave-2 plus the D-4 /15→/5 fold-in to 372, ↓105 wave-4 component families to 267; residue = 38 chart-hex + 19 legacy-palette classes across components 37 / app 17 / types 3, owned by the C5 waves-3..4 owner): exit 0 at or below baseline, exit 1 only on increase, and any decrease must lower the baseline in the same commit. Suppression is only via the exported BOUNDARY_EXCEPTIONS map (3 files — the C5 waterfall categorical hex and two historical `#7C3AED` chart marks; the former F-10 WCAG-contrast exception was lifted 2026-09-02), each entry carrying an owner/debt ID and mirrored 1:1 in the classification manifest; the script runs its 10-case node:test self-suite first and fails fast if it fails.",
+      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2, no npm alias — invoke with `node scripts/…`) scans production src/**/*.{ts,tsx} (tests, __tests__, .d.ts, src/test excluded; relative-first enumeration) for LEGACY_PALETTE and CONTEXTUAL_HEX violations using the superset regex canon, groups them per route, totals them, and ratchets against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt. The gate is TERMINAL at 0 as of C5 completion (2026-09-12): baseline 0 AND exceptions = 0 registered. The exported BOUNDARY_EXCEPTIONS map ships empty — all 22 suppressed sites were migrated (waterfall 11, PriceHistorySheet 6, FunnelTab 5; lifted in C5 wave-4 after hex literals moved to var(--color-*) tokens; the F-10 WCAG-contrast exception had already been lifted 2026-09-02 via PB-4). Baseline history: born at 523 in 174.2, 401 after the 174.4 re-run, ↓58 wave-1 and ↓29 wave-2 plus the D-4 /15→/5 fold-in to 372, ↓105 wave-4 to 267, ↓149 wave-5 lib-residue sweep to 118, ↓61 through C5-W1/W2 to 57, ↓57 to 0 at C5 completion. The gate exits 0 at or below baseline, exits 1 on increase, and at 0 any violation is a STOP; the regex canon now lives in the Design System page § Chart-Color Canon. The script runs its 10-case node:test self-suite first and fails fast if it fails.",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L152-L156",
-          "version": "repo-lines-v1:sha256:3fba16bf860c6449efb588bc2cd1cd924664a08c4fd540dbff19b89cd170865d:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
+          "version": "repo-lines-v1:sha256:f0ccda222a8117e1e0742540a846b858a8b11d845c069c00fc980ccc6da23904:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:1326faec3eb42dc72ddffe46daf3940b932f48b9799f6cbf28e80504e7b34958"
+          "version": "repo-file-v1:sha256:9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
         },
         {
           "resource": "repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs",
-          "version": "repo-file-v1:sha256:2acf3671f96aa8c8cbd39f514bd3a79956d64e4a598cd01de5ed0cfe7bb1474d"
+          "version": "repo-file-v1:sha256:4d18043c8c4a8562ac10131f265f3089a0bc9c011a14b6c3b1347a211bdcb5a0"
         },
         {
-          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L33-L52",
-          "version": "repo-lines-v1:sha256:422d1730b989b30121fc14171a21b8e65d455b1e8a8ad634145a0309b6aee274:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YzQwNmE2Y2Y1OTZjMTM1NGRjYmU5OTI2ZjljZjE4NGE3N2E3ZmMwOWIxYWFiY2QzN2ViOGNiYjc1MGU2NmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2M2FhZTM5YWQ1OWZhZjMyZDNhMDQ1OGI4OTM0NmU4ZTg4ZTkxZmRkNDA0NTQwM2E4OGEwNjdlYjU2Mjk5NjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5ZWFlM2FiOWFlY2IyNmJmZjBlZDViZTY0MWYyNjc5MjEyYmU3ZmRkMTRmMGUzZDExMjhmYTczMmQyMDJmNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4YzkxOGVhM2M5MGQ0NWNhZTBjZGJiNmJkMTkwYTA1Y2NkZTYwNzk1YjZjYTMxZWU1ZmM4YzlmYWMxZTcyM2EifQ"
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L15-L39",
+          "version": "repo-lines-v1:sha256:585a7b9ca433d09fdece57664348e4113ae425cabccba380d85819897b9dee9e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxMGVlMThiM2RjM2E5YTI1MmQ0NjFhYzg2MTVmNTI0Mjc0NGI4NjNiYmE5ZTQxMTI1ODIwYTc3NDE5NjdkMzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNTY3ZWMyOGY0NTM2ZWQ5MzEzMjI4YTc3ODQ3NmU4MGVmOTJkMzdlOTgwMzJkNWJkYTAxZjEzNzRjZjM2M2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhODM4OWEyNmJmZTg2OWUwMzU2ZTcwZDZmZWYxY2M5ZjZiNmIxYTdiZDlkNTMyNjYxNTFiMmViNTFjMDI5OTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4YzkxOGVhM2M5MGQ0NWNhZTBjZGJiNmJkMTkwYTA1Y2NkZTYwNzk1YjZjYTMxZWU1ZmM4YzlmYWMxZTcyM2EifQ"
         }
       ]
     },
@@ -365,6 +365,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-11T08:47:52.616Z"
+    "at": "2026-09-12T08:47:52.090Z"
   }
 }

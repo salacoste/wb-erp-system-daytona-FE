@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:1365df19fda2b894b7adece16b17e14d0415441520837ada7e66484377d9d2f6",
+  "pageVersion": "sha256:46744569d96c9a5243a251b35edda3a7fcc145427144f0e85374b494659a45c4",
   "claims": [
     {
       "id": "claim_47ae5092df88459d932915ee945c35e6",
@@ -8,7 +8,7 @@
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L141-L156",
-          "version": "repo-lines-v1:sha256:7d8d63b9e5995f3c7fba4c3bada0b78b5b4e9abc96e58617fe18a559074341a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+          "version": "repo-lines-v1:sha256:c78236d25f64a9d9df7056579db2da36b790ea95d90fd0057400eab765455686:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
         }
       ]
     },
@@ -60,7 +60,7 @@
         },
         {
           "resource": "repo://src/app/(dashboard)/supplies/%5Bid%5D/__tests__/supply-detail-presentation-source-contracts.test.ts",
-          "version": "repo-file-v1:sha256:9d578952ab38ce0e406c4a997d05798e9309593285b4afc75f5a058e48243030"
+          "version": "repo-file-v1:sha256:75caac419b6a56136831a84d158a483a36b4a42c2527cf8619393960792b5603"
         },
         {
           "resource": "repo://src/components/custom/analytics/__tests__/brand-share-presentation-source-contracts.test.tsx",
@@ -82,7 +82,7 @@
       "evidence": [
         {
           "resource": "repo://src/app/(dashboard)/supplies/%5Bid%5D/__tests__/supply-detail-presentation-source-contracts.test.ts#L31-L76",
-          "version": "repo-lines-v1:sha256:ace514fc0b6a360eee09388eed650ecb394d34affd395d9f1bab552288fe719e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5YWJhOWZhZDdhNzBjNDgwNmVkOTI3NmUyY2VhOGQyNTRjNTNiODNhYzVkN2I4ZjVmOWY2ZTM4YjRhN2Q1ZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkZmEyNTc0NzQ5NTY4YzZmMTc2NWE5OTVmMzA2MTg1NjNhOTgxMGIwZDM0ODI4MjI3YTdmMWNlNzRhYzhiODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjOWJkZDA0NzYwMmNiZmY2Nzg5OTE5MDRkZWU5M2IyNWIzMzIzZWNmM2RjN2NiMGYwNDJkMWFmMjg3ODM5NzkifQ"
+          "version": "repo-lines-v1:sha256:8e3cce4ca4a1500f1ced4708cb50ca715090a14236447c974f6278c398911c08:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5YWJhOWZhZDdhNzBjNDgwNmVkOTI3NmUyY2VhOGQyNTRjNTNiODNhYzVkN2I4ZjVmOWY2ZTM4YjRhN2Q1ZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkZmEyNTc0NzQ5NTY4YzZmMTc2NWE5OTVmMzA2MTg1NjNhOTgxMGIwZDM0ODI4MjI3YTdmMWNlNzRhYzhiODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjOWJkZDA0NzYwMmNiZmY2Nzg5OTE5MDRkZWU5M2IyNWIzMzIzZWNmM2RjN2NiMGYwNDJkMWFmMjg3ODM5NzkifQ"
         }
       ]
     },
@@ -102,19 +102,19 @@
     },
     {
       "id": "claim_084d7128eb0942879160b2a48980d601",
-      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2) is the repository-wide design-system boundary gate: it scans all production src/**/*.{ts,tsx} with the LEGACY_PALETTE and CONTEXTUAL_HEX canon regexes, suppresses files registered in BOUNDARY_EXCEPTIONS (three owner-accepted exceptions: the C5 waterfall categorical-hex config plus two historical #7C3AED chart marks — the FeedbackButtons F-10 exception was lifted 2026-09-02 by debt D-3/PB-4), and ratchets the active total against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt, which stands at 57 per the CLAUDE.md accepted-baselines table (↓57 lib-hex → semantic tokens, 2026-09-11 C5-W2; ↓4 dead lib/chart-colors.ts removed, 2026-09-11 C5-W1; was 118 after wave-5 ↓149, 2026-09-05 P2; 267 after wave-4 ↓105; original Story 174.2 baseline 523; residue = 38 chart-hex + 19 legacy-palette classes: components 37 + app 17 + types 3, owned by C5 waves-3..4).",
+      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2) is the repository-wide design-system boundary gate: it scans all production src/**/*.{ts,tsx} with the LEGACY_PALETTE and CONTEXTUAL_HEX canon regexes and ratchets the active total against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt. The gate is TERMINAL as of C5 completion (2026-09-12): baseline 0 AND exceptions = 0 registered — C5 wave-4 lifted all three remaining exceptions (waterfall-chart-config.ts, PriceHistorySheet.tsx, FunnelTab.tsx) by migrating hex literals to var(--color-*) design tokens, closing all 22 suppressed sites (waterfall 11, PriceHistorySheet 6, FunnelTab 5). Any increase = STOP; re-registration requires an owner/debt ID plus a 1:1 classification-manifest mirror.",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L141-L156",
-          "version": "repo-lines-v1:sha256:7d8d63b9e5995f3c7fba4c3bada0b78b5b4e9abc96e58617fe18a559074341a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+          "version": "repo-lines-v1:sha256:c78236d25f64a9d9df7056579db2da36b790ea95d90fd0057400eab765455686:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:1326faec3eb42dc72ddffe46daf3940b932f48b9799f6cbf28e80504e7b34958"
+          "version": "repo-file-v1:sha256:9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
         },
         {
-          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L33-L52",
-          "version": "repo-lines-v1:sha256:422d1730b989b30121fc14171a21b8e65d455b1e8a8ad634145a0309b6aee274:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YzQwNmE2Y2Y1OTZjMTM1NGRjYmU5OTI2ZjljZjE4NGE3N2E3ZmMwOWIxYWFiY2QzN2ViOGNiYjc1MGU2NmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2M2FhZTM5YWQ1OWZhZjMyZDNhMDQ1OGI4OTM0NmU4ZTg4ZTkxZmRkNDA0NTQwM2E4OGEwNjdlYjU2Mjk5NjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5ZWFlM2FiOWFlY2IyNmJmZjBlZDViZTY0MWYyNjc5MjEyYmU3ZmRkMTRmMGUzZDExMjhmYTczMmQyMDJmNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4YzkxOGVhM2M5MGQ0NWNhZTBjZGJiNmJkMTkwYTA1Y2NkZTYwNzk1YjZjYTMxZWU1ZmM4YzlmYWMxZTcyM2EifQ"
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L30-L39",
+          "version": "repo-lines-v1:sha256:7e04cdc5c016744e0b241ae05e7a27aad942be1390c775c5fbeb86c8425e3594:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwYjI3MTZiZGZjZWU4NTQ4YWU1MDI0MWYyYjZlZTEzYzEyMWFlNTRiYWI5YTI2OGVhY2M3Mjk0ZTk0YWI3OGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNTY3ZWMyOGY0NTM2ZWQ5MzEzMjI4YTc3ODQ3NmU4MGVmOTJkMzdlOTgwMzJkNWJkYTAxZjEzNzRjZjM2M2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmMDYxZTgwZWZjNjQwMmY2MTQ1ZjIxZDAzOGFjNThlZGRlYWU4Mjk2YzYwYzU5NTJhZmJhNTM1ODhhN2IxNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4YzkxOGVhM2M5MGQ0NWNhZTBjZGJiNmJkMTkwYTA1Y2NkZTYwNzk1YjZjYTMxZWU1ZmM4YzlmYWMxZTcyM2EifQ"
         }
       ]
     },
@@ -130,19 +130,19 @@
     },
     {
       "id": "claim_8530eaa0a0104b2298840ee55a110da7",
-      "statement": "Both shadcn gate scripts run a node:test self-suite before scanning/validating and fail fast on self-test failure; the self-suites are excluded from the Vitest run because they are node:test-only surfaces (static imports only, no node:child_process or dynamic import in the boundary suite, per the Playwright static boundary). The boundary suite pins regex positives/negatives, scan scope, exception suppression (register size pinned at 3), and ratchet baseline semantics; the parity suite additionally asserts the clean corpus validates and proves each defect code fires via injected defects.",
+      "statement": "Both shadcn gate scripts run a node:test self-suite before scanning/validating and fail fast on self-test failure; the self-suites are excluded from the Vitest run because they are node:test-only surfaces (static imports only, no node:child_process or dynamic import in the boundary suite, per the Playwright static boundary). The boundary suite pins regex positives/negatives, scan scope, ratchet baseline semantics, and the emptied exceptions register (size pinned at 0 after C5 wave-4, while still probing the suppression mechanism with a test-only register entry); the parity suite additionally asserts the clean corpus validates and proves each defect code fires via injected defects.",
       "evidence": [
         {
           "resource": "repo://scripts/__tests__/check-shadcn-migration-parity.test.mjs#L58-L60",
           "version": "repo-lines-v1:sha256:8bc563b1025ef6f3eee60c138c0d7c340b60fb82a06bf4a9841059ba2049eb0d:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTA3MDNjODU1MjkzYTMyNTU3YWEwOTNhZTNkMGNjYmM2Mzc4ZWU0ZDU0ZGMxZGU1OWQ5MDhhMzQ5MmM3MmVlMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODU4MGI3NjUxOGRhZTk3OWZhZWJkMDIzNjdhMjkyOTJhNTBkOTc2MDkyMjUxYTM4YTZjZTMwODgwYmE0MjgyNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjllNDZkNzI2NzI1YTA2Y2RjY2U1Yjc4ZjdlMzg4NDg2NzA3YWZiYTBhMDM2NmM0YTA1NzBjZWIwYzI5MmZlZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmQyZDg4NjM1NDY2ZjJiZjUxYjdkMWEyOTMwYjdmOWZjMWYyOTY5MmVhZDIzZGZhYTI4N2I4ZTMxYTNlMzQ0MCJ9"
         },
         {
-          "resource": "repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs#L1-L154",
-          "version": "repo-lines-v1:sha256:18ce886b1fef47cbc50b7fd3565f9927a60d62c91f50479c362e6bf03fa949d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyYTk1NzFmYWMzMDk5NGVmOGNmNmE1YWRlMDY3ZTEzZDZjZjkzMGEzNDRjN2UzNjljNDMxNGMxZmU0NzEwZGI0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI4NTgwYjc2NTE4ZGFlOTc5ZmFlYmQwMjM2N2EyOTI5MmE1MGQ5NzYwOTIyNTFhMzhhNmNlMzA4ODBiYTQyODI1IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkNGI0ZmNlZDE2OTJhNzQ1NzRiMjM4OThlYWFmZGY4YzIxNjBkYzZkM2Q5OGZiNGRiYjdiNDliYThhYTliZWE0In0"
+          "resource": "repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs#L115-L171",
+          "version": "repo-lines-v1:sha256:d6fe1827aa6e337e3c0ad8aaabc74b8e8781cec98e1ecfc6d32dca42f3811bfc:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlYWM5ZjIyZjhmZjNmYmEyYmM1NWQ2YzgzYjU5MWU1NmJhZDQ1YjZmYjlkYmY4OTI1MDE2MWY3YjkwY2U0MzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1ODBiNzY1MThkYWU5NzlmYWViZDAyMzY3YTI5MjkyYTUwZDk3NjA5MjI1MWEzOGE2Y2UzMDg4MGJhNDI4MjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZiYjFiN2FiYTljOTNjMTZhNTI3YTcyOWFmMzZmMzdjMjc3YTk2Yzg5ZjBiZWMzMzgxZWQ3YTg1ZGViNzQ4ZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5N2M5MzI4YmI4MTA4NGY4YjI0NDljODgzNTQ5MDAyZTFmMzk2YzRlZjEzYzI1NTQ2ZDlmZjY3OWVhNjk3MDEifQ"
         },
         {
           "resource": "repo://vitest.config.ts#L60-L61",
-          "version": "repo-lines-v1:sha256:ed4630188aefd7f578bc9b596f18439246c01714dba737cb80f2591cb83fdda8:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDc0MDQ3YWNjNjk2MWJjNzhkYTQzMDIxNTgwMzAzYjc2MmQ4YjIzODU0ODIyYTAxNDcyZTE3NjJiODNkYjJkYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDA5YmE0YjRlYzBiMjFmZTcyZjEzMzE5OWY0N2M2MDBjOWM1ZDljZjMwNmVkOGVhNDNhNzU1MmJhZjU2NTU0MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzJiYjFiMDliNmI0ZTBkNDdjMjRiMDNhMjZiZGRiMjE4Y2QyNTUzZjZhMmRjOGU3NmY4NTY4OTQ0NDNmNDZkNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzJiZGY3ZmY2MzZlOTNiNmRlMDk0NzZkN2JlNjNlZTI0N2JjN2FhMDFlM2UwMTc3MTQ5Yjk3MzYzZWM2ZTAzMiJ9"
+          "version": "repo-lines-v1:sha256:7c98852b263331c8572a3a2183a8238dba2e1c78426274583a11b40f2e043278:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTNjMGM3NDM5MjVkNmFlZjc2MDA4YTU5YTc1NmEyZTMwM2ExYTg4ZjJmMDA1YTJmNDQxZWFjMDlmMDQ0OGI4YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDc0MDQ3YWNjNjk2MWJjNzhkYTQzMDIxNTgwMzAzYjc2MmQ4YjIzODU0ODIyYTAxNDcyZTE3NjJiODNkYjJkYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjc3NmY1ZDAzMmNmMjg2NWJmMTVhOTU1ZmQ4YzU0ZmE1YzQzNWI0MjRjMTIxMmE4ZDU5MzA0NjQ2ZWJiNDY4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2ViNTQyYWM5MzcyNDVkZGZjZDFmNDcyMmE0N2Y3Yzc5ZjM0Y2RhYWM5ODMyMzNjNjViZTFmOWVmZTM5N2Y4MSJ9"
         }
       ]
     },
@@ -176,11 +176,11 @@
     },
     {
       "id": "claim_7edbfecc3ad34e2aa8eb52c47a05d470",
-      "statement": "The accepted Vitest baseline is ≥ 19573 passing / 0 failed, with a hard floor of 19118 passing (lowered exactly by 756 proven-dead tests in Story 174.2-FE, then raised incrementally through the 174.3 window, 174.4 contract tests, and the debt/backlog suites — redact D-9, nonce-mint D-1/PB-1, urgency-tier C15, reactive-refresh D-2/PB-3, AA re-pins, /80-sweep style pins, FE-D3 sanitizer pins, FE-D1 retry/ApiError-preservation pins, FE-D5 web-locks/claim suite, fe-d3-family hook-fallback pins, wave-6 WCAG style pins, session-9 route-guards exact-array pins, and C5-W1 token-contract/stack pins); additions are acceptable, regressions are not, and skipped counts are informational only.",
+      "statement": "The accepted Vitest baseline is ≥ 19582 passing / 0 failed, with a hard floor of 19118 passing (lowered exactly by 756 proven-dead tests in Story 174.2-FE, then raised incrementally through the 174.3 window, 174.4 contract tests, and the debt/backlog suites — redact D-9, nonce-mint D-1/PB-1, urgency-tier C15, reactive-refresh D-2/PB-3, AA re-pins, /80-sweep style pins, FE-D3 sanitizer pins, FE-D1 retry/ApiError-preservation pins, FE-D5 web-locks/claim suite, fe-d3-family hook-fallback pins, wave-6 WCAG style pins, session-9 route-guards exact-array pins, C5-W1 token-contract/stack pins, and C5-W4 waterfall/supplies/review-adopted pin additions); additions are acceptable, regressions are not, and skipped counts are informational only.",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L153-L156",
-          "version": "repo-lines-v1:sha256:bb90d34f72190fb686e756bf113108123c9e27c42ea7c5c324c741d369e6a416:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTI4Y2FjODA3MTZjYzUzY2M0ODAyZjU1NTlhOTg1ZGIzYmFiOTgxMDE0MmM4OGQyNTkxYTQ1YzkxZTM0ZTJiOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
+          "version": "repo-lines-v1:sha256:0e431e14a5f84b15ff1177ac0e5ee67dab83786df2fb02062839d82097045d30:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTBhMjFmNmU5NDE1YjRmZDUxOWM4ZDliOTU3YzVjZjk4OTkwODQwZmZmY2EyZmM3ZTRmYzc1YjJjZWZhY2QwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
         }
       ]
     },
@@ -317,6 +317,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-11T08:47:52.616Z"
+    "at": "2026-09-12T08:47:52.090Z"
   }
 }

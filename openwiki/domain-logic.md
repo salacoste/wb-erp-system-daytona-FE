@@ -91,10 +91,10 @@ sources:
     resource: repo://src/types/analytics-returns.ts
   - id: openwiki-source-dbb29a8befd1ef6fd6b187fb
     resource: repo://src/types/sku-financials/core.ts
-generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-12T08:47:52.090Z" }
 verified:
   - by: openwiki/0.5.1
-    at: 2026-09-11T08:47:52.616Z
+    at: 2026-09-12T08:47:52.090Z
 ---
 # Domain Logic
 
@@ -549,4 +549,3 @@ The write-side (reply to feedback, answer question, send chat message, pin/unpin
 ## Backfill Retry (Story 165.5)
 
 The backfill admin page (`/settings/backfill`) exposes **per-source retry** controls for failed backfill pipelines. The backend exposes two separate retry endpoints — `POST /v1/admin/backfill/report/retry` and `POST /v1/admin/backfill/analytics/retry` — keyed by `BackfillRetrySource` (`'reports' | 'analytics'`, `src/types/backfill.ts`). `retryBackfill()` (`src/lib/api/backfill.ts`) routes to the correct path via a `RETRY_PATH` map and normalizes the response (`{ success, message }` with an attempt counter) through `normalizeRetryBackfillResponse`. The UI disambiguates the failed state so the operator retries only the failed source's pipeline. **Focused tests**: `src/lib/api/__tests__/backfill-retry.test.ts`, `BackfillRetryControls.test.tsx`, `e2e/settings/backfill-admin.spec.ts`.
-ols.test.tsx`, `e2e/settings/backfill-admin.spec.ts`.

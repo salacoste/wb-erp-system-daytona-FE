@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b6c50a714bc2b8618223284d151db32e1f7233e1607d4add0a54c9bc620ea1cd",
+  "pageVersion": "sha256:4929e96d8aa34f8c7b557ad5b5d36d0be9cd0d7b56f4b63c4512a8f6355a1db4",
   "claims": [
     {
       "id": "claim_9bfdc04061f14b3bb2bb441081e614c3",
@@ -112,7 +112,7 @@
         },
         {
           "resource": "repo://src/components/custom/price-calculator/cost-breakdown-types.ts",
-          "version": "repo-file-v1:sha256:fa3ba1512ef3d44ce9b6c68806553faff25b08fbf1ee32a9fa5f8c600d6ed6d5"
+          "version": "repo-file-v1:sha256:382ac3afe612ab779fcdc6a54c100ad4f72add551a25f2412e66b172754b1791"
         }
       ]
     },
@@ -272,7 +272,7 @@
       "evidence": [
         {
           "resource": "repo://src/lib/efficiency-utils.ts",
-          "version": "repo-file-v1:sha256:cdf6a6d7d5e504540040176a08b42f890c54d484ab2416725de1f077ecd11ed7"
+          "version": "repo-file-v1:sha256:9a6915c55f8461560b6ef1d6f354dcfa434184d9e46edd6a909a195b1bd92233"
         }
       ]
     },
@@ -364,7 +364,7 @@
       "evidence": [
         {
           "resource": "repo://src/lib/coefficient-types.ts#L7-L100",
-          "version": "repo-lines-v1:sha256:33e8118902e68adf792e41d853f0a40791ed32c2886113cfb3ad81a6613a7789:eyJzZWxlY3RlZExpbmVDb3VudCI6OTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3NGRlN2NlMzkxYTlkY2JjNGU5NDc4OTczMjk5ODBjODRlNTUwMTYxZjVhNTQyYzhiMWZlZDg3N2Y5ZDBjZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1ZmQwNTAzMTYzYTg4NjQ4NGY3NmE0MGMwNWJiNDA5ODU0MmJjYWFlNzZhOTJjZWQ3Y2ZmNzU2MTk2Y2FjNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdiYmU1YzEzNWRiOWYyMTBjYWQ3YThhYzRjNWY3NjdiOTNlZDFhYTFmNjgxNDY1NTIyZDE0OTY2Zjk1MTRkMDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMTZjODMxOGFiZDZlOTZhNjY1NWJlN2Q1NGEyMmRjOTQ5OTU5YTMzOGMwZDYxODgyMGE3YzM4ODI2YmNhYWIifQ"
+          "version": "repo-lines-v1:sha256:1ed0246b5c82e301b1a43effa5ba7fba6d54935a27cff629b4a535514798eceb:eyJzZWxlY3RlZExpbmVDb3VudCI6OTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3NGRlN2NlMzkxYTlkY2JjNGU5NDc4OTczMjk5ODBjODRlNTUwMTYxZjVhNTQyYzhiMWZlZDg3N2Y5ZDBjZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1ZmQwNTAzMTYzYTg4NjQ4NGY3NmE0MGMwNWJiNDA5ODU0MmJjYWFlNzZhOTJjZWQ3Y2ZmNzU2MTk2Y2FjNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdiYmU1YzEzNWRiOWYyMTBjYWQ3YThhYzRjNWY3NjdiOTNlZDFhYTFmNjgxNDY1NTIyZDE0OTY2Zjk1MTRkMDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMTZjODMxOGFiZDZlOTZhNjY1NWJlN2Q1NGEyMmRjOTQ5OTU5YTMzOGMwZDYxODgyMGE3YzM4ODI2YmNhYWIifQ"
         }
       ]
     },
@@ -405,6 +405,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-11T08:47:52.616Z"
+    "at": "2026-09-12T08:47:52.090Z"
   }
 }
