@@ -481,3 +481,48 @@ FE :3100 → 200.
 lint 0/0 · tsc 0 (bare) · docs 0 · locale 4 · lessons 0 · privacy 0 bare · контракт-тесты 174.3 ·
 computed-style проб: waterfall (increase/decrease/total) + PriceHistorySheet marks + FunnelTab —
 формы резолвятся, rgb сверяются с globals.css (НЕ скриншоты, НЕ jsdom — прецедент (d)).
+
+### 12.1 Имплементация (2026-09-12)
+
+| Коммит | Содержание |
+|---|---|
+| `e50ac726` | мини-план + решения шага-0 (§12.0) |
+| `c5561699` | owner-решение waterfall (синтез ②+④) |
+| `64a08119` | waterfall: 11 hex → токены, guard-тест усилен (61/61, tsc 0) |
+| `7cea224b` | PriceHistorySheet 6 + FunnelTab 5 → инлайн-токены; `BOUNDARY_EXCEPTIONS` опустошён; self-тест чекера переписан (88/88, self-tests 10/10) |
+| `da138b69` | same-name комментарии 3 тёзок (уже токен-чистых с 172.1/169.12; 0 не-коммент-строк) |
+| `015da104` | warn/40 → солид: 41 прод-файл + 14 тест-пинов + compile/numeric пины (300/300) |
+| `114105e9` | supplies 173.12/173.13 re-pins: /40-count 5→4 + 2 sha256 |
+| `a0a61ed9` | 174.3 манифест-реген раннером (set-diff: 1 sha) |
+
+**Waterfall маппинг (финал)**: revenue→chart-9 · cogs→chart-1 · commission→chart-2 · logistics_delivery→chart-3 · logistics_return→**valence-2** · storage→chart-5 · delivery_to_warehouse→chart-6 · paid_acceptance→chart-7 · penalties→**valence-4** · other_deductions→**valence-neutral** · advertising→chart-10 (≡ байт) · profit/loss — без изменений. Дистанции обоснованы byte-twin парами (`globals.css:191≡:200`, `:279≡:286`, `:283≡:287`); other_deductions разрешает revenue↔other коллизию на chart-9 (≈пиксель: #9E9E9E→#9CA3AF).
+
+**Sheet/Funnel маппинг (byte-nearest)**: sheet — lastPrice→valence-neutral(≡), recommendedPrice→chart-1, breakEvenPrice→chart-8(≡), marginCurrent→chart-7, marginRec→valence-1(≡), targetMargin→chart-2 (owner: #7C3AED); funnel — views→chart-1, cart→chart-7, orders→valence-4, buyouts→valence-1, conversion→chart-2 (owner).
+
+**warn/40 (1.4.11)**: swap на солид по расчёту — alpha 0.8 даёт 3.32 vs white но 2.94 vs warning/10 (FAIL на частейшей паре); солид 4.81/4.26/3.96 light, 12.56/11.37/10.01 dark. Solid-fill сайты (3 файла) не ухудшаются (бордер=заливка 1.00; значимая пара заливка/страница 4.81). Numeric non-text пины (:root/.dark ≥3) + compile-pin в globals-compiled-contrast.
+
+### 12.2 Computed-style проб (прецедент (d); НЕ скриншоты, НЕ jsdom)
+
+- **Синтетический узел, 13 ролей, light**: 13/13 MATCH байт-в-байт с node-расчётом из globals.css (chart-1 rgb(21,101,192) · chart-2 rgb(106,27,154) · chart-7 rgb(234,179,8) · chart-8 rgb(239,68,68) · chart-9 rgb(107,114,128) · chart-10 rgb(20,184,166) · positive rgb(46,125,50) · negative rgb(198,40,40) · valence-1 rgb(34,197,94) · valence-2 rgb(132,204,22) · valence-4 rgb(249,115,22) · valence-neutral rgb(156,163,175) · status-warning rgb(141,110,0)); color+borderTopColor резолвятся.
+- **Живой waterfall** (/analytics/unit-economics): 12 баров, 7 уникальных fills — точные rgb ролей chart-2/3/9, valence-2, valence-neutral, chart-positive (категории <0.5% порога недели не рендерятся — их формы покрыты синтетикой).
+- **Живой PriceHistorySheet** (/analytics/pricing, клик строки): 5 line strokes + ReferenceLine — байт-в-байт, вкл. мигрированный #7C3AED→chart-2 rgb(106,27,154).
+- **FunnelTab**: интерактивно не пробован (dev-auth TTL ~60с < холодной компиляции роута; 3 попытки). Компенсация: 5 ролей funnel — подмножество 13 доказанных форм; механизм идентичен (recharts `<Bar fill>`/`<Line stroke>` — доказан живьём на 18 элементах двух поверхностей).
+
+### 12.3 Гейты (финал, живые прогоны 2026-09-12)
+
+vitest СОЛО **19579/19579 exit 0** (3 прогона: 2 фейла пинов → фикс → 9 фейлов 174.3 (манифест-stale) → реген раннером → 0; логи /tmp/c5w4-vitest-full*.log) · lint 0/0 · tsc 0 bare · boundary **0 = 0, `exceptions = 0 registered, 0 suppressing`** · docs exit 0 (95) · locale 4 · lessons 0 · privacy 0 bare · манифест 174.3: реген `--owner-units` exit 0, set-diff = 1 sha (supply-detail контракт-тест), 770 записей. CLAUDE.md: флор 19579, boundary-строка ТЕРМИНАЛЬНАЯ, Chart-Color Canon + 1.4.11-вердикт в Design System.
+
+### 12.4 Процесс-уроки волны-4 (→ реестр §34(f))
+
+1. **Премисса owner-решения проверяется рекон-ом** (главный урок): ④ читался как increase/decrease/total — график категориальный; третье AskUserQuestion с фактами заняло минуты, буквальное исполнение разрушило бы живой график.
+2. **False positive чекера на прозе**: `hsl()` в JSDoc + цифры «168.11» в 40-символьном окне CONTEXTUAL_HEX; фикс формулировкой («no hsl wrappers»).
+3. **174.3 execution-manifest пиннит sha256 произвольных source-файлов** (вкл. тестовые); живёт в `e2e/fixtures/story-174-3/execution-manifest.json` — префлайт по `scripts/*.mjs`+JSON-maxdepth-2 его НЕ видит. Реген только раннером + set-diff.
+4. **sha-контракты между тест-файлами**: supply-detail пиннит sha supplies-list теста — правка одного роняет другой (пересчитывать ПОСЛЕ всех правок файла).
+5. **Missed-pin класс**: пин `/40`-count в supplies-контракте не попал в рекон-список RED-тестов (греп только точного `border-status-warning/40`, а пин был regex'ом `border-status-[a-z]+/40`) — ловится полным прогоном, не грепом.
+6. **dev-auth TTL** — см. §12.2.
+
+### Post-1st-pass-review fixes (2026-09-12)
+
+**Meta-claim blanket qualifier (Trigger 4 MANDATORY; pre-written per 116.1-FE A-2).** Этот блок, §12 целиком, Completion-нарративы и последующие Post-Nth-pass блоки используют формулировки, утверждающие структурные свойства (kanон-завершение, полнота миграций, исходы прогонов), аттестационные числа (22/11/6/5, 13/13, 12 баров, 19579), самоклассификацию применимости триггеров и подобный recursive-self-validation язык. Всё это — **unaudited meta-claims** по Trigger 4, квалифицируются коллективно здесь.
+
+_(1st-pass findings added below when the 1st-pass review runs.)_
