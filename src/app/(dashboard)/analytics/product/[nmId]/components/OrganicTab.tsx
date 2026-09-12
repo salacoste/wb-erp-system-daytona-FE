@@ -25,8 +25,10 @@ function iroasLabel(interp: string | null): { text: string; cls: string; icon: s
   // interpretation tiers keep distinct intensity — highly_effective = full
   // positive, effective = full positive TOO, but the distance moved to a
   // NON-TEXT channel (owner decision (a), 2026-09-12; debt-p2-80-sweep A2):
-  // the old `text-financial-positive/80` failed WCAG 1.4.3 as TEXT (3.51:1,
-  // no passing alpha exists between /80 and full), so both positive tiers now
+  // the old `text-financial-positive/80` failed WCAG 1.4.3 as TEXT (3.51:1;
+  // /90 fails at 4.23, only /95+ passes at 4.66 — visually indistinguishable
+  // from full, so no alpha can carry the tier distance on text), so both
+  // positive tiers now
   // render full-token text (5.13:1 light / 9.38 dark) and the icon brightness
   // carries the tier: effective = opacity-80 icon (3.51:1 light / 6.34:1 dark,
   // ≥3:1 non-text per 1.4.11), highly_effective = full-opacity icon. Idiom

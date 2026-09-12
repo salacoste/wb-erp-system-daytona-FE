@@ -90,6 +90,27 @@ describe('OrganicTab — 168.7 semantic tokens', () => {
       expect(el.classList.contains('text-financial-negative')).toBe(true)
       expect(el.querySelector('svg')).toBeNull()
     })
+
+    it('unknown BE tier (defensive drift path) → raw label, muted, no icon', () => {
+      // BE introduced a 5th tier outside the closed union — Defensive Frontend:
+      // render raw text muted, never crash, never leak a positive-tier icon.
+      render(
+        <OrganicTab
+          correlation={[]}
+          iroas={{ ...makeIroas('effective'), interpretation: 'super_effective' as never }}
+        />
+      )
+      const el = verdictByLabel('super_effective')
+      expect(el.classList.contains('text-muted-foreground')).toBe(true)
+      expect(el.querySelector('svg')).toBeNull()
+    })
+
+    it('iroas=null → «Нет данных» muted (no icon)', () => {
+      render(<OrganicTab correlation={[]} iroas={null} />)
+      const el = verdictByLabel('Нет данных')
+      expect(el.classList.contains('text-muted-foreground')).toBe(true)
+      expect(el.querySelector('svg')).toBeNull()
+    })
   })
 
   describe('confidence column (data-quality, not financial)', () => {
