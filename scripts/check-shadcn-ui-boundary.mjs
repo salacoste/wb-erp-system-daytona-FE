@@ -30,26 +30,13 @@ export const CONTEXTUAL_HEX =
 // Single source of truth for suppressed files. Each entry must carry an
 // owner/debt ID and be mirrored 1:1 in the classification manifest
 // (_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md).
-export const BOUNDARY_EXCEPTIONS = new Map([
-  // FeedbackButtons exception lifted 2026-09-02 (debt D-3 / PB-4): legacy green-700
-  // success span replaced with a solid status pair (AA-safe in both themes);
-  // the file no longer carries legacy-palette matches.
-  // C5 (debt registry §3.2): waterfall double-color-source — categorical hex
-  // stays until the chart-palette owner decides the canon source.
-  [
-    'src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts',
-    'C5 waterfall categorical hex — registered chart exception until chart-palette owner decision',
-  ],
-  // 170.x carry-out: historical #7C3AED chart mark, classified not migrated.
-  [
-    'src/app/(dashboard)/analytics/pricing/components/PriceHistorySheet.tsx',
-    'historical #7C3AED chart mark — 170.x carry-out, classified not migrated',
-  ],
-  [
-    'src/app/(dashboard)/analytics/product/[nmId]/components/FunnelTab.tsx',
-    'historical #7C3AED chart mark — 170.x carry-out, classified not migrated',
-  ],
-])
+// Lifted-exceptions history: FeedbackButtons lifted 2026-09-02 (debt D-3 /
+// PB-4, legacy green-700 replaced with a solid status pair); all 3 remaining
+// exceptions (waterfall-chart-config.ts, PriceHistorySheet.tsx, FunnelTab.tsx)
+// were lifted in C5 wave-4 (2026-09-12) after their hex literals migrated to
+// var(--color-*) design tokens. The register ships empty; the ratchet
+// baseline stays at 0.
+export const BOUNDARY_EXCEPTIONS = new Map([])
 
 export function paletteMatches(source) {
   return [...source.matchAll(LEGACY_PALETTE)].map(match => match[0])

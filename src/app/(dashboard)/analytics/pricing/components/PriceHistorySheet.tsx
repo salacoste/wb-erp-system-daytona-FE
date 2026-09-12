@@ -23,15 +23,6 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
-const CHART_COLORS = {
-  lastPrice: '#9CA3AF',
-  recommendedPrice: '#3B82F6',
-  breakEvenPrice: '#EF4444',
-  marginCurrent: '#F59E0B',
-  marginRec: '#22C55E',
-  targetMargin: '#7C3AED',
-} as const
-
 interface PriceHistorySheetProps {
   nmId: number | null
   vendorCode: string | null
@@ -132,7 +123,7 @@ export function PriceHistorySheet({
                   yAxisId="rub"
                   type="monotone"
                   dataKey="lastPrice"
-                  stroke={CHART_COLORS.lastPrice}
+                  stroke="var(--color-valence-neutral)"
                   strokeDasharray="5 5"
                   name="Текущая цена"
                   connectNulls={false}
@@ -141,7 +132,7 @@ export function PriceHistorySheet({
                   yAxisId="rub"
                   type="monotone"
                   dataKey="recommendedPrice"
-                  stroke={CHART_COLORS.recommendedPrice}
+                  stroke="var(--color-chart-1)"
                   name="Рекомендация"
                   connectNulls={false}
                 />
@@ -149,7 +140,7 @@ export function PriceHistorySheet({
                   yAxisId="rub"
                   type="monotone"
                   dataKey="breakEvenPrice"
-                  stroke={CHART_COLORS.breakEvenPrice}
+                  stroke="var(--color-chart-8)"
                   name="Безубыточность"
                   connectNulls={false}
                 />
@@ -157,7 +148,7 @@ export function PriceHistorySheet({
                   yAxisId="pct"
                   type="monotone"
                   dataKey="marginCurrent"
-                  stroke={CHART_COLORS.marginCurrent}
+                  stroke="var(--color-chart-7)"
                   strokeDasharray="5 5"
                   name="Маржа (текущ.)"
                   connectNulls={false}
@@ -166,14 +157,14 @@ export function PriceHistorySheet({
                   yAxisId="pct"
                   type="monotone"
                   dataKey="marginRec"
-                  stroke={CHART_COLORS.marginRec}
+                  stroke="var(--color-valence-1)"
                   name="Маржа (рек.)"
                   connectNulls={false}
                 />
                 <ReferenceLine
                   yAxisId="pct"
                   y={targetMargin}
-                  stroke={CHART_COLORS.targetMargin}
+                  stroke="var(--color-chart-2)"
                   strokeDasharray="3 3"
                   label={{ value: `Целевая ${targetMargin}%`, fontSize: 11 }}
                 />

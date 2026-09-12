@@ -112,7 +112,17 @@ test('production scope excludes tests, __tests__, .d.ts, and src/test', () => {
   }
 })
 
-test('exceptions register suppresses flagged files and feeds per-route counts', () => {
+test('exceptions register: emptied by C5 wave-4, suppression mechanism stays live', () => {
+  // C5 wave-4 (2026-09-12) lifted all 3 registered exceptions (waterfall-chart-config,
+  // PriceHistorySheet, FunnelTab) after their hex literals migrated to var(--color-*)
+  // design tokens. The register ships EMPTY and the ratchet baseline stays at 0;
+  // re-registration requires an owner/debt ID and a classification-manifest mirror.
+  assert.equal(
+    BOUNDARY_EXCEPTIONS.size,
+    0,
+    'C5 wave-4 emptied the exceptions register — a re-added entry needs an owner/debt ID and a manifest mirror (see register header comment)'
+  )
+
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'story-174-2-suppress-'))
   const write = (relative, content) => {
     const target = path.join(root, relative)
@@ -120,11 +130,7 @@ test('exceptions register suppresses flagged files and feeds per-route counts', 
     fs.writeFileSync(target, content)
   }
   try {
-    // Real exception path (C5 waterfall categorical hex) — must be scanned but never counted.
-    write(
-      'src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts',
-      "export const WATERFALL_COLORS = { revenue: '#2196F3', cogs: '#FF9800' }\n"
-    )
+    // With an empty register, a violating fixture must flow into ACTIVE counts.
     write('src/app/(dashboard)/live/Live.tsx', 'export const tone = "bg-red-500"\n')
     const scan = collectViolations(root)
     assert.equal(scan.total, 1)
@@ -133,15 +139,32 @@ test('exceptions register suppresses flagged files and feeds per-route counts', 
       ['src/app/(dashboard)/live/Live.tsx']
     )
     assert.deepEqual(scan.routeCounts, { 'src/app/(dashboard)': 1 })
-    assert.deepEqual(scan.suppressed.map(file => file.path), [
-      'src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts',
-    ])
-    assert.ok(
-      BOUNDARY_EXCEPTIONS.get(
-        'src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts'
+    assert.deepEqual(scan.suppressed, [])
+    assert.equal(scan.files[0].suppressed, false)
+
+    // Regression guard for the suppression MECHANISM: if a future entry is
+    // (re-)registered, scanFile must still mark the file suppressed and keep
+    // its violations out of active counts. Probe with a test-only entry on the
+    // historical waterfall path, restoring the register in finally.
+    const probePath =
+      'src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts'
+    BOUNDARY_EXCEPTIONS.set(probePath, 'test-only probe entry — restored in finally')
+    try {
+      write(probePath, "export const WATERFALL_COLORS = { revenue: '#2196F3', cogs: '#FF9800' }\n")
+      const suppressedScan = collectViolations(root)
+      assert.equal(suppressedScan.total, 1)
+      assert.deepEqual(
+        suppressedScan.files.map(file => file.path),
+        ['src/app/(dashboard)/live/Live.tsx']
       )
-    )
-    assert.equal(BOUNDARY_EXCEPTIONS.size, 3)
+      assert.deepEqual(suppressedScan.suppressed.map(file => file.path), [probePath])
+      assert.equal(suppressedScan.suppressed[0].suppressed, true)
+      assert.ok(suppressedScan.suppressed[0].violations.length > 0)
+      assert.ok(BOUNDARY_EXCEPTIONS.get(probePath))
+    } finally {
+      BOUNDARY_EXCEPTIONS.delete(probePath)
+    }
+    assert.equal(BOUNDARY_EXCEPTIONS.size, 0, 'register must be restored after the probe')
   } finally {
     fs.rmSync(root, { recursive: true, force: true })
   }

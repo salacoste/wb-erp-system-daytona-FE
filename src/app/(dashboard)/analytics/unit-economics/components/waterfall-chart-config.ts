@@ -8,7 +8,7 @@
 /**
  * Color scheme — C5 wave-4 token migration (owner decision (a), 2026-09-12):
  * every value is a full-form `var(--color-*)` presentation token (no raw hex,
- * no hsl() wrappers). Story 168.11's tier-collapse concern (13 series must stay
+ * no hsl wrappers). Story 168.11's tier-collapse concern (13 series must stay
  * visually distinct) is preserved by distance offsets — logistics_return maps to
  * valence-2 and penalties to valence-4 because chart-4/chart-8 are byte-twins of
  * chart-positive/chart-negative in at least one theme. Canon form, exact role
