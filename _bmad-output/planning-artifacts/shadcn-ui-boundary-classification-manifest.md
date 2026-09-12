@@ -223,7 +223,7 @@ Removed 2026-09-12 at C5 wave-4 (all 3 migrated to `var(--color-*)` tokens; hist
 
 | path | category | evidence / disposition |
 |------|----------|------------------------|
-| `src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts` | 5 | C5 (debt registry §3.2) waterfall categorical hex — 11 suppressed matches (:15-25, Material palette); **owner decision (a) 2026-09-12: ②+④ synthesis — 8 categories chart-1..10 index-aligned + 3 documented distance offsets (valence-2/valence-4/valence-neutral), guard Story 168.11 strengthened; migrated, exception lifted** |
+| `src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts` | 5 | C5 (debt registry §3.2) waterfall categorical hex — 11 suppressed matches (:15-25, Material palette); **owner decision (a) 2026-09-12: ②+④ synthesis — 7 of 10 categories chart-1..10 index-aligned + 3 documented divergences (valence-2/valence-4/valence-neutral; 2 byte-twin distance offsets + 1 revenue↔other collision resolution), guard Story 168.11 strengthened; migrated, exception lifted** |
 | `src/app/(dashboard)/analytics/pricing/components/PriceHistorySheet.tsx` | 5 | historical `#7C3AED` chart mark — 6 suppressed matches (:27-32); 170.x carry-out; **migrated to byte-nearest roles (owner: #7C3AED → chart-2), exception lifted** |
 | `src/app/(dashboard)/analytics/product/[nmId]/components/FunnelTab.tsx` | 5 | historical `#7C3AED` chart mark — 5 suppressed matches (:28-32); 170.x carry-out; **migrated to nearest roles (#7C3AED → chart-2), exception lifted** |
 

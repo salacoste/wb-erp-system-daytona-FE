@@ -1,4 +1,8 @@
 import { describe, it, expect } from 'vitest'
+
+import { COST_CATEGORIES as LIB_COST_CATEGORIES } from '@/lib/unit-economics-config'
+import { declarationsFor, hslTripletToHex, parseGlobals } from '@/styles/__tests__/token-test-utils'
+
 import { WATERFALL_COLORS, COST_CATEGORIES, COST_CATEGORY_BY_KEY } from '../waterfall-chart-config'
 
 // C5 wave-4 token migration (owner decision (a)): every WATERFALL_COLORS value is a
@@ -7,6 +11,8 @@ import { WATERFALL_COLORS, COST_CATEGORIES, COST_CATEGORY_BY_KEY } from '../wate
 // this suite enforces canon form, exact role mapping, sign-token separation, and
 // pairwise distinctness of all 13 series.
 describe('WATERFALL_COLORS — C5 wave-4 token migration', () => {
+  const globals = parseGlobals()
+
   it('profit uses the chart-positive token', () => {
     expect(WATERFALL_COLORS.profit).toBe('var(--color-chart-positive)')
   })
@@ -54,6 +60,78 @@ describe('WATERFALL_COLORS — C5 wave-4 token migration', () => {
     const values = Object.values(WATERFALL_COLORS)
     expect(values).toHaveLength(13)
     expect(new Set(values).size).toBe(13)
+  })
+
+  it.each([':root', '.dark'])('%s all 13 mapped roles resolve to distinct RGB values', selector => {
+    const tokens = declarationsFor(globals, selector)
+    const resolvedColors = Object.entries(WATERFALL_COLORS).map(([key, value]) => {
+      const role = value.match(/^var\(--color-([a-z0-9-]+)\)$/)?.[1]
+      expect(role, `${key} token role`).toBeDefined()
+
+      const triplet = tokens.get(`--${role}`)
+      expect(triplet, `${selector} ${key}/${role}`).toBeDefined()
+      return hslTripletToHex(triplet ?? '')
+    })
+
+    expect(resolvedColors).toHaveLength(13)
+    expect(new Set(resolvedColors).size).toBe(13)
+  })
+
+  it('stays order-aligned with the lib categories and diverges only at owner-approved colors', () => {
+    expect(COST_CATEGORIES.map(category => category.key)).toEqual(
+      LIB_COST_CATEGORIES.map(category => category.key)
+    )
+
+    expect(
+      COST_CATEGORIES.map((category, index) => ({
+        key: category.key,
+        componentLabel: category.label,
+        libLabel: LIB_COST_CATEGORIES[index]?.label,
+      }))
+    ).toEqual([
+      { key: 'cogs', componentLabel: 'COGS', libLabel: 'Себестоимость' },
+      { key: 'commission', componentLabel: 'Комиссия', libLabel: 'Комиссия WB' },
+      { key: 'logistics_delivery', componentLabel: 'Доставка', libLabel: 'Доставка' },
+      { key: 'logistics_return', componentLabel: 'Возвраты', libLabel: 'Возвраты' },
+      { key: 'storage', componentLabel: 'Хранение', libLabel: 'Хранение' },
+      {
+        key: 'delivery_to_warehouse',
+        componentLabel: 'Доставка на склад',
+        libLabel: 'Доставка на склад',
+      },
+      { key: 'paid_acceptance', componentLabel: 'Приёмка', libLabel: 'Приёмка' },
+      { key: 'penalties', componentLabel: 'Штрафы', libLabel: 'Штрафы' },
+      { key: 'other_deductions', componentLabel: 'Прочее', libLabel: 'Прочие' },
+      { key: 'advertising', componentLabel: 'Реклама', libLabel: 'Реклама' },
+    ])
+
+    const libColors = new Map<string, string>(
+      LIB_COST_CATEGORIES.map(category => [category.key, category.color])
+    )
+    expect(
+      COST_CATEGORIES.flatMap(category => {
+        const libColor = libColors.get(category.key)
+        return category.color === libColor
+          ? []
+          : [{ key: category.key, componentColor: category.color, libColor }]
+      })
+    ).toEqual([
+      {
+        key: 'logistics_return',
+        componentColor: 'var(--color-valence-2)',
+        libColor: 'var(--color-chart-4)',
+      },
+      {
+        key: 'penalties',
+        componentColor: 'var(--color-valence-4)',
+        libColor: 'var(--color-chart-8)',
+      },
+      {
+        key: 'other_deductions',
+        componentColor: 'var(--color-valence-neutral)',
+        libColor: 'var(--color-chart-9)',
+      },
+    ])
   })
 
   it('COST_CATEGORIES colors derive from WATERFALL_COLORS and BY_KEY lookup works', () => {

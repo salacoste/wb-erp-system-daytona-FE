@@ -441,7 +441,8 @@ chart-7≡#EAB308 — только где старое значение совп
 
 1. **WCAG 1.4.11 light-форк → решение (a)**: закрывается для dark (**6.5–14.0:1** vs
    `--background`; floor = chart-6 6.47, потолок = status-warning 14.03; пересчёт прохода-2 —
-   унаследованное «7.6» из W1-рекорда было другим role-set'ом) + компонентных пар
+   «7.6» не реконструируется ни под role-set W1 (floor 9.11), ни W4 (6.47); W1-запись не
+   правится, APPEND-ONLY) + компонентных пар
    (waterfall-валенс; warn/40 бордеры 2.66 → пары ≥3:1 по wave-6 рецептам; TrendGraph-баннер 5.00:1
    AA-pass — вердикт документируется); легаси-light (валенс-семейство + chart-7/8/10 как текст
    1.92–3.76:1) принимается осознанным форком — дисклоужа в CLAUDE.md Design System + реестр.
@@ -452,9 +453,10 @@ chart-7≡#EAB308 — только где старое значение совп
 **Owner-решение waterfall-семантики (уточнение к ④, 2026-09-12, AskUserQuestion — рекон выявил
 расхождение премиссы)**: график категориальный (Выручка + до 10 баров-категорий + Прибыль/Убыток,
 `waterfall-chart-utils.ts:77-103`), не increase/decrease/total; буквальное ④ обрушило бы легенду.
-Решение **(a) — синтез ②+④ с двумя дистанциями**: 8 категорий → `chart-1..10` индексно (маппинг lib
-COST_CATEGORIES; double-source §191 закрывается: обе стороны токен-чистые, конвергенция 7/10 +
-3 задокументированные owner-дистанции — lib остаётся строгим 1:1, cross-ref комментарии в обоих
+Решение **(a) — синтез ②+④**: **7 из 10 категорий** → `chart-1..10` индексно (маппинг lib
+COST_CATEGORIES; double-source §191 закрывается: обе стороны токен-чистые) + **3 задокументированных
+расхождения** (2 byte-twin-дистанции + 1 разрешение коллизии revenue↔other) — lib остаётся строгим
+1:1, cross-ref комментарии в обоих
 конфигах); коллайдеры byte-twin
 (`chart-4 ≡ chart-positive` в обеих темах `globals.css:191≡:200/:279≡:286`; `chart-8 ≡ chart-negative`
 в dark `:283≡:287`) уводятся на валенс: `logistics_return → var(--color-valence-2)`,
@@ -498,9 +500,17 @@ computed-style проб: waterfall (increase/decrease/total) + PriceHistorySheet
 | `64a08119` | waterfall: 11 hex → токены, guard-тест усилен (61/61, tsc 0) |
 | `7cea224b` | PriceHistorySheet 6 + FunnelTab 5 → инлайн-токены; `BOUNDARY_EXCEPTIONS` опустошён; self-тест чекера переписан (88/88, self-tests 10/10) |
 | `da138b69` | same-name комментарии 3 тёзок (уже токен-чистых с 172.1/169.12; 0 не-коммент-строк) |
-| `015da104` | warn/40 → солид: 41 прод-файл + 14 тест-пинов + compile/numeric пины (300/300) |
+| `015da104` | warn/40 → солид: 41 прод-файл + 14 re-pinned тест-файлов (17 pin-инстансов) + compile/numeric пины (300/300) |
 | `114105e9` | supplies 173.12/173.13 re-pins: /40-count 5→4 + 2 sha256 |
 | `a0a61ed9` | 174.3 манифест-реген раннером (set-diff: 1 sha) |
+
+**Проход-3 adoption note (прецедент «evaluate on substance»)**: из rogue-снапшота прохода-2
+адаптированы 4 hunk'а — (a) dual-theme RGB-distinctness `it.each` для 13 ролей, (b) lib-order/label/
+divergence-alignment тест, (d) контраст-тест (14.03-комментарий + card + warning/10+15 composite
+пины), (f) BackfillStatusTable prettier-коллапс (регрессия самой волны). Каждый верифицирован
+проходом-3 независимым пересчётом + диск-прогонами (52/52, tsc 0, prettier clean, полный СОЛО
+19582/19582); отклонены (c2) самозванные доки-секции и непроверяемые клеймы. Прогнан в отдельном
+adoption-коммите с полным provenance.
 
 **Waterfall маппинг (финал)**: revenue→chart-9 · cogs→chart-1 · commission→chart-2 · logistics_delivery→chart-3 · logistics_return→**valence-2** · storage→chart-5 · delivery_to_warehouse→chart-6 · paid_acceptance→chart-7 · penalties→**valence-4** · other_deductions→**valence-neutral** · advertising→chart-10 (≡ байт **в light**; dark-значения токенов иные по дизайну тем) · profit/loss — без изменений. Дистанции обоснованы byte-twin парами (`globals.css:191≡:200`, `:279≡:286`, `:283≡:287`); other_deductions разрешает revenue↔other коллизию на chart-9 (≈пиксель в light: #9E9E9E→#9CA3AF).
 
@@ -517,7 +527,7 @@ computed-style проб: waterfall (increase/decrease/total) + PriceHistorySheet
 
 ### 12.3 Гейты (финал, живые прогоны 2026-09-12)
 
-vitest СОЛО **19579/19579 exit 0** (3 прогона: 2 фейла пинов → фикс → 9 фейлов 174.3 (манифест-stale) → реген раннером → 0; логи /tmp/c5w4-vitest-full*.log) · lint 0/0 · tsc 0 bare · boundary **0 = 0, `exceptions = 0 registered, 0 suppressing`** · docs exit 0 (95) · locale 4 · lessons 0 · privacy 0 bare · манифест 174.3: реген `--owner-units` exit 0, set-diff = 1 sha (supply-detail контракт-тест), 770 записей. CLAUDE.md: флор 19579, boundary-строка ТЕРМИНАЛЬНАЯ, Chart-Color Canon + 1.4.11-вердикт в Design System.
+vitest СОЛО **19582/19582 exit 0** (прогоны: 2 фейла пинов → фикс → 9 фейлов 174.3 (манифест-stale) → реген раннером → 0 → +3 review-adopted пина → 19582; логи /tmp/c5w4-vitest-full*.log) · lint 0/0 · tsc 0 bare · boundary **0 = 0, `exceptions = 0 registered, 0 suppressing`** · docs exit 0 (95) · locale 4 · lessons 0 · privacy 0 bare · манифест 174.3: реген `--owner-units` exit 0, set-diff = 1 sha (supply-detail контракт-тест), 770 записей. CLAUDE.md: флор 19582, boundary-строка ТЕРМИНАЛЬНАЯ, Chart-Color Canon + 1.4.11-вердикт в Design System.
 
 ### 12.4 Процесс-уроки волны-4 (→ реестр §34(f))
 
@@ -615,3 +625,56 @@ disclosures»), +57 строк тестов (dual-theme RGB-distinctness), пр�
   в этом блоке; выводы не меняются (реальные пары ≥3:1 с запасом).
 - LOW-полировка (pin-blind-spot: string-level distinctness не ловит byte-слияние через правку
   globals.css — покрыто numeric-пинами; принято как есть).
+
+### Post-3rd-pass-review fixes (2026-09-12)
+
+**Проход-3** (свежий контекст, opus; мандат: кодификационная семантика + Trigger-4 meta-audit +
+fix-attestation-vs-disk + оценка rogue-снапшота; honor-check: 0 записей в репо): **REQUEST-CHANGES**
+— 0 CRITICAL / **1 HIGH** / 2 MEDIUM / 4 LOW + 2 riders. 20-строчная meta-audit таблица: большинство
+аттестаций VERIFIED до копеек (контраст-числа, sha, line-refs, флор-дельта, манифест 770), три —
+REFUTED/не реконструируются.
+
+**Применённые фиксы (HIGH первым):**
+
+1. **HIGH — опровержение MEDIUM-1 в Post-2 само было false-on-disk**: диспозиция «файл уже содержит
+   14.03, grep 12.56 = 0 хитов» проверялась на ROGUE-МОДИФИЦИРОВАННОМ дереве (rogue действительно
+   поправил комментарий), а после `git checkout` коммит вернул 12.56 на место — grep = 1 хит.
+   **MEDIUM-1 прохода-2 была ВЕРНОЙ; моё опровержение — ложь; corrocked-класс зацементирован в
+   артефакте и коммит-месседже 7d4d8743 (immutable).** Исправление: (a) настоящий APPEND-ONLY ряд
+   отзывает опровержение; (b) комментарий в globals-compiled-contrast.test.ts исправлен (12.56 →
+   14.03, alpha-клейм ограничен «alpha 0.8 fails on warning/10») — через adopt rogue-hunk (d) +
+   расширенные пины (background+card × warning/10+15 composite; все 8 numeric assertions
+   пересчитаны проходом-3 PASS и прогнаны диском 52/52). **Процесс-урок высшего порядка: состояние
+   дерева на момент проверки — часть аттестации; «refuted on disk» без указания дерева = неполная
+   аттестация.**
+2. **MEDIUM-1 (p3)**: арифметика дивергенции нормализована на трёх поверхностях (§12.0, §34,
+   manifest §7): «**7 из 10 категорий** индексно + **3 задокументированных расхождения** (2
+   byte-twin-дистанции + 1 revenue↔other коллизия-резолюция)» — прежнее «8 категорий + 3 дистанции»
+   не складывалось (8+3=11≠10) и сосуществовало с «7/10» в том же предложении.
+3. **MEDIUM-2 (p3)**: CLAUDE.md-канон честнее об энфорсменте: чекер НЕ ловит digitless-обёртки
+   (`var(--chart-negative)`, `hsl(var(--valence-neutral))` — матчатся 0 раз; это в точности
+   знаковые/нейтральные роли волны) — «Enforcement is partial; review enforces the broader canon;
+   scanner-semantics = отдельный owner-ledger item». Прожито live-пробой прохода-3.
+4. **LOW-1**: BackfillStatusTable prettier-регрессия волны (чист на базе, грязн на HEAD) — устранена
+   (rogue hunk f, единственный валидный фикс).
+5. **LOW-2**: объяснение происхождения «7.6» («другой role-set») не реконструируется (W1-subset
+   floor = 9.11) → переформулировано: «не реконструируется ни под W1 (9.11), ни W4 (6.47);
+   W1-запись APPEND-ONLY».
+6. **LOW-3**: счётчик инцидента «+57 строк» не реконструируется → зафиксирован метод и точные
+   числа: волна-1 = 8 файлов +123/−18, волна-2 (ре-apply) = 2 файла +99/−7 (git diff --stat
+   снапшотов /tmp/c5w4-rogue-pass2-edits*.patch).
+7. **RIDER-2**: «14 тест-пинов» → «14 re-pinned тест-файлов (17 pin-инстансов)».
+
+**Rogue-патч: протокол «substance over provenance» исполнен** — каждый hunk оценён проходом-3
+независимо: (a) dual-theme RGB-distinctness ADOPT (закрывает реальный blind-spot string-level
+Set(13)), (b) lib-alignment/divergence-allowlist ADOPT (исполняемая кодификация §191-закрытия),
+(d) контраст-пины ADOPT (включая HIGH-фикс), (f) prettier ADOPT; (c1) канон-reword ADOPT (п.3);
+(c2) самозванные доки-секции REJECT (дублируют/конфликтуют с коммиченным нарративом; клейм
+«26/26 fresh probe» неверифицируем). Adoption-коммит отдельный, с полным provenance.
+
+**Триггеры**: p1(6) + p2(9) = 15 > 12 → Trigger 2 (проход-3 MANDATORY — исполнен); p3 = 7 > 5 →
+Trigger 3 → проход-4 MANDATORY (в расписании). Кумулятив 22.
+
+**Открытые на проход-4**: RIDER-1 (§34 head-sha + PR-литерал — заполняется на merge-шаге);
+преттиер checker-self-test (pre-existing на базе, вне волны, optional hygiene); финальный
+close-row/PR-readiness аудит.

@@ -159,11 +159,7 @@ describe('BackfillStatusTable', () => {
   it.each([
     ['idle', 'Ожидает', ['border-border', 'bg-muted', 'text-muted-foreground']],
     ['not_started', 'Не начат', ['border-border', 'bg-muted', 'text-muted-foreground']],
-    [
-      'pending',
-      'В очереди',
-      ['border-status-warning', 'bg-status-warning/10', 'text-foreground'],
-    ],
+    ['pending', 'В очереди', ['border-status-warning', 'bg-status-warning/10', 'text-foreground']],
     [
       'in_progress',
       'Выполняется',
