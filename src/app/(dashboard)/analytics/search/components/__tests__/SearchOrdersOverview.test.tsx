@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@/test/utils/test-utils'
 import { SearchOrdersOverview } from '../SearchOrdersOverview'
 import type { SearchOrdersResponse } from '@/types/search-analytics'
+import { unknownSearchCoverage } from '@/lib/api/search-coverage-normalizer'
 
 vi.mock('@/hooks/use-search-analytics', () => ({
   useSearchOrders: vi.fn(),
@@ -21,6 +22,7 @@ const mockData: SearchOrdersResponse = {
   summary: {
     totalSearchOrders: 23,
     searchOrderShare: 65.5,
+    ...unknownSearchCoverage(),
   },
 }
 

@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/react'
 import { createTestQueryClient, createQueryWrapper } from '@/test/utils/test-utils'
 import type { QueryClient } from '@tanstack/react-query'
 import type { SearchOrdersResponse } from '@/types/search-analytics'
+import { unknownSearchCoverage } from '@/lib/api/search-coverage-normalizer'
 
 const mockUseSearchOrders = vi.fn()
 vi.mock('@/hooks/use-search-analytics', () => ({
@@ -39,7 +40,7 @@ function okResponse(
       period: { from: '2026-03-01', to: '2026-03-07' },
       groupBy: 'query',
       items,
-      summary: { totalSearchOrders, searchOrderShare },
+      summary: { totalSearchOrders, searchOrderShare, ...unknownSearchCoverage() },
     },
     isLoading: false,
     isError: false,

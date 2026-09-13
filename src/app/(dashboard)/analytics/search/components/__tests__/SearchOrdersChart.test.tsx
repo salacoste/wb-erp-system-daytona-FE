@@ -9,6 +9,7 @@ import {
   toChartRows,
 } from '../SearchOrdersChart'
 import type { SearchOrderItem, SearchOrdersResponse } from '@/types/search-analytics'
+import { unknownSearchCoverage } from '@/lib/api/search-coverage-normalizer'
 
 vi.mock('@/hooks/use-search-analytics', () => ({
   useSearchOrders: vi.fn(),
@@ -98,7 +99,7 @@ describe('SearchOrdersChart', () => {
         period: { from: '2026-03-01', to: '2026-03-31' },
         groupBy: 'day',
         items: [],
-        summary: { totalSearchOrders: 0, searchOrderShare: null },
+        summary: { totalSearchOrders: 0, searchOrderShare: null, ...unknownSearchCoverage() },
       } as SearchOrdersResponse,
       isLoading: false,
       isError: false,

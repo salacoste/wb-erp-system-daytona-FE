@@ -8,6 +8,7 @@
  */
 
 import { asRecord, toCount, toNullableNumber, toStr, toOptionalString } from './normalizer-helpers'
+import { normalizeDashboardSearchAnalytics } from './monitoring/dashboard-normalizer'
 import type {
   MonitoringDashboard,
   DashboardSystem,
@@ -95,6 +96,10 @@ export function normalizeMonitoringDashboardResponse(raw: unknown): MonitoringDa
     pipelines: (Array.isArray(r.pipelines) ? r.pipelines : []).map(normalizeDashboardPipeline),
     telegram: normalizeDashboardTelegram(r.telegram),
     dataCompleteness: normalizeDashboardDataCompleteness(r.dataCompleteness),
+    // Task-139.7: fails closed to the canonical unknown shape when BE omits the block
+    // (null / older builds) — the StatusCard renders "Полнота неизвестна", never a
+    // fabricated metric.
+    searchAnalytics: normalizeDashboardSearchAnalytics(r.searchAnalytics),
   }
 }
 

@@ -8,6 +8,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { createTestQueryClient, createQueryWrapper } from '@/test/utils/test-utils'
 import type { QueryClient } from '@tanstack/react-query'
+import { unknownSearchCoverage } from '@/lib/api/search-coverage-normalizer'
 
 vi.mock('@/lib/api/search-analytics', () => ({
   getSearchByProduct: vi.fn(),
@@ -187,7 +188,7 @@ describe('useSearchOrders', () => {
     period: { from: '2026-02-01', to: '2026-02-28' },
     groupBy: 'query' as const,
     items: [{ key: 'кроссовки', totalOrders: 50, totalRevenue: 0, uniqueProducts: 12 }],
-    summary: { totalSearchOrders: 500, totalSearchRevenue: 0, searchOrderShare: 35.2 },
+    summary: { totalSearchOrders: 500, totalSearchRevenue: 0, searchOrderShare: 35.2, ...unknownSearchCoverage() },
   }
 
   it('returns data when from and to are provided', async () => {

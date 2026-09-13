@@ -17,6 +17,7 @@ import { ShoppingCart, AlertCircle } from 'lucide-react'
 import type { SearchOrdersSummary } from '@/types/search-analytics'
 import { SearchOrdersTable } from './SearchOrdersTable'
 import { SearchShareCard } from './SearchShareCard'
+import { SearchCoverageNotice } from './SearchCoverageNotice'
 import { calculateSearchDelta, formatDelta, getDeltaColor } from './search-comparison-utils'
 import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
 import { exportSearchOrdersToCsv } from '@/lib/csv/search-csv-export'
@@ -100,10 +101,15 @@ export function SearchOrdersOverview({
 
   if (items.length === 0) {
     return (
-      <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>Нет данных за выбранный период</AlertDescription>
-      </Alert>
+      <div className="space-y-4">
+        {/* Coverage explains an empty range (uncovered/partial periods render no rows) —
+            show it alongside the empty state, not instead of it. */}
+        {summary && <SearchCoverageNotice summary={summary} />}
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>Нет данных за выбранный период</AlertDescription>
+        </Alert>
+      </div>
     )
   }
 
@@ -115,9 +121,10 @@ export function SearchOrdersOverview({
           compareSummary={compareEnabled ? compareData?.summary : undefined}
         />
       )}
+      {summary && <SearchCoverageNotice summary={summary} />}
       <div className="flex justify-end">
         <ExportCsvButton
-          csvContent={exportSearchOrdersToCsv(items)}
+          csvContent={exportSearchOrdersToCsv(items, summary)}
           fileName={`search-orders-${from}-${to}.csv`}
           disabled={items.length === 0}
         />

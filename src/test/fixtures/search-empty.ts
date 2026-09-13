@@ -15,6 +15,7 @@ import type {
   SearchByQueryResponse,
   SearchOrdersResponse,
 } from '@/types/search-analytics'
+import { unknownSearchCoverage } from '@/lib/api/search-coverage-normalizer'
 
 /** Empty by-product response: no queries driving traffic. */
 export function emptySearchByProductResponse(
@@ -60,6 +61,10 @@ export function emptySearchOrdersResponse(
       totalSearchOrdersDeduplicated: 0,
       searchOrderShareDeduplicated: null,
       searchOrderShareDeduplicatedInflated: false,
+      // Task-139.6: normalize-stable coverage shape — the coverage derivation fails
+      // closed to the canonical UNKNOWN object for an absent/empty partition, so the
+      // fixture carries exactly that (toBeEqual smoke-test in the normalizer suite).
+      ...unknownSearchCoverage(),
     },
     ...overrides,
   }

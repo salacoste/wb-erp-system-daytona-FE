@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { render, screen } from '@/test/utils/test-utils'
 import { SearchShareCard } from '../SearchShareCard'
 import type { SearchOrdersSummary } from '@/types/search-analytics'
+import { unknownSearchCoverage } from '@/lib/api/search-coverage-normalizer'
 
 function formatPercent(n: number | undefined | null): string {
   if (n == null) return '—'
@@ -18,6 +19,7 @@ function makeSummary(overrides: Partial<SearchOrdersSummary> = {}): SearchOrders
   return {
     totalSearchOrders: 100,
     searchOrderShare: 45.5,
+    ...unknownSearchCoverage(),
     ...overrides,
   }
 }

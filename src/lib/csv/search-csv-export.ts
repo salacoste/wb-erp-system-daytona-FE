@@ -3,7 +3,13 @@
  * No side effects — Blob/DOM/download handled by <ExportCsvButton>.
  */
 
-import type { SearchOrderItem, SearchQueryItem, SearchProductItem } from '@/types/search-analytics'
+import type {
+  SearchAnalyticsCoverageStatus,
+  SearchOrderItem,
+  SearchOrdersSummary,
+  SearchQueryItem,
+  SearchProductItem,
+} from '@/types/search-analytics'
 import { escapeCsvCell, prefixUtf8Bom } from './csv-helpers'
 
 function fmt(n: number): string {
@@ -22,8 +28,7 @@ const BY_PRODUCT_HEADERS = [
   'Запрос',
   'Ср. позиция',
   'Показы',
-  'Клики',
-  'CTR %',
+  'Ср. конверсия добавления в корзину %',
   'В корзину',
   'Заказы',
 ]
@@ -33,7 +38,9 @@ function queryItemToRow(item: SearchQueryItem): string[] {
     item.searchQuery,
     item.avgPosition == null ? '' : fmt(item.avgPosition), // 170.7: unknown position -> empty cell
     fmt(item.totalImpressions),
-    fmt(item.totalClicks),
+    // BE: avgCtr is the average WB addToCart/openCard conversion (%) — NOT a click rate.
+    // totalClicks (the legacy "Клики"/"CTR %" columns) is WB addToCart mislabeled
+    // (deprecated alias of searchCartAdds) — exporting it as clicks was a semantic lie.
     fmtPct(item.avgCtr),
     fmt(item.searchCartAdds ?? 0),
     fmt(item.totalOrders),
@@ -55,8 +62,7 @@ const BY_QUERY_HEADERS = [
   'Артикул продавца',
   'Ср. позиция',
   'Показы',
-  'Клики',
-  'CTR %',
+  'Ср. конверсия добавления в корзину %',
   'В корзину',
   'Заказы',
 ]
@@ -67,8 +73,7 @@ function productItemToRow(item: SearchProductItem): string[] {
     item.vendorCode ?? '—',
     item.avgPosition == null ? '' : fmt(item.avgPosition), // 170.7: unknown position -> empty cell
     fmt(item.totalImpressions),
-    fmt(item.totalClicks),
-    fmtPct(item.avgCtr),
+    fmtPct(item.avgCtr), // BE: addToCart conversion %, see queryItemToRow
     fmt(item.searchCartAdds ?? 0),
     fmt(item.totalOrders),
   ]
@@ -90,12 +95,48 @@ function orderItemToRow(item: SearchOrderItem): string[] {
   return [String(item.key), fmt(item.totalOrders), fmt(item.uniqueProducts ?? 0)]
 }
 
+/** Orders-export coverage metadata: full summary minus the derived status label input. */
+export type SearchOrdersCoverageMeta = Omit<SearchOrdersSummary, 'status'> & {
+  status?: SearchAnalyticsCoverageStatus
+}
+
+function coverageStatusLabel(meta: SearchOrdersCoverageMeta): string {
+  if (!meta.coverageKnown) return meta.status === 'error' ? 'Ошибка' : 'Неизвестно'
+  return meta.coverageComplete ? 'Полное' : 'Неполное'
+}
+
+/**
+ * Prepends the Task-139.6 coverage metadata block so a partial/unknown range is
+ * visible inside the exported file itself, then a blank line, then the data section.
+ * 'Расчёт метрик' appears only when coverage is KNOWN-but-incomplete (it explains the
+ * covered-dates-only computation; asserting it under a denied authority would
+ * fabricate a computation claim — Pass-1 M2).
+ */
+function coverageMetaRows(meta: SearchOrdersCoverageMeta): string[] {
+  const rows: string[][] = [
+    ['Статус покрытия', coverageStatusLabel(meta)],
+    ['Запрошено дней', fmt(meta.requestedDayCount)],
+    ['Покрыто дней', fmt(meta.coveredDayCount)],
+    ['Дней без покрытия', fmt(meta.missingDayCount)],
+    ['Даты без покрытия', meta.missingDates.join(', ')],
+  ]
+  if (meta.coverageKnown && !meta.coverageComplete) {
+    rows.push(['Расчёт метрик', 'Только по покрытым датам'])
+  }
+  return rows.map(row => row.map(escapeCsvCell).join(','))
+}
+
 /**
  * Exports search-attributed orders (groupBy=query) to CSV with UTF-8 BOM.
- * Empty items array → BOM + headers only.
+ * When `meta` is provided, a coverage metadata block precedes the data section.
+ * Empty items array → BOM + metadata (if any) + headers only.
  */
-export function exportSearchOrdersToCsv(items: SearchOrderItem[]): string {
+export function exportSearchOrdersToCsv(
+  items: SearchOrderItem[],
+  meta?: SearchOrdersCoverageMeta
+): string {
   const headerRow = ORDERS_HEADERS.map(escapeCsvCell).join(',')
   const dataRows = items.map(i => orderItemToRow(i).map(escapeCsvCell).join(','))
-  return prefixUtf8Bom([headerRow, ...dataRows].join('\r\n'))
+  const sections = meta ? [...coverageMetaRows(meta), ''] : []
+  return prefixUtf8Bom([...sections, headerRow, ...dataRows].join('\r\n'))
 }

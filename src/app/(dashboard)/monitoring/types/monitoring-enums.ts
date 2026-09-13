@@ -2,8 +2,11 @@
  * Monitoring enums and dashboard types — Epic 68-FE
  * Extracted from monitoring.ts for Story 74.8 (file size compliance)
  *
- * Contains: status enums, dashboard endpoint types, data completeness types.
+ * Contains: status enums, dashboard endpoint types, data completeness types,
+ * and the Task-139.7 search analytics dashboard summary.
  */
+
+import type { SearchAnalyticsCoverage, SearchAnalyticsDataStatus } from '@/types/search-analytics'
 
 // --- Pipeline & Status Enums ---
 
@@ -81,6 +84,21 @@ export interface DataCompletenessDetail {
   issuesCount: number
 }
 
+// --- Search analytics summary (BE Task-139.7: dashboard-summary.dto.ts) ---
+
+export interface DashboardSearchAnalytics {
+  totalQueries: number
+  totalSearchImpressions: number
+  totalSearchClicks: number
+  totalSearchOrders: number
+  /** Average WB search position; null when the boundary normalizer cannot coerce a number. */
+  avgSearchPosition: number | null
+  topQueries: Array<{ query: string; impressions: number; orders: number }>
+  coverage: SearchAnalyticsCoverage
+  /** Data-level status — coverage status plus the covered-zero-rows 'no_data' state. */
+  status: SearchAnalyticsDataStatus
+}
+
 export interface MonitoringDashboard {
   cabinetId: string
   generatedAt: string
@@ -88,4 +106,10 @@ export interface MonitoringDashboard {
   pipelines: DashboardPipeline[]
   telegram: DashboardTelegram
   dataCompleteness: DashboardDataCompleteness
+  /**
+   * BE Task-139.7. `null` is the BE-side state ("cannot compute"); the boundary
+   * normalizer never emits null post-boundary — it fails closed to the canonical
+   * unknown object (Pass-2 L2 comment-drift note).
+   */
+  searchAnalytics: DashboardSearchAnalytics | null
 }

@@ -24,6 +24,7 @@ export type {
   DashboardDataCompleteness,
   TableCompletenessDetail,
   DataCompletenessDetail,
+  DashboardSearchAnalytics,
   MonitoringDashboard,
 } from './monitoring-enums'
 

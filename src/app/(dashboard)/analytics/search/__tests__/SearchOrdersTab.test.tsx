@@ -13,6 +13,7 @@ import { render, screen } from '@testing-library/react'
 import { createTestQueryClient, createQueryWrapper } from '@/test/utils/test-utils'
 import type { QueryClient } from '@tanstack/react-query'
 import type { SearchOrdersResponse } from '@/types/search-analytics'
+import { unknownSearchCoverage } from '@/lib/api/search-coverage-normalizer'
 
 const mockUseSearchOrders = vi.fn()
 vi.mock('@/hooks/use-search-analytics', () => ({
@@ -27,7 +28,7 @@ const queryData: SearchOrdersResponse = {
   period: { from: '2026-03-01', to: '2026-03-03' },
   groupBy: 'query',
   items: [{ key: 'платье', totalOrders: 50, uniqueProducts: 10 }],
-  summary: { totalSearchOrders: 150, searchOrderShare: 42.5 },
+  summary: { totalSearchOrders: 150, searchOrderShare: 42.5, ...unknownSearchCoverage() },
 }
 
 const dayData: SearchOrdersResponse = {
@@ -37,7 +38,7 @@ const dayData: SearchOrdersResponse = {
     { key: '2026-03-01', totalOrders: 50, uniqueQueries: 20 },
     { key: '2026-03-02', totalOrders: 65, uniqueQueries: 24 },
   ],
-  summary: { totalSearchOrders: 115, searchOrderShare: 38.0 },
+  summary: { totalSearchOrders: 115, searchOrderShare: 38.0, ...unknownSearchCoverage() },
 }
 
 type HookResult = { data: SearchOrdersResponse | undefined; isLoading: boolean; isError: boolean }

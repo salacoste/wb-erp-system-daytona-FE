@@ -112,7 +112,32 @@ export interface SearchOrderItem {
   uniqueQueries?: number
 }
 
-export interface SearchOrdersSummary {
+// --- Search data coverage (BE Task-139.6/139.7; DTO ../src/analytics/dto/response/search-analytics-coverage.dto.ts) ---
+
+export type SearchAnalyticsCoverageStatus =
+  'complete' | 'partial' | 'uncovered' | 'unknown' | 'error'
+
+/** Coverage status + the covered-but-zero-rows distinction (dashboard endpoint only, Task-139.7). */
+export type SearchAnalyticsDataStatus = SearchAnalyticsCoverageStatus | 'no_data'
+
+/**
+ * Exact-day search-attribution coverage partition. `coverageKnown` is the fail-closed
+ * authority flag: true ONLY when the metadata partition was present, self-consistent
+ * (contiguous, counts matching, status agreement) and — when a request period is
+ * supplied — an exact partition of it (see normalizeSearchCoverage).
+ */
+export interface SearchAnalyticsCoverage {
+  coverageKnown: boolean
+  requestedDayCount: number
+  coveredDayCount: number
+  missingDayCount: number
+  coverageComplete: boolean
+  coveredDates: string[]
+  missingDates: string[]
+  status: SearchAnalyticsCoverageStatus
+}
+
+export interface SearchOrdersSummary extends SearchAnalyticsCoverage {
   totalSearchOrders: number
   // Story 91.1-FE: totalSearchRevenue removed. Story 119.1-FE 1st-pass F-2: widened to `number | null` per AP#8 (UI renders '—')
   searchOrderShare: number | null

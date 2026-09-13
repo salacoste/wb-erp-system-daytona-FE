@@ -65,6 +65,54 @@ describe('normalizeMonitoringDashboardResponse', () => {
     expect(result.pipelines).toHaveLength(0)
   })
 
+  // Task-139.7: the search analytics block must always land on the FE dashboard shape —
+  // null/absent BE blocks fail closed to the canonical unknown (StatusCard renders
+  // "Полнота неизвестна"), never undefined on MonitoringDashboard.searchAnalytics.
+  it('searchAnalytics: absent BE block fails closed to the canonical unknown shape', () => {
+    const result = normalizeMonitoringDashboardResponse({})
+    expect(result.searchAnalytics).toEqual({
+      totalQueries: 0,
+      totalSearchImpressions: 0,
+      totalSearchClicks: 0,
+      totalSearchOrders: 0,
+      avgSearchPosition: null,
+      topQueries: [],
+      coverage: {
+        coverageKnown: false,
+        requestedDayCount: 0,
+        coveredDayCount: 0,
+        missingDayCount: 0,
+        coverageComplete: false,
+        coveredDates: [],
+        missingDates: [],
+        status: 'unknown',
+      },
+      status: 'unknown',
+    })
+  })
+
+  it('searchAnalytics: covered zero-rows block preserves no_data (not unknown)', () => {
+    const result = normalizeMonitoringDashboardResponse({
+      searchAnalytics: {
+        totalQueries: 0,
+        totalSearchImpressions: 0,
+        status: 'no_data',
+        coverage: {
+          coverageKnown: true,
+          requestedDayCount: 1,
+          coveredDayCount: 1,
+          missingDayCount: 0,
+          coverageComplete: true,
+          coveredDates: ['2026-05-01'],
+          missingDates: [],
+          status: 'complete',
+        },
+      },
+    })
+    expect(result.searchAnalytics?.status).toBe('no_data')
+    expect(result.searchAnalytics?.coverage.coverageKnown).toBe(true)
+  })
+
   it('handles missing fields with safe defaults', () => {
     const result = normalizeMonitoringDashboardResponse({})
     expect(result.system.overallStatus).toBe('healthy')
