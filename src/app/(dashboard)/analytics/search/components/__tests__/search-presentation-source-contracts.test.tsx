@@ -55,7 +55,7 @@ describe('Story 170.7 route presentation source contracts', () => {
     // FAIL this pin (upgrades the former count + contains assertions). Catalog
     // derivation (Story 170.7): 22 pre-migration production files, plus
     // SearchPositionOpportunitiesTable.tsx (movers split) and
-    // search-chart-config.ts (chart-token single source) = 24.
+    // search-chart-config.ts (chart-token single source) = 24; plus SearchCoverageNotice.tsx (Task-139.6 coverage notice) = 25.
     const relative = productionFiles()
       .map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/'))
       .sort()
@@ -67,6 +67,7 @@ describe('Story 170.7 route presentation source contracts', () => {
       'components/SearchByProductTable.tsx',
       'components/SearchByQueryTab.tsx',
       'components/SearchByQueryTable.tsx',
+      'components/SearchCoverageNotice.tsx',
       'components/SearchOrdersChart.tsx',
       'components/SearchOrdersOverview.tsx',
       'components/SearchOrdersTab.tsx',

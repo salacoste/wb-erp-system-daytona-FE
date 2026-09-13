@@ -78,6 +78,7 @@ const dashboard = {
     overallHealth: 'healthy',
     tables: [],
   },
+  searchAnalytics: null,
 } satisfies MonitoringDashboard
 
 describe('MonitoringPageContent', () => {

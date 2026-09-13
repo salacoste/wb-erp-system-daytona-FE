@@ -10,6 +10,7 @@ import { render, screen } from '@testing-library/react'
 import { createTestQueryClient, createQueryWrapper } from '@/test/utils/test-utils'
 import type { QueryClient } from '@tanstack/react-query'
 import type { SearchOrdersResponse } from '@/types/search-analytics'
+import { unknownSearchCoverage } from '@/lib/api/search-coverage-normalizer'
 
 const mockUseSearchOrders = vi.fn()
 vi.mock('@/hooks/use-search-analytics', () => ({
@@ -30,6 +31,7 @@ const mockData: SearchOrdersResponse = {
   summary: {
     totalSearchOrders: 150,
     searchOrderShare: 42.5,
+    ...unknownSearchCoverage(),
   },
 }
 
@@ -89,6 +91,7 @@ describe('SearchOrdersOverview', () => {
         totalSearchOrders: 10,
         searchOrderShare: 176.38,
         searchOrderShareInflated: true,
+        ...unknownSearchCoverage(),
       })
       renderOverview()
       expect(screen.getByLabelText(/WB засчитывает один заказ/)).toBeInTheDocument()
@@ -100,13 +103,19 @@ describe('SearchOrdersOverview', () => {
         totalSearchOrders: 10,
         searchOrderShare: 42.5,
         searchOrderShareInflated: false,
+        ...unknownSearchCoverage(),
       })
       renderOverview()
       expect(screen.queryByLabelText(/WB засчитывает один заказ/)).not.toBeInTheDocument()
     })
 
     it('hides the indicator when share is null even if inflated=true (no warning next to —)', () => {
-      withSummary({ totalSearchOrders: 0, searchOrderShare: null, searchOrderShareInflated: true })
+      withSummary({
+        totalSearchOrders: 0,
+        searchOrderShare: null,
+        searchOrderShareInflated: true,
+        ...unknownSearchCoverage(),
+      })
       renderOverview()
       expect(screen.queryByLabelText(/WB засчитывает один заказ/)).not.toBeInTheDocument()
     })
@@ -131,6 +140,7 @@ describe('SearchOrdersOverview', () => {
         searchOrderShareDeduplicated: 93.85,
         searchOrderShareInflated: true,
         searchOrderShareDeduplicatedInflated: false,
+        ...unknownSearchCoverage(),
       })
       renderOverview()
       // primary sane figure (Intl rounds 93.85 → "93,8 %" — half-even on the float repr)
@@ -153,6 +163,7 @@ describe('SearchOrdersOverview', () => {
         searchOrderShareDeduplicated: 120.5,
         searchOrderShareInflated: true,
         searchOrderShareDeduplicatedInflated: true,
+        ...unknownSearchCoverage(),
       })
       renderOverview()
       // both the primary (dedup, now flagged) and the subtext (raw) carry the Info affordance
@@ -165,6 +176,7 @@ describe('SearchOrdersOverview', () => {
         searchOrderShare: 193.7,
         searchOrderShareDeduplicated: null,
         searchOrderShareInflated: true,
+        ...unknownSearchCoverage(),
       })
       renderOverview()
       expect(screen.getByText(/193,7\s%/)).toBeInTheDocument()

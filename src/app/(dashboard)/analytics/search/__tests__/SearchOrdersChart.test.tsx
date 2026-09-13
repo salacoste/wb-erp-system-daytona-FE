@@ -19,6 +19,7 @@ vi.mock('@/hooks/use-search-analytics', () => ({
 
 import { SearchOrdersChart, toChartRows, formatDayTick } from '../components/SearchOrdersChart'
 import type { SearchOrderItem } from '@/types/search-analytics'
+import { unknownSearchCoverage } from '@/lib/api/search-coverage-normalizer'
 
 let queryClient: QueryClient
 
@@ -30,7 +31,7 @@ const dayData: SearchOrdersResponse = {
     { key: '2026-03-02', totalOrders: 65, uniqueQueries: 24, uniqueProducts: 12 },
     { key: '2026-03-03', totalOrders: 40, uniqueQueries: 18, uniqueProducts: 9 },
   ],
-  summary: { totalSearchOrders: 155, searchOrderShare: 38.0 },
+  summary: { totalSearchOrders: 155, searchOrderShare: 38.0, ...unknownSearchCoverage() },
 }
 
 beforeEach(() => {

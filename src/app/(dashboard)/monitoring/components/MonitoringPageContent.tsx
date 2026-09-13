@@ -19,6 +19,7 @@ import { HealthScoreWidget } from './HealthScoreWidget'
 import { PipelineStatusGrid } from './PipelineStatusGrid'
 import { DataCompletenessTable } from './DataCompletenessTable'
 import { TelegramStatusCard } from './TelegramStatusCard'
+import { SearchAnalyticsStatusCard } from './SearchAnalyticsStatusCard'
 import { PipelineHeatmap } from './PipelineHeatmap'
 import { RecoveryPanel } from './RecoveryPanel'
 import { HealthHistoryChart } from './HealthHistoryChart'
@@ -108,6 +109,8 @@ export function MonitoringPageContent() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <HealthScoreWidget system={dashboard?.system} isLoading={isLoading} />
               <TelegramStatusCard telegram={dashboard?.telegram} isLoading={isLoading} />
+              {/* Task-139.7: BE null / absent → canonical unknown inside the card (fail-closed) */}
+              <SearchAnalyticsStatusCard data={dashboard?.searchAnalytics} />
             </div>
             <PipelineStatusGrid pipelines={dashboard?.pipelines} isLoading={isLoading} />
             <DataCompletenessTable data={dashboard?.dataCompleteness} isLoading={isLoading} />

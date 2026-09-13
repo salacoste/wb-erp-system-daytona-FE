@@ -8,6 +8,7 @@ import { render, screen } from '@testing-library/react'
 import { createTestQueryClient, createQueryWrapper } from '@/test/utils/test-utils'
 import type { QueryClient } from '@tanstack/react-query'
 import type { SearchOrderItem, SearchOrdersResponse } from '@/types/search-analytics'
+import { unknownSearchCoverage } from '@/lib/api/search-coverage-normalizer'
 
 const mockUseSearchOrders = vi.fn()
 vi.mock('@/hooks/use-search-analytics', () => ({
@@ -93,7 +94,7 @@ describe('TopKeywordsByOrdersCard (component)', () => {
       period: { from: '2026-03-01', to: '2026-03-03' },
       groupBy: 'query',
       items,
-      summary: { totalSearchOrders: 0, searchOrderShare: 0 },
+      summary: { totalSearchOrders: 0, searchOrderShare: 0, ...unknownSearchCoverage() },
     },
     isLoading: false,
     isError: false,

@@ -441,9 +441,149 @@ describe('search-empty fixtures (Pattern 3 smoke-test)', () => {
 
   it('emptySearchOrdersResponse accepts overrides for test specialization', () => {
     const fx = emptySearchOrdersResponse({
-      summary: { totalSearchOrders: 42, searchOrderShare: 12.5 },
+      summary: {
+        totalSearchOrders: 42,
+        searchOrderShare: 12.5,
+        coverageKnown: true,
+        requestedDayCount: 2,
+        coveredDayCount: 2,
+        missingDayCount: 0,
+        coverageComplete: true,
+        coveredDates: ['2026-05-01', '2026-05-02'],
+        missingDates: [],
+        status: 'complete',
+      },
     })
     expect(fx.summary.totalSearchOrders).toBe(42)
     expect(fx.summary.searchOrderShare).toBe(12.5)
+  })
+})
+
+// --- Task-139.6: coverage derivation on the orders summary -----------------
+//
+// The BE search-orders summary (search-orders-query.service.ts) emits the raw
+// coverage partition (dates + counts + coverageComplete) WITHOUT the
+// coverageKnown/status flags. FE derives them and normalizes via
+// normalizeSearchCoverage against the request period — fail-closed on any
+// inconsistency (mirrors search-coverage-normalizer.test.ts UNKNOWN semantics).
+
+describe('normalizeSearchOrdersResponse — Task-139.6 coverage derivation', () => {
+  const PERIOD = { from: '2026-05-01', to: '2026-05-03' }
+
+  const rawWithCoverage = (coverage: Record<string, unknown>) => ({
+    period: PERIOD,
+    groupBy: 'query',
+    items: [],
+    summary: { totalSearchOrders: 10, searchOrderShare: 20, ...coverage },
+  })
+
+  it('derives coverageKnown=true + complete for a full partition', () => {
+    const r = normalizeSearchOrdersResponse(
+      rawWithCoverage({
+        requestedDayCount: 3,
+        coveredDayCount: 3,
+        missingDayCount: 0,
+        coverageComplete: true,
+        coveredDates: ['2026-05-01', '2026-05-02', '2026-05-03'],
+        missingDates: [],
+      })
+    )
+    expect(r.summary.coverageKnown).toBe(true)
+    expect(r.summary.coverageComplete).toBe(true)
+    expect(r.summary.status).toBe('complete')
+    expect(r.summary.coveredDates).toEqual(['2026-05-01', '2026-05-02', '2026-05-03'])
+  })
+
+  it('derives partial for a valid partition with missing days', () => {
+    const r = normalizeSearchOrdersResponse(
+      rawWithCoverage({
+        requestedDayCount: 3,
+        coveredDayCount: 2,
+        missingDayCount: 1,
+        coverageComplete: false,
+        coveredDates: ['2026-05-01', '2026-05-02'],
+        missingDates: ['2026-05-03'],
+      })
+    )
+    expect(r.summary.coverageKnown).toBe(true)
+    expect(r.summary.coverageComplete).toBe(false)
+    expect(r.summary.status).toBe('partial')
+    expect(r.summary.missingDates).toEqual(['2026-05-03'])
+  })
+
+  it('derives uncovered when the partition covers zero requested days', () => {
+    const r = normalizeSearchOrdersResponse(
+      rawWithCoverage({
+        requestedDayCount: 3,
+        coveredDayCount: 0,
+        missingDayCount: 3,
+        coverageComplete: false,
+        coveredDates: [],
+        missingDates: ['2026-05-01', '2026-05-02', '2026-05-03'],
+      })
+    )
+    expect(r.summary.coverageKnown).toBe(true)
+    expect(r.summary.status).toBe('uncovered')
+  })
+
+  it('fails closed (coverageKnown=false/unknown) on a count mismatch', () => {
+    const r = normalizeSearchOrdersResponse(
+      rawWithCoverage({
+        requestedDayCount: 3,
+        coveredDayCount: 5,
+        missingDayCount: 0,
+        coverageComplete: true,
+        coveredDates: ['2026-05-01', '2026-05-02', '2026-05-03'],
+        missingDates: [],
+      })
+    )
+    expect(r.summary.coverageKnown).toBe(false)
+    expect(r.summary.status).toBe('unknown')
+    expect(r.summary.coveredDates).toEqual([])
+  })
+
+  it('fails closed when dates fall outside the request period', () => {
+    const r = normalizeSearchOrdersResponse(
+      rawWithCoverage({
+        requestedDayCount: 3,
+        coveredDayCount: 3,
+        missingDayCount: 0,
+        coverageComplete: true,
+        coveredDates: ['2026-05-01', '2026-05-02', '2026-05-04'],
+        missingDates: [],
+      })
+    )
+    expect(r.summary.coverageKnown).toBe(false)
+    expect(r.summary.status).toBe('unknown')
+  })
+
+  it('fails closed when coverage metadata is absent (legacy summary shape)', () => {
+    const r = normalizeSearchOrdersResponse({
+      period: PERIOD,
+      groupBy: 'query',
+      items: [],
+      summary: { totalSearchOrders: 60, searchOrderShare: 35.5 },
+    })
+    expect(r.summary.coverageKnown).toBe(false)
+    expect(r.summary.coverageComplete).toBe(false)
+    expect(r.summary.coveredDates).toEqual([])
+    expect(r.summary.missingDates).toEqual([])
+    expect(r.summary.requestedDayCount).toBe(0)
+    expect(r.summary.status).toBe('unknown')
+  })
+
+  it('fails closed on garbage metadata types (never coerced into authority)', () => {
+    const r = normalizeSearchOrdersResponse(
+      rawWithCoverage({
+        requestedDayCount: '3',
+        coveredDayCount: 3,
+        missingDayCount: 0,
+        coverageComplete: 'yes',
+        coveredDates: '2026-05-01',
+        missingDates: [],
+      })
+    )
+    expect(r.summary.coverageKnown).toBe(false)
+    expect(r.summary.status).toBe('unknown')
   })
 })
