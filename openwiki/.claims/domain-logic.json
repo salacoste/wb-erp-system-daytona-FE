@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4929e96d8aa34f8c7b557ad5b5d36d0be9cd0d7b56f4b63c4512a8f6355a1db4",
+  "pageVersion": "sha256:e98801f7ea051297032a0850f748fb8a3f486eb11c329fea06221dd165beea52",
   "claims": [
     {
       "id": "claim_9bfdc04061f14b3bb2bb441081e614c3",
@@ -401,10 +401,54 @@
           "version": "repo-lines-v1:sha256:ee41aa85f3a7f57ddaac8c727b92ac9aed5a962a345431827a82500d5680be1b:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczMDUzMzcyODU5NWFlZjY1NjIzMWE5ZWVmMzkzMTZjYjQwNmNjZWM5NzE5ZmEwZDI0M2Y0ZTA3NjhmYjcxM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3OGZkNjI5NjZhZDBjN2YyMzBlMmUwZDRiMzlkMDc4OGE3NjJkM2Q5NzBmNzQxM2Y2ZGE3MGNhYWEyYzllNzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5Mzc3NjA5ODIwM2NjZDZiYmQxMjBkMTljN2YzZmIwNDhhMDlhMDg4ZGIyZTc5Nzk1NjQ4Y2U3ZDhhMzdmNTYifQ"
         }
       ]
+    },
+    {
+      "id": "claim_d500155b63ab44abbc6162a03cb10562",
+      "statement": "Supply planning (Epic 6) classifies SKUs by StockoutRisk (out_of_stock/critical/warning/low/healthy/unknown based on days until stockout), ReorderStatus (urgent <7d, soon < safety_stock_days, ok, unknown), and VelocityTrend (growing >+10%, stable ±10%, declining <−10%, no_data); each union carries a boundary-honest unknown/no_data member (Story 169.13) so unrecognized backend values are never coerced to the optimistic green state.",
+      "evidence": [
+        {
+          "resource": "repo://src/types/supply-planning/core.ts#L14-L38",
+          "version": "repo-lines-v1:sha256:4e789f0f109a0b6370b20d070d0b9e1f7eaa1dd7e2cbaa4e7eacadf34ce16f23:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlODgyZmVkYmI1ZmJlYWZlNDA2YTQyMWQ2YTEzYmUzMjhiMzgzZjI4MTY1ODY3Y2Y3MTA0ZjkwMWUxNWRmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkNTNjOWVjODk2ZDkzNTBlOWRlNzgzZDViZjg1ZThmYTY5NDY2ZjE4YTQ4YTIwMDE0OWRkMmMxYmY0NDg4ZWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4NzViMDRiMjdmNjUxZDI5NDZmNjRmNDdjMGU1NGMzN2IxYTQwNmRkNmRkNWVhOGIwMjBhNGYyMjFjMjEyZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzNWNmN2QxMDM5NDllZWE3YThhZDg3NTdkZmU5N2EyODczNjI2NjNhYzMxNDdlMGFkYzA1ZDI1ZWY0ZDgxODAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8fbca83c006e40028bbc2b61ecff0fc8",
+      "statement": "STOCKOUT_RISK_CONFIG maps the six risk tiers to semantic CSS-var tokens (tints via color-mix(token 15%, transparent); muted tiers on the muted surface), with getUrgentSkuCount(summary) = out_of_stock_count + stockout_critical driving the nav badge; reorder-status and velocity-trend configs live in supply-planning-reorder-velocity.ts, and VELOCITY_TREND_CONFIG deliberately excludes 'no_data' (no renderable trend). The route presentation renders via SUPPLY_RISK_TOKENS as the single source — these lib channels feed only non-route callers (getStockoutRiskBadgeClasses / getRiskDistributionData).",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/supply-planning-config.ts#L26-L53",
+          "version": "repo-lines-v1:sha256:3e7e7b42c5f4e4e3311f0a6a5f9e8971af1848a85b57d7ee350405f2a8a1e883:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmNzI3NzI3MTQwMjczYjAxMTFmN2RhZmE0MjE3MTQyZDg5ZGIxNDQ0Mjk4YTc0M2JiMGQwNmFjNzRlNGZhYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjMDdjOTc4YzRmYTE3ZDM4NjUzYjFkNmI4NzFhYmZkYTJhYjU5YmQzNDFhZmZkODg5ZDg4MmJiMjgwYzg2MzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlNjRlMmYyOWY3ZTNkYjU3ZDE0NDc0ODkyMDY3MTI5YjMxZTQyMmEwMTgyMjE5ZjdhNDlhZWI2YjdkYTE3ZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiMGM0NzZlZTYyMGQ3NTJkYzMxZDllZTRmZTZmYjI1ZjA5NTViMmY0ZGZmMTllOTNlYmNhYzdlYTFjM2Q3NzMifQ"
+        },
+        {
+          "resource": "repo://src/lib/supply-planning-reorder-velocity.ts#L60-L93",
+          "version": "repo-lines-v1:sha256:fd0af31f0a1919fbe7efa96e51078edd0afaed66e324a4ed4ddc6e61b7dc6f7a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3NWVkOTUyNDE5OWNmY2RjMjIyM2Y4NTczN2Q2NmNhYmEyNGM2OWU4Y2U3OWEwMTY1NWE2ZjVkYmQ1ZDllNjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVkYmU3ZjA0MjA4YmU4YmE4MDc3MDM3OWY2ZjExYTk5MzZhOTMwZDhkZjFlYTQ2ZWRlMmU1Y2Y1MjEwMjNkYjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzMDczZjcyMDhkN2RkMjBhNmIyZmNmMzc0YTVhMjRlOGYxMWI4OWNmYzc4MWJiMDc5ZTgzZTU4NjYyOTkzNGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c872e03798604577b6d12a85f4b5fa1e",
+      "statement": "Supply-planning formatters enforce AP#8 null honesty: formatReorderValue renders null/undefined (COGS unassigned) or a real 0 as «—» never a fabricated «0 ₽»; formatSafetyStockCoverage guards the division (no buffer or null velocity → «—», zero/negative velocity → «∞» instead of the literal 'Infinity дней'); formatVelocity maps null → «—»; formatDaysUntilStockout emits correct Russian plural forms with «Сегодня» for 0 and «∞» for ≥999.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/supply-planning-utils.ts#L45-L112",
+          "version": "repo-lines-v1:sha256:19e663c5431560990b6ce59a5fb11eb45e112a0cc598a6ad2fcbda75b88684e8:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlZmZlMzg1ZDhlZTkwMTk2YjAxNDQ0N2NjNTQ2MTJkOGUxMGU4MzU0YjQzODMwMzU0Y2MzNDFlYjI4NjIzNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjczYTk2M2FkMGMyMTE1MThiN2U3NjU3ZDgyN2YxYWMyZDZmYjZiYjU4M2JlMzVhZmVlYzEzYTEzYzZkYTZkOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhZTc5OWY0ZTkyYjBlZjFhNzUyZDQzM2I2MGEyYWIzZTc1ZWNhMmYxYTBmYTFhNmM2ZWM0ZWNlZjEzM2YxMzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa92a6c2372e414eb61c61a18b107bef",
+      "statement": "src/types/supply-planning-config.ts defines the UI display contract types RiskStatusConfig (full/short labels, token colors, emoji + Lucide icon names, solid-badge Tailwind bgClass/textClass, priority sort key where 0 = most urgent), ReorderStatusConfig, and RiskDistributionData, extracted from supply-planning.ts for the 200-line cap.",
+      "evidence": [
+        {
+          "resource": "repo://src/types/supply-planning-config.ts#L17-L55",
+          "version": "repo-lines-v1:sha256:2ab724d1dad1f644915f74f638091c8486b1b297baaee6d4ce2639e68445dbfe:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4YWU0ZWRiZjc3NjQ4OTEwYTZmOWVkNTBhMzQ4MjM0ZjljNTJhMDc1MGIzOTk2OGJlNWYwZjhiYjg1OTdhOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5NjJjMjQ3ZTA5MjI0ODU5ZTdmMTE1ZGYxZjZlNWU1YzU4MWMyY2Q1NmYwMjk2MmVlNjQ5ZWZmNDljOGZmMDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-12T08:47:52.090Z"
+    "at": "2026-09-13T08:47:58.162Z"
   }
 }

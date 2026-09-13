@@ -50,16 +50,20 @@ sources:
     resource: repo://src/components/custom/dashboard/__tests__/dashboard-widgets-presentation-source-contracts.test.ts
   - id: openwiki-source-be0dd10095970e7048ebf130
     resource: repo://src/hooks/__tests__/supply-sticker-document-error-fallback.test.ts
+  - id: openwiki-source-a7c7d558f70edbb3171b87ab
+    resource: repo://src/lib/api-client.ts
+  - id: openwiki-source-da1ab80751a0bdd4fc2e9d5c
+    resource: repo://src/lib/api-wb-token-errors.ts
   - id: openwiki-source-77df4b425c7f7d6e1bd76726
     resource: repo://src/lib/mutation-retry.ts
   - id: openwiki-source-3b4dbdbe8d2f4037d2dd4991
     resource: repo://src/lib/sanitize-fallback-message.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.1", at: "2026-09-12T08:47:52.090Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-13T08:47:58.162Z" }
 verified:
   - by: openwiki/0.5.1
-    at: 2026-09-12T08:47:52.090Z
+    at: 2026-09-13T08:47:58.162Z
 ---
 
 # Conventions & Quality Gates
@@ -180,7 +184,7 @@ Each story closes only when every quality gate matches its accepted baseline (th
 | Dot-locale percent | `npm run check:locale-percent` | Ratchet ↓ — current count 4 in `scripts/.locale-percent-baseline.txt` (started at ~108); lower the baseline when migrating |
 | AP#8 normalizer | `npm run check:anti-pattern-8-normalizer` | Ratchet guard vs baseline (`scripts/.anti-pattern-8-normalizer-baseline.txt`) |
 | ESLint | `npm run lint` | 0 errors, 0 warnings (zero-warning policy, `--max-warnings 0` in `lint` + `lint:fix`, Story 164.4) |
-| Vitest | `npm test -- --run` | ≥ 19582 passing / 0 failed (floor: 19118 after 174.2 dead-test deletion; then +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite debt-FE-D9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, +12 reactive-refresh suite D-2/PB-3, +3 wave-3 AA re-pins, +9 /80-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, +22 wave-6 WCAG style pins, +11 route-guards exact-array pins, session-9, +3 C5-W1 token-contract/stack pins, +9 C5-W4 waterfall guard rewrite / numeric contrast / supplies re-pins / review-adopted pins; additions OK, regressions not; skipped informational) |
+| Vitest | `npm test -- --run` | ≥ 19604 passing / 0 failed (floor: 19118 after 174.2 dead-test deletion; then +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite debt-FE-D9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, +12 reactive-refresh suite D-2/PB-3, +3 wave-3 AA re-pins, +9 /80-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, +22 wave-6 WCAG style pins, +11 route-guards exact-array pins, session-9, +3 C5-W1 token-contract/stack pins, +9 C5-W4 waterfall guard rewrite / numeric contrast / supplies re-pins / review-adopted pins, +2 wave-A2 tier re-pins + defensive branches, +8 wave-C apiClient sanitize pins incl. populated-data bypass guard, +12 wave-D logger-redaction pins incl. same-class clone; additions OK, regressions not; skipped informational) |
 | E2E bare skips | `npm run check:e2e-bare-skips` + `scripts/check-e2e-bare-skips.test.mjs` | No bare `.skip` without reason in owned E2E specs |
 | Max-lines cross-check | `npm run check:max-lines` | Matches the ESLint `max-lines` caps (200 source / 800 test) |
 | Privacy console guard | `npm run check:privacy` | 0 forbidden `console.*` calls in PII-adjacent files (see [Testing & Operations](testing-and-ops.md#privacy-console-check)) |
@@ -274,14 +278,14 @@ Network failures arrive as `ApiError` with status 0 (api-client wraps fetch thro
 
 ### `sanitizeFallbackMessage` — fallback error-text scrubbing (FE-D3)
 
-`src/lib/sanitize-fallback-message.ts` is the canonical home (extracted byte-identically from `src/components/custom/wb-token-form-helpers.ts`, which re-exports it) of the rule that a fallback error branch must never echo raw `error.message` verbatim — a malicious/buggy server can embed tokens, stack frames, or internal paths, which `WbTokenForm` (and now the supply/sticker/document mutation hooks `useCreateSupply`, `useCloseSupply`, `useGenerateStickers`, `useDownloadDocument`) render as-is. The pure helper:
+`src/lib/sanitize-fallback-message.ts` is the canonical home (extracted byte-identically from `src/components/custom/wb-token-form-helpers.ts`, which re-exports it) of the rule that a fallback error branch must never echo raw `error.message` verbatim — a malicious/buggy server can embed tokens, stack frames, or internal paths. It is applied at two layers: UI mutation fallbacks (`WbTokenForm` and the supply/sticker/document mutation hooks `useCreateSupply`, `useCloseSupply`, `useGenerateStickers`, `useDownloadDocument` render its output on error) and the API layer itself — `src/lib/api-client.ts` sanitizes the error message before Telegram error tracking and before wrapping network throwables into `ApiError(..., 0)`, and `src/lib/api-wb-token-errors.ts` sanitizes mapped WB-token error copy/recommendations before re-throwing. The pure helper:
 
 1. bounds hostile input to 4096 chars before scrubbing (bounds worst-case regex backtracking),
-2. scrubs a fixed `SCRUB_PATTERNS` list — V8 stack frames and `stack:` markers, scheme-agnostic URLs, POSIX/Windows paths, verbal SQL fragments, Prisma internals, JWT sequences (both full `header.payload.signature` and bare `eyJ` prefixes), 32+ hex blobs, and 40+ base64-ish blobs — each with documented false-positive trade-offs,
+2. scrubs a fixed `SCRUB_PATTERNS` list — V8 stack frames and `stack:` markers, scheme-agnostic URLs, POSIX/Windows paths (with a wave-C rider so slash-dates like `2024/01/15` are not mangled), verbal SQL fragments (one-token object form to limit benign-prose false hits), Prisma internals, JWT sequences (both full `header.payload.signature` and bare `eyJ` prefixes), 32+ hex blobs, and 40+ base64-ish blobs — each with documented false-positive trade-offs,
 3. collapses whitespace, returns a fixed Russian generic message when nothing survives, and
 4. truncates to 200 code points (never splitting surrogate pairs) at the last word boundary with an ellipsis.
 
-`src/components/custom/wb-token-form-helpers.test.ts` pins the scrub matrix, and `src/hooks/__tests__/supply-sticker-document-error-fallback.test.ts` pins the end-to-end behavior that the hooks display exactly `sanitizeFallbackMessage(<hostile message>)`.
+`src/components/custom/wb-token-form-helpers.test.ts` pins the scrub matrix, `src/hooks/__tests__/supply-sticker-document-error-fallback.test.ts` pins the end-to-end behavior that the hooks display exactly `sanitizeFallbackMessage(<hostile message>)`, and `src/lib/api-client.test.ts` carries the wave-C sanitizer pins (including the populated-data bypass guard).
 
 ## Two-Pass Review Discipline
 

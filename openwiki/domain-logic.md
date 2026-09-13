@@ -1,7 +1,7 @@
 ---
 type: "Domain Reference"
 title: "Domain Logic"
-description: "Financial and business-logic pure functions in src/lib/ (theoretical profit, margin/COGS temporal logic, ROI/profit-per-unit and efficiency status tiers + filter chips, profitability status, unit economics, liquidity with trends, coefficient status tiers, two-level pricing, account finances + document download, seller communications with gated write-back, backfill retry, ISO-week/Moscow-timezone handling, null/decimal helpers), the per-week financial series hook, the cabinet-creation cross-tab lock and account-scoped recovery state machine, returns-analytics and sku-financials type contracts, route-local monitor/monitoring domain helpers, and the price-calculator cost-breakdown and margin-status modules."
+description: "Financial and business-logic pure functions in src/lib/ (theoretical profit, margin/COGS temporal logic, ROI/profit-per-unit and efficiency status tiers + filter chips, profitability status, unit economics, liquidity with trends, coefficient status tiers, two-level pricing, supply-planning stockout/reorder status taxonomies and formatters, account finances + document download, seller communications with gated write-back, backfill retry, ISO-week/Moscow-timezone handling, null/decimal helpers), the per-week financial series hook, the cabinet-creation cross-tab lock and account-scoped recovery state machine, returns-analytics and sku-financials type contracts, route-local monitor/monitoring domain helpers, and the price-calculator cost-breakdown and margin-status modules."
 sources:
   - id: openwiki-source-ee5f1c25126203a1b15fbabe
     resource: repo://docs/request-backend/145-THEORETICAL-PROFIT-FORMULA-DOCUMENTATION.md
@@ -81,6 +81,12 @@ sources:
     resource: repo://src/lib/roi-profit-utils.test.ts
   - id: openwiki-source-1834adbab3256ce3be6ed751
     resource: repo://src/lib/roi-profit-utils.ts
+  - id: openwiki-source-902b20b5e0b4055c72060dae
+    resource: repo://src/lib/supply-planning-config.ts
+  - id: openwiki-source-a0439a39f2315ecb8d33ae96
+    resource: repo://src/lib/supply-planning-reorder-velocity.ts
+  - id: openwiki-source-7e98221c3094cd0cc5f0311f
+    resource: repo://src/lib/supply-planning-utils.ts
   - id: openwiki-source-d6b8b04abd546dc2eafc55e1
     resource: repo://src/lib/theoretical-profit.ts
   - id: openwiki-source-450a81272fabe346d1708966
@@ -91,10 +97,14 @@ sources:
     resource: repo://src/types/analytics-returns.ts
   - id: openwiki-source-dbb29a8befd1ef6fd6b187fb
     resource: repo://src/types/sku-financials/core.ts
-generated: { by: "openwiki/0.5.1", at: "2026-09-12T08:47:52.090Z" }
+  - id: openwiki-source-79856853922b9532d8b8e1a4
+    resource: repo://src/types/supply-planning-config.ts
+  - id: openwiki-source-e8791a268e1c74d34056abd5
+    resource: repo://src/types/supply-planning/core.ts
+generated: { by: "openwiki/0.5.1", at: "2026-09-13T08:47:58.162Z" }
 verified:
   - by: openwiki/0.5.1
-    at: 2026-09-12T08:47:52.090Z
+    at: 2026-09-13T08:47:58.162Z
 ---
 # Domain Logic
 
@@ -406,6 +416,35 @@ The liquidity page (`/analytics/liquidity`) renders a **trends section** (Дин
 | **Independent state machine** | `LiquidityTrendsSection` owns its own loading/empty/error state (AC4 multi-source) — a trends failure never blanks the surrounding liquidity page. 30-min staleTime (historical data changes slowly). |
 
 **Focused tests**: `src/app/(dashboard)/analytics/liquidity/components/__tests__/LiquidityTrendChart.test.tsx` (chart rendering), `e2e/liquidity.spec.ts` (E2E).
+
+## Supply Planning (Epic 6 — Stockout Prevention)
+
+The `/analytics/supply-planning` domain keeps its business logic in a family of sibling lib modules (the same file-size-split pattern), with the UI display contract types extracted to `src/types/supply-planning-config.ts` (`RiskStatusConfig`, `ReorderStatusConfig`, `RiskDistributionData` — full/short labels, theme-token colors, emoji + Lucide icon names, solid-badge Tailwind classes, and a `priority` sort key where 0 = most urgent).
+
+### Status taxonomies (`src/types/supply-planning/core.ts`)
+
+| Union | Values | Classification basis |
+|-------|--------|----------------------|
+| `StockoutRisk` | `out_of_stock` / `critical` / `warning` / `low` / `healthy` / `unknown` | days until stockout: stock = 0, 0–7 d, 7–14 d, 14–30 d, > 30 d |
+| `ReorderStatus` | `urgent` / `soon` / `ok` / `unknown` | `urgent` < 7 d; `soon` < `safety_stock_days`; `ok` ≥ it |
+| `VelocityTrend` | `growing` / `stable` / `declining` / `no_data` | > +10% / ±10% / < −10% vs previous period |
+
+Each union carries a boundary-honest `unknown` (or `no_data`) member — Story 169.13 "indicate, never coerce": an absent or unrecognized backend value must never render as the optimistic green «В норме» / «Запас достаточен».
+
+### Config & helpers
+
+- `STOCKOUT_RISK_CONFIG` (`src/lib/supply-planning-config.ts`, Story 174.2) maps the six risk tiers to semantic CSS-var tokens; muted tiers use the muted surface, tints use the `color-mix(token 15%, transparent)` idiom. The route presentation renders via `SUPPLY_RISK_TOKENS` (`supply-risk-tokens.ts`) as the single source; these channels feed only non-route callers (`getStockoutRiskBadgeClasses` / `getRiskDistributionData`). `getUrgentSkuCount(summary)` = `out_of_stock_count + stockout_critical` drives the nav badge.
+- `getReorderStatusConfig` / `getVelocityTrendInfo` live in `supply-planning-reorder-velocity.ts`; `VELOCITY_TREND_CONFIG` deliberately **excludes `no_data`** (no renderable trend — handle at the call site; growing=success, stable=muted, declining=error).
+- Sorting/filtering (`getStockoutRiskSeverity`, `sortByStockoutRisk`, `filterByMinRisk`) is extracted to `supply-planning-sorting.ts`; chart data (`getRiskDistributionData`) to `supply-planning-chart.ts`; `supply-planning-utils.ts` is the barrel plus the formatters.
+
+### Formatters (AP#8 null honesty)
+
+- `formatDaysUntilStockout(days)` — correct Russian plural forms (день/дня/дней with the 11–14 exception), `0` → «Сегодня», `null` → «Нет данных», ≥999 → «∞».
+- `formatSafetyStockCoverage(safetyStockUnits, avgDailySales)` — days the safety buffer lasts (`safety_stock_units / avg_daily_sales`); no buffer or null velocity → «—», zero/negative velocity → «∞» (buffer never depletes; pre-guard this rendered the literal "Infinity дней").
+- `formatReorderValue(value)` — null/undefined (backend omits `reorder_value` when COGS is unassigned) or a real `0` → «—», never a fabricated «0 ₽».
+- `formatVelocity(velocity)` — null → «—» (169.13); adaptive precision (2/1/0 decimals by magnitude).
+
+**Focused tests**: `src/lib/__tests__/supply-planning-config.test.ts`, `SupplyRiskCards.test.tsx`.
 
 ## Cost & Tariff Calculations
 

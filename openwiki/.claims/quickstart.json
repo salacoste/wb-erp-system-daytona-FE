@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:5acdbf8c58b319d55b6becb41838ae62fe776b384e0aba4036f746cb924630ea",
+  "pageVersion": "sha256:90efced4a47ef92f5704dd1d1b8b24a4ab8a31f0c57fb1168f7cb9338926e6be",
   "claims": [
     {
       "id": "claim_07e85bb249e745f69c550323b16664e1",
@@ -258,19 +258,19 @@
     },
     {
       "id": "claim_2134510cae8d4eec9f8debc679151e77",
-      "statement": "The C5 chart-palette epic is terminally CLOSED (session-13, 2026-09-12, PR #446): all four waves executed — wave-1 token foundation and dead chart-colors.ts deletion (118 → 114), wave-2 src/lib hex migration (→ 57), waves 3-4 components/app/types hex, 23 legacy classes → status/tint tokens, and the 22 suppressed waterfall/PriceHistorySheet/FunnelTab sites, ending at boundary 0 = baseline 0 with the exceptions register emptied and WCAG 1.4.11 closed (warn/40 borders → solid pairs). Remaining backlog is no longer implementation work: only owner-decision items with prepared AskUserQuestion requests (A2 OrganicTab /80 tier, apiClient sanitization ~131 .tsx, financial tokens/logger-redact bundle, docs-baseline zone enforcement) plus BE-side follow-ups, and implementing an owner-decision item without an owner answer is prohibited (V21 §8).",
+      "statement": "The C5 chart-palette epic is terminally CLOSED (session-13, 2026-09-12, PR #446): four waves took the shadcn-ui boundary ratchet from 118 to 0 with BOUNDARY_EXCEPTIONS emptied and WCAG 1.4.11 closed under owner decision (a) (legacy-light accepted as a conscious fork). Session-14 (2026-09-13, handoff HANDOFF-2026-09-13-SESSION14-OWNER-DECISIONS-EXECUTED.md) then executed all remaining owner decisions via PRs #449-#455: A2 OrganicTab structural /80 fix, financial-* sign-valence canon, central apiClient sanitization through sanitizeFallbackMessage (covering ~131 JSX-echo sites), and logger.warn/error redactSensitive wrapping — leaving the FE-debt queue EMPTY (no open PRs, registry rows §34-§41 closed) with only BE-side items remaining (request-backend #231 raw driver-leak audit, D-2 remote refresh-branch publish, Manager-creds BE-seed).",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md#L12-L24",
-          "version": "repo-lines-v1:sha256:f4721a16c07d9c1d9d22ccfca26c20f3ef0ab978dd4ba21bb3cca96ddc35e83f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMWZhM2ViMzJhNGU0MDE5ZjFjMjQ3NWE0MTUzMGI4YmI1ZjY1NThiYWM0NGQ4ZGJiYmI2MmFhZjU0NDQwYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkNGVhYWYwNDc2NmU5MzBlZDBhZjllNzA0ZDBmNTA1NWU3OTdhMmNmNzZiNTU5NjM2MzkxZGEyMmI0ZmZhMzAifQ"
+          "resource": "repo://docs/HANDOFF-2026-09-12-SESSION13-C5-COMPLETE-OWNER-DECISION-QUEUE.md#L1-L16",
+          "version": "repo-lines-v1:sha256:b6f02845bb0e62c5b08bb675972cd60fe25168ad2b557f4ae1318c1be2881764:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzYzI3Y2E4YmU1MThlNmE1ZjgxODQ0ZmZiY2Q3ZTJiODJiYzZmYjU4MDZmNjc5YjlmMzZjYjc0NzNmY2Q0Y2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1MmQ3MTExMDNkNTBhNDM3ODMwYzZmYmNkMDRmYjRiYWI0OWEwZjgyZjZkMjZkMWM3OTFjNmU4NDg4ZGQwOTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzYzg1ZDQyYjA0ODI4M2U4MjdlZjk3MjFmZTFjMTZkOGViYjFhOWJkMzFmMGEzNWJhOTVmNzMyNjVlOTE0MGEifQ"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-09-12-SESSION13-C5-COMPLETE-OWNER-DECISION-QUEUE.md#L1-L18",
-          "version": "repo-lines-v1:sha256:1c38f82784d2b8e87d1790e4f01f9a9acec6cb8f45136358dc587e1e86bd16a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzYzI3Y2E4YmU1MThlNmE1ZjgxODQ0ZmZiY2Q3ZTJiODJiYzZmYjU4MDZmNjc5YjlmMzZjYjc0NzNmY2Q0Y2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4Mzk2MzAzNjQwMzZkYmFiMjg4N2M3NGFkNmU3ZjYxYTVlMzQzNDAyMTIyMDkxOWQ5NTRjNWVlZjNkMWRhMjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhNDIzNTdkYjYzNmUxZDNmYmZmMmQyODE0MWI2Y2M1YWMxMDY4OTgyMzhjY2E5MzU4NzkzN2E3NTMxNWZlYWIifQ"
+          "resource": "repo://docs/HANDOFF-2026-09-13-SESSION14-OWNER-DECISIONS-EXECUTED.md#L12-L52",
+          "version": "repo-lines-v1:sha256:885441875c6ca8fe6c31a6640379214cb96dceca9f000355ec318e530108d534:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxZDMxZDU4OTVjZjQ0N2VlZWE1MTIwZGU5N2MxZDczNmRjNGVkMDkzYjJjM2I2NzljYzYyY2MwMGU1ZmE4NWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2ZTEzNzgzMzczYmM3ZmJiZDBmZDMwZjA4ZTlhMTQ1ZTQ4ODJmODdlZjJmMzJiNmJlOWM3ZTEyMDM3N2MwNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxM2M0ZjMxZGU2MDRlNDc0MGM5Y2UwNzdlZmNjMzAyZGE3YTY3MGM2YWQwNjZhMzY3ZTkxYTViNWNiNjRmM2YifQ"
         },
         {
-          "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+          "resource": "repo://docs/request-backend/231-error-envelope-raw-driver-leak-audit.md",
+          "version": "repo-file-v1:sha256:0e8ae798c1b4a9891e406cc87073fbbb6fd80032378490eb790f64c58e82fa40"
         }
       ]
     },
@@ -310,11 +310,15 @@
     },
     {
       "id": "claim_1330e666318d45d2abcf0954fb126a1d",
-      "statement": "scripts/.check-docs-baseline.txt (the docs-95 baseline) is zone-annotated as of session-10: 1 CANONICAL, 4 ARCHIVAL-CANDIDATE, and 90 ARCHIVAL entries; zones are narrative only (comments are stripped by the gate), and running check-doc-citations.sh --update-baseline regenerates the file flat, silently destroying the zone annotation, so it must be re-split after any regeneration.",
+      "statement": "scripts/.check-docs-baseline.txt is currently FLAT (no zone annotation present): the session-10 zoning (1 CANONICAL / 4 ARCHIVAL-CANDIDATE / 90 ARCHIVAL) was lost when the baseline was regenerated, and PR #454 (session-14, split variant (a)) resolved the one canonical citation and dropped the baseline from 95 to 94 entries, which the docs gate now matches (94 = 94). In-baseline zone enforcement was ruled structurally impossible without a baseline format change (registry §24 owner ruling); the archival mass is grandfathered.",
       "evidence": [
         {
-          "resource": "repo://scripts/.check-docs-baseline.txt#L13-L30",
-          "version": "repo-lines-v1:sha256:37a8c1f2336bcb52593b6c3e8f020474c9c0da05680d0a7421a09e8c1c4402cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjYTE5OGU4Y2QyYjE5MjA1MDdlZDhmMDJkYjVhOWRjMjNkNTVjYzhmNDY4NjI1MzE5ZDE0YjUzOTA4ZDJiYTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1Y2Y1ZTk3MmI1OTgyY2U1OTlmMDlkY2RlMjk3YzNjYTY3ZTIwNWI0MjE3N2Y4ODcwMDBiMmFjZjg1YmJjMmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljZjgwMjUyM2U5MTllZDk0MGYxMGFiOTVjODAwYjg4Zjg3ZWIwYTliYzdhODhjMmVkMjIxZWZiOWZiZDE3ZDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJlZjcyZjUxZjRkMmVkMWFjOTgxOGNkYjQ2NTMxODZkNmU5OTdmODUyMDBlOGZlNGRmNTlmMzAwOTA0OGFkZjIifQ"
+          "resource": "repo://docs/HANDOFF-2026-09-13-SESSION14-OWNER-DECISIONS-EXECUTED.md#L14-L22",
+          "version": "repo-lines-v1:sha256:b2faf1d62be3dd693c6aa47f2b8e363b4e0af2cd0db0fff2cb7a25be60f4dfe1:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzRkOTFjNmEyN2Q1NmI4M2QxYjAwNWIyNDBkODZkYzhjYTdiY2RmODY5Mzg2YzM4NzhjNmRkZjhkMzBiZGI1OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmU0MWI2OWJiOGQ5ZTVhYzE2ODAwY2UzNWRiOTYyMjA1N2VkZDYxZjlkYTk2OTI5MDUzM2IwYmJiYThiNTA5MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmM2YjA0ZTI5NmZjOWEyZmNiY2IwZmNjMjNiODM4ZTJlZDAxZjUwMzk0NTQ4Njk1MDliMmZkNjQ2YmM0ZWIxOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTQ4NGNiZjY1NjgyNTI1Nzk0ZGE3NDZiNGVmYjkyNDU0ZTM5YWVkNTMzNWQ3YmFjMGVhNDM0ZmM5NWYxZTBiYyJ9"
+        },
+        {
+          "resource": "repo://scripts/.check-docs-baseline.txt#L1-L30",
+          "version": "repo-lines-v1:sha256:5591146bf51fef05bb60aa3a17954313f05412320f773c0dbf829d5d4d7323a0:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkZTg3NmZkZDViNmJhMjg2MDhmNTliMDNlNjk5OTc5NzlhYzI0MWEzMWY5MzM3NjVmZjdiZDZlZDg5MzIzZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjODAxMzljMmU4NzljNDlhMDllMTZiMWYzNDlmMTJjYzIwMGIxMDNmMDhjNzE4ZmVlZWIzMjUyYjBjYzI1MjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFjZmFlMDA1OWQyNjFlZmViNmU1ZDkxNTYyMmQwZjM3MDc1NjZmNDM1ZWY5NjEwZmU5YzM0Nzk0MjBjNTk5MTUifQ"
         }
       ]
     },
@@ -353,10 +357,20 @@
           "version": "repo-lines-v1:sha256:21885de665cbe89fe79210b388c2cddcbef420cd4db2fe8a5abbfdc054e5fd5d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkZjViMmE3NzQ5MzIyZjI1NDU4MzQzZTQzNWI2OTI0YmEwNzc2MzFiYjM2M2Y0MDZlNzFmMGNmOWY4ZDU5N2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwYTIwNjI1YzI5YTkwNDFlNzk4YjU0NmM0ODMxNmQzYzllNWE0YWNmNWEyYzM0YjkxMjllZGM4MjMyMTEwZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjMzc0YzI2MzJlNzE5MGIzODgxNzAwOWNkMDY3YzQ1YTc3MTY2NWU0Njk3MjY3ZWQ5YWEwMDA3Njg3NjA0NzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJkMmVkNDQyZGM1MThjNDdlYjU3MzEzODlkYjExNTRiMDE3ZTQ4MzU2Zjk3MzY4NjFlMWIwNDhhMGNlNGU1NjcifQ"
         }
       ]
+    },
+    {
+      "id": "claim_0bb604c368e5413c837a82e828f4f180",
+      "statement": "Final session-14 validation battery on HEAD 116ecf11 (Node 24.18.0): Vitest solo 19,604/19,604 exit 0 across 1,288 files, lint --max-warnings 0 = 0, tsc = 0, production build exit 0 with 70/70 static pages, shadcn-ui boundary 0 = 0 with 0 registered / 0 suppressing exceptions, and privacy/locale/docs/lessons gates all clean. Documented limitations: FunnelTab was verified only by synthetic computed-style probes (13/13) plus live waterfall/PriceHistorySheet probes (no interactive journey), and the logger's Error.stack on the sanitized clone still passes verbatim as a registered residual.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-13-SESSION14-OWNER-DECISIONS-EXECUTED.md#L24-L43",
+          "version": "repo-lines-v1:sha256:ec152e4e115ac91f30ef7b62bdea7a9c0155832b06b9975a6d4ae5f4a250732e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0YWZjYTY3OTFkYWI3M2EwNzIzN2VjN2U4MWE0YjdjMGUwMWExYTlmMjEyZTMyZTkyOTgwNGU4ZjZkNWI4MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmYTNiMDQ5YWE5ZmRkYWUyM2Y0MjVmMGMwNmIyZTg1OWI2YzRhM2NhZmFkZmUxYmEyNDMzNGZjZTQyZmFkMDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MWQ5YTA2NDk4YTljMGQxOTUyZjJiOWU5MDVhMzZhN2U2ODY0NGMzOTU3NDViNDI5ZGY1YTdhYWNkZjU2M2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVkZTljYmExMTNiYWQ3ZDI5ZThiMGI5YTYxNzQwZjk1YTAzMzNhNTZkZDdlM2Y0NGY5OWQzM2M2ZWEyZjU4NzYifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-12T08:47:52.090Z"
+    "at": "2026-09-13T08:47:58.162Z"
   }
 }

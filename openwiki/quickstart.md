@@ -20,10 +20,14 @@ sources:
     resource: repo://docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXECUTED-AND-REMAINING-BACKLOG.md
   - id: openwiki-source-d194306cbc079c845e475aad
     resource: repo://docs/HANDOFF-2026-09-12-SESSION13-C5-COMPLETE-OWNER-DECISION-QUEUE.md
+  - id: openwiki-source-8a6f3f3ee260ffa511b32c7e
+    resource: repo://docs/HANDOFF-2026-09-13-SESSION14-OWNER-DECISIONS-EXECUTED.md
   - id: openwiki-source-012193b44418d77f0463a518
     resource: repo://docs/ORCHESTRATOR-PROMPT-2026-09-10-V20-DEBT-CONTINUATION-OMC-SUBAGENTS.md
   - id: openwiki-source-c66fd1b858bdd6d97345f065
     resource: repo://docs/request-backend/230-auth-refresh-endpoint-missing.md
+  - id: openwiki-source-44a1da934fd0f67ddf60ee15
+    resource: repo://docs/request-backend/231-error-envelope-raw-driver-leak-audit.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
@@ -44,10 +48,10 @@ sources:
     resource: repo://scripts/run-story-174-3-state-evidence.mjs
   - id: openwiki-source-13697ff46e81b49dcb27ba68
     resource: repo://src/styles/globals.css
-generated: { by: "openwiki/0.5.1", at: "2026-09-12T08:47:52.090Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-13T08:47:58.162Z" }
 verified:
   - by: openwiki/0.5.1
-    at: 2026-09-12T08:47:52.090Z
+    at: 2026-09-13T08:47:58.162Z
 ---
 
 # WB ERP System — Frontend OpenWiki
@@ -98,13 +102,25 @@ Chain: V19 (`docs/HANDOFF-2026-09-09-V19-SESSION9-PRETTIER-BROWSER02-PRIVACY-EXE
 - **privacy docs-example redaction** (PR #423/#424): the privacy gate scans the HEAD merge-diff (fallback `-m`), so pre-existing doc examples with fake Bearer tokens surfaced on merge #420; 4 files under `docs/request-backend/` shortened below the 12-char trigger.
 - **privacy scanner × tool dirs exclusion** (PR #425): owner decision 2026-09-08 excluded the 5 vendored BMAD knowledge dirs (≈630 accepted residual violations) from the change-set scan via `EXCLUDED_CHANGE_SET_PREFIXES` + a per-file filter in `collectGitChangeFiles`; scan roots/PII pins untouched.
 - **route-guards exact-array unification** (PR #427): 33 deviants across 3 waves; the 174.3 execution manifest regenerated with `--owner-units` (3 hash updates, 275/275 == disk). Test floor 19,559 → 19,570.
-- **session-10**: cwd-anchoring of 4 sibling guards (tax, shipments, sku-packaging, box-types) to the `import.meta.url` 170.6 canon (#430); the harness restart-per-run generalized into `npm run test:e2e:isolated` / `scripts/run-e2e-isolated.mjs` (#431, node:test 56, five review passes); FR-7 re-pin + AT-matrix written owner-accept + Manager-creds optional (#432); docs-95 baseline re-zoned CANONICAL 1 / CANDIDATE 4 / ARCHIVAL 90 (#433).
+- **session-10**: cwd-anchoring of 4 sibling guards (tax, shipments, sku-packaging, box-types) to the `import.meta.url` 170.6 canon (#430); the harness restart-per-run generalized into `npm run test:e2e:isolated` / `scripts/run-e2e-isolated.mjs` (#431, node:test 56, five review passes); FR-7 re-pin + AT-matrix written owner-accept + Manager-creds optional (#432); docs-95 baseline zoned CANONICAL 1 / CANDIDATE 4 / ARCHIVAL 90 (#433; zone annotation later removed when #454 regenerated the baseline flat at 94).
 - **session-11 follow-ups** (§3.4): FU-4 stale "verified W26" comment (#435/#436), FU-1 cwd-anchor contracts 2→4 files/7 anchors (#437), FU-2 canon-comment harmonization across 27 files (#438), FU-3 isolated-runner fail-safe hardening — dev spawn error/exit-before-ready aborts readiness within one poll tick, ps/jlist corruption pins, node:test 63/63 (#439), FU-5 no-op. Live main `092e7c26`: vitest 19,570/0.
-- **C5 epic — terminally CLOSED (2026-09-12)**. The chart-palette owner decision landed in session-12 (8 decisions, artifact §1): CSS tokens `var(--chart-N)` are the single canon; categorical palette extends to `chart-1..10`; valence tokens `--valence-1..5`/`--valence-neutral` bundle WCAG 1.4.11; waterfall moves to valence semantics; boundary target full 118 → 0 with all 3 exceptions lifted; delivered in 4 waves. Wave-1 (#441): `--chart-7..10` + valence tokens in `globals.css`, dark `--chart-2` contrast fix (3.71 → ≥4.5 pinned by test), dead `src/lib/chart-colors.ts` deleted → boundary 118 → 114. Wave-2: all remaining `src/lib` hex migrated → 57. Waves 3-4 (through session-13, PR #446): components/app/types hex migrated, the 23 legacy classes → status/tint tokens, waterfall/PriceHistorySheet/FunnelTab exception sites migrated (22 suppressed sites), `BOUNDARY_EXCEPTIONS` emptied, warn/40 borders → solid pairs (light 4.81 / dark 14.03), WCAG 1.4.11 closed. Final gate state on main: **boundary 0 = baseline 0, exceptions 0 registered — TERMINAL**. Session-13 record: `docs/HANDOFF-2026-09-12-SESSION13-C5-COMPLETE-OWNER-DECISION-QUEUE.md`.
+- **C5 epic — terminally CLOSED (2026-09-12)**. The chart-palette owner decision landed in session-12 (8 decisions, artifact §1): CSS tokens `var(--chart-N)` are the single canon; categorical palette extends to `chart-1..10`; valence tokens `--valence-1..5`/`--valence-neutral` bundle WCAG 1.4.11; waterfall moves to valence semantics; boundary target full 118 → 0 with all 3 exceptions lifted; delivered in 4 waves. Wave-1 (#441): `--chart-7..10` + valence tokens in `globals.css`, dark `--chart-2` contrast fix (3.71 → ≥4.5 pinned by test), dead `src/lib/chart-colors.ts` deleted → boundary 118 → 114. Wave-2: all remaining `src/lib` hex migrated → 57. Waves 3-4 (through session-13, PR #446): components/app/types hex migrated, the 23 legacy classes → status/tint tokens, waterfall/PriceHistorySheet/FunnelTab exception sites migrated (22 suppressed sites), `BOUNDARY_EXCEPTIONS` emptied, warn/40 borders → solid pairs (light 4.81 / dark 14.03), WCAG 1.4.11 closed. Final gate state on main: **boundary 0 = baseline 0, exceptions 0 registered — TERMINAL**. Session-13 record: `docs/HANDOFF-2026-09-12-SESSION13-C5-COMPLETE-OWNER-DECISION-QUEUE.md` (marked SUPERSEDED 2026-09-13 — its awaiting-decision statuses are stale; see session-14 below).
 
-Live gate state: Vitest floor **19,582** (session-13 verified, solo run exit 0) · lint 0/0 · tsc 0 · build `--webpack` 0 · **boundary 0 = baseline, exceptions 0 registered (TERMINAL)** · docs 0 · locale 4 · lessons 0 · privacy exit 0 (bare run, never piped — a pipe eats the exit code) · cleanup 0/0/0 · 174.3 contracts 33/33 · manifest 275/275 == disk. Environment: Node **24.18.0** (PATH-pinned; Node 26 breaks webpack), PM2 frontend on :3100, backend on :3000; after a Mac reboot restore Docker → `pm2 resurrect`.
+### Session 14 (2026-09-13) — owner decisions executed, FE-debt program COMPLETE
 
-Remaining backlog: no unblocked implementation items — only owner-decision items with prepared AskUserQuestion requests (A2 OrganicTab `/80` tier; apiClient-wide sanitization ~131 `.tsx` echo sites; financial tokens / logger-redact / scanner-semantics bundle; docs-baseline zone enforcement — low priority) and BE follow-ups (remote publish of the D-2 refresh branch, FE-D3-residual NestJS filters, BE-seed for Manager-creds). Implementing any owner-decision item without an owner answer is prohibited (V21 §8). Route backend-blocking work to `docs/request-backend/` (e.g. `docs/request-backend/230-auth-refresh-endpoint-missing.md`).
+`docs/HANDOFF-2026-09-13-SESSION14-OWNER-DECISIONS-EXECUTED.md` is the current chain entry point. All owner decisions from session-13 §3 were executed and merged (PRs #449–#452 plus tail items #453–#455):
+
+- **A (#449)** — A2 OrganicTab `/80` tier closed via structural differentiation: full `text-financial-positive` (5.13/9.38 vs bg-card AA) plus a `CheckCircle2 opacity-80` non-text cue (≥3:1). The last `/80` exception is gone.
+- **B (#450)** — `financial-*` declared the sign-valence canon (CLAUDE.md Design System); scanner freeze confirmed; the C2/contrast-trio code items were already fixed by P2 wave-3 (stale registry rows closed).
+- **C (#451)** — apiClient central sanitization: both construction sites route through `sanitizeFallbackMessage`, covering the ~131 JSX-echo sites; review caught a HIGH bypass (`api-wb-token-errors` re-injected raw `errorData`) and a slash-date over-scrub, both fixed.
+- **D (#452)** — `logger.warn`/`logger.error` wrapped with `redactSensitive`, closing 131 call sites in 81 files without touching them (identity carve-out for `ApiError.data` closed via a same-class clone).
+- **#453** F1 `/10` pairs were a no-op (already fixed); **#454** resolved the one canonical citation in the docs baseline (95 → 94, split variant (a) — zone enforcement ruled structurally impossible without a format change); **#455** opened backend request `docs/request-backend/231-error-envelope-raw-driver-leak-audit.md`.
+
+Final validation battery on HEAD `116ecf11` (Node 24.18.0): Vitest solo **19,604/19,604 exit 0** (1,288 files) · lint `--max-warnings 0` 0 · tsc 0 · production build exit 0 (70/70 static pages) · boundary 0 = 0, exceptions 0 registered / 0 suppressing · privacy 0 · locale 0 (baseline 4) · docs 0 (94 = 94) · lessons 0. Documented status limitations: FunnelTab was verified by synthetic computed-style probes (13/13) plus live waterfall/PriceHistorySheet — no interactive journey; WCAG 1.4.11 is closed under owner decision (a) with legacy-light accepted as a conscious fork; the logger's `Error.stack` on the clone still passes verbatim (registered residual).
+
+Live gate state: Vitest floor **19,604** (session-14, HEAD `116ecf11`, solo run exit 0) · lint 0/0 · tsc 0 · build exit 0 (70/70 static pages) · **boundary 0 = baseline, exceptions 0 registered (TERMINAL)** · docs 0 (baseline 94 = 94) · locale 4 · lessons 0 · privacy exit 0 (bare run, never piped — a pipe eats the exit code) · cleanup 0/0/0 · 174.3 contracts 33/33 · manifest 275/275 == disk. Environment: Node **24.18.0** (PATH-pinned; Node 26 breaks webpack), PM2 frontend on :3100, backend on :3000; after a Mac reboot restore Docker → `pm2 resurrect`.
+
+Remaining backlog: the **FE-debt queue is EMPTY** — the session-14 waves closed every owner-decision item (A2 OrganicTab, apiClient sanitization, financial tokens / logger-redact / scanner bundle, docs-baseline split), the boundary canon is terminal, registry rows §34–§41 are closed, and there are no open PRs. What remains is **BE-side only** (unreachable from the FE repo): request-backend **#231** (NestJS filter audit for raw pg/redis driver leaks in error envelopes — FE borders are ready after waves C/D), the D-2 remote publish of the backend refresh branch, and a BE-seed for e2e Manager-creds. Route backend-blocking work to `docs/request-backend/` (e.g. `docs/request-backend/231-error-envelope-raw-driver-leak-audit.md`). New FE work means product stories or new owner decisions only.
 
 ## Overview
 
@@ -172,9 +188,9 @@ node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate 
 | Task | Go to |
 |------|-------|
 | Route migration work (Stories 166–174, route ledger, worktrees, handoffs), the Story 174.3 evidence pipeline (execution manifest, contract tests, scope register) | [Migration Program (Epics 166–174)](migration-program.md) |
-| Token / component / primitive work, design-system boundary canon (`LEGACY_PALETTE` / `CONTEXTUAL_HEX`), the WCAG 2.2 AA inclusive visual matrix, the C5 chart-token canon (`--chart-1..10`, valence tokens), and the debt-session boundary waves (ratchet now 57, target 0 via C5 waves 3-4) | [Design System](design-system.md) |
+| Token / component / primitive work, design-system boundary canon (`LEGACY_PALETTE` / `CONTEXTUAL_HEX`), the WCAG 2.2 AA inclusive visual matrix, the C5 chart-token canon (`--chart-1..10`, valence tokens), the sign-valence `financial-*` canon, and the debt-session boundary waves (ratchet TERMINAL at 0 since C5 wave-4, 2026-09-12) | [Design System](design-system.md) |
 | App structure / route groups / auth store (including D-1 `ensureSessionNonce`, D-2 nonce-preserving `refreshToken`, and FE-D5 `cabinetCreationLock` Web Locks) / environment & API configuration | [Architecture](architecture.md) |
-| api-client transport, error semantics, the D-2 reactive 401 single-flight refresh interceptor, and the FE-D3/fe-d3-family `sanitizeFallbackMessage` fallback sanitization | [API Client and Normalizers](api-and-normalizers.md) |
+| api-client transport, error semantics, the D-2 reactive 401 single-flight refresh interceptor, the FE-D3 `sanitizeFallbackMessage` canon plus session-14 central api-client sanitization (#451) and logger `redactSensitive` redaction (#452) | [API Client and Normalizers](api-and-normalizers.md) |
 | Financial summary math, margin/liquidity calculations, cabinet creation and settlement flows, task-role semantics (including the quality-wave `ScenarioUrgencyTier` work) | [Domain Logic](domain-logic.md) |
 | Gate / baseline / ratchet work, including `check-shadcn-ui-boundary.mjs` (TERMINAL: baseline 0 and 0 registered exceptions since C5 wave-4, 2026-09-12; still fails on any increase) and `check-shadcn-migration-parity.mjs` self-suites | [Conventions & Quality Gates](conventions-and-quality.md) |
 | Test / e2e / automation work, including the story-174-3 e2e runner tooling (`e2e/support/story-174-3-runner-*.ts`, real-browser-zoom and state-evidence runners, fixture corpus under `e2e/fixtures/story-174-3/`) and the D-1 two-tab nonce-nulling e2e, and the isolated restart-per-run e2e orchestrator (`npm run test:e2e:isolated`) | [Testing & Operations](testing-and-ops.md) |

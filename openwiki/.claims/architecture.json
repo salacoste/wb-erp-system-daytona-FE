@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a3f99d9e63229a2b8db3475efc96ddce85522964a79ac749db6c775eb688b8e3",
+  "pageVersion": "sha256:ee3c8ff1f2846a2ee16aec8903d0a6e2b9d602a1425ac34434da84760657e9b1",
   "claims": [
     {
       "id": "claim_2c9c1829b6b846cd913111aee59b6f27",
@@ -60,15 +60,15 @@
     },
     {
       "id": "claim_cbcd4250a6334b7b832df7243eb01f7b",
-      "statement": "The centralized ApiClient (src/lib/api-client.ts) auto-injects Authorization: Bearer <token> and X-Cabinet-Id headers read from the Zustand auth store on every request, unless skipAuth/skipCabinetId is set; an immutable initiating authToken/cabinetIdOverride wins over the mutable store values, non-OK responses throw ApiError with Retry-After extraction for 429/503, and the constructor logs an error (does not throw) for plain-HTTP production API URLs outside localhost.",
+      "statement": "The centralized ApiClient (src/lib/api-client.ts) auto-injects Authorization: Bearer <token> and X-Cabinet-Id headers read from the Zustand auth store on every request, unless skipAuth/skipCabinetId is set; an immutable initiating authToken/cabinetIdOverride wins over the mutable store values. Authenticated 401s (excluding the refresh endpoint, and unless allowReactiveRefresh is disabled) trigger the D-2 single-flight refresh and a single replay; other non-OK responses throw an ApiError whose message is centrally sanitized (Wave C, FE-D3) with Retry-After extraction for 429/503, and the constructor logs an error (does not throw) for plain-HTTP production API URLs outside localhost.",
       "evidence": [
         {
-          "resource": "repo://src/lib/api-client.ts#L106-L130",
-          "version": "repo-lines-v1:sha256:0c0bc00f2bfb72aea794bbf22a6639f182f6dab304514946b7c049595dfa5dde:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3NjgxMmU3YTk4MTM5M2UxYjc4ZDJlOWY3MjQzZGIxYzRjNmM3NWE4Y2IyY2JiM2Y0YzA1ZTQyMmUwMWE3ZWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwZDcyMmExMDlkNmJhMDk1ODJhNGFmZjY0MzgyNDIwODBjYTVkMWJmZTMyMjI1OGE4ZWVlZjJkZTQ3Zjc3MTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlNzVjYTg4OThhNTZhOTZmZDI3NjY2OGEwMjc1N2UwZmNhY2I5MWY5OTAyYjZkZThmZGY5MTYzZTRkZTQ4ZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMDEzYjEzMjRhZjdmMWEyMzFiODNlODhhZjBmMjIzZWQ4ZDUzMzc5NzkyMWUwYWM5YmI3ZTZiYWQ0YmFiMDcifQ"
+          "resource": "repo://src/lib/api-client.ts#L26-L67",
+          "version": "repo-lines-v1:sha256:0bc064fb932e49fb26b87e82b4491540acdaadde6876d5d78fd2f05ecc60e105:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1NGIzM2QwZjI1YmQ5NDQ3ZjQyNDVjZmI4MTFhNTY4YTc4ZDRlNGMzMWJhMTg4OGU0Y2UyNmMzMWM0ZjBiZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4Nzc1MDE2ZjViNDZhOGJjZGRiNDA3ZDNhMzkxYWRhYmJlZjY1YzkyZDE1YjYwZjY3ZGYzZTIzY2U4Y2MzZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjN2E5NmM0MWVkNTI1OTk2YzFkNjdlZTIyMDFmMDVmNjg3NDI5ZjI5NzFkYjdjYjI3MzhjMDAyMjRhYWYxOWYifQ"
         },
         {
-          "resource": "repo://src/lib/api-client.ts#L25-L66",
-          "version": "repo-lines-v1:sha256:0bc064fb932e49fb26b87e82b4491540acdaadde6876d5d78fd2f05ecc60e105:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1NGIzM2QwZjI1YmQ5NDQ3ZjQyNDVjZmI4MTFhNTY4YTc4ZDRlNGMzMWJhMTg4OGU0Y2UyNmMzMWM0ZjBiZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4Nzc1MDE2ZjViNDZhOGJjZGRiNDA3ZDNhMzkxYWRhYmJlZjY1YzkyZDE1YjYwZjY3ZGYzZTIzY2U4Y2MzZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjN2E5NmM0MWVkNTI1OTk2YzFkNjdlZTIyMDFmMDVmNjg3NDI5ZjI5NzFkYjdjYjI3MzhjMDAyMjRhYWYxOWYifQ"
+          "resource": "repo://src/lib/api-client.ts#L77-L146",
+          "version": "repo-lines-v1:sha256:50668fd7d7d1bdd65c4367133247e9b948cb12df829fc6903e770f3d13d72e2d:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4YzVkYTc3ZjcxMzlhNDlmZTMxN2U2MGU4OTEyNDFhOTJlMGYxZDMyZDQ4NDQ3MmE5ZTNkNWYwNjUyZTgzOWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwZDcyMmExMDlkNmJhMDk1ODJhNGFmZjY0MzgyNDIwODBjYTVkMWJmZTMyMjI1OGE4ZWVlZjJkZTQ3Zjc3MTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3OTVjNTBmNDk0Y2M1ZTcwZjlhYjExNGRiMmQzMzVjYzJhMWM1OWExMjc1OWNmMjdjZTQ5NzlkZmQ5NDEyYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMDEzYjEzMjRhZjdmMWEyMzFiODNlODhhZjBmMjIzZWQ4ZDUzMzc5NzkyMWUwYWM5YmI3ZTZiYWQ0YmFiMDcifQ"
         }
       ]
     },
@@ -341,6 +341,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-11T08:47:52.616Z"
+    "at": "2026-09-13T08:47:58.162Z"
   }
 }

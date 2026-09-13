@@ -58,10 +58,10 @@ sources:
     resource: repo://src/stores/authStore.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-13T08:47:58.162Z" }
 verified:
   - by: openwiki/0.5.1
-    at: 2026-09-11T08:47:52.616Z
+    at: 2026-09-13T08:47:58.162Z
 ---
 # Architecture
 
@@ -115,6 +115,8 @@ Page (client component)
                   ├─ Authorization: Bearer <JWT>
                   └─ X-Cabinet-Id: <cabinetId>
 ```
+
+Non-OK responses throw a centrally constructed `ApiError`: since Wave C, every HTTP error `message` is scrubbed at this single choke point by the FE-D3 sanitizer (secrets/stacks/paths/JWT, truncate ≤200), while status, headers, `data`, and the extracted `Retry-After` (429/503) pass through untouched; 401s may instead trigger the D-2 reactive refresh described below.
 
 TanStack Query is configured with a browser-singleton `QueryClient` (fresh client per render on the server, reused browser client) to avoid recreation on re-render and to survive React suspending during initial render. Defaults come from `makeQueryClient()` in `src/app/providers.tsx`: `staleTime` 60s, `gcTime` 5min, `retry: 1` for queries with refetch on window focus/reconnect, and — per policy FE-D1 — mutations retry via `shouldRetryMutation()` (one retry, never on 4xx permanent client errors), pinned by a unit test in `src/lib/mutation-retry.test.ts`.
 

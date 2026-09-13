@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:1037cab5dc304da9b421138add96b8cae34131a5a2631eb61477f46efbe96f85",
+  "pageVersion": "sha256:1e0292bb5b5ed4f72350d2a43621026cd02403c46b2d0a1e420abb54a1e01db1",
   "claims": [
     {
       "id": "claim_7146a57eacad4db2bf7552b903072ad9",
@@ -48,15 +48,19 @@
     },
     {
       "id": "claim_40680ad34c7f4a82b1c8e3b266b4a0a1",
-      "statement": "scripts/check-shadcn-ui-boundary.mjs is a node-stdlib-only scanner over production src/**/*.{ts,tsx} detecting the LEGACY_PALETTE regex and 3-branch CONTEXTUAL_HEX canon, with a ratchet baseline of 459 counted violations at scripts/.shadcn-ui-boundary-baseline.txt (exit 0 at or below, fail only on increase; born at 523 in Story 174.2, ratcheted down by 174.4) and 3 suppressed matches in 3 files via BOUNDARY_EXCEPTIONS (C5 waterfall hex + two historical #7C3AED chart marks; the FeedbackButtons exception was lifted 2026-09-02 when PB-4 was fixed).",
+      "statement": "scripts/check-shadcn-ui-boundary.mjs is a node-stdlib-only scanner over production src/**/*.{ts,tsx} detecting the LEGACY_PALETTE regex and CONTEXTUAL_HEX canon, with a ratchet baseline (exit 0 at or below, fail only on increase) whose trajectory is 523 (174.2) → 459 (174.4) → 372 (session-2 waves) → 118 (sessions-4/5, C5-frozen) → 114 (C5-W1, dead chart-colors.ts deleted) → 57 (C5-W2) → 0 (C5-W3, PR #443). The gate is now TERMINAL: baseline 0 AND exceptions = 0 registered — BOUNDARY_EXCEPTIONS was emptied in C5 wave-4 (2026-09-12) after all 22 suppressed violations (waterfall-chart-config 11, PriceHistorySheet 6, FunnelTab 5) migrated to var(--color-*) tokens; the FeedbackButtons exception had been lifted 2026-09-02 (PB-4). Any increase = STOP.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-final-delivery-manifest.md#L73-L98",
-          "version": "repo-lines-v1:sha256:6be97d1ae71dbfbc184585888d700aeb4f655d56447f5990b7911223f0d8994a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMjBhMjU3N2RhZmZjNzJlNGZmZmVlMDE2NjQ1MjM3NmFhYzE2ZmQ3YzVlYWM2ZGZiYzFjMGYwZmYxZWEyNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlYTZhNjFmOTcyMDdkZDUzYjFlY2M5MWQxNjllNzE2YWI5MjcxNDMzZWNiOWNmNTg5MWI1OTg5ZGExNjZmZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkY2FjZDg1NjU2ZTI2NmUyNWYwYzU2OWI1NTZmZTVhZTEwMmNiYzE3N2Q1NDZmMjkyZmM3M2EzNzJlMmI0ZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUzZjkxNTljMDc2ZWI5MWM2ODFhYzlmYWE4MTUyYjBiZWY4M2ZiNDRkNDI4Y2YwZmFlMzE0YmI2NmFhMTkxMzgifQ"
+          "resource": "repo://CLAUDE.md#L153-L154",
+          "version": "repo-lines-v1:sha256:e35fb2cf9076c319e626384e27b029bb41b95ae183da8befa52edfc4e927d5a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmM0ZWM3MzJkZDkwNDc2ZDExYTM5ZDZkNDdjOGE0N2U2MGJlM2YzZTMwMGY4OGIwMWE1MTdjMDE3MmUxZGRiMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODMyZGFkY2Y5OTQwMTY1ZWNhZDY3OWNiYWQ0ZDhkNmMwMzEwNzZlZDg2ZDI5ZjM0Mjg2NjkyZDRmNWM1NWYwNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
         },
         {
-          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs",
-          "version": "repo-file-v1:sha256:c2b0e0efa87bf1396ef77ca5f20f8df1d7c1b664042c61b100825f856f8af44d"
+          "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
+          "version": "repo-file-v1:sha256:9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+        },
+        {
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L30-L39",
+          "version": "repo-lines-v1:sha256:7e04cdc5c016744e0b241ae05e7a27aad942be1390c775c5fbeb86c8425e3594:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwYjI3MTZiZGZjZWU4NTQ4YWU1MDI0MWYyYjZlZTEzYzEyMWFlNTRiYWI5YTI2OGVhY2M3Mjk0ZTk0YWI3OGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNTY3ZWMyOGY0NTM2ZWQ5MzEzMjI4YTc3ODQ3NmU4MGVmOTJkMzdlOTgwMzJkNWJkYTAxZjEzNzRjZjM2M2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmMDYxZTgwZWZjNjQwMmY2MTQ1ZjIxZDAzOGFjNThlZGRlYWU4Mjk2YzYwYzU5NTJhZmJhNTM1ODhhN2IxNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4YzkxOGVhM2M5MGQ0NWNhZTBjZGJiNmJkMTkwYTA1Y2NkZTYwNzk1YjZjYTMxZWU1ZmM4YzlmYWMxZTcyM2EifQ"
         }
       ]
     },
@@ -308,7 +312,7 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:71a5c96f044b128bce7d83bda2066fda47da03ae7c8f7f63fe0b2bf6abc43085"
+          "version": "repo-file-v1:sha256:2588e1be9187976e1b10c15d9928ec19f30073171447866199a219ee028c5553"
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
@@ -322,19 +326,19 @@
     },
     {
       "id": "claim_64ebcd3023134ee0be1292d5c89c0b03",
-      "statement": "FE-D3 (raw `getErrorMessage` echo) was resolved in session-6 (PR #411) with `sanitizeFallbackMessage` (11 scrub patterns, prebound 4096, code-point truncate ≤200, generic fallback), and its family follow-up fe-d3-family (session-8, PR #416) moved the function byte-identically to `src/lib/sanitize-fallback-message.ts` with a re-export from `wb-token-form-helpers.ts` preserving the SHA-pinned test (no manifest regen needed) and switched the four hook-local fallbacks (useCloseSupply, useCreateSupply, useGenerateStickers, useDownloadDocument) from raw `error.message` echo to sanitization; ~128 `.tsx` echo surfaces remain an owner decision (recommended: apiClient-egress sanitization).",
+      "statement": "FE-D3 (raw getErrorMessage echo) was resolved in session-6 (PR #411) with sanitizeFallbackMessage (11 scrub patterns, prebound 4096, code-point truncate ≤200, generic fallback) at src/lib/sanitize-fallback-message.ts (moved byte-identically from wb-token-form-helpers.ts, which re-exports it so the SHA-pinned test needed no manifest regen); fe-d3-family (session-8, PR #416) switched the four hook-local fallbacks (useCloseSupply, useCreateSupply, useGenerateStickers, useDownloadDocument) to sanitization. The systemic tail was closed session-14 wave C: both ApiError construction sites (api-client.ts HTTP :131, network :182) sanitize centrally, covering all ~131 downstream JSX-echo surfaces with a 2-site diff; pass-1 caught a HIGH bypass via raw errorData in api-wb-token-errors and a telegram-egress hole, both closed.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-fe-d3-family-hook-fallback-sanitization.md",
-          "version": "repo-file-v1:sha256:8b72d78fdbccb497f48a04f936d1b8b2ea89515f2c2b90338ae059247ffcd53e"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-session14-owner-decisions.md#L64-L73",
+          "version": "repo-lines-v1:sha256:8c07db58bab8e822196a4c3fa2eb08fa810034a95b97efca0fb1a0ba9d0924b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhZDJjNGM2YjcxNjNhNWEzYzdkODZhZGNlYTBiNmRhNDgzNTZmYTM0Njg5YmMxZDY2ZDA0YWE0ZWI1ZTMwZWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiNTkwMmE2ZjMxNzVhMjQxNzNhZjcwODIyNjA0YjllMzQzMDk4OWYyMDhlYTJjOTJiMTIyZWM0MzZhYWVkOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlNTcwNjBmOTRiZGNlZDE4MGFkNDBkYTA5YmQ1MDI1NmFlMTg2ZTAwYjM5NWI2NGJkOWE5OGE3NWYwMTA2ZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViNWMzYjc0ZTliOGNiZTYxMzAwZWExYWIxN2EzZTgzMGVmOTEwODFmMTk1YWYzNTBiZTRhNDQyZDEzOGYzMjAifQ"
         },
         {
-          "resource": "repo://src/hooks/useCloseSupply.ts",
-          "version": "repo-file-v1:sha256:682c5bba973abdbf98490bfb9c94cc1c86d1e956519624fd0b535cca8c1dc0b2"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L414-L420",
+          "version": "repo-lines-v1:sha256:b90b0a546c97ba768617e3ffa979ea8249b96edf0bc9d62c96fec33eefa02b8e:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmE3YzI2NTFjN2JiNTAwYjFlNjU3N2IwYmY1ZmI4OWZmNmE3MGI5NWQwMTdmZTAwNTkyOGFjNmIwYWFhZWY0YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWQ3ZDhhZjc2MWI0YzMwOWRmOWYzM2JkNTE5NGE2ODYyNTAwYWRlMWE3ZDA0NjE4ODMyODdjMTgwMzFhYjdkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTcxMTJhYTMxYjJhMWMxMmQ5NGNjMGM0ODRhMDExODZmMDU0OWY4ZTM2ODYzYmRjMmNmNDIwZmFhZDM4Y2E4OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODU1ZmViYWRlOGI3M2M5OWJhMmFlODk3ODA4NTEyZTA3YTE0YWRiMTBhNDE3MTk0MTRlOWQ1ZDRkZjYyNmI1NCJ9"
         },
         {
           "resource": "repo://src/lib/sanitize-fallback-message.ts",
-          "version": "repo-file-v1:sha256:feae577e73391d6eca472d1c423ea6591b67056d714f8eb297255d279e03b9ec"
+          "version": "repo-file-v1:sha256:01599707e513a3d8cb875b98fb8ee6856fb17cde17e8675eaf3100dbde6b53ac"
         }
       ]
     },
@@ -348,21 +352,21 @@
         },
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:71a5c96f044b128bce7d83bda2066fda47da03ae7c8f7f63fe0b2bf6abc43085"
+          "version": "repo-file-v1:sha256:2588e1be9187976e1b10c15d9928ec19f30073171447866199a219ee028c5553"
         }
       ]
     },
     {
       "id": "claim_f16402306c2e4073a4747611e05388fc",
-      "statement": "The repo-wide `/80`-sweep (text-*/80 AA failures) was resolved in session-6 (PR #410): 16 prod sites — 9 remediated (worst 2.78 → 3.76+), 6 PASS-as-is with attested comments, 1 owner exception (A2 OrganicTab /80-tier, where alpha tuning is non-viable and structural tier differentiation is recommended).",
+      "statement": "The repo-wide /80-sweep (text-*/80 AA failures) was resolved in session-6 (PR #410): 16 prod sites — 9 remediated (worst 2.78 → 3.76+), 6 PASS-as-is with attested comments, 1 owner exception (A2 OrganicTab). The A2 exception itself was closed session-14 (2026-09-12, owner decision (a) structural differentiation): the effective tier uses full text-financial-positive (5.13 light AA vs bg-card) with tier distance on the non-text channel (CheckCircle2 opacity-80, 3.51 ≥ 3:1); /95 passes (4.66) but is visually indistinguishable from full, so the closure was owner-design-forced; live text-financial-positive/80 in src = 0 with a re-inflation guard.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-80-sweep.md",
-          "version": "repo-file-v1:sha256:0da8faf5ae52d72ad83523b66af6ca9b1b613df7f37ba11d5305faa781ac9b05"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-80-sweep.md#L49-L53",
+          "version": "repo-lines-v1:sha256:9877606cea59e4043aade5aa13e7f70993707566e84eae60b7ebcfb76261b0cb:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGU4Mjc2NWRkM2ExZTVhMjRjZWFhZjMzOTE3YjVjYjk3ZjU1YWMxYTcyNThmYmNhNWQ1ZTJhODM5OTllNjUwMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWUxMGU0ZDE2MGYyNzI3NzBlODg3Mjg5YWNiMTMyM2EwNjBlNjllNzIzNDZiZmI3ZWY5NGM3OGEyOThlNDY4ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTY3MjBjMmVhM2U1YTQ1NjRlOTNhNGU5YmM2ZWUyMWIwZWNjYjMxYjM3NmZhZTMwNTk0NTFjODdlYWMzNmE0YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-09-05-V17-SESSION6-80-SWEEP-AND-FE-D3-EXECUTION-AND-REMAINING-BACKLOG.md",
-          "version": "repo-file-v1:sha256:a67379f31b988631b145863458024e357111d55ebb69219a1e9b6a0911dbaa14"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-session14-owner-decisions.md#L35-L45",
+          "version": "repo-lines-v1:sha256:c74348f40fcdf2d60e3be4abeffe2e1c20ea408f05abaca1948b20c77e33fc84:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1Y2IyZGExMzU3OTQxNmE4NTZhY2E1ZDZlY2U2ODBkZDM4YjM5YzEwZmMwNzQzN2JhNDM2NDQ0YWM0NGRkODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViNzFmMjYxODBlYmFlMTNkMGU4MjM4ODVmMGNiNzkxYzZkMGU0M2NiZTQ1YTFiMzBjYzA1MjgxODMzM2UwNTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkZjVmMTU2Y2EwOTU3M2JlNDI3YmVlNjE2YTIwM2Y0NzcxNmJkYmY5M2Q2ZWM1YzhhYTFlMTY4ZDIxMjk2MzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmYzIxNTVmNDA4Njc2MzI2NTBiMjBhNWM3MTc1OTVmODUyOWI1MDFjMzEwZjM1M2I2NmU2MmRiNGM3OGQ5NDQifQ"
         }
       ]
     },
@@ -414,15 +418,15 @@
     },
     {
       "id": "claim_9a42274ef00c48a680e52db938b03cb3",
-      "statement": "The debt-session Vitest floor advanced monotonically 19,363 (program close) → 19,439 (wave-3) → 19,448/19,464 (session-6) → 19,492 (FE-D1) → 19,521/19,537/19,559 (session-8) → 19,570 (session-9 route-guards #427, held exactly by sessions-10/11) → 19,573 (C5-W1, +3 token-contract pins — the current CLAUDE.md floor), with each increment shipped in the same PR that updates the CLAUDE.md Accepted Baselines floor.",
+      "statement": "The debt-session Vitest floor advanced monotonically 19,363 (program close) → 19,439 (wave-3) → 19,448/19,464 (session-6) → 19,492 (FE-D1) → 19,521/19,537/19,559 (session-8) → 19,570 (session-9 route-guards #427; sessions-10/11 held it) → 19,573 (C5-W1) → 19,582 (C5-W4) → 19,584 (A2 tier wave) → 19,592 (apiClient central sanitization) → 19,604 (logger central redact — the current CLAUDE.md floor), each increment shipped in the same PR that updates the CLAUDE.md Accepted Baselines floor.",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L153-L154",
-          "version": "repo-lines-v1:sha256:3d7aaccec8927779931c1f60dcfb81f4b9b93898fc8739990dd122501749a6c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTI4Y2FjODA3MTZjYzUzY2M0ODAyZjU1NTlhOTg1ZGIzYmFiOTgxMDE0MmM4OGQyNTkxYTQ1YzkxZTM0ZTJiOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWM5NDliMzE3OTBmOTBiZTNiNzc1YTE5OWMzOTVjMmU2MzJmNTFjZDE5NjEzNjc3NzM5MjI0MzZhYTQzYzZkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
+          "version": "repo-lines-v1:sha256:e35fb2cf9076c319e626384e27b029bb41b95ae183da8befa52edfc4e927d5a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmM0ZWM3MzJkZDkwNDc2ZDExYTM5ZDZkNDdjOGE0N2U2MGJlM2YzZTMwMGY4OGIwMWE1MTdjMDE3MmUxZGRiMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODMyZGFkY2Y5OTQwMTY1ZWNhZDY3OWNiYWQ0ZDhkNmMwMzEwNzZlZDg2ZDI5ZjM0Mjg2NjkyZDRmNWM1NWYwNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
         },
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md",
-          "version": "repo-file-v1:sha256:f7dd4b4d8d505d7688f5a69626011781b42cedd245a81b59b5912fb23a2d4164"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L389-L427",
+          "version": "repo-lines-v1:sha256:9bfab9bc9c724f60d59ad5deb61a3444c71188cdfbe0c9be118c4cfc00ebd8aa:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmZDc4ODllZDVkZjkxZDBmZGE4ZmEzM2YwZTM5NTVlMjA0ZTVmMzgxMzIwMzI1Y2IzYjE1NDBjYzgzYTE2OTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4OTQ1ZjJmYWNmOWU2OGJjMGNiYjdjOTIzNDc0OGRkMTg4ZTZjZjIwNmM5NzIwNmVhZTY5ZTJmOGNlYjdkODMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY1OGEyMjRjNmIxZGUzNmFjZTc2YzFhNjQ3ZTcxNWFlNjAwMWYwODBmM2RjMDY2ZjIzNDAwOTNiMjk0NmE2NTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk2MzFmNzIyYzVlNWEyNjVkYmU3NTE5NGQ3YTRlZWFhMTc4MzAwYzU4NTEyNDMyOTg3YjZiMmY5OWIzNDVmZDgifQ"
         }
       ]
     },
@@ -516,15 +520,15 @@
     },
     {
       "id": "claim_7cbc0dab02f84e318ce0e7ca0708340d",
-      "statement": "Session-10's docs-95 zoning item re-zoned `scripts/.check-docs-baseline.txt` by comments into CANONICAL: 1 / ARCHIVAL-CANDIDATE: 4 / ARCHIVAL: 90, but the zones are narrative only: the gate strips comments today, and `--update-baseline` regenerates the file flat and silently destroys the zones (re-split required after every regeneration). Recon corrected the item's premise — the canonical zone is materially empty (94 of 95 broken citations live in frozen docs; the single living-doc entry cites the permanently deleted `src/hooks-v1/useMarginTrends.ts:70` and is fixable only by rewriting the citation in the doc), so the gate already implicitly enforces zero broken citations in living docs.",
+      "statement": "Session-10's docs-95 zoning re-zoned scripts/.check-docs-baseline.txt by comments into CANONICAL: 1 / ARCHIVAL-CANDIDATE: 4 / ARCHIVAL: 90, but the zones are narrative only (the gate strips comments; --update-baseline regenerates flat). Session-14 (registry §41, variant (a)) closed the split: the single CANONICAL entry (VALIDATION-PLAN.md quoting the permanently deleted src/hooks-v1/useMarginTrends.ts:70, whose quoted bug is real and fixed in the live src/hooks/useMarginTrends.ts) was rewritten into RESOLVED form and a bare regen dropped the baseline 95 → 94 with NEW=0/RESOLVED=1, gate exit 0; the zone markers were smoothed by that regen and 5 archival entries remain structurally unfixable (BE-repo paths / dangling).",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-p3-docs-95-zoning.md",
-          "version": "repo-file-v1:sha256:8d7b3f090717dde3f51daa72a3f640d46df3cc61459e146afd61ff98c7313c2b"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L433-L437",
+          "version": "repo-lines-v1:sha256:49a628845ad03c48d53a3b395777fa6375035bd1caa0a7a272bbb973b46e7088:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmUxZTQxMjIxMzc5NDdlZGViZWVmMjA1MzM0MjVlMmYwNDljOWNjZDViMGE4NmNjZTA0Yjg3ZDkyYzMxMWVhMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGNkZWZiN2I0NTM0MTNhY2M3MTZiNTdmYjE4NjRkODFjZTMwZDM4NzgxYjFiOTA2ZmZiYTVkMjQyMjVlZDExOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGQ5Nzk2ZTM1ZTQ4MTJlNjJjZmNiZWNhZDg5YWEyMzI2MDUzZTA5YjYwZGMyZTYxMWY0YTlmZGIwMzkyODY3ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         },
         {
           "resource": "repo://scripts/.check-docs-baseline.txt",
-          "version": "repo-file-v1:sha256:82878fa8985f3664b7ebbde81feecf491bd16b1c05541646c726173e31e1eb6f"
+          "version": "repo-file-v1:sha256:a6394c58c36d867caa3b1e52d55abe7f70a25835316ea36e595455b8594e8870"
         }
       ]
     },
@@ -548,7 +552,7 @@
         },
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:71a5c96f044b128bce7d83bda2066fda47da03ae7c8f7f63fe0b2bf6abc43085"
+          "version": "repo-file-v1:sha256:2588e1be9187976e1b10c15d9928ec19f30073171447866199a219ee028c5553"
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-10-SESSION10-4-ITEMS-EXECUTED-AND-REMAINING-BACKLOG.md",
@@ -576,19 +580,19 @@
     },
     {
       "id": "claim_42d6bf506d08446fa420314c24a0d7c0",
-      "statement": "The C5 chart-palette epic was unblocked by eight owner decisions on 2026-09-11 (CSS tokens as the sole chart-color canon, categorical chart-1..10, --valence-1..5 + --valence-neutral, waterfall valence semantics, full 118→0 with all 3 boundary exceptions lifted, 4-wave delivery, review mode 4/2/2/4). Waves 1-2 executed: W1 (PR #441) minted +10 token roles ×2 themes in globals.css, fixed dark --chart-2 lightness 59.6%→70% (selected-stack pair 5.31:1, RED-check reproducing 3.6979 ≈ the wave-6 \"3.71\"), deleted the production-dead src/lib/chart-colors.ts, and advanced floor 19,570→19,573; W2 migrated 57 lib-hex sites to tokens with the codified color-mix tint recipe (raw var triplets are not colors — jsdom is blind to CSS-variable resolution; hsl(var(--x)) would re-inflate the boundary). The ui-boundary ratchet fell 118 → 114 → the current 57 (residue = 38 chart-hex + 19 legacy classes: components 37 + app 17 + types 3, owned by C5 waves 3-4). An owner fork remains for wave-4: light valence/chart-7/8/10 as text are 1.92-3.76:1 (below AA; chart-9 light 4.83 passes), so closing the WCAG 1.4.11 bundle in light requires either retuning (breaking the pixel contract) or recorded acceptance of legacy light.",
+      "statement": "The C5 chart-palette epic (opened by 8 owner decisions 2026-09-11: CSS tokens as the sole chart-color canon, chart-1..10, --valence-1..5 + --valence-neutral, full 118→0 with all exceptions lifted, 4-wave delivery) CLOSED in session-13 (2026-09-12): W1 (PR #441) minted +10 token roles ×2 themes in globals.css and fixed dark --chart-2 lightness 59.6%→70% (selected-hover pair 5.31:1, RED-check 3.6979 ≈ wave-6's 3.71); W2 (PR #442) migrated 57 lib-hex sites; W3 (PR #443) the components/app/types residue → boundary 0; W4 (PR #446) closed the waterfall double-color-source, migrated all 22 suppressed literals, emptied BOUNDARY_EXCEPTIONS, and closed WCAG 1.4.11 by owner verdict (a): dark + component pairs AA, legacy light accepted (chart-9 light 4.83 outside the fork). The canonical TS string-value form is var(--color-<role>) — raw var(--x) triplets are not colors (jsdom-blind, proven by a headless-Chromium probe) and hsl(var(--x)) matches CONTEXTUAL_HEX; tints use color-mix(in srgb, var(--color-<role>) N%, var(--color-card)).",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L153-L154",
-          "version": "repo-lines-v1:sha256:3d7aaccec8927779931c1f60dcfb81f4b9b93898fc8739990dd122501749a6c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTI4Y2FjODA3MTZjYzUzY2M0ODAyZjU1NTlhOTg1ZGIzYmFiOTgxMDE0MmM4OGQyNTkxYTQ1YzkxZTM0ZTJiOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWM5NDliMzE3OTBmOTBiZTNiNzc1YTE5OWMzOTVjMmU2MzJmNTFjZDE5NjEzNjc3NzM5MjI0MzZhYTQzYzZkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
+          "version": "repo-lines-v1:sha256:e35fb2cf9076c319e626384e27b029bb41b95ae183da8befa52edfc4e927d5a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmM0ZWM3MzJkZDkwNDc2ZDExYTM5ZDZkNDdjOGE0N2U2MGJlM2YzZTMwMGY4OGIwMWE1MTdjMDE3MmUxZGRiMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODMyZGFkY2Y5OTQwMTY1ZWNhZDY3OWNiYWQ0ZDhkNmMwMzEwNzZlZDg2ZDI5ZjM0Mjg2NjkyZDRmNWM1NWYwNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
         },
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-c5-w1-chart-token-canon.md",
-          "version": "repo-file-v1:sha256:f7dd4b4d8d505d7688f5a69626011781b42cedd245a81b59b5912fb23a2d4164"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L373-L398",
+          "version": "repo-lines-v1:sha256:e21fb7af7647876ae4962c4e686ab84696469984479252fd49632aefcf2192c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4NDIwNzcxYjA4NzM3OTkxYzllMWQ0MzVmMjkwYWM3ZmMzYzViMDcxYWNiN2M5YjQ5NTVmMDMzZWMzODcyNTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhZjQ3ZGExMTExMTBkYWQ1ODU4ZTVkMDJjYWYzMDM3YmExMTQwNWU2MGJlYTQxZDM1ZGQ4ZGNmZmZmYjZlYjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyYWJkMWI3OTZkNzc4OWNmNzFiN2FhNTcwMWZiNGM2ZWM2YmE2ZjM3OTNiYjU3YzgyMDA3NzQwNjc3ZjkxM2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiMWI4MmE5YjY4NjY4NDZlNjJiOGU0YzZmMTgxZmI5NDM0MmQ1NmY2YmI3ZGIxYjA5ZDNjNTcyNjA3YzM4NjUifQ"
         },
         {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:71a5c96f044b128bce7d83bda2066fda47da03ae7c8f7f63fe0b2bf6abc43085"
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L30-L39",
+          "version": "repo-lines-v1:sha256:7e04cdc5c016744e0b241ae05e7a27aad942be1390c775c5fbeb86c8425e3594:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwYjI3MTZiZGZjZWU4NTQ4YWU1MDI0MWYyYjZlZTEzYzEyMWFlNTRiYWI5YTI2OGVhY2M3Mjk0ZTk0YWI3OGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNTY3ZWMyOGY0NTM2ZWQ5MzEzMjI4YTc3ODQ3NmU4MGVmOTJkMzdlOTgwMzJkNWJkYTAxZjEzNzRjZjM2M2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmMDYxZTgwZWZjNjQwMmY2MTQ1ZjIxZDAzOGFjNThlZGRlYWU4Mjk2YzYwYzU5NTJhZmJhNTM1ODhhN2IxNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4YzkxOGVhM2M5MGQ0NWNhZTBjZGJiNmJkMTkwYTA1Y2NkZTYwNzk1YjZjYTMxZWU1ZmM4YzlmYWMxZTcyM2EifQ"
         }
       ]
     },
@@ -609,10 +613,38 @@
           "version": "repo-lines-v1:sha256:dd3d31e56d012f19cbcf4644e2d1ad7cbd4fdcac94ba9b28b6e6dbb344d6eb80:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQzZDMxZTU2ZDAxMmYxOWNiY2Y0NjQ0ZTJkMWFkN2NiZDRmZGNhYzk0YmE5YjI4YjZlNmRiYjM0NGQ2ZWI4MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQzZDMxZTU2ZDAxMmYxOWNiY2Y0NjQ0ZTJkMWFkN2NiZDRmZGNhYzk0YmE5YjI4YjZlNmRiYjM0NGQ2ZWI4MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWE4NGEwNmYyNzg1NmJlZWQzNGEwMjY0MDZkMGRiYjIxZmE1MTE5MDA2N2NkZGEzYjg2MGQ0OGY1ZWVkYWZmYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGRkY2VmMDY2MzE1YWQ2N2ZjODFlY2NiZjcwNjhiM2YyOWJhYmM4M2FhNTFkM2I5MGRhOTU3MDM0YjAyOTE2NiJ9"
         }
       ]
+    },
+    {
+      "id": "claim_9a7939bc32d04a158d50bb38fee2b916",
+      "statement": "Session-14 (2026-09-12, V22) executed four owner-decision waves: A closed A2 OrganicTab via structural tier differentiation (floor → 19,584); B declared financial-positive/negative/neutral the financial sign canon in CLAUDE.md (zero/absent = muted-foreground, fg-on-tint mandatory, tier intensity on non-text channels, financial-foreground deferred) as a code-content NO-OP — preflight proved C2 MarginDisplay and the unit-economics contrast trio already fixed by earlier waves; C centralized sanitization in api-client.ts; D wrapped logger.warn/error in redactSensitive centrally (131 calls / 81 files closed untouched; Error identity carve-out then a same-class ApiError clone after pass-1 caught raw ApiError.data leaking; debug/info untouched; stack verbatim disclosed).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-session14-owner-decisions.md#L7-L28",
+          "version": "repo-lines-v1:sha256:d6c3b17e2a9aa6ca6cd584b02d55178eea401870d9377e03934c15599b907ab3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0MTExNWE1NTQwYTVhNWMwMjY5OTlkNDU5NWM3NDgxMzk2YmYyMzA3YjBlOGExYWU2ZmNlNzNhNmM2Yzc3MzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1NmExN2ViZGFkZjI5MjVjOGUxMjU5YmE2YTY1YTQ2MzQxYWJhYTE5ZWFmMjI5YjdjZWFlM2Q4YzFkMTQ2NjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEzZTA2M2IxMTJkYzg1YTg3ZDRmNzExM2YyMTQyMzhmNTQ0MTA3ZTg1YzQ2ZjViMTQyYWVkNTNiMDZhNTczMGYifQ"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L406-L427",
+          "version": "repo-lines-v1:sha256:a06891f048bdcf3d8e0cc2b465423b75099c205f68f3a2f2a565c9cac00b89a2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwNGMzMTdmZGVmZDAzZjY3ZWMxYjZmYTJkNjA2N2Q5NGVkNjA3N2JmY2RhYzg3OWFiZmRmMmQxY2E0Y2JjYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4OTQ1ZjJmYWNmOWU2OGJjMGNiYjdjOTIzNDc0OGRkMTg4ZTZjZjIwNmM5NzIwNmVhZTY5ZTJmOGNlYjdkODMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0NzUwODNhMjc5NWQ3MTY2MmUwYjc1ZGUwZDNmMDEzNGNhYzg4M2QyMDhlMjJlMGI2OGM1ODNkZDQwNjA2NmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk2MzFmNzIyYzVlNWEyNjVkYmU3NTE5NGQ3YTRlZWFhMTc4MzAwYzU4NTEyNDMyOTg3YjZiMmY5OWIzNDVmZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa2e5cb1a89d49919d925d3048dd5278",
+      "statement": "C5 wave-4 closed the waterfall double-color-source in src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts: every value is a full-form var(--color-*) token — revenue → chart-9, seven categories → chart-1..10 indexed against lib unit-economics COST_CATEGORIES, and three documented distance-offset divergences because chart-4 ≡ chart-positive (both themes) and chart-8 ≡ chart-negative (dark) are byte-twins (logistics_return → valence-2, penalties → valence-4, other_deductions → valence-neutral, which also resolves the revenue↔other collision on chart-9); the Story 168.11 guard pins canon form over all 13 roles with a pairwise-distinctness Set(13) and bans on chart-4/8 and sign tokens. The wave also converted wave-6's border-status-warning/40 to solid border-status-warning across 41 prod files / 51 sites (no alpha reaches 3:1 on all adjacent light backgrounds).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L391-L394",
+          "version": "repo-lines-v1:sha256:ae122ff6b4199293aa2f35b5684024c97dae8d22543d2d6a1a1ab37ba5302e17:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWIyMzI3NzQ0MWIxZTJkMDcyZjJjODRiODlkMzFhNDdlMGU1NTVhNDZlMzNiYzJlNzg4ZWFjNjY1YWIwZTg0ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzBjZmYzMWY0ZTlmZmNkNjkxMjVkYmQ3YzI4MDFmMTQ2ZThlODQxNmYxZjUzZjEzMzAyOWFkNDc0ZWRmYWQ3ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2JiOWQ2NDUwYmM4ZDljNzI0OGFlNjVjYmZlNjAyZGNlZTYzN2FlYWY1ZDVlYzM3OGVmOGI1NjRhYmM1NTgxMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDVmZjIyZDZjNTZkNjQwZDQyMWJkNmQ2ZThhNDAzOWU5ZWQwOTM5MzM2OTBjM2QxNWQ1NzhjN2UxOGJlZTUzNyJ9"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts#L8-L35",
+          "version": "repo-lines-v1:sha256:08a11ae3343ea9a76fdae796fea9c848bbc2488779b9110912fdca189de63ffe:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4Mzc5Y2EzYjNlODQxZTNkZDg2MWNkYzE4NDkzYTQ0Y2I1NmU4MDVkZmQ3YzY0YTM1M2QyMDg2ZGRmNjc3MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhZDFhNmQxNTM3ZDI1NGI4Y2JiMTQ3NWVhZTJjNjc4YjYxZWQ3OGZiYzljMmNmMWU1MjQwODYyMDdlNjlkYzUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-11T08:47:52.616Z"
+    "at": "2026-09-13T08:47:58.162Z"
   }
 }

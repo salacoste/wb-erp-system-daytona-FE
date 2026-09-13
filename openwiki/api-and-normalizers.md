@@ -5,7 +5,7 @@ description: "API client singleton with auto-injected auth and cabinet headers, 
 tags: [api-client, boundary-normalizer, reactive-401-refresh, mutation-retry, anti-pattern-8, paid-storage-import, csv-export, finances-documents]
 verified:
   - by: openwiki/0.5.1
-    at: 2026-09-11T08:47:52.616Z
+    at: 2026-09-13T08:47:58.162Z
 sources:
   - id: openwiki-source-8d0f263ceba491caec34db6c
     resource: repo://src/app/providers.tsx
@@ -51,7 +51,7 @@ sources:
     resource: repo://src/types/api.ts
   - id: openwiki-source-41740c7db8b80479f12ec88f
     resource: repo://src/types/variant-analytics.ts
-generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
+generated: { by: "openwiki/0.5.1", at: "2026-09-13T08:47:58.162Z" }
 ---
 # API Layer & Normalizers
 
@@ -66,7 +66,7 @@ generated: { by: "openwiki/0.5.1", at: "2026-09-11T08:47:52.616Z" }
 | **Cabinet header** | Auto-injects `X-Cabinet-Id` from `useAuthStore`. Bypassed via `options.skipCabinetId`. This is the multi-tenant isolation mechanism. `options.cabinetIdOverride` mirrors the `authToken` pattern. |
 | **Response unwrapping** | Backend returns `{ data: T }` envelopes. Client auto-unwraps `rawData.data`. Use `skipDataUnwrap: true` for paginated responses where `data` is a legitimate array field. |
 | **Binary downloads** | `responseType: 'blob'` returns raw `Blob` without JSON parsing. |
-| **Error handling** | Custom `ApiError` class carries `status`, `message`, `data`, `retryAfter`. HTTP 429/503 `Retry-After` header parsed and clamped to [1, 600] seconds. |
+| **Error handling** | Custom `ApiError` class carries `status`, `message`, `data`, `retryAfter`. HTTP 429/503 `Retry-After` header parsed and clamped to [1, 600] seconds. **Wave C choke point**: every `ApiError.message` built from an HTTP response is scrubbed at construction via `sanitizeFallbackMessage` (status/headers/`retryAfter`/`data` untouched), and `trackTelegramApiError` egress also receives the sanitized message — `logApiError` keeps the raw message because its WB-token classification contract depends on raw shapes and it never renders. |
 
 Source: `src/lib/api-client.ts`, `src/lib/api-interceptors.ts`, `src/lib/env.ts`
 
@@ -118,6 +118,8 @@ Source: `src/lib/api-interceptors.ts`, `src/lib/error-utils.ts`, `src/lib/api-wb
 
 **Critical contract (FE-D1)**: every mapped branch re-throws the `ApiError` **class** (`src/types/api`) carrying the original `status` and `data` — never a flat `Error`. A flat `Error` here would defeat the global mutation-retry predicate below and cause a duplicate 4xx PUT (the defect observed live as e2e WB-TOKEN-BROWSER-02 "Expected 1, Received 2"). Unrecognized errors are re-thrown untouched. UI copies stay stable because `getErrorMessage` maps by message content + `data.code`, both preserved verbatim. Pinned by `src/lib/api-wb-token-errors.test.ts`.
 
+**Wave C sanitize rule (pass-1, 2026-09-12)**: message fragments **derived from `apiError.data`** (the 400 branch's `details[0].recommendation` / `details.message`, and the data-derived recommendation in the `INVALID_TOKEN` and `TOKEN_VALIDATION_FAILED` branches) bypass the apiClient construction-time sanitize, so they are scrubbed with `sanitizeFallbackMessage` at this re-wrap. The 401/403/404 passthrough branches need no re-scrub — their `apiError.message` was already sanitized when `apiClient` built the error. Two fallback literals are passed through the sanitizer byte-identical (benign single-line text), while the `INVALID_TOKEN` fallback literal is deliberately **not** sanitized — it embeds the public seller-portal recovery URL, which the URL-scrub pattern would strip.
+
 ### Mutation retry: 4xx is permanent (`shouldRetryMutation`)
 
 `src/lib/mutation-retry.ts` is registered as the global TanStack mutation retry policy (`QueryClient` defaults `mutations: { retry: shouldRetryMutation }` in `src/app/providers.tsx`). It replaces the old blind `retry: 1`, which re-issued every failed mutation once — including permanent 4xx client errors (a WB-token PUT rejected with 400 was sent twice), wasting traffic and accelerating BE throttling (login is capped at 5/hour).
@@ -133,7 +135,7 @@ The predicate can only classify errors that **keep** the `ApiError` class — he
 
 ### Fallback-message sanitization (`sanitizeFallbackMessage`, FE-D3)
 
-`src/lib/sanitize-fallback-message.ts` (canonical home; `src/components/custom/wb-token-form-helpers.ts` re-exports it so existing imports keep resolving) is the guard that the fallback error branch never echoes raw `error.message` verbatim — a malicious/buggy server can embed tokens, stack frames, or internal paths in a message rendered as-is by forms. It scrubs a fixed `SCRUB_PATTERNS` list (V8 stack frames and `stack:` markers, scheme-agnostic URLs, POSIX/Windows absolute paths, verbal SQL fragments with accepted false-positive trade-offs, Prisma internals, JWTs and JWT-like `eyJ` sequences, ≥32-char hex blobs, ≥40-char base64-ish blobs), collapses whitespace, and falls back to a fixed RU generic message (`'Произошла неизвестная ошибка. Попробуйте снова.'`) when nothing survives. Input is pre-bounded at 4096 chars before scrubbing (bounds regex backtracking), and the output is code-point-sliced to 200 chars at a word boundary so surrogate pairs are never split.
+`src/lib/sanitize-fallback-message.ts` (canonical home, extracted from `wb-token-form-helpers.ts` for the fe-d3-family direction fix; `src/components/custom/wb-token-form-helpers.ts` re-exports it so existing imports keep resolving) is the guard that the fallback error branch never echoes raw `error.message` verbatim — a malicious/buggy server can embed tokens, stack frames, or internal paths in a message rendered as-is by forms. It scrubs a fixed `SCRUB_PATTERNS` list (V8 stack frames and `stack:` markers, scheme-agnostic URLs, POSIX/Windows absolute paths with the slash-date rider, verbal SQL fragments with accepted false-positive trade-offs, Prisma internals, JWTs and JWT-like `eyJ` sequences, ≥32-char hex blobs, ≥40-char base64-ish blobs), collapses whitespace, and falls back to a fixed RU generic message (`'Произошла неизвестная ошибка. Попробуйте снова.'`) when nothing survives. Input is pre-bounded at 4096 chars before scrubbing (bounds regex backtracking), and the output is code-point-sliced to 200 chars at a word boundary so surrogate pairs are never split. Since Wave C it is also the choke-point sanitizer inside `apiClient` itself (every HTTP-derived `ApiError.message` and analytics egress), which is why downstream re-wrappers only need to sanitize fragments read from `apiError.data`.
 
 Consumers: `getWbTokenErrorMessage` (wb-token form helpers) and the mutation hooks `useCreateSupply`, `useCloseSupply`, `useGenerateStickers`, and `useDownloadDocument`, which pipe `apiError.message` through it for their fallback toasts. Pinned by `src/components/custom/wb-token-form-helpers.test.ts` and `src/hooks/__tests__/supply-sticker-document-error-fallback.test.ts`.
 

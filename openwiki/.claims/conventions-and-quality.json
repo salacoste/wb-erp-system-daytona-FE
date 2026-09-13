@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:46744569d96c9a5243a251b35edda3a7fcc145427144f0e85374b494659a45c4",
+  "pageVersion": "sha256:53a1dd6d4a7a735aa97f4f3278b7aed3b9fc45f5b02f5442158e411e1d5b3c90",
   "claims": [
     {
       "id": "claim_47ae5092df88459d932915ee945c35e6",
@@ -8,7 +8,7 @@
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L141-L156",
-          "version": "repo-lines-v1:sha256:c78236d25f64a9d9df7056579db2da36b790ea95d90fd0057400eab765455686:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+          "version": "repo-lines-v1:sha256:75be081b810652c760b123de418507824e84e72e9c817307af456496b0306f8e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
         }
       ]
     },
@@ -106,7 +106,7 @@
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L141-L156",
-          "version": "repo-lines-v1:sha256:c78236d25f64a9d9df7056579db2da36b790ea95d90fd0057400eab765455686:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+          "version": "repo-lines-v1:sha256:75be081b810652c760b123de418507824e84e72e9c817307af456496b0306f8e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
@@ -176,11 +176,11 @@
     },
     {
       "id": "claim_7edbfecc3ad34e2aa8eb52c47a05d470",
-      "statement": "The accepted Vitest baseline is ≥ 19582 passing / 0 failed, with a hard floor of 19118 passing (lowered exactly by 756 proven-dead tests in Story 174.2-FE, then raised incrementally through the 174.3 window, 174.4 contract tests, and the debt/backlog suites — redact D-9, nonce-mint D-1/PB-1, urgency-tier C15, reactive-refresh D-2/PB-3, AA re-pins, /80-sweep style pins, FE-D3 sanitizer pins, FE-D1 retry/ApiError-preservation pins, FE-D5 web-locks/claim suite, fe-d3-family hook-fallback pins, wave-6 WCAG style pins, session-9 route-guards exact-array pins, C5-W1 token-contract/stack pins, and C5-W4 waterfall/supplies/review-adopted pin additions); additions are acceptable, regressions are not, and skipped counts are informational only.",
+      "statement": "The accepted Vitest baseline is ≥ 19604 passing / 0 failed, with a hard floor of 19118 passing (lowered exactly by 756 proven-dead tests in Story 174.2-FE, then raised incrementally through the 174.3 window, 174.4 contract tests, and the debt/backlog suites — redact D-9, nonce-mint D-1/PB-1, urgency-tier C15, reactive-refresh D-2/PB-3, AA re-pins, /80-sweep style pins, FE-D3 sanitizer pins, FE-D1 retry/ApiError-preservation pins, FE-D5 web-locks/claim suite, fe-d3-family hook-fallback pins, wave-6 WCAG style pins, session-9 route-guards exact-array pins, C5-W1 token-contract/stack pins, C5-W4 waterfall/supplies/review-adopted pins, wave-A2 tier re-pins, wave-C apiClient sanitize pins, and wave-D logger-redaction pins); additions are acceptable, regressions are not, and skipped counts are informational only.",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L153-L156",
-          "version": "repo-lines-v1:sha256:0e431e14a5f84b15ff1177ac0e5ee67dab83786df2fb02062839d82097045d30:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTBhMjFmNmU5NDE1YjRmZDUxOWM4ZDliOTU3YzVjZjk4OTkwODQwZmZmY2EyZmM3ZTRmYzc1YjJjZWZhY2QwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
+          "version": "repo-lines-v1:sha256:55301ad5c5d7e78036b68a7e4e1a782b0c7f19870000308f418f1d0f4b697519:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmM0ZWM3MzJkZDkwNDc2ZDExYTM5ZDZkNDdjOGE0N2U2MGJlM2YzZTMwMGY4OGIwMWE1MTdjMDE3MmUxZGRiMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
         }
       ]
     },
@@ -302,21 +302,29 @@
     },
     {
       "id": "claim_ded596745ec84965b0eba84a7fdfe7bf",
-      "statement": "sanitizeFallbackMessage in src/lib/sanitize-fallback-message.ts (debt FE-D3) is the canonical scrub-and-bound helper that every user-facing mutation fallback path (WbTokenForm via wb-token-form-helpers re-export, plus useCreateSupply/useCloseSupply/useGenerateStickers/useDownloadDocument) applies to raw error.message before display: it pre-bounds input to 4096 chars, scrubs stack frames, URLs, paths, SQL, Prisma, JWT, hex and base64 blob patterns, returns a fixed Russian generic message when nothing survives, and truncates to 200 code points on a word boundary without splitting surrogate pairs.",
+      "statement": "sanitizeFallbackMessage in src/lib/sanitize-fallback-message.ts (debt FE-D3) is the canonical scrub-and-bound helper applied to raw error text at two layers: UI mutation fallbacks (WbTokenForm via wb-token-form-helpers re-export, plus useCreateSupply/useCloseSupply/useGenerateStickers/useDownloadDocument) and the API layer (api-client.ts sanitizes messages for Telegram error tracking and for ApiError(..., 0) network-failure wrapping; api-wb-token-errors.ts sanitizes mapped WB-token error copy). It pre-bounds input to 4096 chars, scrubs stack frames, URLs, paths (with a slash-date-preserving rider), verbal SQL, Prisma, JWT, hex and base64 blob patterns, returns a fixed Russian generic message when nothing survives, and truncates to 200 code points on a word boundary without splitting surrogate pairs.",
       "evidence": [
         {
           "resource": "repo://src/hooks/__tests__/supply-sticker-document-error-fallback.test.ts#L27-L96",
           "version": "repo-lines-v1:sha256:6707cdc201294dd297e15cc576878ab42b55b4dde2dae03503e6f2a662b64b03:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5MjJlZjdiZmVhMjVmMzRmNGQ2ODk2NjA0MGE3NGUwMzE2MWU5ZTVlNDdiNDQ5Y2VmZTdhZGI2OWZkYTcxMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiOGNhOTI0YzY3YzdiYzRiMWVlZTFlZTc0NTEyYzVlMmNiZmFjNzI1N2FlY2EzZDVlMWUxMGY5YTY1NDYxZTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlNGE4ZWRhMTdmYzE3MzZjOWVjM2VkOTUzZDFjM2M2OTk5ZTk4NTZkOWEwNGJkYjNkN2YyMDQ4ZjQwNDRjY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRiZjllM2MxZmE3NzZlYzVhNGZiMGYyODEyYzFjZGIyMjVjNTIwYjExYTE3NjRmODk5ODgyOGFmMjg0MWZlZDAifQ"
         },
         {
-          "resource": "repo://src/lib/sanitize-fallback-message.ts#L20-L59",
-          "version": "repo-lines-v1:sha256:e1c773dcf5c51353cc1b0d3a1e2c5b1b3386be2eff9d49e4df91a397c6d02b26:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4NTY1Mjk5MTA0YjBmMGIxN2JiY2FjYmY5ZDIyOTVkYjhjZmEyYTZmMGM2NThlNDBkMjdkZjcwNzVjNzIwYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwYzFiMzA2MDVlNTZjOWM4YjU1MTE3YTczMjMxYTRhMmQyZGViYmMxZTk4YjJmOThmNzM4NWFkNjcxZDRlOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkZDI1ZGExY2E5OTYyZTE0ODhkYTM1YTFkZGYwM2E0NjBiODY1NDIwZGMwMjYxZTNkZjY0ZTYwYTU4NjU4MDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+          "resource": "repo://src/lib/api-client.ts#L121-L182",
+          "version": "repo-lines-v1:sha256:492c37c3c614ecf05113f3895620be2e09516638af67541bed412eb46baf21b1:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjMjQ4NTg1NTQ1ZTVjYjhkMGRiYWE2ZTk1NTNkODg0NmNjMDY2NmYzOWM5MDBmOTAzYzgzNzZjMDUxYzc3YTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1NmRlYzgyMDQxNDdhNjE1NjI3OGM3YmE5YTNmODMyMzk1NWQxNDBjYmRiMTQ1YzJkNjI4MmRkYzhkZGYxZTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxNDMwYWNkODhhZDk3ZGRmMDZkYjA2ZTU1NzEyMjdkYmFjM2ZiMzQxMDVjYmQ0NjY2YjhhNDk1NDc1MDNhNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMifQ"
+        },
+        {
+          "resource": "repo://src/lib/api-wb-token-errors.ts#L18-L99",
+          "version": "repo-lines-v1:sha256:3eb78bbbfb7a1177c19ec76fe35603b836041e896b14fca676faf851e98c1603:eyJzZWxlY3RlZExpbmVDb3VudCI6ODIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5MjJlZjdiZmVhMjVmMzRmNGQ2ODk2NjA0MGE3NGUwMzE2MWU5ZTVlNDdiNDQ5Y2VmZTdhZGI2OWZkYTcxMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyOGQ0MjMyMjZmNTI2MTg1ODMwMjcyOGRhNmYzOTBjOTE0ZWRkZTc4NWZiYjFhNDkyNzllMzFhNmY0YjJiM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZGM4OTEyNDFhMTBmZTZiZGZhY2EyZGI2MjVkN2EyZGY0ZmJmODc1NDJmYWQ4YjRkYTBjM2Y0ZWYwMTNmNjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4ZTg1OWJlNmU0MWM5ZDVhY2YwNDYwZGJmOWNjNDZjNGMzMTQyYjdkMTcxNTVjOGI1MTc3MGU3OTQ3YmE1OGEifQ"
+        },
+        {
+          "resource": "repo://src/lib/sanitize-fallback-message.ts#L20-L67",
+          "version": "repo-lines-v1:sha256:dd528cf869b968118a475c0cc24d08704f1475b1306489a32ceea7c3a3512315:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4NTY1Mjk5MTA0YjBmMGIxN2JiY2FjYmY5ZDIyOTVkYjhjZmEyYTZmMGM2NThlNDBkMjdkZjcwNzVjNzIwYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwYzFiMzA2MDVlNTZjOWM4YjU1MTE3YTczMjMxYTRhMmQyZGViYmMxZTk4YjJmOThmNzM4NWFkNjcxZDRlOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkZDI1ZGExY2E5OTYyZTE0ODhkYTM1YTFkZGYwM2E0NjBiODY1NDIwZGMwMjYxZTNkZjY0ZTYwYTU4NjU4MDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-12T08:47:52.090Z"
+    "at": "2026-09-13T08:47:58.162Z"
   }
 }
