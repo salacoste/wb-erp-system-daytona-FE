@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:1e0292bb5b5ed4f72350d2a43621026cd02403c46b2d0a1e420abb54a1e01db1",
+  "pageVersion": "sha256:7e970f2d8a387114b9ac5f049a0c96bbcbaec71d96038f6d0b3ed6fea52d845f",
   "claims": [
     {
       "id": "claim_7146a57eacad4db2bf7552b903072ad9",
@@ -312,7 +312,7 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:2588e1be9187976e1b10c15d9928ec19f30073171447866199a219ee028c5553"
+          "version": "repo-file-v1:sha256:13c6245b4914452e7786847cabcb45f9b07ccb12c401b9739618bf5a249613dd"
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
@@ -352,7 +352,7 @@
         },
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:2588e1be9187976e1b10c15d9928ec19f30073171447866199a219ee028c5553"
+          "version": "repo-file-v1:sha256:13c6245b4914452e7786847cabcb45f9b07ccb12c401b9739618bf5a249613dd"
         }
       ]
     },
@@ -552,7 +552,7 @@
         },
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:2588e1be9187976e1b10c15d9928ec19f30073171447866199a219ee028c5553"
+          "version": "repo-file-v1:sha256:13c6245b4914452e7786847cabcb45f9b07ccb12c401b9739618bf5a249613dd"
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-10-SESSION10-4-ITEMS-EXECUTED-AND-REMAINING-BACKLOG.md",
@@ -641,10 +641,86 @@
           "version": "repo-lines-v1:sha256:08a11ae3343ea9a76fdae796fea9c848bbc2488779b9110912fdca189de63ffe:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4Mzc5Y2EzYjNlODQxZTNkZDg2MWNkYzE4NDkzYTQ0Y2I1NmU4MDVkZmQ3YzY0YTM1M2QyMDg2ZGRmNjc3MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhZDFhNmQxNTM3ZDI1NGI4Y2JiMTQ3NWVhZTJjNjc4YjYxZWQ3OGZiYzljMmNmMWU1MjQwODYyMDdlNjlkYzUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_e2f7971e782542a3922bceb1d3cb7269",
+      "statement": "Session-15 (2026-09-13, PR #458 merged as c87ead6c, registry §42) adopted an orphaned 8-file untracked search-coverage WIP (FE consumption of backend Task-139.6/139.7, author session lost after docs-PR #457) whose tree was red with 18 tsc errors, treated the WIP tests as an unchanged specification, and completed the missing contract: SearchAnalyticsCoverage types, MonitoringDashboard.searchAnalytics via the canonical normalizer (duplicate WIP normalizer deleted), fail-closed coverage derivation in the orders normalizer, CSV relabeling of the deprecated totalClicks/«CTR %» mislabels to addToCart-conversion plus coverage metadata; floor advanced to 19,682/0 (+78) with 2-pass APPROVE review.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L439-L445",
+          "version": "repo-lines-v1:sha256:6baf7f20b15bf6ee8d77242c94af5ad2ffdf2b40e0434bbb37f1f750520fee11:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmY1ZjkyYjhhYjEwZWI2MmRjYzA4ZGFlZTkwY2Q1MWRkZjA2OTgyYTU0ODMyNjQ2ODk3NTdjY2E2ZGRlYTc2ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGYzMGY3NWZiYzNhMjIwYzg3NmU4ZTA5NTVmZTI5OTUxMDRhZTA3M2Q2MDA4Y2Y1MmQ1YWMyOGNkMzk1ZDRmNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTE3NGZmMGY4ZmFkOTkxYjRiYzQzZDc5NGMzMGYxZDBjYmQyMGEwZDFjZmVlZThhYmQ3N2JkNWFjYjA4NmFiMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-13-SESSION15-SEARCH-COVERAGE-ADOPTED.md",
+          "version": "repo-file-v1:sha256:a7aaf90fb1c9b2090c85f7f5879675ef60c343047abec9ae0ee958b8edf6cdf1"
+        }
+      ]
+    },
+    {
+      "id": "claim_d8362f06db064e13bf6268a5bb8d2542",
+      "statement": "SearchCoverageNotice renders nothing when coverage is known and complete; otherwise it shows a warning Alert with covered/missing day counts, missing dates, an explicit 'metrics computed only over covered dates' line, and — when coverageKnown is false or the status is error/unknown — a non-authoritative-results disclaimer, so unknown coverage never masquerades as complete data.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/search/components/SearchCoverageNotice.tsx",
+          "version": "repo-file-v1:sha256:50918e9eb326926ed60b9e02641a37dbb2939c117960cebadb291035d034f7f8"
+        }
+      ]
+    },
+    {
+      "id": "claim_107dc4690e084aa48cc7de12ab6570a8",
+      "statement": "SearchAnalyticsStatusCard on /monitoring is fail-closed: absent data defaults to status 'unknown' («Полнота неизвестна»); total metrics are displayed only for authoritative statuses (complete/no_data/partial) and are hidden with a muted placeholder line otherwise; per-day coverage counts appear only for partial/uncovered (real measurements), and an error status yields a destructive alert — placeholder 0/0 is never presented as data.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/monitoring/components/SearchAnalyticsStatusCard.tsx",
+          "version": "repo-file-v1:sha256:eff8093dfb017719bb332c0d97a1122e96d1a9748e6c95c300a43c70dc76d3f3"
+        }
+      ]
+    },
+    {
+      "id": "claim_35799a2818554a5f97bb4235c68ce294",
+      "statement": "Request-backend #232 (HIGH, 2026-09-13) records three layers of BE deploy drift exposed by the session-15 dev-BE rebuild: BE main `9c063dea5` does not compile (16× TS2559 — getSearchAnalyticsCoverage receives a base PrismaClient transaction client where SearchAnalyticsCoverageClient is expected); the dev DB lacks migration 20260906013500 (500 on /v1/analytics/search/orders via 42P01/42703, with migration-baseline drift making prisma migrate deploy unusable — the FE applied only the minimal idempotent DDL surgically); and .env lacked the newly required MOYSKLAD_BOOTSTRAP_CABINET_ID (crash-loop; added with .env.bak-s15-20260913 backup). Live afterwards: orders returns the full coverage contract (coveredDayCount 0 — honestly uncovered until ingest) and the monitoring card shows the fail-closed unknown status; the /analytics/search live journey remains gated by RequireJam standard (Notice covered by a 42+ test unit suite).",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-13-SESSION15-SEARCH-COVERAGE-ADOPTED.md",
+          "version": "repo-file-v1:sha256:a7aaf90fb1c9b2090c85f7f5879675ef60c343047abec9ae0ee958b8edf6cdf1"
+        },
+        {
+          "resource": "repo://docs/request-backend/232-be-search-coverage-deploy-drift.md",
+          "version": "repo-file-v1:sha256:c8c0825a133b187394b76d83fc1b9bdd254ef61351fa03a6a30b9fabe05bee49"
+        }
+      ]
+    },
+    {
+      "id": "claim_8dffc5a88a6040e1847c7876e704ee17",
+      "statement": "Session-14 (2026-09-12/13) executed all 5 owner decisions via PRs #449-#452 (waves A-D: A2 OrganicTab structural differentiation, financial-sign canon declaration, apiClient central sanitization, logger central redact) plus tail items #453-#455 (price-calculator /10 no-op close, docs-95 split 95→94 variant (a), request-backend #231 BE audit), and declared the FE-debt program finished: final live battery at HEAD 116ecf11 = Vitest solo 19,604/19,604 across 1,288 files, lint 0/0, tsc 0, production build 70/70, boundary 0=0 with 0 exceptions registered, docs 94=94 — the boundary canon (Chart-Color Canon + Sign-valence canon) is terminal, registry rows §34-§41 closed, no open PRs or branches.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L406-L437",
+          "version": "repo-lines-v1:sha256:4551a1b639101352cf02815105e1a7b4148b6e82c49b37440a1254a5f121c6d7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwNGMzMTdmZGVmZDAzZjY3ZWMxYjZmYTJkNjA2N2Q5NGVkNjA3N2JmY2RhYzg3OWFiZmRmMmQxY2E0Y2JjYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjZGVmYjdiNDUzNDEzYWNjNzE2YjU3ZmIxODY0ZDgxY2UzMGQzODc4MWIxYjkwNmZmYmE1ZDI0MjI1ZWQxMTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0NzUwODNhMjc5NWQ3MTY2MmUwYjc1ZGUwZDNmMDEzNGNhYzg4M2QyMDhlMjJlMGI2OGM1ODNkZDQwNjA2NmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxYjE2MGVmZjBiYTU4ODE0N2M4Y2RmNDVmMTg4MDI0OGQ0NmFiOGFiYTE1MjJkYTgyMzBkZmRmMzI3YWMyMzcifQ"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-13-SESSION14-OWNER-DECISIONS-EXECUTED.md",
+          "version": "repo-file-v1:sha256:7c1dacface43485a4ddf2d338a6d0a7a852455db1254638c70db2ac65c4c9400"
+        }
+      ]
+    },
+    {
+      "id": "claim_eac20138dfa046bf8e97dccbcf086a38",
+      "statement": "The pre-migration debt-closure lane is fully delivered — Epic 127 done, Epic 162 done, Epics 163 and 164 done, Epic 165 closed with 165.1-165.3 done and 165.4/165.5 deferred backend-gated (165.4 waits on the backend daily-snapshots contract, 165.5 on the backend per-status retry contracts; FR11/FR12 of the epics-162-165 requirements) — and the shadcn migration program (Epics 166-174) started only after that lane settled into its deferred state.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/epics-162-165-fe.md#L48-L53",
+          "version": "repo-lines-v1:sha256:3c9e0b0319b8c068f5740308e8d32c835bc65ce7bead804aee1491b8e18c2029:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE2OWRhYTc1MzUyYjczZGU0NDc2YTQ3MGM2MDQ1OTIyZDRjMWRhZWQyY2IwN2VlNjc0MGUxZDhkMjI1NGVjMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjcwMzdjYzcyM2RhYTk0ZmEyZGJhMTY0ODRhYWE3OTc1YjkxNzQxYzE1ZGRmOWUxMjFkNWRlYjRiZmRjNmMwMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTgwM2RmYjNlMmJhM2ZmMjQxYzU3MjIxMGFiMGMyYmRjODIwNGJkOGJiY2E0ZmY0NjY2MDYwMDA0YTRiN2Y2YyJ9"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
+          "version": "repo-file-v1:sha256:13c6245b4914452e7786847cabcb45f9b07ccb12c401b9739618bf5a249613dd"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.1",
-    "at": "2026-09-13T08:47:58.162Z"
+    "at": "2026-09-14T08:47:58.101Z"
   }
 }
