@@ -134,6 +134,8 @@ verified:
 
 # Migration Program (Epics 166-174)
 
+<!-- openwiki: broken internal link [/openwiki/conventions-and-quality.md] file "/openwiki/conventions-and-quality.md" does not exist. Fix the href or restore the target, then delete this comment. -->
+<!-- openwiki: broken internal link [/openwiki/design-system.md] file "/openwiki/design-system.md" does not exist. Fix the href or restore the target, then delete this comment. -->
 This page is the canonical wiki home for the shadcn full-UI migration **program**: the master plan, the story pipeline, the current status ledger, and the handoff/orchestration process. Per-story migration status lives here (not in `design-system.md` or `quickstart.md`) so status churn is isolated from stable conventions. See [/openwiki/conventions-and-quality.md](/openwiki/conventions-and-quality.md) for coding standards and [/openwiki/design-system.md](/openwiki/design-system.md) for the token/component layers this program delivers.
 
 Immediate predecessor context: the earlier debt-closure lane is fully delivered — **Epic 127 done, Epic 162 done, Epics 163 and 164 done** (scope defined in `_bmad-output/planning-artifacts/epics-162-165-fe.md`), and **Epic 165** (Truthful Status & Backend-Ready Backlog) closed with stories **165.1–165.3 done** and **165.4 / 165.5 deferred (backend-gated)** — 165.4 (liquidity trends activation) waits on the backend daily-snapshots contract, 165.5 (per-status backfill retry) on the backend per-status retry contracts (FR11/FR12). This migration program (Epics 166–174) started after that lane settled into its deferred state.
