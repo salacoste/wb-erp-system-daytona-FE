@@ -48,10 +48,10 @@ sources:
     resource: repo://scripts/run-story-174-3-state-evidence.mjs
   - id: openwiki-source-13697ff46e81b49dcb27ba68
     resource: repo://src/styles/globals.css
-generated: { by: "openwiki/0.5.1", at: "2026-09-13T08:47:58.162Z" }
+generated: { by: "openwiki/0.5.2", at: "2026-09-15T08:47:56.531Z" }
 verified:
-  - by: openwiki/0.5.1
-    at: 2026-09-14T08:47:58.101Z
+  - by: openwiki/0.5.2
+    at: 2026-09-15T08:47:56.531Z
 ---
 
 # WB ERP System — Frontend OpenWiki
@@ -202,5 +202,4 @@ node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate 
 - **[Design System](design-system.md)** — Tailwind v4 semantic tokens, hardened shadcn primitives, composition families, enforced design-system boundary, and the Story 174.3 inclusive visual contract.
 - **[Domain Logic](domain-logic.md)** — financial-summary math, margin/liquidity calculations, cabinet creation/settlement, and task-role semantics.
 - **[Migration Program (Epics 166–174)](migration-program.md)** — per-epic/story status ledger, route ledger (76/76 verified), parity validation, Story 174.3 evidence pipeline, orchestration process, and the final 94/94 closeout.
-- **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174.3 evidence runners.
-g standards/gates and the testing strategy with the story-174.3 evidence runners.
+- **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174-3 evidence runners.

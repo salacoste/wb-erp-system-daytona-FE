@@ -125,10 +125,10 @@ sources:
     resource: repo://src/test/story-174-3-state-contract.test.ts
   - id: openwiki-source-72aa0e35fae33f199ccac4c2
     resource: repo://src/test/story-174-3-surface-contract.test.ts
-generated: { by: "openwiki/0.5.1", at: "2026-09-14T08:47:58.101Z" }
+generated: { by: "openwiki/0.5.2", at: "2026-09-15T08:47:56.531Z" }
 verified:
-  - by: openwiki/0.5.1
-    at: 2026-09-14T08:47:58.101Z
+  - by: openwiki/0.5.2
+    at: 2026-09-15T08:47:56.531Z
 ---
 
 
@@ -424,4 +424,3 @@ The standing FE-debt table (FE-D1…FE-D9), wave carry-outs C1–C18, BE-debt, a
 Story 169.14 established the authoritative paid-storage import lifecycle/result contract in the **backend** repository: BullMQ `waiting | delayed | prioritized | waiting-children` map to wire `pending`, `active` maps to `processing`, terminal states keep their meanings, and BullMQ `unknown` fails closed as wire `failed` with sanitized `UNKNOWN_QUEUE_STATE` detail. Story 169.15 aligned the shared frontend boundary and may use a frontend-only `unknown` sentinel solely for an unrecognized backend wire value. Story 169.12's route presentation had merged early (PR #227) and was only closed after the 169.14 → 169.15 chain validated the route (contract-closeout lane PRs #299/#304), closing Epic 169 at 15/15.
 
 This lane carries unusually strict evidence machinery (serialized single-leader lifecycle, mode-600 review-bootstrap and record-retirement transactions, payload-hash-verified RED/reviewer/manifest evidence re-read from trusted history, and a suffix-aware secret scan rejecting credential families across `=`, `:=`, `+=`, `-=`, `?=`, `&&=`, `||=`) because it is the only authorized cross-repository contract change; see the plans `169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md` and `169.15-align-shared-frontend-paid-storage-import-boundary.md` under `.omx/plans/` for the executable detail. For frontend stories, the practical takeaway is: the paid-storage wire contract above is authoritative, and no other story may touch backend contracts.
-storage wire contract above is authoritative, and no other story may touch backend contracts.

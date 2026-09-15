@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:bc6dc6105b724566a644d410b220a855747e9f621eaba55dc27bb5148bece828",
+  "pageVersion": "sha256:3417d80f6e79d9540a9083843b99de528dc5f7fa6e9630967dd02b65782195e4",
   "claims": [
     {
       "id": "claim_f797db2a25ab4709beca6aff9f520299",
@@ -215,10 +215,44 @@
           "version": "repo-file-v1:sha256:9b197a1d962dabefaa6c6ad8e8765b361d18fe4aaef386be9489833f56187c41"
         }
       ]
+    },
+    {
+      "id": "claim_ac6d10f95423484690d8d44c308f3f83",
+      "statement": "src/proxy.ts is the Next 16 proxy (renamed middleware) that guards page routes only — its matcher excludes api routes, _next assets, favicon, and static images — so it never touches /v1/... API calls handled by apiClient.",
+      "evidence": [
+        {
+          "resource": "repo://src/proxy.ts#L79-L91",
+          "version": "repo-lines-v1:sha256:b71e4febf8677057c7513c8cbfd052dac08f17f86a9385fe7471215cd3cf8b9a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2M2NiOGYzZjY2NDliNGU3OWM3ZTk0OTk5YTUxNTIyNzkxNTEyMzhkMzhjMGExOWI3YmYzODRlYjBlYzhjNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2NGQ4YzA3MzQyOTg5MzEwMTU3NmQ4OGQ5OTEyN2U4OWQ2ODkxZDNiMTdlODlkZjAyZWM5YWU3MDcwNWQ4YmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYxMGIyZTBjY2U4YjE3ZWI2YzQ3M2FiNGU2ZjdjZTEwZjY0MTQzYzZjNDQ4ZGFjOWJhYjFhY2U0ODgxZjdlZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_656041e43f584917b4e13148f95a310c",
+      "statement": "The proxy reads the auth token from the auth-token cookie (set by LoginForm, since server middleware cannot access localStorage) with an Authorization-header fallback, validates it with isValidToken, and redirects unauthenticated users off protected routes to the login route with the original pathname preserved as a redirect query param.",
+      "evidence": [
+        {
+          "resource": "repo://src/proxy.ts#L38-L58",
+          "version": "repo-lines-v1:sha256:e5c02a4c1c202062bc4167682d280cf56ed702c70b1bb1eb07f5f30aba8df21a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliZGE5NjNjMGI1ZjMzN2NlMTI1OGRjZGYzMTczODhiYTZkMzE5OWE1NDc5MjJhZDBmNDM4NTUzYzBjNDgyYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYxZWUyZWZjOTY5NDZhYmU3YTkwYmM1ZWE0OTc1Y2NlY2I5ZWQ3NjY0ZmZmNDgyYWQ3OTViNjRlMTFkOWI1YmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhZjM1YzMxZGJlNjc5YTJjMTljMWFhZDZjODRlNjc4OWRjMzRjYzIzNmU4ODYzZjk0OTljZmIyMGIwNWIzZWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_13b4081cf585404081d5fcf3b0295156",
+      "statement": "Authenticated users visiting login/register are redirected via getSafeAuthRedirect, which rejects open-redirect shapes (non-'/'-prefixed or '//' values, cross-origin targets, and auth-page targets fall back to the dashboard) and converts URL-parse TypeError into the dashboard fallback.",
+      "evidence": [
+        {
+          "resource": "repo://src/proxy.ts#L60-L74",
+          "version": "repo-lines-v1:sha256:482bc2a44be3fc500fe293ec0130a3451278e21ce3023eed45db839921ffc0ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjMjQwYjRhZWQ2NmRhOWY5YzUzN2QzN2JlMTIzYjM1YzZhZjU2ODUzMzhhOTk4OTA0MWEyYjljNjE0N2EwZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2YWFiMDg0YjhiMzUxZWFhOGQ5MmQ5ZmU4MDg2NTE5ZTJmN2MzM2IxOTA5ZTlmY2JhZWViMTZhNTM5ZmJhZjIifQ"
+        },
+        {
+          "resource": "repo://src/proxy.ts#L7-L29",
+          "version": "repo-lines-v1:sha256:6e070d297f7cf89ac375b5589f557b4e8af6c681e8972c0a548895e49191fdf5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhNTYwOGIyNDI0NTVhNTBmZTY0YzA2OWIzOWU4OWY4ZGZlMzllYmRjZTliN2MyZjRmYjhjYjdkYjkzZTE1OWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjNWQ4YzU2OTU2YjE1YTNhNTE2MzczNDQ4YjNjMmM3ZDYwYTZhMjUxZTYwYTU2NWJkYTgwNDI0NjNlMmMyMTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMWNiNGI0MGE4YjUxMTE4M2VhY2FlYWJkOTdmYmIyMzJmNTgyMzVjYWE4ZjE2OTgyMGM5YTM2Njk0ZTAwYTEifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.1",
-    "at": "2026-09-13T08:47:58.162Z"
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-15T08:47:56.531Z"
   }
 }

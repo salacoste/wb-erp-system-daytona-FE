@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:452a48ac369942783f7c1c73481822ab10881341a626e15df5c01740fc1103c9",
+  "pageVersion": "sha256:d30db88077a3fbc951d897ba8cd739a3954cc04e4b720af70fb0a4ac445194f2",
   "claims": [
     {
       "id": "claim_34d4e9ec9e0249299eb57f3e06db8784",
@@ -361,10 +361,20 @@
           "version": "repo-lines-v1:sha256:35f82787514bc5cf4ef702552f2247bf0b4a9468d161e16a93ccb783beb8e576:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmNjMjFmYWNmNjczNjYwMWI2MjU5NzYwNmUzNTA4YTE1YWMyNWUzNWE2ZjdmNGNhMDkwOGVjNjM0YWIyZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiOWJhYjRhNzhjYjZkNDZmMjFkN2M1ZTA0NDdiN2MwYzBhODQ1NTZkN2UyNjQ5YjdmM2YyMWEyYjk1NzMxZDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwNDM1ODAwODY1NTFhZDM4NzFiMDc2MDM4ZTA4OWYwZDdkYjE2MTcwMGNkNGI1YWMzODExZGJmNjU2MGIxMmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZkYzljZjYxYTJjZTY4NWY5OWQzNWNjNTg2ZGZlYjgwOTRhMDAyYzMxMTkyNzY3YjYxNDQwMTZiZGUwYzMxMzcifQ"
         }
       ]
+    },
+    {
+      "id": "claim_c86fcc5507b245a0ade01903fe735e5f",
+      "statement": "playwright.config.ts defines four projects: `setup` (matches `.*\\.setup\\.ts` for auth storage state), `chromium` (desktop, depends on setup, storage state e2e/.auth/user.json, and test-ignores both historical-spp-analytics and mobile-critical-routes specs so a bare full run does not dispatch them under Desktop Chrome), `mobile` (iPhone 14 device, Story 162.10, matches only mobile-critical-routes.spec.ts, shares the same setup project and preflight), and `historical-spp` (empty storage state, setup match /$^/, fully self-contained for the Story 128.27 exact-command spec). CI behavior: 2 retries, 1 worker, forbidOnly, auto-started dev server; local runs reuse an existing server and require the preflight handshake.",
+      "evidence": [
+        {
+          "resource": "repo://playwright.config.ts#L60-L104",
+          "version": "repo-lines-v1:sha256:6e1c1b4b74c69520cc754d2ffa468f569cdfc4be5e70eb0a604e1c7555970c6b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhODE1MmM0YTRiMzFkZjE2YTJlYzc1YWM2YTIxOThiNDZlZjMzMWU1Y2M1ZjUwYWZiMjViYjQxODJiODMyYzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwZjI4YjdmM2FiYmIwMDNkNTdlNmEyYWNlOTk1YTI5NTFiZjg5MDkwZjRlYjdlNTVlNjgyMTYxZDBlZWI2ZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiMjZjZjJhZmM3MzY0OTY4MWQ4MDA0ZDQzMGI1NjEyY2Q2ZDI0MTUwYmRiMTNmZjcwYjQyNmRlNmZjZTg3NWIifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.1",
-    "at": "2026-09-13T08:47:58.162Z"
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-15T08:47:56.531Z"
   }
 }

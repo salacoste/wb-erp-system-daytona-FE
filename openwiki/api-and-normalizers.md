@@ -4,8 +4,8 @@ title: "API Layer & Normalizers"
 description: "API client singleton with auto-injected auth and cabinet headers, D-2 single-flight reactive 401 refresh with one replay, the global mutation-retry policy that never retries 4xx, WB token error mapping and fallback-message sanitization, the Boundary Normalizer Pattern with AP#8 null semantics, the Story 169.14 paid-storage import result contract and polling lifecycle, CSV export infrastructure, the NEW-7/172.10 finances documents flow, and the communications gated write-back with async 202 job polling."
 tags: [api-client, boundary-normalizer, reactive-401-refresh, mutation-retry, anti-pattern-8, paid-storage-import, csv-export, finances-documents]
 verified:
-  - by: openwiki/0.5.1
-    at: 2026-09-13T08:47:58.162Z
+  - by: openwiki/0.5.2
+    at: 2026-09-15T08:47:56.531Z
 sources:
   - id: openwiki-source-8d0f263ceba491caec34db6c
     resource: repo://src/app/providers.tsx
@@ -45,13 +45,15 @@ sources:
     resource: repo://src/lib/mutation-retry.ts
   - id: openwiki-source-3b4dbdbe8d2f4037d2dd4991
     resource: repo://src/lib/sanitize-fallback-message.ts
+  - id: openwiki-source-f34ac1e549d94dc3ac475ae4
+    resource: repo://src/proxy.ts
   - id: openwiki-source-a634a54b04d180befb7476e7
     resource: repo://src/services/cabinets.service.ts
   - id: openwiki-source-57a6295c7260bc5f8b372d73
     resource: repo://src/types/api.ts
   - id: openwiki-source-41740c7db8b80479f12ec88f
     resource: repo://src/types/variant-analytics.ts
-generated: { by: "openwiki/0.5.1", at: "2026-09-13T08:47:58.162Z" }
+generated: { by: "openwiki/0.5.2", at: "2026-09-15T08:47:56.531Z" }
 ---
 # API Layer & Normalizers
 
@@ -61,7 +63,7 @@ generated: { by: "openwiki/0.5.1", at: "2026-09-13T08:47:58.162Z" }
 
 | Concern | Implementation |
 |---------|----------------|
-| **Base URL** | `env.apiUrl` from `src/lib/env.ts` → reads `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`). Endpoints are `/v1/...` paths. |
+| **Base URL** | `env.apiUrl` from `src/lib/env.ts` → reads `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`). Endpoints are `/v1/...` paths — never append `/api` (`.env.example` documents this explicitly). |
 | **Auth header** | Auto-injects `Authorization: Bearer <token>` from `useAuthStore`. Bypassed via `options.skipAuth`. An immutable per-request `options.authToken` (Story 167.9) wins over the mutable store token, so a request authenticates as the session that initiated it. |
 | **Cabinet header** | Auto-injects `X-Cabinet-Id` from `useAuthStore`. Bypassed via `options.skipCabinetId`. This is the multi-tenant isolation mechanism. `options.cabinetIdOverride` mirrors the `authToken` pattern. |
 | **Response unwrapping** | Backend returns `{ data: T }` envelopes. Client auto-unwraps `rawData.data`. Use `skipDataUnwrap: true` for paginated responses where `data` is a legitimate array field. |
@@ -142,6 +144,16 @@ Consumers: `getWbTokenErrorMessage` (wb-token form helpers) and the mutation hoo
 ### Endpoint mapping reference
 
 `docs/api-integration-guide.md` is the cross-reference catalog mapping each FE API client module to its BE endpoints, authoritative `.http` test files (`/test-api/*.http`), and the FE spec docs (`docs/request-backend/*.md`) — consult it when adding or verifying an API integration rather than re-deriving the contract from tests.
+
+## Route Protection Proxy (`src/proxy.ts`)
+
+Distinct from the data-plane `apiClient`: `src/proxy.ts` is the Next 16 `proxy` (the renamed middleware convention) that guards **page routes**, never `/v1/...` API calls (the matcher excludes `api`, `_next/static`, `_next/image`, `favicon.ico`, and static image extensions).
+
+- **Token sources**: the proxy runs server-side and cannot read `localStorage`, so it reads the `auth-token` cookie (set by `LoginForm` after login) and falls back to the `Authorization: Bearer` header. A token is validated with `isValidToken` (`src/lib/auth`).
+- **Protected routes** (`isProtectedRoute`, `src/lib/routes-protected.ts`): no token / invalid token → redirect to `ROUTES.LOGIN` with the original `pathname` preserved as a `redirect` query param for post-login return.
+- **Auth pages** (`login`/`register`): an authenticated user is redirected away — to the `redirect` param when it is same-origin and not itself an auth page, otherwise to the dashboard. `getSafeAuthRedirect` rejects open-redirect shapes (`//`, non-`/`-prefixed, cross-origin, auth-page targets) and converts URL-parse `TypeError` into a dashboard fallback.
+
+Focused test: `src/proxy.test.ts` pins protected-route redirect, the redirect-param round-trip, and the safe-redirect validation.
 
 ## Boundary Normalizer Pattern
 

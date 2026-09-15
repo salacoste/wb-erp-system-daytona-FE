@@ -603,6 +603,6 @@ Never commit the literal values (SEC-DOC-1 lane, 2026-09-02).
 
 ## OpenWiki
 
-See [AGENTS.md](AGENTS.md) for OpenWiki agent instructions.
+@AGENTS.md
 
 <!-- OPENWIKI:END -->

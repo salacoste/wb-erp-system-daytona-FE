@@ -42,6 +42,8 @@ sources:
     resource: repo://e2e/telegram-notifications.spec.ts
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
+  - id: openwiki-source-5e753d9d77984cb67aae1517
+    resource: repo://playwright.config.ts
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
   - id: openwiki-source-7bebebc56a12d016856c32cc
@@ -78,10 +80,10 @@ sources:
     resource: repo://test-utils/outbound-network-policy.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.1", at: "2026-09-13T08:47:58.162Z" }
+generated: { by: "openwiki/0.5.2", at: "2026-09-15T08:47:56.531Z" }
 verified:
-  - by: openwiki/0.5.1
-    at: 2026-09-13T08:47:58.162Z
+  - by: openwiki/0.5.2
+    at: 2026-09-15T08:47:56.531Z
 ---
 # Testing & Operations
 
@@ -95,7 +97,7 @@ verified:
 | Plugin | `@vitejs/plugin-react` |
 | Coverage | V8 provider (text/json/json-summary/html reporters), output `coverage/local` |
 | Fake timers | `shouldAdvanceTime: true` (waitFor/MSW compatibility) |
-| Full-suite floor | ≥ 19,118 tests passing across 1,234 test files (0 failed) — raised after Story 174.2-FE; the current accepted CLAUDE.md baseline is ≥ 19,582 / 0 failed; a full `npm test -- --run` run must not regress this floor |
+| Full-suite floor | ≥ 19,118 tests passing across 1,234 test files (0 failed) — raised after Story 174.2-FE; the current accepted CLAUDE.md baseline is ≥ 19,604 / 0 failed; a full `npm test -- --run` run must not regress this floor |
 
 ### Test setup (`src/test/`)
 Setup files run in explicit list order (`sequence.setupFiles: 'list'`) defined by `VITEST_SETUP_FILES` in `vitest.config.ts`. Order is load-bearing: the outbound network guard must install **before** any general setup or MSW import, or module-evaluation-time network attempts would escape the guard.
@@ -131,7 +133,7 @@ The floor is a floor, not a substitute for fresh per-story validation. It moves 
 
 ## E2E Tests — Playwright
 
-**Config**: `playwright.config.ts`
+**Config**: `playwright.config.ts` (see the projects table above; the `chromium` project additionally test-ignores `mobile-critical-routes.spec.ts` so a bare full run does not dispatch the mobile-locked spec under Desktop Chrome)
 
 | Aspect | Detail |
 |--------|--------|
@@ -609,3 +611,4 @@ From `.env.example` (names only — never commit actual values):
 | `E2E_MANAGER_EMAIL` / `E2E_MANAGER_PASSWORD` | Optional Manager pair; set both or leave both blank |
 | `E2E_WB_TOKEN` | Optional token for legacy fixture integration scenarios |
 | `E2E_ENABLE_MUTATIONS` / `E2E_MUTATION_TARGET` / `E2E_MUTATION_ACK` | Three-part opt-in to un-gate `@mutating` specs (see [Local E2E Preflight](#local-e2e-preflight)) |
+MUTATIONS` / `E2E_MUTATION_TARGET` / `E2E_MUTATION_ACK` | Three-part opt-in to un-gate `@mutating` specs (see [Local E2E Preflight](#local-e2e-preflight)) |

@@ -103,8 +103,8 @@ sources:
     resource: repo://src/types/supply-planning/core.ts
 generated: { by: "openwiki/0.5.1", at: "2026-09-13T08:47:58.162Z" }
 verified:
-  - by: openwiki/0.5.1
-    at: 2026-09-13T08:47:58.162Z
+  - by: openwiki/0.5.2
+    at: 2026-09-15T08:47:56.531Z
 ---
 # Domain Logic
 
